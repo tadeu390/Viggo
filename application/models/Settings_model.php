@@ -1,31 +1,36 @@
 <?php
+	/*
+		A CLASSE ABAIXO RETORNA INFORMAÇÕES DE CONFIGURAÇÕES DO SISTEMA, CADASTRA E ATUALIZA 
+		DADOS DE CONFIGURAÇÕES
+	*/
 	class Settings_model extends CI_Model {
 		
 		/*
-			CONECTA AO BANCO DE DADOS DEIXANDO A CONEXÃO ACESSÍVEL PARA OS METODOS
-			QUE NECESSITAREM REALIZAR CONSULTAS.
+			CARREGA O DRIVER DO BANCO DE DADOS
 		*/
 		public function __construct()
 		{
 			$this->load->database();
 		}
 
-		public function get_geral($id = FALSE)
+		//ESTE MÉTODO É RESPONSÁVEL POR RETORNAR INFORMAÇÕES DE CONFIGURAÇÃO DO SISTEMA
+		public function get_settings($id = FALSE)
 		{
-			$query = $this->db->query("SELECT id, itens_por_pagina FROM 
-				configuracoes_geral");
-
+			$query = $this->db->query("
+				SELECT Id, Itens_por_pagina FROM 
+				Settings");
 			return $query->row_array();
 		}
 
-		public function set_geral($data)
+		//ESTE MÉTODO É RESPONSÁVEL POR CADASTRAR E ATUALIZAR DADOS DE CONFIGURAÇÕES DO SISTEMA
+		public function set_settings($data)
 		{
-			if(empty($data['id']))
-				return $this->db->insert('configuracoes_geral',$data);
+			if(empty($data['Id']))
+				return $this->db->insert('Settings',$data);
 			else
 			{
-				$this->db->where('id', $data['id']);
-				return $this->db->update('configuracoes_geral', $data);
+				$this->db->where('Id', $data['Id']);
+				return $this->db->update('Settings', $data);
 			}
 		}
 	}

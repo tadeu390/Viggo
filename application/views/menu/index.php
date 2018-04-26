@@ -1,12 +1,12 @@
 <?php $this->load->helper("permissao");?>
 <?php $this->load->helper("paginacao");?>
 <br /><br />
-<div class='row' id='container' name='container' style='padding: 20px;'>
+<div class='row padding20' id='container' name='container'>
 	<input type='hidden' id='controller' value='<?php echo $controller; ?>'/>
 	<?php
-		echo "<div class='col-lg-10 offset-lg-1 padding' style='background: #393836;'>";
+		echo "<div class='col-lg-10 offset-lg-1 padding background_dark'>";
 			echo "<div class='table-responsive'>";
-				echo "<table class='table table-striped table-hover' style='color: white;'>";
+				echo "<table class='table table-striped table-hover text-white'>";
 					echo "<thead>";
 						echo"<tr>";
 							echo"<td class='text-center' colspan='5'>";
@@ -30,17 +30,17 @@
 						for($i = 0; $i < count($lista_menus); $i++)
 						{
 							$cor = "";
-							if($lista_menus[$i]['ativo'] == 0)
+							if($lista_menus[$i]['Ativo'] == 0)
 								$cor = "style='background-color: #dc3545;'";
 							echo "<tr>";
-								echo "<td $cor>".$lista_menus[$i]['nome']."</td>";
+								echo "<td $cor>".$lista_menus[$i]['Nome']."</td>";
 								//echo "<td $cor>".$lista_menus[$i]['ordem']."</td>";
-								echo "<td $cor>".(($lista_menus[$i]['ativo'] == 1) ? 'Sim' : 'Não')."</td>";
+								echo "<td $cor>".(($lista_menus[$i]['Ativo'] == 1) ? 'Sim' : 'Não')."</td>";
 								echo "<td class='text-right'>";
 								if(permissao::get_permissao(UPDATE,$controller))
-									echo "<a href='".$url."$controller/edit/".$lista_menus[$i]['id']."' title='Editar' style='color: #dc3545; cursor: pointer;' class='glyphicon glyphicon-edit'></a> | ";
+									echo "<a href='".$url."$controller/edit/".$lista_menus[$i]['Id']."' title='Editar' style='color: #dc3545; cursor: pointer;' class='glyphicon glyphicon-edit'></a> | ";
 								if(permissao::get_permissao(DELETE,$controller))
-									echo "<span onclick='Main.confirm_delete(". $lista_menus[$i]['id'] .");' id='sp_lead_trash' name='sp_lead_trash' title='Apagar' style='color: #dc3545; cursor: pointer;' class='glyphicon glyphicon-trash'></span>";
+									echo "<span onclick='Main.confirm_delete(". $lista_menus[$i]['Id'] .");' id='sp_lead_trash' name='sp_lead_trash' title='Apagar' style='color: #dc3545; cursor: pointer;' class='glyphicon glyphicon-trash'></span>";
 								echo "</td>";
 							echo "</tr>";
 						}

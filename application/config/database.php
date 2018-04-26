@@ -70,15 +70,15 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | The $query_builder variables lets you determine whether or not to load
 | the query builder class.
 */
-$active_group = 'default'; 
+$active_group = 'default';
 $query_builder = TRUE;
 
 $db['default'] = array(
-	'dsn'	=> 'mysql:host=localhost;port=3306;dbname=app',
+	'dsn'	=> 'mysql:host=localhost;port=3306;dbname=sw',
 	'hostname' => 'mysql:host=localhost',
-	'username' => 'app',
-	'password' => 'app',
-	'database' => 'app',
+	'username' => 'sw',
+	'password' => 'sw',
+	'database' => 'sw',
 	'dbdriver' => 'pdo',
 	'dbprefix' => '',
 	'pconnect' => FALSE,
@@ -94,26 +94,3 @@ $db['default'] = array(
 	'failover' => array(),
 	'save_queries' => TRUE
 );
-
-//for interbase or firebird
-// $db['default'] = array(
-	// 'dsn'	=> '',
-	// 'hostname' => 'localhost',
-	// 'username' => 'sysdba',
-	// 'password' => 'developer',
-	// 'database' => 'c:\bd_firebird\app.fdb',
-	// 'dbdriver' => 'ibase',
-	// 'dbprefix' => '',
-	// 'pconnect' => FALSE,
-	// 'db_debug' => (ENVIRONMENT !== 'production'),
-	// 'cache_on' => FALSE,
-	// 'cachedir' => '',
-	// 'char_set' => 'ANSI',
-	// 'dbcollat' => 'NONE',
-	// 'swap_pre' => '',
-	// 'encrypt' => FALSE,
-	// 'compress' => FALSE,
-	// 'stricton' => FALSE,
-	// 'failover' => array(),
-	// 'save_queries' => TRUE
-// );

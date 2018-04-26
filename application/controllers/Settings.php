@@ -7,7 +7,7 @@
 		public function __construct()
 		{
 			parent::__construct();
-			if(empty($this->Account_model->session_is_valid($this->session->id)['id']))
+			if(empty($this->account_model->session_is_valid($this->session->id)['id']))
 				redirect('Account/login');
 				$this->load->model('Settings_model');
 			$this->set_menu();
@@ -27,11 +27,17 @@
 			$resultado = "sucesso";
 			$dataToSave = array(
 				'id' => $this->input->post('id'),
-				'itens_por_pagina' => $this->input->post('itens_por_pagina')
+				'media' => $this->input->post('media'),
+				'itens_por_pagina' => $this->input->post('itens_por_pagina'),
+				'total_faltas' => $this->input->post('total_faltas'),
+				'primeiro_bimestre' => $this->input->post('primeiro_bimestre'),
+				'segundo_bimestre' => $this->input->post('segundo_bimestre'),
+				'terceiro_bimestre' => $this->input->post('terceiro_bimestre'),
+				'quarto_bimestre' => $this->input->post('quarto_bimestre')
 			);
 
 			//bloquear acesso direto ao metodo store
-			 if(!empty($dataToSave['itens_por_pagina']))
+			 if(!empty($dataToSave['media']))
 					$this->Settings_model->set_geral($dataToSave);
 			 else
 				redirect('admin/dashboard');

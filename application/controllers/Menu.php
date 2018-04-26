@@ -1,11 +1,15 @@
 <?php
-	require_once("Geral.php");
+	require_once("Geral.php");//INCLUI A CLASSE GENÉRICA
 
-	class Menu extends Geral {
+	/*
+		ESTA CLASSE TEM POR FUNÇÃO CONTROLAR TUDO REFERENTE AOS MENUS DO SISTEMA
+	*/
+	class Menu extends Geral 
+	{
 		public function __construct()
 		{
 			parent::__construct();
-			if(empty($this->Account_model->session_is_valid($this->session->id)['id']))
+			if(empty($this->account_model->session_is_valid($this->session->id)['id']))
 				redirect('Account/login');
 			$this->set_menu();
 			$this->data['controller'] = get_class($this);
@@ -13,7 +17,8 @@
 		}
 		
 		/*
-			Renderiza o dashboard
+			RESPONSÁVEL POR LISTAR TODOS OS MENUS NA TELA
+			$page -> número da página atual registros
 		*/
 		public function index($page = false)
 		{
@@ -21,61 +26,71 @@
 				$page = 1;
 			
 			$this->data['title'] = 'Administração - Menus';
-			if($this->Geral_model->get_permissao(READ,get_class($this)) == true)
+			if($this->Geral_model->get_permissao(READ, get_class($this)) == true)
 			{
-				$this->data['lista_menus'] = $this->Menu_model->get_menu_tela(false,$page);
-				$this->data['paginacao']['size'] = $this->data['lista_menus'][0]['size'];
+				$this->data['lista_menus'] = $this->Menu_model->get_menu(FALSE, FALSE, $page);
+				$this->data['paginacao']['size'] = $this->data['lista_menus'][0]['Size'];
 				$this->data['paginacao']['pg_atual'] = $page;
-				$this->view("menu/index",$this->data);
+				$this->view("menu/index", $this->data);
 			}
 			else
 				$this->view("templates/permissao",$this->data);
 		}
-		
+		/*
+			RESPONSÁVEL POR OCULTAR UM MENU DO SISTEMA
+			$id -> id de um menu
+		*/
 		public function deletar($id = false)
 		{
-			if($this->Geral_model->get_permissao(DELETE,get_class($this)) == true)
+			if($this->Geral_model->get_permissao(DELETE, get_class($this)) == true)
 				$this->Menu_model->deletar($id);
 			else
-				$this->view("templates/permissao",$this->data);
+				$this->view("templates/permissao", $this->data);
 		}
-		
+		/*
+			RESPONSÁVEL POR RENDERIZAR O FORMULÁRIO DE CADASTRO DE MENU PARA EDIÇÃO
+			$id -> id de um menu
+		*/
 		public function edit($id = false)
 		{
 			$this->data['title'] = 'Menu - Cadastro';
-			if($this->Geral_model->get_permissao(UPDATE,get_class($this)) == true)
+			if($this->Geral_model->get_permissao(UPDATE, get_class($this)) == true)
 			{
-				$this->data['obj'] = $this->Menu_model->get_menu_tela($id);
-				$this->view("menu/create_edit",$this->data);
+				$this->data['obj'] = $this->Menu_model->get_menu(FALSE, $id, FALSE);
+				$this->view("menu/create_edit", $this->data);
 			}
 			else
 				$this->view("templates/permissao",$this->data);
 		}
-		
+		/*
+			RESPONSÁVEL POR RENDERIZAR O FORMULÁRIO DE CADASTRO DE MENU PARA CRIAR
+		*/
 		public function create()
 		{
 			$this->data['title'] = 'Menu - Cadastro';
-			if($this->Geral_model->get_permissao(CREATE,get_class($this)) == true)
+			if($this->Geral_model->get_permissao(CREATE, get_class($this)) == true)
 			{
-				$this->data['obj'] = $this->Menu_model->get_menu_tela($id);
-				$this->view("menu/create_edit",$this->data);
+				$this->data['obj'] = $this->Menu_model->get_menu(FALSE, 0, FALSE);
+				$this->view("menu/create_edit", $this->data);
 			}
 			else
-				$this->view("templates/permissao",$this->data);
+				$this->view("templates/permissao", $this->data);
 		}
-		
+		/*
+			RESPONSÁVEL POR RECEBER OS DADOS DO FORMULÁRIO E OS ENVIA-LO PARA A MODEL
+		*/
 		public function store()
 		{
 			$resultado = "sucesso";
 			$dataToSave = array(
-				'id' => $this->input->post('id'),
-				'nome' => $this->input->post('nome'),
-				'ordem' => $this->input->post('ordem'),
-				'ativo' => $this->input->post('menu_ativo')
+				'Id' => $this->input->post('id'),
+				'Nome' => $this->input->post('nome'),
+				'Ordem' => $this->input->post('ordem'),
+				'Ativo' => $this->input->post('menu_ativo')
 			);
 
 			//bloquear acesso direto ao metodo store
-			 if(!empty($dataToSave['nome']))
+			 if(!empty($dataToSave['Nome']))
 					$this->Menu_model->set_menu($dataToSave);
 			 else
 				redirect('admin/dashboard');

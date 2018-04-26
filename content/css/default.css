@@ -167,10 +167,10 @@ h2 {
 input.input-material {
   width: 100%;
   border: none;
-  border-bottom: 1px solid #fff;
+  border-bottom: 1px solid #444951;
   padding: 10px 0;
   background: none;
-  color: #fff;
+  color: #8a8d93;
 }
 
 input.input-material:focus {
@@ -178,7 +178,7 @@ input.input-material:focus {
 }
 
 input.input-material ~ label {
-  color: #fff;
+  color: #aaa;
   position: absolute;
   top: 14px;
   left: 0;
@@ -200,7 +200,6 @@ input.input-material ~ label.error {
 input.input-material ~ label.active {
   font-size: 0.85rem;
   top: -10px;
-  color: #DB6574;
 }
 
 .form-group-material {
@@ -457,6 +456,7 @@ nav.side-navbar {
   transition: all 0.3s linear;
   z-index: 999;
   overflow-y: scroll; 
+  overflow-x: hidden;
   /* arrow rotation -------------- */
   /*  Side navbar small ------------------------ */
 }
@@ -1452,7 +1452,7 @@ section.forms .input-group-btn .dropdown-menu a {
   height: 100%;
   display: block;
   z-index: -1;
-background: url('../imagens/tec4.jpg');
+background: url('../imagens/fundo.jpg');
   background-size: cover;
   position: absolute;
   top: 0;
@@ -1498,7 +1498,8 @@ background: url('../imagens/tec4.jpg');
 }
 
 .login-page .form-holder .form {
-  background: #2d3035;
+  /*background: #2d3035;*/
+  background-image: url("../imagens/luz.png");
 }
 
 .login-page .form-holder .form .form-group {
@@ -1529,7 +1530,7 @@ background: url('../imagens/tec4.jpg');
 }
 
 .login-page .form-holder .form small {
-  color: #fff;
+  color: #aaa;
 }
 
 .login-page .form-holder .form .terms-conditions label {
@@ -2355,8 +2356,8 @@ a.text-primary:focus, a.text-primary:hover {
 
 .page-item.active .page-link {
   color: #fff;
-  background-color: #dc3545;
-  border-color: #dc3545;
+  background-color: #007bff;
+  border-color: #007bff;
 }
 
 .page-item.disabled .page-link {
@@ -2368,10 +2369,11 @@ a.text-primary:focus, a.text-primary:hover {
 .page-link {
   padding: 0.5rem 0.75rem;
   line-height: 1.25;
-  color: #dc3545;
+  color: #007bff;
   background-color: #fff;
   border: 1px solid #ddd;
 }
+
 
 .page-link:focus, .page-link:hover {
   color: #22773c;
@@ -2824,9 +2826,9 @@ a.text-dark:focus, a.text-dark:hover {
 /* Switch Success */
 .checkbox.checbox-switch.switch-success label > input:checked + span,
 .checkbox-inline.checbox-switch.switch-success > input:checked + span {
-    background-color: rgb(40, 167, 69);
-    border-color: rgb(40, 167, 69);
-    box-shadow: rgb(40, 167, 69) 0px 0px 0px 8px inset;
+    background-color: #007bff;
+    border-color:#007bff;
+    box-shadow: #007bff 0px 0px 0px 8px inset;
     transition: border 0.4s ease 0s, box-shadow 0.4s ease 0s, background-color 1.2s ease 0s;
 }
 .checkbox.checbox-switch.switch-success label > input:checked:disabled + span,

@@ -16,8 +16,21 @@ nav::-webkit-scrollbar-thumb {
 	padding-bottom: 10px; 
 }
 
+.padding10{
+  padding: 10px;
+}
+
+.padding20{
+  padding: 20px;
+}
+
 .padding30{
   padding: 30px;
+}
+
+.background_dark
+{
+	background-color: #393836;
 }
 
 .border-default{
@@ -31,20 +44,14 @@ nav::-webkit-scrollbar-thumb {
 * {
 	outline: none;
 }
-
-.background::before {
-
- content: '';
-  width: 100%;
-  height: 100%;
-  display: block;
-  z-index: -1;
-  background: url('../imagens/tec4.jpg');
-  background-size: cover;
-  position: absolute;
-  top: 0;
-  right: 0;
-
+.img-login{
+	width: 100px;
+	margin-top: -10px;
+	margin-bottom: 15px;
+	text-align: center;
+}
+#boletim .table th,#boletim .table td{
+	border-top: none;
 }
 .text-white{
 	color: white;
@@ -52,4 +59,11 @@ nav::-webkit-scrollbar-thumb {
 
 .relative{
 	position: relative;
+}
+input.input-material ~ label.active {
+  color: #dae0e5;
+}
+
+#login input.input-material ~ label.active {
+  color: #007bff;
 }

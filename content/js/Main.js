@@ -1,5 +1,5 @@
 var Main = {
-	base_url : "http://"+window.location.host+"/git/app/",
+	base_url : "http://"+window.location.host+"/git/TCC/",
 	load_mask : function(){
 		$(document).ready(function(){
 			$('[data-toggle="popover"]').popover(),
@@ -16,7 +16,7 @@ var Main = {
 				backdrop : 'static'
 			});
 			$.ajax({
-				url: Main.base_url+'account/validar',
+				url: Main.base_url+'Account/validar',
 				data: $("#form_login").serialize(),
 				dataType:'json',
 				cache: false,
@@ -48,7 +48,7 @@ var Main = {
 		$.ajax({
 			type: "POST",
 			dataType: "json",
-			url: Main.base_url+"account/logout",
+			url: Main.base_url+"Account/logout",
 			complete: function(data) {
 				 location.reload();
 			}
@@ -64,20 +64,21 @@ var Main = {
 		else
 			return true;
 	},
+	
 	valida_email : function(email)
 	{
 		var nome = email.substring(0, email.indexOf("@"));
 		var dominio = email.substring(email.indexOf("@")+ 1, email.length);
 
-		if ((nome.length >= 1) && 
+		if ((nome.length >= 1) &&
 			(dominio.length >= 3) && 
 			(nome.search("@")  == -1) && 
-			(dominio.search("@") == -1) && 
+			(dominio.search("@") == -1) &&
 			(nome.search(" ") == -1) && 
-			(dominio.search(" ") == -1) && 
-			(dominio.search(".") != -1) && 
+			(dominio.search(" ") == -1) &&
+			(dominio.search(".") != -1) &&      
 			(dominio.indexOf(".") >= 1)&& 
-			(dominio.lastIndexOf(".") < dominio.length - 1))
+			(dominio.lastIndexOf(".") < dominio.length - 1)) 
 			return true;
 		else
 			return false;
@@ -90,8 +91,8 @@ var Main = {
 	},
 	limpa_login : function ()
 	{
-		$("#senha").val("");
-		$("#senha").focus();
+		$("#senha-login").val("");
+		$("#senha-login").focus();
 	},
 	create_edit : function (){
 		$("#mensagem").html("Aguarde... processando dados");
@@ -99,8 +100,14 @@ var Main = {
 			keyboard: false,
 			backdrop : 'static'
 		})
+		
+		//QUANDO NÃO FOR DEFINIDO NENHUM MÉTODO NA VIEW, POR DEFAULT É CONSIDERADO O METÓDO STORE PARA RECEBER OS DADOS
+		var method = "store";
+		if(document.getElementById("method") != undefined)
+			method = $("#method").val();
+
 		$.ajax({
-			url: Main.base_url+$("#controller").val()+'/store',
+			url: Main.base_url+$("#controller").val()+'/'+method,
 			data: $("#"+$("form[name=form_cadastro]").attr("id")).serialize(),
 			dataType:'json',
 			cache: false,
@@ -171,22 +178,6 @@ var Main = {
 					Main.create_edit();
 			}
 		}
-	},
-	registro_validar : function(){
-		if($("#nome").val() == "")
-			Main.show_error("nome", 'Informe o nome de usuário', 'is-invalid');
-		else if($("#email").val() == "")
-			Main.show_error("email", 'Informe o e-mail de usuário', 'is-invalid');
-		else if(Main.valida_email($("#email").val()) == false)
-			Main.show_error("email", 'Formato de e-mail inválido', 'is-invalid');
-		else if($("#senha").val() == "")
-			Main.show_error("senha", 'Informe a senha de usuário', 'is-invalid');
-		else if($("#confirmar_senha").val() == "")
-			Main.show_error("confirmar_senha", 'Repita a senha de usuário', 'is-invalid');
-		else if($("#senha").val() != $("#confirmar_senha").val())
-			Main.show_error("confirmar_senha", 'Senha especificada é diferente da anterior', 'is-invalid');
-		else
-			Main.create_edit();
 	},
 	menu_validar : function()
 	{

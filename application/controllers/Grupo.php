@@ -5,16 +5,16 @@
 		public function __construct()
 		{
 			parent::__construct();
-			
-			if(empty($this->Account_model->session_is_valid($this->session->id)['id']))
+
+			if(empty($this->account_model->session_is_valid($this->session->id)['id']))
 				redirect('Account/login');
-			
+
 			$this->load->model('Grupo_model');
 			$this->set_menu();
 			$this->data['controller'] = get_class($this);
 			$this->data['menu_selectd'] = $this->Geral_model->get_identificador_menu(strtolower(get_class($this)));
 		}
-		
+ 
 		/*
 			Renderiza o dashboard
 		*/
@@ -22,19 +22,19 @@
 		{
 			if($page === false)
 				$page = 1;
-			
+
 			$this->data['title'] = 'Administração - dashboard';
 			if($this->Geral_model->get_permissao(READ,get_class($this)) == true)
 			{
 				$this->data['lista_grupos'] = $this->Grupo_model->get_grupo_tela(false,$page);
-				$this->data['paginacao']['size'] = $this->data['lista_grupos'][0]['size'];
+				$this->data['paginacao']['size'] = $this->data['lista_grupos'][0]['Size'];
 				$this->data['paginacao']['pg_atual'] = $page;
 				$this->view("grupo/index",$this->data);
 			}
 			else
 				$this->view("templates/permissao",$this->data);
 		}
-		
+
 		public function deletar($id = false)
 		{
 			if($this->Geral_model->get_permissao(DELETE,get_class($this)) == true)
@@ -42,7 +42,7 @@
 			else
 				$this->view("templates/permissao",$this->data);
 		}
-		
+
 		public function detalhes($id = false)
 		{
 			$this->data['title'] = 'Grupo - Detalhes';
@@ -55,7 +55,7 @@
 			else
 				$this->view("templates/permissao",$this->data);
 		}
-		
+
 		public function edit($id = false)
 		{
 			$this->data['title'] = 'Grupo - Cadastro';
@@ -68,7 +68,7 @@
 				$this->view("templates/permissao",$this->data);
 			$this->view("grupo/create_edit",$this->data);
 		}
-		
+
 		public function create()
 		{
 			$this->data['title'] = 'Grupo - Cadastro';
@@ -81,7 +81,7 @@
 			else
 				$this->view("templates/permissao",$this->data);
 		}
-		
+
 		public function store()
 		{
 			$resultado = "sucesso";
@@ -96,7 +96,7 @@
 					$grupo_id = $this->Grupo_model->set_grupo($dataToSave);
 			 else
 				redirect('admin/dashboard');
-			
+
 			// $modulos = array();
 			// $acessos = array();
 			// for($i = 0; $this->input->post('modulo_id'.$i) != null; $i++)

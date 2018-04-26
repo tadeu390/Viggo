@@ -1,34 +1,38 @@
 <?php
+	/*
+		ESTA MODEL TRATA DAS OPERAÇÕES NA BASE DE DADOS REFERENTE AOS ACESSOS DOS USUÁRIOS
+	*/
 	class Account_model extends CI_Model {
 
 		public function __construct()
 		{
 			$this->load->database();
 		}
-		
-		public function get_login($email = FALSE, $senha = FALSE)
+		/*
+			RESPONSÁVEL POR VALIDAR SE O USUÁRIO E SENHA É UMA CONTA VÁLIDA PARA PERMITIR ACESSO AO SISTEMA
+			
+			$email -> e-mail de usuário
+			$senha -> senha de acesso do usuário
+		*/
+		public function valida_login($email, $senha)
 		{
-			$dataResult = "";
-			$query = $this->db->query("SELECT id, grupo_id, senha FROM 
-								usuario WHERE email = ".$this->db->escape($email)." AND senha = ".$this->db->escape($senha)."");
-			 $data =  $query->row_array();
-			 if(!empty($data))
-			 {
-				 //atualizar ultimo acesso
-				 $query = $this->db->query("UPDATE usuario SET ultimo_acesso = NOW()  
-				 					WHERE id = ".$this->db->escape($data['id'])."");
-				 $dataResult = $data;
-			 }
-			return $dataResult;
+			$query = $this->db->query("
+				SELECT u.Id, u.Grupo_id, s.Valor 
+				FROM Usuario u INNER JOIN Senha s ON u.Id = s.Usuario_id 
+				WHERE Email = ".$this->db->escape($email)." AND s.Valor = ".$this->db->escape($senha)." AND s.Ativo = 1");
+			 
+			 $data = $query->row_array();
+			 $data['rows'] =  $query->num_rows();
+			 return $data;
 		}
-
-		//METODO VERIFICA SE EXISTE COOKIE OU SESSAO E VALIDA ESSES DADOS
+		/*
+			RESPONSÁVEL POR VERIFICAR SE EXISTE COOKIE OU SESSAO E VALIDA ESSES DADOS
+		*/
 		public function session_is_valid()
 		{
-
 			$id = "";
 			$grupo_id = "";
-
+		
 			//verificar se existe uma sessao ou cookie
 			if(!empty($this->session->id))
 			{
@@ -51,15 +55,18 @@
 
 			if($id != "")
 			{
-				$query = $this->db->query("SELECT id, grupo_id FROM usuario 
-										WHERE id = ".$this->db->escape($id)." AND
-										grupo_id = ".$this->db->escape($grupo_id)."");
+				$query = $this->db->query("
+					SELECT Id, Grupo_id 
+						FROM Usuario 
+					WHERE Id = ".$this->db->escape($id)." AND
+					Grupo_id = ".$this->db->escape($grupo_id)."");
+
 				if($query->num_rows() > 0)
 				{
 					$sessao = array(
 						'status' => 'ok',
-						'id' => $query->row_array()['id'],
-						'grupo_id' => $query->row_array()['grupo_id']
+						'id' => $query->row_array()['Id'],
+						'grupo_id' => $query->row_array()['Grupo_id']
 					);
 					return $sessao;
 				}

@@ -1,15 +1,25 @@
 <?php
-
-	class Usuario_model extends CI_Model {
-
+	/*
+		ESTA MODAL TRATA DAS OPERAÇÕES NO BANCO DE DADOS REFERENTE AOS DADOS DE USUÁRIOS 
+	*/
+	class Usuario_model extends CI_Model 
+	{
 		public function __construct()
 		{
 			$this->load->database();
 		}
-		
-		public function get_usuario($id = FALSE, $page = false)
+		/*
+			REPONSÁVEL POR RETORNAR UMA LISTA DE USUÁRIOS OU UM USUÁRIO ESPECÍFICO SE FOR PASSADO UM VALOR
+			PARA O PARÂMETRO Id. PAGINA O RESULTADO QUANDO NECESSÁRIO E VOLTA SOMENTE REGISTRO(S) ATIVOS SE FOR PASSA TRUE PARA
+			O PRIMEIRO PARÂMETRO
+		*/
+		public function get_Usuario($Ativo, $Id = FALSE, $page = false)
 		{
-			if ($id === FALSE)
+			$Ativos = "";
+			if($Ativo == true)
+				$Ativos = " AND Ativo = 1 ";
+
+			if ($Id === FALSE)
 			{
 				$limit = $page * ITENS_POR_PAGINA;
 				$inicio = $limit - ITENS_POR_PAGINA;
@@ -20,67 +30,79 @@
 					$pagination = "";
 				
 				$query = $this->db->query("
-					SELECT (SELECT count(*) FROM usuario) AS size, u.id, 
-					u.nome as nome_usuario, u.email, u.ativo, g.nome AS nome_grupo 
-						FROM usuario u 
-					LEFT JOIN grupo g ON u.grupo_id = g.Id 
-					ORDER BY u.data_registro DESC ".$pagination."");
+					SELECT (SELECT count(*) FROM  Usuario) AS Size, u.Id, 
+					u.Nome as Nome_usuario, u.Email, u.Ativo, g.Nome AS Nome_grupo 
+					FROM Usuario u 
+					LEFT JOIN Grupo g ON u.Grupo_id = g.Id WHERE TRUE ".$Ativos."
+					ORDER BY u.Data_registro DESC ".$pagination."");
 
 				return $query->result_array();
 			}
 
 			$query =  $this->db->query("
-				SELECT u.id, u.nome as nome_usuario, u.email, u.senha, u.ativo, 
-				DATE_FORMAT(u.data_registro, '%d/%m/%Y') as data_registro, 
-				DATE_FORMAT(u.ultimo_acesso, '%d/%m/%Y - %r') as ultimo_acesso, 
-				g.nome AS nome_grupo, u.grupo_id  
-					FROM usuario u 
-				LEFT JOIN grupo g ON u.grupo_id = g.id
-				WHERE u.id = ".$this->db->escape($id)."");
-
+				SELECT u.Id, u.Nome as Nome_usuario, u.Email, u.Ativo, 
+				DATE_FORMAT(u.Data_registro, '%d/%m/%Y') as Data_registro, 
+				g.Nome AS Nome_grupo,
+				u.Grupo_id  
+					FROM Usuario u 
+				LEFT JOIN Grupo g ON u.Grupo_id = g.Id
+				WHERE TRUE ".$Ativos." AND u.Id = ".$this->db->escape($Id)."");
 			return $query->row_array();
 		}
-		
-		public function deletar($id)
+		/*
+			REPONSÁVEL POR OCULTAR UM USUÁRIO NO BANCO DE DADOS
+
+			$Id -> id do usuário
+		*/
+		public function deletar($Id)
 		{
 			return $this->db->query("
-				UPDATE usuario SET ativo = 0 
-				WHERE id = ".$this->db->escape($id)."");
+				UPDATE Usuario SET Ativo = 0 
+				WHERE Id = ".$this->db->escape($Id)."");
 		}
-		
+		/*
+			RESPONSÁVEL POR CADASTRAR OU ATUALIZAR UM USUÁRIO E EM SEGUIDA RETORNA A ID DO USUÁRIO CADASTRADO
+
+			$data -> Contém todos os dados do usuário
+		*/
 		public function set_usuario($data)
 		{
-			if(empty($data['id']))
-				return $this->db->insert('usuario',$data);
+			if(empty($data['Id']))
+				$this->db->insert('Usuario',$data);
 			else
 			{
-				$this->db->where('id', $data['id']);
-				return $this->db->update('usuario', $data);
+				$this->db->where('Id', $data['Id']);
+				$this->db->update('Usuario', $data);
 			}
+			return $this->get_usuario_por_email($data['Email'])['Id'];
 		}
-		
-		public function get_grupo($id)
+		/*
+			RESPONSÁVEL POR RETORAR UM USUÁRIO DE ACORDO COM UM E-MAIL
+
+			$Email -> Endereço de e-mail do usuário
+		*/
+		public function get_usuario_por_email($Email)
+		{
+			$query = $this->db->query("SELECT Id FROM Usuario WHERE Email = ".$this->db->escape($Email)."");
+			return $query->row_array();
+		}
+		/*
+			RESPONSÁVEL POR VERIFICAR A DISPONIBILIDADE DE UM ENDEREÇO DE E-MAIL
+
+			$Email -> Endereço de e-mail a ser validado
+			$Id -> Id do usuário
+		*/
+		public function email_valido($Email, $Id)
 		{
 			$query = $this->db->query("
-				SELECT grupo_id FROM usuario 
-				WHERE id = ".$this->db->escape($id)."");
-
-			return $query->row_array()['grupo_id'];
-		}
-		
-		public function email_valido($email,$id = false)
-		{
-			$query = $this->db->query("
-				SELECT email FROM usuario 
-				WHERE email = ".$this->db->escape($email)."");
-
+				SELECT Email FROM Usuario 
+				WHERE Email = ".$this->db->escape($Email)."");
 			$query = $query->row_array();
 			
-			//verifica se foi inserido o no formulario o email atual, logicamente a busca anterior tera algum resultado, porem o emeil encontrado e o que esta cadastrado para o usuario que esta sendo editado
-
-			if(!empty($query) && $this->get_usuario($id)['email'] != $query['email'])
+			if(!empty($query) && $this->get_Usuario(FALSE ,$Id, FALSE)['Email'] != $query['Email'])
 				return "invalido";
-			return "valido";
+			
+			return "valIdo";
 		}
 	}
 ?>

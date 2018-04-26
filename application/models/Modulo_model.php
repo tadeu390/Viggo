@@ -1,79 +1,86 @@
 <?php
-	class Modulo_model extends CI_Model {
-
+	/*
+		ESTA MODEL TRATA DAS OPERAÇÕES NA BASE DE DADOS REFERENTE AOS MÓDULOS DO SISTEMA
+	*/
+	class Modulo_model extends CI_Model 
+	{
 		public function __construct()
 		{
 			$this->load->database();
 		}
-		
-		public function get_modulo()//usado apenas para montar o menu
+		/*
+			RESPONSÁVEL POR RETORNAR UMA LISTA DE MÓDULOS OU UM MÓDULO ESPECÍFICO, AMBOS PODENDO INCLUIR
+			APENAS REGISTROS ATIVOS OU TODOS.
+			
+			$Ativo -> Especifica o retorno de módulos ativos ou todos. true p/ ativos false p/ todos
+			$id -> id de um menu específico
+			$page-> número da paginação para retornar a página de registros correta
+		*/
+		public function get_modulo($Ativo, $id = false, $page = false)
 		{
-			$CI = get_instance();
-			$CI->load->model("Account_model");
+			$Ativos = "";
+			if($Ativo == true)
+				$Ativos = " AND mo.Ativo = 1 ";
 
-			$query = $this->db->query("SELECT mo.nome as nome_modulo, mo.id as id_modulo,
-				mo.menu_id, mo.url as url_modulo, mo.icone 
-					FROM modulo mo 
-				INNER JOIN acesso a ON mo.id = a.modulo_id 
-				WHERE mo.ativo = 1 AND grupo_id = ".$CI->Account_model->session_is_valid()['id']." 
-				AND a.visualizar = 1 
-				ORDER BY mo.ordem");
-
-			return $query->result_array();
-		}
-		
-		public function get_modulo_tela($id = false, $page = false)
-		{
 			if($id === false)
 			{
 				$limit = $page * ITENS_POR_PAGINA;
 				$inicio = $limit - ITENS_POR_PAGINA;
 				$step = ITENS_POR_PAGINA;
-
+				
 				$pagination = " LIMIT ".$inicio.",".$step;
 				if($page === false)
 					$pagination = "";
 
 				$query = $this->db->query("
-					SELECT (SELECT count(*) FROM  modulo) AS size, me.nome AS nome_menu, 
-					mo.descricao, mo.ativo, mo.ordem, 
-					DATE_FORMAT(mo.data_registro, '%d/%m/%Y') as data_registro, 
-					mo.nome as nome_modulo, mo.id, mo.url as url_modulo, mo.icone 
-						FROM menu me 
-					RIGHT JOIN modulo mo ON me.id = mo.menu_id 
-					ORDER BY mo.data_registro DESC ".$pagination."");
+					SELECT (SELECT count(*) FROM  Modulo) AS Size, me.Nome AS Nome_menu, 
+					me.Id as Menu_id, mo.Descricao, mo.Ativo, mo.Ordem, 
+					DATE_FORMAT(mo.Data_registro, '%d/%m/%Y') as Data_registro, 
+					mo.nome as Nome_modulo, mo.Id, mo.Url as Url_modulo, mo.Icone 
+						FROM Menu me 
+					RIGHT JOIN Modulo mo ON me.Id = mo.Menu_id 
+					WHERE TRUE ".$Ativos."
+					ORDER BY mo.Data_registro DESC ".$pagination."");
 
 				return $query->result_array();
 			}
 			$query = $this->db->query("
-				SELECT me.nome AS nome_menu, mo.descricao, mo.ativo, mo.ordem, 
-				DATE_FORMAT(mo.data_registro, '%d/%m/%Y') as data_registro,
-				mo.nome as nome_modulo, mo.id, mo.url as url_modulo, mo.menu_id, mo.icone 
-					FROM menu me 
-				RIGHT JOIN modulo mo ON me.Id = mo.menu_id 
-				WHERE mo.id = ".$this->db->escape($id)." 
-				ORDER BY mo.ordem, me.ordem");
+				SELECT me.Nome AS Nome_menu, mo.Descricao, mo.Ativo, mo.Ordem, 
+				DATE_FORMAT(mo.Data_registro, '%d/%m/%Y') as Data_registro,
+				mo.Nome as Nome_modulo, mo.Id, mo.Url as Url_modulo, mo.Menu_id, mo.Icone 
+					FROM Menu me 
+				RIGHT JOIN Modulo mo ON me.Id = mo.Menu_id 
+				WHERE TRUE ".$Ativos." AND mo.Id = ".$this->db->escape($id)." 
+				ORDER BY mo.Ordem, me.Ordem");
 
 			return $query->row_array();
 		}
-		
+		/*
+			RESPONSÁVEL POR OCULTAR UM MÓDULO ESPECÍFICO
+
+			$id -> Id de um Módulo específico
+		*/
 		public function deletar($id)
 		{
 			return $this->db->query("
-				UPDATE modulo SET ativo = 0 
-				WHERE id = ".$this->db->escape($id)."");
+				UPDATE Modulo SET Ativo = 0 
+				WHERE Id = ".$this->db->escape($id)."");
 		}
-		
+		/*
+			RESPONSÁVEL POR CADASTRAR UM NOVO MÓDULO OU ATUALIZA-LO CASO JÁ EXISTA NO BANCO DE DADOS
+
+			$data -> Contém os dados do menu
+		*/
 		public function set_modulo($data)
 		{
-			if($data['menu_id'] == "0")
-				$data['menu_id'] = null;
-			if(empty($data['id']))
-				return $this->db->insert('modulo',$data);
+			if($data['Menu_id'] == "0")
+				$data['Menu_id'] = null;
+			if(empty($data['Id']))
+				return $this->db->insert('Modulo',$data);
 			else
 			{
-				$this->db->where('id', $data['id']);
-				return $this->db->update('modulo', $data);
+				$this->db->where('Id', $data['Id']);
+				return $this->db->update('Modulo', $data);
 			}
 		}
 	}
