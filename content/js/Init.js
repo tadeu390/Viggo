@@ -106,6 +106,11 @@ $(document).ready(
       Main.create_edit();
     });
 
+    $("#form_cadastro_Grupo_permissoes").submit(function(event) {
+      event.preventDefault();
+      Main.create_edit();
+    });
+
     $("#form_cadastro_Account").submit(function(event) {
       event.preventDefault();
       Main.registro_validar();

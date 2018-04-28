@@ -83,7 +83,8 @@
 		*/
 		public function get_usuario_por_email($Email)
 		{
-			$query = $this->db->query("SELECT Id FROM Usuario WHERE Email = ".$this->db->escape($Email)."");
+			$query = $this->db->query("
+				SELECT Id FROM Usuario WHERE Email = ".$this->db->escape($Email)."");
 			return $query->row_array();
 		}
 		/*
@@ -102,7 +103,19 @@
 			if(!empty($query) && $this->get_Usuario(FALSE ,$Id, FALSE)['Email'] != $query['Email'])
 				return "invalido";
 			
-			return "valIdo";
+			return "valido";
+		}
+		/*
+			RESPONSÁVEL POR RETORNAR OS USUÁRIOS DE UM DETERMINADO GRUPO
+
+			$Grupo_id -> id de um grupo
+		*/
+		public function get_usuario_por_grupo($Grupo_id)
+		{
+			$query = $this->db->query("
+				SELECT * FROM Usuario WHERE Grupo_id = ".$Grupo_id."");
+
+			return $query->result_array();
 		}
 	}
 ?>

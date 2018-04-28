@@ -1,26 +1,17 @@
 <?php
-	class Grupo_model extends CI_Model {
-
+	class Grupo_model extends CI_Model 
+	{
 		public function __construct()
 		{
 			$this->load->database();
 		}
 		
-		public function get_grupo($id = FALSE)///usado para o cadastro de usuario
+		public function get_grupo($Ativo = FALSE, $id = FALSE, $page = FALSE)
 		{
-			if ($id === FALSE)
-			{
-				$query = $this->db->query("SELECT Id, Nome AS Nome_grupo FROM Grupo WHERE Ativo = 1");
-				return $query->result_array();
-			}
+			$Ativos = "";
+			if($Ativo == true)
+				$Ativos = " AND Ativo = 1 ";
 
-			$query =  $this->db->query("SELECT Id, Nome AS Nome_grupo FROM Grupo WHERE Ativo = 1 
-										WHERE Id = ".$this->db->escape($id)."");
-			return $query->row_array();
-		}
-		
-		public function get_grupo_tela($id = FALSE, $page = FALSE)
-		{
 			if ($id === FALSE)
 			{
 				$limit = $page * ITENS_POR_PAGINA;
@@ -33,14 +24,14 @@
 				
 				$query = $this->db->query("
 					SELECT (SELECT count(*) FROM  Grupo) AS Size, Id, Nome AS Nome_grupo, Ativo 
-						FROM Grupo 
+						FROM Grupo WHERE TRUE ".$Ativos."
 					ORDER BY Data_registro DESC ".$pagination."");
 
 				return $query->result_array();
 			}
 
 			$query =  $this->db->query("SELECT Id, Nome AS Nome_grupo, Ativo FROM Grupo 
-										WHERE Id = ".$this->db->escape($id)."");
+										WHERE TRUE ".$Ativos." AND Id = ".$this->db->escape($id)."");
 			return $query->row_array();
 		}
 		
@@ -50,42 +41,51 @@
 				UPDATE Grupo SET Ativo = 0 
 				WHERE Id = ".$this->db->escape($id)."");
 		}
-		
-		public function get_grupo_acesso($id)
+
+		public function get_grupo_acesso($Grupo_id)
 		{
-			$query = $this->db->query("
-				SELECT m.Nome AS Nome_modulo, a.Grupo_id, m.Id AS modulo_id,
-				a.Criar, a.Visualizar, a.Atualizar, a.Remover, a.Id as Acesso_id  
-				FROM Modulo m 
-				LEFT JOIN Acesso a ON m.id = a.Modulo_id AND a.Usuario_id = ".$this->db->escape($id)."
-				WHERE a.Usuario_id = ".$this->db->escape($id)." OR a.Usuario_id IS NULL");
+			$query = $this->db->query("SELECT *,
+				(SELECT COUNT(*)  FROM Usuario u WHERE u.Grupo_id = ".$this->db->escape($Grupo_id).") AS Qtd_user,
+				(SELECT COUNT(*) FROM Usuario usp 
+					INNER JOIN Acesso A ON usp.Id = a.Usuario_id 
+						WHERE a.Modulo_id = x.Modulo_id AND a.Criar = 1 
+						AND usp.Grupo_id = ".$this->db->escape($Grupo_id).") AS Permissoes_criar,
+
+				(SELECT COUNT(*) FROM Usuario usp 
+					INNER JOIN Acesso A ON usp.Id = a.Usuario_id 
+						WHERE a.Modulo_id = x.Modulo_id AND a.Ler = 1 
+						AND usp.Grupo_id = ".$this->db->escape($Grupo_id).") AS Permissoes_ler,
+
+				(SELECT COUNT(*) FROM Usuario usp 
+					INNER JOIN Acesso A ON usp.Id = a.Usuario_id 
+						WHERE a.Modulo_id = x.Modulo_id AND a.Atualizar = 1 
+						AND usp.Grupo_id = ".$this->db->escape($Grupo_id).") AS Permissoes_atualizar,
+
+				(SELECT COUNT(*) FROM Usuario usp 
+					INNER JOIN Acesso A ON usp.Id = a.Usuario_id 
+						WHERE a.Modulo_id = x.Modulo_id AND a.Remover = 1 
+						AND usp.Grupo_id = ".$this->db->escape($Grupo_id).") AS Permissoes_remover
+				FROM(
+						SELECT M.Id as Modulo_id, a.Id as Acesso_id, g.Nome as Nome_grupo,
+						m.Nome as Nome_modulo, a.Criar, a.Ler,
+						a.Atualizar, a.Remover
+						FROM Modulo m 
+                        LEFT JOIN Acesso a ON m.Id = a.Modulo_id 
+                       	LEFT JOIN Usuario u ON a.Usuario_id = u.Id 
+                        LEFT JOIN Grupo g ON u.Grupo_id = g.Id 
+                        GROUP BY m.Nome 
+					) as x ORDER BY x.Modulo_id"); //ORDER BY, NÃO REMOVER EM HIPÓTESE ALGUMA, O MÉTODO GET_ACESSO DA MODEL ACESSO_MODEL FAZ A MESMA ORDENAÇÃO, OS DOIS SÃO NECESSÁRIOS PRA PODER ESPECIFICAR AS PERMISSIOS NO BANCO DE FORMA CORRETA 
 			return $query->result_array();
 		}
 		
 		public function set_grupo($data)
 		{
 			if(empty($data['Id']))
-			{
 				$this->db->insert('Grupo',$data);
-				$query = $this->db->query("SELECT Id FROM Grupo ORDER BY Id DESC LIMIT 1");
-				return $query->row_array()['Id'];
-			}
 			else
 			{
 				$this->db->where('Id', $data['Id']);
 				$this->db->update('Grupo', $data);
-				return $data['Id'];
-			}
-		}
-		
-		public function set_grupo_acesso($data)
-		{
-			if(empty($data['Id']))
-				$this->db->insert('Acesso',$data);
-			else
-			{
-				$this->db->where('Id', $data['Id']);
-				$this->db->update('Acesso', $data);
 			}
 		}
 	}

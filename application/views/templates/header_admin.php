@@ -69,6 +69,7 @@
 							echo "</ul>";
 							echo "</li>";
 						}
+						//ABAIXO EXIBE OS MÓDULOS QUE NÃO PERTECEM A NENHUM MENU
 						for ($i = 0; $i < count($modulo); $i++)
 							if (empty($modulo[$i]['Menu_id']))
 								echo "<li><a href='" .$url. $modulo[$i]['Url_modulo'] . "'><i class='" . $modulo[$i]['Icone'] . "' style='margin-bottom: 10px;'></i><span>" . $modulo[$i]['Nome_modulo'] . "</span></a></li>";

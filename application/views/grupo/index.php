@@ -36,8 +36,10 @@
 								echo "<td $cor>".(($lista_grupos[$i]['Ativo'] == 1) ? 'Sim' : 'Não')."</td>";
 								echo "<td class='text-right'>";
 								if(permissao::get_permissao(UPDATE,$controller))
-									echo "<a href='".$url."$controller/edit/".$lista_grupos[$i]['Id']."' title='Editar' style='color: #dc3545; cursor: pointer;' class='glyphicon glyphicon-edit'></a> | ";
-									echo "<a href='".$url."$controller/detalhes/".$lista_grupos[$i]['Id']."' title='Detalhes' style='color: #dc3545; cursor: pointer;' class='glyphicon glyphicon-th'></a>";
+										echo "<a href='".$url."$controller/permissoes/".$lista_grupos[$i]['Id']."' title='Permissões' style='color: #dc3545; cursor: 	pointer;' class='glyphicon glyphicon-ok-sign'></a> | ";
+								if(permissao::get_permissao(UPDATE,$controller))
+									echo "<a href='".$url."$controller/edit/".$lista_grupos[$i]['Id']."' title='Editar' style='color: #dc3545; cursor: pointer;' class='glyphicon glyphicon-edit'></a>  ";
+									//echo "<a href='".$url."$controller/detalhes/".$lista_grupos[$i]['Id']."' title='Detalhes' style='color: #dc3545; cursor: pointer;' class='glyphicon glyphicon-th'></a>";
 								if(permissao::get_permissao(DELETE,$controller))
 									echo " | <span onclick='Main.confirm_delete(". $lista_grupos[$i]['Id'] .");' id='sp_lead_trash' name='sp_lead_trash' title='Apagar' style='color: #dc3545; cursor: pointer;' class='glyphicon glyphicon-trash'></span>";
 								echo "</td>";

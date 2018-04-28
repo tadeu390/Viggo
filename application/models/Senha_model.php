@@ -45,7 +45,8 @@
 		*/
 		public function desativar_senha($Usuario_id)
 		{
-			$this->db->query("UPDATE Senha SET Ativo = 0 WHERE ".$this->db->escape($Usuario_id)."");
+			$this->db->query("
+				UPDATE Senha SET Ativo = 0 WHERE Usuario_id = ".$this->db->escape($Usuario_id)."");
 		}
 	}
 ?>

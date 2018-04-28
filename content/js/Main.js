@@ -39,6 +39,14 @@ var Main = {
 			});
 		}
 	},
+	troca_status: function(idd)
+	{
+		//settimeout para recuperar o efeito de transição do botão, somente por questões de estética
+		setTimeout(function(){
+			document.getElementById(idd).className = "checkbox checbox-switch switch-success";
+		},500);	
+		document.getElementById("flag"+idd).value = "success";
+	},
 	logout : function (){
 		$("#mensagem").html("Aguarde... encerrando sessão");
 		$('#admin_modal').modal({

@@ -26,6 +26,7 @@
 			$this->load->model('account_model');
 			$this->load->model('Menu_model');
 			$this->load->model('Modulo_model');
+			$this->load->model('Acesso_model');
 			$this->load->model('Geral_model');
 			$this->load->helper('url_helper');
 			$this->load->helper('url');
@@ -43,7 +44,7 @@
 		public function set_menu()
 		{
 			$this->data['menu'] = $this->Menu_model->get_menu(1, FALSE, FALSE);
-			$this->data['modulo'] = $this->Modulo_model->get_modulo(1, FALSE, FALSE);
+			$this->data['modulo'] = $this->Acesso_model->get_modulo_acesso();
 		}
 		/*
 			RESPONSÁVEL POR CARREGAR A VIEW COM OS DADOS PASSADOS

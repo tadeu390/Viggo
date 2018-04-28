@@ -105,8 +105,8 @@
 			 if(!empty($dataToSave['Nome']))
 					$this->Modulo_model->set_modulo($dataToSave);
 			 else
-				redirect('admin/dashboard');
-			
+				redirect('modulo/index');
+
 			$arr = array('response' => $resultado);
 			header('Content-Type: application/json');
 			echo json_encode($arr);
@@ -116,9 +116,9 @@
 
 			$id -> id de um módulo
 		*/
-		public function detalhes($id = false)
+		public function detalhes($id = FALSE)
 		{
-			if($this->Geral_model->get_permissao(READ, get_class($this)) == true)
+			if($this->Geral_model->get_permissao(READ, get_class($this)) == TRUE)
 			{		
 				$this->data['title'] = 'Módulo - Detalhes';
 				$this->data['obj'] = $this->Modulo_model->get_modulo(FALSE, $id, FALSE);

@@ -1,10 +1,17 @@
 <br /><br />
 <div class='row padding20' id='container' name='container'>
 	<?php
-		echo "<div class='col-lg-10 offset-lg-1 background_dark'>";
+		echo "<div class='col-lg-10 offset-lg-1 background_dark padding20'>";
 			echo "<div class='form-group'>";
-			echo "<div class='padding20 text-white'>Permissões de: ".$usuario."</div>";
-				
+				echo"<div>";
+					echo"<a href='javascript:window.history.go(-1)' title='Voltar'>";
+						echo"<span class='glyphicon glyphicon-arrow-left text-white' style='font-size: 25px;'></span>";
+					echo"</a>";
+				echo"</div>";
+				echo "<br />";
+
+				echo "<div class='text-white'>Permissões do usuário: <span class='text-warning'>".$usuario."</span></div>";
+				echo "<br />";				
 				$atr = array("id" => "form_cadastro_".$controller."_permissoes", "name" => "form_cadastro"); 
 				echo form_open("$controller/store_permissoes", $atr);
 					

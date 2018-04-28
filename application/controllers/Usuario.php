@@ -19,7 +19,6 @@
 			$this->load->model('Grupo_model');
 			$this->load->model('Senha_model');
 			$this->load->model('Logs_model');
-			$this->load->model('Acesso_model');
 			$this->set_menu();
 			$this->data['controller'] = get_class($this);
 			$this->data['menu_selectd'] = $this->Geral_model->get_identificador_menu(strtolower(get_class($this)));
@@ -215,15 +214,39 @@
 							'Valor' => $this->input->post('senha')
 						);
 						$this->Senha_model->set_senha($data);
+						$this->permissoes_default($Usuario_id);
 					}
 				}
 			 }
 			 else
-				redirect('admin/dashboard');
+				redirect('Usuario/index');
 			
 			$arr = array('response' => $resultado);
 			header('Content-Type: application/json');
 			echo json_encode($arr);
+		}
+		/*
+			RESPONSÁVEL POR CADASTRAR AS PERMISSÕES DEFAULT DO USUÁRIO
+
+			$id -> id do usuário 
+		*/
+		public function permissoes_default($id)
+		{
+			$modulos = $this->Modulo_model->get_modulo(FALSE, FALSE, FALSE);
+
+			for($i = 0; $i < COUNT($modulos); $i++)
+			{
+				$dataAcessoToSave = array(
+					'Id' => '',
+					'Usuario_id' => $id,
+					'Modulo_id' => $modulos[$i]['Id'],
+					'Criar' => 0,
+					'Ler' => 0,
+					'Atualizar' => 0,
+					'Remover' => 0
+				);
+				$this->Acesso_model->set_acesso($dataAcessoToSave);
+			}
 		}
 	}
 ?>
