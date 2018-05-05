@@ -10,7 +10,7 @@
 		}
 		/*
 			RESPONSÁVEL POR RETORNAR OS MODULOS E AS PERMISSÕES POR USUÁRIO PARA PODER VISUALIZAR
-			QUAIS MÓDULO O USUÁRIO TEM ACESSO
+			QUAIS MÓDULO CADA USUÁRIO TEM ACESSO
 
 			$id -> id do usuário
 		*/
@@ -41,19 +41,17 @@
 		}
 		/*
 			RESPONSÁVEL POR RETORNAR TODOS OS MÓDULOS QUE O USUÁRIO LOGADO PODE VISUALIZAR
+
+			Obs.: modulo_acesso é uma view
 		*/
 		public function get_modulo_acesso()//usado apenas para montar o menu
 		{
 			$CI = get_instance();
 			$CI->load->model("Account_model");
 
-			$query = $this->db->query("SELECT mo.Nome as Nome_modulo, mo.Id as Id_modulo,
-				mo.Menu_id, mo.Url as Url_modulo, mo.Icone 
-					FROM Modulo mo 
-				INNER JOIN Acesso a ON mo.Id = a.Modulo_id 
-				WHERE mo.Ativo = 1 AND a.Usuario_id = ".$CI->Account_model->session_is_valid()['id']." 
-				AND a.Ler = 1 
-				ORDER BY mo.Ordem");
+			$query = $this->db->query("
+				SELECT * FROM Modulo_acesso_view m 
+				WHERE m.Usuario_id = ".$CI->Account_model->session_is_valid()['id']." ORDER BY m.Ordem");
 
 			return $query->result_array();
 		}

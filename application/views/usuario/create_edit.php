@@ -42,7 +42,7 @@
 				}
 			?>
 			<div class='form-group'>
-					<div class='input-group-addon' style="color: #8a8d93;">Tipo de usuário</span></div>
+					<div style="color: #8a8d93;">Tipo de usuário</div>
 					<select name='grupo_id' id='grupo_id' class='form-control'>
 						<option value='0' style='background-color: #393836;'>Selecione</option>
 						<?php

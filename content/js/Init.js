@@ -91,7 +91,7 @@ $(document).ready(
 
     //BTN CADASTROS
 
-    $("#form_cadastro_geral_Settings").submit(function(event) {
+    $("#form_cadastro_geral_Configuracoes").submit(function(event) {
       event.preventDefault();
       Main.settings_geral_validar();
     });

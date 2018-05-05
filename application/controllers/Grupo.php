@@ -1,7 +1,10 @@
 <?php
 	require_once("Geral.php");
-
-	class Grupo extends Geral {
+	/*
+		ESTA CLASSE TEM POR FUNÇÃO CONTROLAR TUDO REFERENTE AOS GRUPOS DO SISTEMA
+	*/
+	class Grupo extends Geral 
+	{
 		public function __construct()
 		{
 			parent::__construct();
@@ -15,9 +18,9 @@
 			$this->data['controller'] = get_class($this);
 			$this->data['menu_selectd'] = $this->Geral_model->get_identificador_menu(strtolower(get_class($this)));
 		}
- 
 		/*
-			Renderiza o dashboard
+			RESPONSÁVEL POR LISTAR TODOS OS GRUPOS NA TELA
+			$page -> número da página atual registros
 		*/
 		public function index($page = false)
 		{
@@ -35,7 +38,10 @@
 			else
 				$this->view("templates/permissao",$this->data);
 		}
-
+		/*
+			RESPONSÁVEL POR OCULTAR UM GRUPO DO SISTEMA
+			$id -> id de um grupo
+		*/
 		public function deletar($id = false)
 		{
 			if($this->Geral_model->get_permissao(DELETE,get_class($this)) == true)
@@ -55,7 +61,10 @@
 			else
 				$this->view("templates/permissao", $this->data);
 		}
-
+		/*
+			RESPONSÁVEL POR RENDERIZAR O FORMULÁRIO DE CADASTRO DE GRUPO PARA EDIÇÃO
+			$id -> id de um grupo
+		*/
 		public function edit($id = FALSE)
 		{
 			$this->data['title'] = 'Grupo - Cadastro';
@@ -67,20 +76,23 @@
 				$this->view("templates/permissao", $this->data);
 			$this->view("grupo/create_edit", $this->data);
 		}
-
+		/*
+			RESPONSÁVEL POR RENDERIZAR O FORMULÁRIO DE CADASTRO DE grupo PARA CRIAR
+		*/
 		public function create()
 		{
 			$this->data['title'] = 'Grupo - Cadastro';
 			if($this->Geral_model->get_permissao(CREATE, get_class($this)) == TRUE)
 			{
 				$this->data['obj'] = $this->Grupo_model->get_grupo(FALSE, 0, FALSE);
-//				$this->data['lista_grupos_acesso'] = $this->Grupo_model->get_grupo_acesso(0);
 				$this->view("grupo/create_edit", $this->data);
 			}
 			else
 				$this->view("templates/permissao", $this->data);
 		}
-
+		/*
+			RESPONSÁVEL POR RECEBER OS DADOS DO FORMULÁRIO E OS ENVIA-LO PARA A MODEL
+		*/
 		public function store()
 		{
 			$resultado = "sucesso";
@@ -89,7 +101,7 @@
 				'Ativo' => $this->input->post('grupo_ativo'),
 				'Nome' => $this->input->post('nome')
 			);
-			
+
 			//bloquear acesso direto ao metodo store
 			 if(!empty($dataToSave['Nome']))
 					$this->Grupo_model->set_grupo($dataToSave);
@@ -100,7 +112,11 @@
 			header('Content-Type: application/json');
 			echo json_encode($arr);
 		}
+		/*
+			RESPONSÁVEL CARREGAR AS INFORMAÇÕES PARA VIEW QUE MOSTRARÁ AS PERMISSÕES POR MODULOS DE UM DETERMINADO GRUPO
 
+			$id -> id do grupo
+		*/
 		public function permissoes($id = FALSE)
 		{
 			if($this->Geral_model->get_permissao(UPDATE, get_class($this)) == TRUE)
@@ -114,11 +130,11 @@
 			else
 				$this->view("templates/permissao", $this->data);
 		}
-
+		/*
+			RESPONSÁVEL POR CADASTRAR OU ATUALIZAR PERMISSÕES POR GRUPO. ESTE MÉTODO TAMBÉM IDENTIFICA SE CADA CHECKBOX ESTÁ MARCADO, DESMARCADO OU MARCADO COMO PARCIAL(FICA EM AMARELO E QUANDO É SALVO AS ALTERAÇÕES, TUDO O QUE ESTÁ MARCADO EM AMARELO NÃO ALTERA NADA NO BANCO)
+		*/
 		public function store_permissoes()
 		{
-			$a = array();
-			$b = array();
 			if(!empty($this->input->post("grupo_id")))
 			{
 				$resultado = "sucesso";

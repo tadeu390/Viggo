@@ -19,8 +19,8 @@
 		public function __construct()
 		{
 			parent::__construct();
-			$this->load->model('Settings_model');
-			define("ITENS_POR_PAGINA", $this->Settings_model->get_settings()['Itens_por_pagina']);
+			$this->load->model('Configuracoes_model');
+			define("ITENS_POR_PAGINA", $this->Configuracoes_model->get_configuracoes()['Itens_por_pagina']);
 
 			$this->load->library('pdfgenerator');
 			$this->load->model('account_model');
@@ -43,7 +43,7 @@
 		*/
 		public function set_menu()
 		{
-			$this->data['menu'] = $this->Menu_model->get_menu(1, FALSE, FALSE);
+			$this->data['menu'] = $this->Menu_model->get_menu_acesso();
 			$this->data['modulo'] = $this->Acesso_model->get_modulo_acesso();
 		}
 		/*

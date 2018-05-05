@@ -40,7 +40,7 @@
 						FROM Menu me 
 					RIGHT JOIN Modulo mo ON me.Id = mo.Menu_id 
 					WHERE TRUE ".$Ativos."
-					ORDER BY mo.Data_registro DESC ".$pagination."");
+					ORDER BY mo.Data_registro ASC ".$pagination."");
 
 				return $query->result_array();
 			}

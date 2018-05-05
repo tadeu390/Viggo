@@ -25,7 +25,7 @@
 				$query = $this->db->query("
 					SELECT (SELECT count(*) FROM  Grupo) AS Size, Id, Nome AS Nome_grupo, Ativo 
 						FROM Grupo WHERE TRUE ".$Ativos."
-					ORDER BY Data_registro DESC ".$pagination."");
+					ORDER BY Data_registro ASC ".$pagination."");
 
 				return $query->result_array();
 			}

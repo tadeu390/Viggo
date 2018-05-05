@@ -21,7 +21,7 @@
 				</div>
 
 				<div class='form-group'>
-						<div class='input-group-addon'>Ordem</div>
+						<div style="color: #8a8d93;">Ordem</div>
 						<input name='ordem' min="1" id='ordem' value='<?php echo (!empty($obj['Ordem']) ? $obj['Ordem']:''); ?>' type='number' class='form-control' />
 					<div class='input-group mb-2 mb-sm-0 text-danger' id='error-ordem'></div>
 				</div>

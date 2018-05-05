@@ -1,6 +1,5 @@
 <?php
 	require_once("Geral.php");//INCLUI A CLASSE GENÉRICA
-
 	/*
 		ESTA CLASSE TEM POR FUNÇÃO CONTROLAR TUDO REFERENTE AOS MENUS DO SISTEMA
 	*/
@@ -15,7 +14,6 @@
 			$this->data['controller'] = get_class($this);
 			$this->data['menu_selectd'] = $this->Geral_model->get_identificador_menu(strtolower(get_class($this)));
 		}
-		
 		/*
 			RESPONSÁVEL POR LISTAR TODOS OS MENUS NA TELA
 			$page -> número da página atual registros

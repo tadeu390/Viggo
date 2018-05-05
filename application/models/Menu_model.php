@@ -36,7 +36,7 @@
 					SELECT (SELECT count(*) FROM  Menu) AS Size, Id, Nome, Ordem, Ativo 
 						FROM Menu 
 					WHERE TRUE ".$Ativos."
-					ORDER BY Data_registro DESC ".$pagination."");
+					ORDER BY Data_registro ASC ".$pagination."");
 				
 				return $query->result_array();
 			}
@@ -48,6 +48,24 @@
 			
 			return $query->row_array();
 		}
+		/*
+			RESPONSÁVEL POR RETORNAR TODOS OS MENUS QUE O USUÁRIO LOGADO PODE VISUALIZAR, 
+			ESSES MENUS SÃO RETORNADOS DESDE QUE HAJA PELO MENOS UM MODULO DENTRO DO MENU E DESDE QUE O USUÁRIO LOGADO TENHA PERMISSAO DE LEITURA PARA VISUALIZAR PELO MENOS UM MODULO.
+			SE NÃO ATENDER A ESSAS REGRAS O MENU É SIMPLESMENTE IGNORADO. SENDO ASSIM SÓ EXIBE MENUS QUE O USUÁRIO LOGADO POSSUA PERMISSAO DE LEITURA EM ALGUM MODULO DENTRO DOS MESMOS
+
+			obs.: modulo acesso é uma VIEW
+		*/
+		public function get_menu_acesso()//usado apenas para montar o menu
+		{
+			$CI = get_instance();
+			$CI->load->model("Account_model");
+
+			$query = $this->db->query("SELECT Nome_menu, Menu_id FROM Modulo_acesso_view 
+			WHERE Usuario_id = ".$CI->Account_model->session_is_valid()['id']." GROUP BY 1,2 ORDER BY Ordem");
+			
+			return $query->result_array();
+		}
+		
 		/*
 			RESPONSÁVEL POR OCULTAR UM MENU ESPECÍFICO
 

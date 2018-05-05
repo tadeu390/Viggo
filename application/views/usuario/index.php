@@ -9,17 +9,18 @@
 				echo "<table class='table table-striped table-hover text-white'>";
 					echo "<thead>";
 						echo"<tr>";
-							echo"<td class='text-center' colspan='5'>";
+							echo"<td class='text-center' colspan='4'>";
 								echo"<p style='color: white; margin-top: 10px;'>Todos os usuários</p>";
 							echo"</td>";
 						echo"</tr>";
 						echo"<tr>";
-							echo"<td class='text-right' colspan='5'>";
+							echo"<td class='text-right' colspan='4'>";
 							if(permissao::get_permissao(CREATE,$controller))
 								echo"<a class='btn btn-success' href='".$url."$controller/create/0/'>Novo usuário</a>";
 							echo"</td>";
 						echo"</tr>";
 						echo "<tr>";
+							echo "<td>Id</td>";
 							echo "<td>Nome</td>";
 							echo "<td>Ativo</td>";
 							//echo "<td>E-mail</td>";
@@ -34,6 +35,7 @@
 							if($usuarios[$i]['Ativo'] == 0)
 								$cor = "style='background-color: #dc3545;'";
 							echo "<tr>";
+								echo "<td $cor>".$usuarios[$i]['Id']."</td>";
 								echo "<td $cor>".$usuarios[$i]['Nome_usuario']."</td>";
 								echo "<td $cor>".(($usuarios[$i]['Ativo'] == 1) ? 'Sim' : 'Não')."</td>";
 								//echo "<td $cor>".$usuarios[$i]['email']."</td>";

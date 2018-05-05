@@ -34,7 +34,7 @@
 					u.Nome as Nome_usuario, u.Email, u.Ativo, g.Nome AS Nome_grupo 
 					FROM Usuario u 
 					LEFT JOIN Grupo g ON u.Grupo_id = g.Id WHERE TRUE ".$Ativos."
-					ORDER BY u.Data_registro DESC ".$pagination."");
+					ORDER BY u.Data_registro ASC ".$pagination."");
 
 				return $query->result_array();
 			}

@@ -31,6 +31,7 @@ nav::-webkit-scrollbar-thumb {
 .background_dark
 {
 	background-color: #393836;
+	border-radius: 5px;
 }
 
 .border-default{

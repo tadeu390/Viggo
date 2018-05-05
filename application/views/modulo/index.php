@@ -9,17 +9,18 @@
 				echo "<table class='table table-striped table-hover text-white'>";
 					echo "<thead>";
 						echo"<tr>";
-							echo"<td class='text-center' colspan='5'>";
+							echo"<td class='text-center' colspan='4'>";
 								echo"<p style='color: white; margin-top: 10px;'>Todos os módulos</p>";
 							echo"</td>";
 						echo"</tr>";
 						echo"<tr>";
-							echo"<td class='text-right' colspan='6'>";
+							echo"<td class='text-right' colspan='4'>";
 								if(permissao::get_permissao(CREATE,$controller))
 									echo"<a class='btn btn-success' href='".$url."$controller/create/0/'>Novo módulo</a>";
 							echo"</td>";
 						echo"</tr>";
 						echo "<tr>";
+							echo "<td>Id</td>";
 							echo "<td>Nome</td>";
 							//echo "<td>Descrição</td>";
 							//echo "<td>Ativo</td>";
@@ -35,6 +36,7 @@
 							if($lista_modulos[$i]['Ativo'] == 0)
 								$cor = "style='background-color: #dc3545;'";
 							echo "<tr >";
+								echo "<td $cor>".$lista_modulos[$i]['Id']."</td>";
 								echo "<td $cor>".$lista_modulos[$i]['Nome_modulo']."</td>";
 								//echo "<td $cor>".$lista_modulos[$i]['descricao']."</td>";
 								echo "<td $cor>".(($lista_modulos[$i]['Ativo'] == 1) ? 'Sim' : 'Não')."</td>";
