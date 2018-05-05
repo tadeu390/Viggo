@@ -1,5 +1,5 @@
 <?php
-	require_once("Geral.php");
+	require_once("Geral.php");//INCLUI A CLASSE GENÉRICA
 	/*
 		ESTA CLASSE TEM POR FUNÇÃO CONTROLAR TUDO REFERENTE AOS GRUPOS DO SISTEMA
 	*/
@@ -9,13 +9,13 @@
 		{
 			parent::__construct();
 
-			if(empty($this->account_model->session_is_valid($this->session->id)['id']))
+			if(empty($this->Account_model->session_is_valid($this->session->id)['id']))
 				redirect('Account/login');
 
 			$this->load->model('Grupo_model');
 			$this->load->model('Usuario_model');
 			$this->set_menu();
-			$this->data['controller'] = get_class($this);
+			$this->data['controller'] = strtolower(get_class($this));
 			$this->data['menu_selectd'] = $this->Geral_model->get_identificador_menu(strtolower(get_class($this)));
 		}
 		/*
@@ -28,12 +28,12 @@
 				$page = 1;
 
 			$this->data['title'] = 'Administração - dashboard';
-			if($this->Geral_model->get_permissao(READ,get_class($this)) == true)
+			if($this->Geral_model->get_permissao(READ, get_class($this)) == true)
 			{
 				$this->data['lista_grupos'] = $this->Grupo_model->get_grupo(FALSE, FALSE, $page);
 				$this->data['paginacao']['size'] = $this->data['lista_grupos'][0]['Size'];
 				$this->data['paginacao']['pg_atual'] = $page;
-				$this->view("grupo/index",$this->data);
+				$this->view("grupo/index", $this->data);
 			}
 			else
 				$this->view("templates/permissao",$this->data);
@@ -44,10 +44,10 @@
 		*/
 		public function deletar($id = false)
 		{
-			if($this->Geral_model->get_permissao(DELETE,get_class($this)) == true)
+			if($this->Geral_model->get_permissao(DELETE, get_class($this)) == true)
 				$this->Grupo_model->deletar($id);
 			else
-				$this->view("templates/permissao",$this->data);
+				$this->view("templates/permissao", $this->data);
 		}
 
 		public function detalhes($id = FALSE)

@@ -65,7 +65,6 @@
 			
 			return $query->result_array();
 		}
-		
 		/*
 			RESPONSÁVEL POR OCULTAR UM MENU ESPECÍFICO
 

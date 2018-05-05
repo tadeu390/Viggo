@@ -51,6 +51,14 @@ nav::-webkit-scrollbar-thumb {
 	margin-bottom: 15px;
 	text-align: center;
 }
+
+.img-senha{
+	width: 100px;
+	margin-top: -10px;
+	margin-bottom: 50px;
+	text-align: center;
+}
+
 #boletim .table th,#boletim .table td{
 	border-top: none;
 }
@@ -65,6 +73,82 @@ input.input-material ~ label.active {
   color: #dae0e5;
 }
 
-#login input.input-material ~ label.active {
+#login input.input-material ~ label.active 
+{
   color: #007bff;
+}
+
+.text-info 
+{
+	color: #336CD2 !important;/*azul*/
+}
+
+.text-warning
+{
+	color: #EDC127 !important;
+}
+
+.text-danger
+{
+	color: #DD3068 !important;
+}
+
+.text-success
+{
+	color: #58A61A !important;/*verde*/
+}
+
+a.text-info:hover
+{
+	color: #336CD2 !important;
+}
+
+.btn-success 
+{
+  background-color: #58A61A;
+  border-color: #58A61A;
+}
+
+.btn-success:hover 
+{
+  background-color: #4E9216;
+  border-color: #4E9216;
+}
+
+.btn-success:focus 
+{
+  background-color: #4E9216  !important;
+  border-color: #4E9216 !important;
+}
+
+.btn-danger
+{
+	background-color: #DD3068;
+	border-color: #DD3068;
+}
+
+.btn-danger:hover
+{
+	background-color: #C12054;
+	border-color: #C12054;
+}
+
+.btn-danger:focus
+{
+	background-color: #C12054;
+	border-color: #C12054;
+}
+
+.btn-outline-danger 
+{
+  color:#DD3068;
+  background-color: transparent;
+  background-image: none;
+  border-color: #DD3068;
+}
+
+.btn-outline-danger:hover 
+{
+  background-color: #DD3068;
+  border-color: #DD3068;
 }

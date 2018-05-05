@@ -1,5 +1,5 @@
 <div class='row padding30'>
-		<div class='col-lg-8 offset-lg-2 padding' style="background: #393836;">
+		<div class='col-lg-8 offset-lg-2 padding background_dark'>
 			<div>
 				<a href='javascript:window.history.go(-1)' title='Voltar'>
 					<span class='glyphicon glyphicon-arrow-left text-white' style='font-size: 25px;'></span>

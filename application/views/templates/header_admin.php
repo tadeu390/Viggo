@@ -20,7 +20,7 @@
 			}
 			.form-control:focus{
 				border-bottom: 1px solid #dc3545;
-				outline: none
+				outline: none;
 			}
 		</style>
 		<script type="text/javascript">
@@ -32,13 +32,14 @@
 		</script>
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	</head >
-	<body id='c'>
+	<body id='c' class="admin-fundo">
 		<div class='container-fluid'>
 			<nav class="side-navbar">
 				<div class="sidenav-header d-flex align-items-center justify-content-center">
 					<div class="sidenav-header-inner  text-center">
 						<img class="img-fluid rounded-circle" src="<?php echo $url;?>/content/imagens/logo.png" title='CEP - Centro de Educação Profissional "Tancredo Neves"'>
 						<h2>CEP - Admin</h2> <br />
+
 					</div>
 					<div style="margin-top: 15px;" class="sidenav-header-logo"><a href="#" class="brand-small text-center">
 						<strong title='CEP - Centro de Educação Profissional "Tancredo Neves"'>CEP</strong></a>
@@ -163,8 +164,11 @@
 								</div>
 								<ul class="nav-menu list-unstyled d-flex flex-md-row align-items-md-center">
 									<li class="nav-item">
+										<div class="text-white" style=" padding-right: 20px"><?php echo $usuario; ?></div>
+									</li>
+									<li class="nav-item">
 										<?php
-										echo "<button class='btn btn-outline-danger btn-block glyphicon glyphicon-log-out' onclick='Main.logout()'>&nbsp;Sair</button>";
+										echo "<button class='btn btn-outline-danger btn-block' onclick='Main.logout()'><span class='glyphicon glyphicon-log-out'></span> Sair</button>";
 										  ?>
 									</li>
 								</ul>

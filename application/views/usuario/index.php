@@ -42,12 +42,12 @@
 								//echo "<td $cor>".$usuarios[$i]['nome_grupo']."</td>";
 								echo "<td class='text-right'>";
 									if(permissao::get_permissao(UPDATE,$controller))
-										echo "<a href='".$url."$controller/permissoes/".$usuarios[$i]['Id']."' title='Permissões' style='color: #dc3545; cursor: 	pointer;' class='glyphicon glyphicon-ok-sign'></a> | ";
+										echo "<a href='".$url."$controller/permissoes/".$usuarios[$i]['Id']."' title='Permissões' style='color:cursor: 	pointer;' class='glyphicon glyphicon-ok-sign text-danger'></a> | ";
 									if(permissao::get_permissao(UPDATE,$controller))
-										echo "<a href='".$url."$controller/edit/".$usuarios[$i]['Id']."' title='Editar' style='color: #dc3545; cursor: pointer;' class='glyphicon glyphicon-edit'></a> | ";
-									echo "<a href='".$url."$controller/detalhes/".$usuarios[$i]['Id']."' title='Detalhes' style='color: #dc3545; cursor: pointer;' class='glyphicon glyphicon-th'></a>";
+										echo "<a href='".$url."$controller/edit/".$usuarios[$i]['Id']."' title='Editar' style='cursor: pointer;' class='glyphicon glyphicon-edit text-danger'></a> | ";
+									echo "<a href='".$url."$controller/detalhes/".$usuarios[$i]['Id']."' title='Detalhes' style='cursor: pointer;' class='glyphicon glyphicon-th text-danger'></a>";
 									if(permissao::get_permissao(DELETE,$controller))
-										echo " | <span onclick='Main.confirm_delete(". $usuarios[$i]['Id'] .");' id='sp_lead_trash' name='sp_lead_trash' title='Apagar' style='color: #dc3545; cursor: pointer;' class='glyphicon glyphicon-trash'></span>";
+										echo " | <span onclick='Main.confirm_delete(". $usuarios[$i]['Id'] .");' id='sp_lead_trash' name='sp_lead_trash' title='Apagar' style='cursor: pointer;' class='glyphicon glyphicon-trash text-danger'></span>";
 								echo "</td>";
 							echo "</tr>";
 						}

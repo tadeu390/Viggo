@@ -520,7 +520,7 @@ nav.side-navbar a {
 }
 
 nav.side-navbar a:focus, nav.side-navbar a:hover, nav.side-navbar a[aria-expanded="true"] {
-  background: #218838;
+  background: #58A61A;
   color: #fff;
   border-radius: 2px;
 }
@@ -704,7 +704,7 @@ background: url('../imagens/fundo.jpg');
 
 .login-page .form-holder .info,
 .login-page .form-holder .form {
-  min-height: 70vh;
+  min-height: 60vh;
   padding: 40px;
  
 }
@@ -730,6 +730,7 @@ background: url('../imagens/fundo.jpg');
 .login-page .form-holder .form {
   /*background: #2d3035;*/
   background-image: url("../imagens/luz.png");
+  background-repeat: no-repeat;
 }
 
 .login-page .form-holder .form .form-group {
@@ -1234,9 +1235,9 @@ a.text-primary:focus, a.text-primary:hover {
 /* Switch Success */
 .checkbox.checbox-switch.switch-success label > input:checked + span,
 .checkbox-inline.checbox-switch.switch-success > input:checked + span {
-    background-color: #007bff;
-    border-color:#007bff;
-    box-shadow: #007bff 0px 0px 0px 8px inset;
+    background-color: #336CD2 ;
+    border-color:#336CD2 ;
+    box-shadow: #336CD2  0px 0px 0px 8px inset;
     transition: border 0.4s ease 0s, box-shadow 0.4s ease 0s, background-color 1.2s ease 0s;
 }
 .checkbox.checbox-switch.switch-success label > input:checked:disabled + span,
@@ -1297,9 +1298,9 @@ a.text-primary:focus, a.text-primary:hover {
 /* Switch Warning */
 .checkbox.checbox-switch.switch-warning label > input:checked + span,
 .checkbox-inline.checbox-switch.switch-warning > input:checked + span {
-    background-color: rgb(255, 193, 7);
-    border-color: rgb(255, 193, 7);
-    box-shadow: rgb(255, 193, 7) 0px 0px 0px 8px inset;
+    background-color: #EDC127;
+    border-color: #EDC127;
+    box-shadow: #EDC127 0px 0px 0px 8px inset;
     transition: border 0.4s ease 0s, box-shadow 0.4s ease 0s, background-color 1.2s ease 0s;
 }
 .checkbox.checbox-switch.switch-warning label > input:checked:disabled + span,

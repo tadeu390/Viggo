@@ -17,7 +17,7 @@
 		{
 			$Ativos = "";
 			if($Ativo == true)
-				$Ativos = " AND Ativo = 1 ";
+				$Ativos = " AND u.Ativo = 1 ";
 
 			if ($Id === FALSE)
 			{

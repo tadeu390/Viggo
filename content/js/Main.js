@@ -16,13 +16,15 @@ var Main = {
 				backdrop : 'static'
 			});
 			$.ajax({
-				url: Main.base_url+'Account/validar',
+				url: Main.base_url+'account/validar',
 				data: $("#form_login").serialize(),
 				dataType:'json',
 				cache: false,
 				type: 'POST',
 				success: function (msg) {
-					if(msg.response == "valido")
+					if(msg.response == "primeiro_acesso")
+						window.location.assign(Main.base_url+"account/primeiro_acesso");
+					else if(msg.response == "valido")
 						location.reload();
 					else
 					{

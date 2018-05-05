@@ -11,7 +11,7 @@
 			parent::__construct();
 			$this->load->model('Account_model');
 			$this->load->model('Logs_model');
-			$this->data['controller'] = 'Account';
+			$this->data['controller'] = strtolower(get_class($this));
 
 		}
 		/*
@@ -20,11 +20,14 @@
 		*/
 		public function login()
 		{
+			unset($_SESSION['nome']);//deleta a sessao utilizada para o primeiro acesso
+			unset($_SESSION['email']);//deleta a sessao utilizada para o primeiro acesso
+
 			$this->data['title'] = 'Login';
 			$this->load->view('templates/header', $this->data);
 			$this->load->view('account/login', $this->data);
 			$this->load->view('templates/footer', $this->data);
-			if($this->account_model->session_is_valid()['status'] == "ok")
+			if($this->Account_model->session_is_valid()['status'] == "ok")
 				redirect('admin/dashboard');
 		}
 		/*
@@ -39,11 +42,11 @@
 		}
 		/*
 				hmmm... deve ter um motivo pra existir isso, verificar depois
-		*/
+		
 		public function index()
 		{
-			redirect("Account/login");
-		}
+			redirect("account/login");
+		}*/
 		/*
 			REPONSÁVEL POR REALIZAR TODAS AS VALIDAÇÕES DO LOGIN
 		*/
@@ -57,13 +60,21 @@
 			$data['title'] = 'Login';
 
 
-			if($this->account_model->session_is_valid() == "ok")//verifica se ja existe uma sessao, caso sim apenas ira recarregar a pagina
+			if($this->Account_model->session_is_valid() == "ok")//verifica se ja existe uma sessao, caso sim apenas ira recarregar a pagina
 				$login = 'valido';
 			else if($login['rows'] > 0)
 			{
 				$this->Logs_model->set_log($login['Id']);
-				$this->set_sessao($login, $conectado);
-				$login = 'valido';
+				if($login['Redefinir_senha'] == 0)
+				{
+					$this->set_sessao($login, $conectado);
+					$login = 'valido';
+				}
+				else
+				{
+					$this->set_sessao_primeiro_acesso($login);
+					$login = "primeiro_acesso";
+				}
 			}
 			else
 				$login = 'invalido';
@@ -106,6 +117,37 @@
 					);
 				$this->session->set_userdata($login);
 	  		}
+		}
+
+		public function redefinir_senha()
+		{
+			$this->data['title'] = 'Redefinir senha';
+			$this->load->view('templates/header', $this->data);
+			$this->load->view('account/redefinir_senha', $this->data);
+			$this->load->view('templates/footer', $this->data);
+		}
+
+		public function primeiro_acesso()
+		{
+			if(empty($this->session->email))
+				redirect('account/login');
+
+			$this->data['sessao_primeiro_acesso']['nome'] = $this->session->nome;
+			$this->data['sessao_primeiro_acesso']['email'] = $this->session->email;
+
+			$this->data['title'] = 'Primeiro acesso';
+			$this->load->view('templates/header', $this->data);
+			$this->load->view('account/primeiro_acesso', $this->data);
+			$this->load->view('templates/footer', $this->data);
+		}
+
+		public function set_sessao_primeiro_acesso($Usuario)
+		{
+			$primeiro_acesso = array(
+				'nome'  => $Usuario['Nome'],
+				'email'  => $Usuario['Email']
+			);
+			$this->session->set_userdata($primeiro_acesso);
 		}
 	}
 ?>

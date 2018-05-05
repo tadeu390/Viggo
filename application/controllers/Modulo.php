@@ -8,10 +8,10 @@
 		public function __construct()
 		{
 			parent::__construct();
-			if(empty($this->account_model->session_is_valid($this->session->id)['id']))
+			if(empty($this->Account_model->session_is_valid($this->session->id)['id']))
 				redirect('Account/login');
 			$this->set_menu();
-			$this->data['controller'] = get_class($this);
+			$this->data['controller'] = strtolower(get_class($this));
 			$this->data['menu_selectd'] = $this->Geral_model->get_identificador_menu(strtolower(get_class($this)));
 		}
 		/*

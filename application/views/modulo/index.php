@@ -44,10 +44,10 @@
 								//echo "<td $cor>".$lista_modulos[$i]['nome_menu']."</td>";
 								echo "<td class='text-right'>";
 								if(permissao::get_permissao(UPDATE,$controller))
-									echo "<a href='".$url."$controller/edit/".$lista_modulos[$i]['Id']."' title='Editar' style='color: #dc3545; cursor: pointer;' class='glyphicon glyphicon-edit'></a> | ";
-									echo "<a href='".$url."$controller/detalhes/".$lista_modulos[$i]['Id']."' title='Detalhes' style='color: #dc3545; cursor: pointer;' class='glyphicon glyphicon-th'></a>";
+									echo "<a href='".$url."$controller/edit/".$lista_modulos[$i]['Id']."' title='Editar' style='cursor: pointer;' class='glyphicon glyphicon-edit text-danger'></a> | ";
+									echo "<a href='".$url."$controller/detalhes/".$lista_modulos[$i]['Id']."' title='Detalhes' style='cursor: pointer;' class='glyphicon glyphicon-th text-danger'></a>";
 								if(permissao::get_permissao(DELETE,$controller))
-									echo " | <span onclick='Main.confirm_delete(". $lista_modulos[$i]['Id'] .");' id='sp_lead_trash' name='sp_lead_trash' title='Apagar' style='color: #dc3545; cursor: pointer;' class='glyphicon glyphicon-trash'></span>";
+									echo " | <span onclick='Main.confirm_delete(". $lista_modulos[$i]['Id'] .");' id='sp_lead_trash' name='sp_lead_trash' title='Apagar' style='cursor: pointer;' class='glyphicon glyphicon-trash text-danger'></span>";
 								echo "</td>";
 							echo "</tr>";
 						}

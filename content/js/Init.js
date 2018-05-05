@@ -91,42 +91,42 @@ $(document).ready(
 
     //BTN CADASTROS
 
-    $("#form_cadastro_geral_Configuracoes").submit(function(event) {
+    $("#form_cadastro_geral_configuracoes").submit(function(event) {
       event.preventDefault();
       Main.settings_geral_validar();
     });
 
-    $("#form_cadastro_Usuario").submit(function(event) {
+    $("#form_cadastro_usuario").submit(function(event) {
       event.preventDefault();
       Main.usuario_validar();
     });
 
-    $("#form_cadastro_Usuario_permissoes").submit(function(event) {
+    $("#form_cadastro_usuario_permissoes").submit(function(event) {
       event.preventDefault();
       Main.create_edit();
     });
 
-    $("#form_cadastro_Grupo_permissoes").submit(function(event) {
+    $("#form_cadastro_grupo_permissoes").submit(function(event) {
       event.preventDefault();
       Main.create_edit();
     });
 
-    $("#form_cadastro_Account").submit(function(event) {
+    $("#form_cadastro_account").submit(function(event) {
       event.preventDefault();
       Main.registro_validar();
     });
 
-    $("#form_cadastro_Menu").submit(function(event) {
+    $("#form_cadastro_menu").submit(function(event) {
       event.preventDefault();
       Main.menu_validar();
     });
 
-    $("#form_cadastro_Modulo").submit(function(event) {
+    $("#form_cadastro_modulo").submit(function(event) {
       event.preventDefault();
       Main.modulo_validar();
     });
 
-    $("#form_cadastro_Grupo").submit(function(event) {
+    $("#form_cadastro_grupo").submit(function(event) {
       event.preventDefault();
       Main.grupo_validar();
     });

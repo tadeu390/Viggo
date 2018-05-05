@@ -23,7 +23,8 @@
 			define("ITENS_POR_PAGINA", $this->Configuracoes_model->get_configuracoes()['Itens_por_pagina']);
 
 			$this->load->library('pdfgenerator');
-			$this->load->model('account_model');
+			$this->load->model('Account_model');
+			$this->load->model('Usuario_model');
 			$this->load->model('Menu_model');
 			$this->load->model('Modulo_model');
 			$this->load->model('Acesso_model');
@@ -37,6 +38,7 @@
 			$this->data['url'] = base_url();
 			$this->data['paginacao']['url'] = base_url();
 			$this->data['paginacao']['itens_por_pagina'] = ITENS_POR_PAGINA;
+			$this->data['usuario'] = $this->Usuario_model->get_usuario(1, $this->Account_model->session_is_valid()['id'], FALSE)['Nome_usuario'];
 		}
 		/*
 			RESPONSÁVEL POR CARREGAR OS MENUS E OS MÓDULOS DO SISTEMA

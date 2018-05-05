@@ -11,7 +11,7 @@
 		public function __construct()
 		{
 			parent::__construct();
-			if($this->account_model->session_is_valid()['status'] != "ok")
+			if($this->Account_model->session_is_valid()['status'] != "ok")
 				redirect('Account/login');
 			$this->set_menu();
 			$this->data['controller'] = get_class($this);

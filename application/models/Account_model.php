@@ -17,7 +17,7 @@
 		public function valida_login($email, $senha)
 		{
 			$query = $this->db->query("
-				SELECT u.Id, u.Grupo_id, s.Valor 
+				SELECT u.Id, u.Grupo_id, u.Redefinir_senha, s.Valor, u.Nome, u.Email  
 				FROM Usuario u INNER JOIN Senha s ON u.Id = s.Usuario_id 
 				WHERE Email = ".$this->db->escape($email)." AND s.Valor = ".$this->db->escape($senha)." AND s.Ativo = 1");
 			 
@@ -26,7 +26,7 @@
 			 return $data;
 		}
 		/*
-			RESPONSÁVEL POR VERIFICAR SE EXISTE COOKIE OU SESSAO E VALIDA ESSES DADOS
+			RESPONSÁVEL POR VERIFICAR SE EXISTE COOKIE OU SESSAO E VALIDA ESSES DADOS NO BANCO
 		*/
 		public function session_is_valid()
 		{
