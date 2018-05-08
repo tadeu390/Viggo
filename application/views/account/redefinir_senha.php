@@ -38,10 +38,10 @@
 							$atr = array('id' => 'form_redefinir_senha','name' => 'form_redefinir_senha');
 							echo form_open('Account/enviar_email_senha',$atr);
 						?> 
-							<img class="mx-auto d-block img-senha" src="<?php echo $url;?>/content/imagens/logo.png">	<span class="text-info" style='font-size: 17px;'>Recuperar senha</span>
+							<img class="mx-auto d-block img-senha" src="<?php echo $url;?>/content/imagens/logo.png">	<span class="text-info" style='font-size: 17px;'>Recuperar senha</span><br /><br />
 							<div class="form-group">
-								<input id="email-login" autocomplete="false" spellcheck="false" name="email-login" type="text" class="input-material">
-								<label for="email-login" class="label-material">E-mail</label>
+								<input id="email-login" autocomplete="false" autofocus="true" spellcheck="false" name="email-login" type="text" class="input-material">
+								<label for="email-login" class="label-material active">E-mail</label>
 								<div class='input-group mb-2 mb-sm-0 text-danger' id='error-email-login'></div>
 							</div>
 							<div class="text-left">

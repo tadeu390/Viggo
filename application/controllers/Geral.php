@@ -27,6 +27,7 @@
 			$this->load->model('Usuario_model');
 			$this->load->model('Menu_model');
 			$this->load->model('Modulo_model');
+			$this->load->model('Senha_model');
 			$this->load->model('Acesso_model');
 			$this->load->model('Geral_model');
 			$this->load->helper('url_helper');

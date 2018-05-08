@@ -85,5 +85,30 @@
 			);
 			return $sessao;
 		}
+		/*
+			RESPONSÁVEL POR GERAR E CADASTRAR NO BANCO DE DADOS O CÓDIGO GERADO.
+
+			$id -> id do usuário
+		*/
+		public function gera_codigo_ativacao($Id)
+		{
+			$codigo = rand(100000,999999);
+			$this->db->query("
+				UPDATE Usuario SET Codigo_ativacao = ".$this->db->escape($codigo)." 
+				WHERE Id = ".$this->db->escape($Id)."AND Redefinir_senha = 1");
+
+		}
+		/*
+			RESPONSÁVEL POR DESATIVAR A REDEFINIÇÃO DE SENHA DO PRIMEIRO ACESSO, 
+			ISSO EVITA QUE UMA SENHA SEJA TROCADA MAIS DE UMA VEZ PELA TELA DE PRIMEIRO ACESSO
+
+			$id -> id do usuario
+		*/
+		public function desativa_redef_senha($id)
+		{
+			$this->db->query("
+				UPDATE Usuario SET Redefinir_senha = 0, Codigo_ativacao = 0 
+				WHERE Id = ".$this->db->escape($id)."");
+		}
 	}
 ?>

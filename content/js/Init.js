@@ -35,16 +35,21 @@ $(document).ready(
       if (this.value != '') Main.show_error("confirmar_senha", '', 'is-valid');
     });
 
+    $('#codigo_ativacao').blur(function() {
+      if (this.value != '' && this.value.length == 6) Main.show_error("codigo_ativacao", '', 'is-valid');
+    });
+
     $('#grupo_id').blur(function() {
       if (this.value != '0') Main.show_error("grupo_id", '', '');
     });
 
     $('#nova_senha').blur(function() {
-      if (this.value != '') Main.show_error("nova_senha", '', 'is-valid');
+      if (this.value != '' && this.value.length >= 8) Main.show_error("nova_senha", '', 'is-valid');
+      else Main.show_error("nova_senha", 'A senha deve conter no mínimo 8 caracteres.', 'is-invalid');
     });
 
     $('#confirmar_nova_senha').blur(function() {
-      if (this.value != '') Main.show_error("confirmar_nova_senha", '', 'is-valid');
+      if (this.value != '' && this.value.length >= 8) Main.show_error("confirmar_nova_senha", '', 'is-valid');
     });
 
     $('#ordem').blur(function() {
@@ -90,6 +95,11 @@ $(document).ready(
     });
 
     //BTN CADASTROS
+    
+    $("#form_redefinir_senha_primeiro_acesso").submit(function(event) {
+      event.preventDefault();
+      Main.validar_senha_primeiro_acesso();
+    });
 
     $("#form_cadastro_geral_configuracoes").submit(function(event) {
       event.preventDefault();

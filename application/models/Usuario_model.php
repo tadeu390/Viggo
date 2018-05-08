@@ -42,7 +42,7 @@
 			$query =  $this->db->query("
 				SELECT u.Id, u.Nome as Nome_usuario, u.Email, u.Ativo, 
 				DATE_FORMAT(u.Data_registro, '%d/%m/%Y') as Data_registro, 
-				g.Nome AS Nome_grupo,
+				g.Nome AS Nome_grupo, u.Redefinir_senha, u.Codigo_ativacao,  
 				u.Grupo_id  
 					FROM Usuario u 
 				LEFT JOIN Grupo g ON u.Grupo_id = g.Id

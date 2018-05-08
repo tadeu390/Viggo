@@ -6,6 +6,7 @@ var Main = {
 			$('#telefone').mask('(00) 0000-00009'),
 			$('#cep').mask('00000-000'),
 			$('#cpf').mask('000.000.000-00')
+			$('#codigo_ativacao').mask('999999')
 		});
 	},
 	login : function () {
@@ -240,5 +241,25 @@ var Main = {
 	},
 	settings : function(){
 		$("#settings").modal('show');
+	},
+	validar_senha_primeiro_acesso : function() {
+		var codigo_ativacao = $("#codigo_ativacao").val();
+		var nova_senha = $("#nova_senha").val();
+		var confirmar_nova_senha = $("#confirmar_nova_senha").val();
+
+		if(codigo_ativacao.length == 0)
+			Main.show_error("codigo_ativacao", 'Insira o código de ativação', 'is-invalid');
+		else if(codigo_ativacao.length < 6)
+			Main.show_error("codigo_ativacao", 'O código de ativação deve conter 6 caracteres numéricos', 'is-invalid');
+		else if(nova_senha.length == 0)
+			Main.show_error("nova_senha", 'Insira a nova senha', 'is-invalid');
+		else if(nova_senha.length < 8)
+			Main.show_error("nova_senha", 'A senha deve conter no mínimo 8 caracteres.', 'is-invalid');
+		else if(confirmar_nova_senha == 0)
+			Main.show_error("confirmar_nova_senha", 'Confirme a nova senha', 'is-invalid');
+		else if(nova_senha != confirmar_nova_senha)
+			Main.show_error("confirmar_nova_senha", 'As senhas não coincidem', 'is-invalid');
+		else
+			Main.create_edit();
 	}
 };

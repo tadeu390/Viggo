@@ -40,8 +40,8 @@
 						?> 
 							<img class="mx-auto d-block img-login" src="<?php echo $url;?>/content/imagens/logo.png">	
 							<div class="form-group">
-								<input id="email-login" autocomplete="false" spellcheck="false" name="email-login" type="text" class="input-material">
-								<label for="email-login" class="label-material">E-mail</label>
+								<input id="email-login" autofocus="true" autocomplete="false" spellcheck="false" name="email-login" type="text" class="input-material">
+								<label for="email-login" class="label-material active">E-mail</label>
 								<div class='input-group mb-2 mb-sm-0 text-danger' id='error-email-login'></div>
 							</div>
 							<div class="form-group">

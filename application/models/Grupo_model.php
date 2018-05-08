@@ -68,12 +68,12 @@
 			$query = $this->db->query("SELECT *,
 				(SELECT COUNT(*)  FROM Usuario u WHERE u.Grupo_id = ".$this->db->escape($Grupo_id).") AS Qtd_user,
 				(SELECT COUNT(*) FROM Usuario usp 
-					INNER JOIN Acesso A ON usp.Id = a.Usuario_id 
+					INNER JOIN Acesso a ON usp.Id = a.Usuario_id 
 						WHERE a.Modulo_id = x.Modulo_id AND a.Criar = 1 
 						AND usp.Grupo_id = ".$this->db->escape($Grupo_id).") AS Permissoes_criar,
 
 				(SELECT COUNT(*) FROM Usuario usp 
-					INNER JOIN Acesso A ON usp.Id = a.Usuario_id 
+					INNER JOIN Acesso a ON usp.Id = a.Usuario_id 
 						WHERE a.Modulo_id = x.Modulo_id AND a.Ler = 1 
 						AND usp.Grupo_id = ".$this->db->escape($Grupo_id).") AS Permissoes_ler,
 
@@ -83,11 +83,11 @@
 						AND usp.Grupo_id = ".$this->db->escape($Grupo_id).") AS Permissoes_atualizar,
 
 				(SELECT COUNT(*) FROM Usuario usp 
-					INNER JOIN Acesso A ON usp.Id = a.Usuario_id 
+					INNER JOIN Acesso a ON usp.Id = a.Usuario_id 
 						WHERE a.Modulo_id = x.Modulo_id AND a.Remover = 1 
 						AND usp.Grupo_id = ".$this->db->escape($Grupo_id).") AS Permissoes_remover
 				FROM(
-						SELECT M.Id as Modulo_id, a.Id as Acesso_id, g.Nome as Nome_grupo,
+						SELECT m.Id as Modulo_id, a.Id as Acesso_id, g.Nome as Nome_grupo,
 						m.Nome as Nome_modulo, a.Criar, a.Ler,
 						a.Atualizar, a.Remover
 						FROM Modulo m 
