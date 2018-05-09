@@ -18,8 +18,8 @@
 
       <div class="modal-header">
       </div>
-      <div class="modal-body text-center">
-		E-mail e/ou senha inválidos
+      <div class="modal-body text-center" id="mensagem_login">
+		
       </div>
       <div class="modal-footer text-center" style='display: block;'>
         <button type="button" class="btn btn-danger" data-dismiss="modal">Fechar</button>

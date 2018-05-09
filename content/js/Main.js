@@ -33,6 +33,7 @@ var Main = {
 							$('#login_modal_aguardar').modal('hide');
 						},500);
 						Main.limpa_login();
+						$("#mensagem_login").html(msg.response);
 						$('#login_modal_erro').modal({
 							keyboard: false,
 							backdrop : 'static'

@@ -3,6 +3,10 @@
 	/*
 		ESTA CLASSE TEM POR FUNÇÃO CONTROLAR TUDO RELACIONADO AO ACESSO DOS USUÁRIOS
 	*/
+	
+	define("LIMITE_TENTATIVA", 3);//TENTATIVAS CONSECUTIVAS
+	define("TEMPO_ESPERA", 60);//TEMPO NECESSÁRIO PARA DESBLOQUEAR A CONTA DO USUÁRIO
+	
 	class Account extends Geral 
 	{
 		//NO CONSTRUTOR DA CLASSE CARREGA AS MODELS UTILIZADAS NO CONTROLLER, ENTRE OUTRAS CONFIGURAÇÕES
@@ -68,6 +72,7 @@
 				if($login['Redefinir_senha'] == 0)
 				{
 					$this->set_sessao($login, $conectado);
+					$this->Account_model->reset_auxiliar_login($login['Id']);
 					$login = 'valido';
 				}
 				else
@@ -78,7 +83,12 @@
 				}
 			}
 			else
-				$login = 'invalido';
+			{
+				$login = "E-mail e/ou senha inválidos";
+				$id = $this->Usuario_model->get_usuario_por_email($email)['Id'];
+				if($this->Account_model->tentativas_erro($id) >= LIMITE_TENTATIVA)
+					$login = "Conta temporariamente bloqueada, pois você antingiu o limite de tentativas. Tente novamente daqui alguns minutos.";
+			}
 
 			$arr = array('response' => $login);
 			header('Content-Type: application/json');
@@ -191,7 +201,7 @@
 			$nova_senha = $this->input->post('nova_senha');
 			$usuario = $this->Usuario_model->get_usuario(FALSE, $this->session->id_primeiro_acesso, FALSE);
 			
-			if($usuario['Codigo_ativacao'] == $codigo_ativacao && $usuario['Redefinir_senha'] == 1)
+			if($usuario['Codigo_ativacao'] != 0 && $usuario['Codigo_ativacao'] == $codigo_ativacao && $usuario['Redefinir_senha'] == 1)
 			{
 				$data = array(
 					'Usuario_id' => $this->session->id_primeiro_acesso,
@@ -204,14 +214,21 @@
 
 				//cria a sessao
 				if($login['rows'] > 0)
-					$this->set_sessao($login, 1);
+					$this->set_sessao($login, 0);
 
-				$this->Account_model->desativa_redef_senha($this->session->id_primeiro_acesso);
+				$this->Account_model->reset_auxiliar_login($this->session->id_primeiro_acesso);
 
 				$resultado = "sucesso";
 			}
 			else
+			{
 				$resultado = "O código de ativação informado está incorreto";
+				if($this->Account_model->tentativas_erro($this->session->id_primeiro_acesso) == LIMITE_TENTATIVA)
+				{
+					$this->gera_codigo_ativacao($this->session->id_primeiro_acesso, FALSE);
+					$resultado = "Limite de tentativas para o código gerado foi excedido. Um novo código de ativação foi enviado para o seu e-mail.";	
+				}
+			}
 
 			$arr = array('response' => $resultado);
 			header('Content-Type: application/json');

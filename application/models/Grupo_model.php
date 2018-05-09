@@ -78,7 +78,7 @@
 						AND usp.Grupo_id = ".$this->db->escape($Grupo_id).") AS Permissoes_ler,
 
 				(SELECT COUNT(*) FROM Usuario usp 
-					INNER JOIN Acesso A ON usp.Id = a.Usuario_id 
+					INNER JOIN Acesso a ON usp.Id = a.Usuario_id 
 						WHERE a.Modulo_id = x.Modulo_id AND a.Atualizar = 1 
 						AND usp.Grupo_id = ".$this->db->escape($Grupo_id).") AS Permissoes_atualizar,
 
