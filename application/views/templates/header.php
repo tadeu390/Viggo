@@ -2,6 +2,7 @@
 	<head> 
 		
 		<title><?php echo $title;?></title>
+		<?php echo"<link rel='shortcut icon' href='".$url."content/imagens/favicon.ico'>"; ?>
 		<?= link_tag('content/css/bootstrap.min.css') ?>
 		<?= link_tag('content/css/normalize.css') ?>
 		<?= link_tag('content/css/font-awesome.css') ?>

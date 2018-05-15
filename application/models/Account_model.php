@@ -17,7 +17,7 @@
 		public function valida_login($email, $senha)
 		{
 			$query = $this->db->query("
-				SELECT u.Id, u.Grupo_id, u.Redefinir_senha, u.Contador_tentativa, s.Valor, u.Nome, u.Email  
+				SELECT u.Id, u.Grupo_id, u.Redefinir_senha, u.Contador_tentativa, s.Valor, u.Nome AS Nome_usuario, u.Email 
 				FROM Usuario u INNER JOIN Senha s ON u.Id = s.Usuario_id 
 				WHERE Email = ".$this->db->escape($email)." AND s.Valor = ".$this->db->escape($senha)." 
 					AND s.Ativo = 1 AND (u.Contador_tentativa < ".LIMITE_TENTATIVA." OR (NOW() - Data_ultima_tentativa) >= ".TEMPO_ESPERA.")");
@@ -87,17 +87,56 @@
 			return $sessao;
 		}
 		/*
+			RESPONSÁVEL POR VERIFICAR SE OS DADOS QUE ESTÃO NA SESSÃO QUANDO ESTÁ TROCANDO A SENHA SÃO VÁLIDOS,
+			SEJA TROCANDO A SENHA NO PRIMEIRO ACESSO OU APENAS REDEFININDO A MESMA CASO O USUÁRIO ESQUEÇA.
+		*/
+		public function session_is_valid_troca_senha()
+		{
+			$sessao_troca_senha = array();
+
+			if(!empty($this->session->id_troca_senha))
+			{
+				if(!empty($this->session->nome_troca_senha))
+				{
+					if(!empty($this->session->nome_troca_senha))
+					{
+						$id_troca_senha = $this->session->id_troca_senha;
+						$nome_troca_senha = $this->session->nome_troca_senha;
+						$email_troca_senha = $this->session->email_troca_senha;
+						
+						//validar no banco se existe isso
+						$query = $this->db->query("
+							SELECT Id FROM Usuario 
+							WHERE Id = ".$this->db->escape($id_troca_senha)." AND 
+							Nome = ".$this->db->escape($nome_troca_senha)." AND 
+							Email = ".$this->db->escape($email_troca_senha)." AND (Redefinir_senha = 1 OR Redefinir_senha = 2)");
+						
+						if($query->num_rows() > 0)
+						{
+							$sessao_troca_senha = array(
+								'id_troca_senha' => $id_troca_senha,
+								'nome_troca_senha' => $nome_troca_senha,
+								'email_troca_senha' => $email_troca_senha
+							);
+						}
+						return $sessao_troca_senha;
+					}
+				}
+			}
+			return $sessao_troca_senha;
+		}
+		/*
 			RESPONSÁVEL POR GERAR E CADASTRAR NO BANCO DE DADOS O CÓDIGO GERADO.
 
 			$id -> id do usuário
 		*/
-		public function gera_codigo_ativacao($Id)
+		public function gera_codigo_ativacao($id)
 		{
 			$codigo = rand(100000,999999);
 			$this->db->query("
 				UPDATE Usuario SET Codigo_ativacao = ".$this->db->escape($codigo).", Contador_tentativa = 0 
-				WHERE Id = ".$this->db->escape($Id)."AND Redefinir_senha = 1");
-
+				WHERE Id = ".$this->db->escape($id)."AND Redefinir_senha = 1");
+			return $codigo;
 		}
 		/*
 			RESPONSÁVEL POR RESTAURAR OS VALORES PADRÕES DE CAMPOS QUE AUXILIAM NA VALIDAÇÃO DO LOGIN, 
@@ -125,6 +164,20 @@
 			return $this->db->query("
 				SELECT Contador_tentativa FROM Usuario 
 				WHERE Id = ".$this->db->escape($id)."")->row_array()['Contador_tentativa'];
+		}
+		/*
+			RESPONSÁVEL POR gera o código de alteração da senha e marcar o campo
+			com status de solicitação de de alteração de senha com o valor 2
+
+			$id -> id do usuário
+		*/
+		public function gera_codigo_alteracao($id)
+		{
+			$codigo = rand(100000,999999);
+			$this->db->query("
+				UPDATE Usuario SET Codigo_ativacao = ".$this->db->escape($codigo).", Contador_tentativa = 0, Redefinir_senha = 2 
+				WHERE Id = ".$this->db->escape($id)."");
+			return $codigo;
 		}
 	}
 ?>

@@ -33,7 +33,7 @@
 			if($page === FALSE)//QUANDO A PÁGINA NÃO É ESPECIFICADA, POR DEFAULT CARREGA A PRIMEIRA PÁGINA
 				$page = 1;
 			
-			$this->data['title'] = 'Administração - dashboard';
+			$this->data['title'] = 'usuários';
 
 			if($this->Geral_model->get_permissao(READ, get_class($this)) == TRUE)
 			{
@@ -67,7 +67,7 @@
 		{
 			if($this->Geral_model->get_permissao(READ, get_class($this)) == TRUE)
 			{
-				$this->data['title'] = 'Usuário - Detalhes';
+				$this->data['title'] = 'Detalhes do usuário';
 				$this->data['obj'] = $this->Usuario_model->get_usuario(FALSE, $id, FALSE);
 				$this->data['obj']['Ultimo_acesso'] = $this->Logs_model->get_last_access_user($this->data['obj']['Id'])['Data_registro'];
 				$this->view("usuario/detalhes", $this->data);
@@ -84,7 +84,7 @@
 		{
 			if($this->Geral_model->get_permissao(UPDATE, get_class($this)) == TRUE)
 			{
-				$this->data['title'] = 'Usuário - Permissões';
+				$this->data['title'] = 'Permissões do usuário';
 				$this->data['usuario_id'] = $id;
 				$this->data['lista_usuario_acesso'] = $this->Acesso_model->get_acesso($id);
 				$this->data['usuario'] = $this->Usuario_model->get_usuario(FALSE, $id, FALSE)['Nome_usuario'];
@@ -129,7 +129,7 @@
 			if($this->Geral_model->get_permissao(CREATE, get_class($this)) == TRUE)
 			{
 				$this->data['obj'] = $this->Usuario_model->get_usuario(FALSE, 0, FALSE);
-				$this->data['title'] = 'Usuário - Cadastro';
+				$this->data['title'] = 'Novo usuário';
 				$this->data['grupos_usuario'] = $this->Grupo_model->get_grupo(FALSE, FALSE, FALSE);
 				$this->view("usuario/create_edit", $this->data);
 			}
@@ -148,7 +148,7 @@
 
 			if($this->Geral_model->get_permissao(UPDATE, get_class($this)) == TRUE)
 			{
-				$this->data['title'] = 'Usuario - Cadastro';
+				$this->data['title'] = 'Editar usuário';
 				
 				$this->data['obj'] = $this->Usuario_model->get_usuario(FALSE, $id, FALSE);
 				

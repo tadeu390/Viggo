@@ -24,7 +24,7 @@
 			if($page === false)
 				$page = 1;
 			
-			$this->data['title'] = 'Administração - Módulos';
+			$this->data['title'] = 'Módulos';
 			if($this->Geral_model->get_permissao(READ, get_class($this)) == true)
 			{
 				$this->data['lista_modulos'] = $this->Modulo_model->get_modulo(FALSE, FALSE, $page);
@@ -57,7 +57,7 @@
 		*/
 		public function edit($id = false)
 		{
-			$this->data['title'] = 'Módulo - Cadastro';
+			$this->data['title'] = 'Editar Módulo';
 			if($this->Geral_model->get_permissao(UPDATE, get_class($this)) == true)
 			{
 				$this->data['obj'] = $this->Modulo_model->get_modulo(FALSE, $id, FALSE);
@@ -73,7 +73,7 @@
 		*/
 		public function create()
 		{
-			$this->data['title'] = 'Módulo - Cadastro';
+			$this->data['title'] = 'Novo Módulo';
 			if($this->Geral_model->get_permissao(CREATE, get_class($this)) == true)
 			{
 				$this->data['obj'] = $this->Modulo_model->get_modulo(FALSE, 0, FALSE);
@@ -100,10 +100,15 @@
 				'Menu_id' => $this->input->post('menu_id'),
 				'Ativo' => $this->input->post('modulo_ativo')
 			);
-			
+
 			//bloquear acesso direto ao metodo store
 			 if(!empty($dataToSave['Nome']))
+			 {
+				if(empty($this->Modulo_model->get_modulo_por_nome($dataToSave['Nome'])))
 					$this->Modulo_model->set_modulo($dataToSave);
+				else
+					$resultado = "O nome informado para o módulo já se encontra cadastrado no sistema.";
+			 }
 			 else
 				redirect('modulo/index');
 
@@ -120,7 +125,7 @@
 		{
 			if($this->Geral_model->get_permissao(READ, get_class($this)) == TRUE)
 			{		
-				$this->data['title'] = 'Módulo - Detalhes';
+				$this->data['title'] = 'Detalhes do módulo';
 				$this->data['obj'] = $this->Modulo_model->get_modulo(FALSE, $id, FALSE);
 	
 				$this->view("modulo/detalhes", $this->data);

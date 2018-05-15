@@ -95,7 +95,16 @@ $(document).ready(
     });
 
     //BTN CADASTROS
-    
+    $("#form_alterar_senha").submit(function(event) {//quando o usuário está inserindo a senha nova do esqueceu sua senha
+      event.preventDefault();
+      Main.validar_nova_senha();
+    });
+
+    $("#form_redefinir_senha").submit(function(event) {//quando o usuário está solicitando a alteração de senha
+      event.preventDefault();
+      Main.validar_redefinir_senha();
+    });
+
     $("#form_redefinir_senha_primeiro_acesso").submit(function(event) {
       event.preventDefault();
       Main.validar_senha_primeiro_acesso();

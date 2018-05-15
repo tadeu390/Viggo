@@ -42,10 +42,10 @@
 						?> 
 							<img class="mx-auto d-block img-senha" src="<?php echo $url;?>/content/imagens/logo.png">	
 							<span class="text-info text-justify" style='font-size: 17px;'>
-								Seja bem vindo <b><?php echo $sessao_primeiro_acesso['nome_primeiro_acesso']; ?>.</b>
+								Seja bem vindo <b><?php echo $sessao_primeiro_acesso['nome_troca_senha']; ?>.</b>
 								Este é o seu primeiro acesso,
-								foi enviado um código de ativação da sua conta para o e-mail: <b><?php echo $sessao_primeiro_acesso['email_primeiro_acesso']; ?></b>. Verifique sua caixa de entrada. 
-								<?php echo "<a href='".$url."account/gera_codigo_ativacao/".$sessao_primeiro_acesso['id_primeiro_acesso']."/redirect'>Reenviar código</a>"; ?>
+								foi enviado um código de ativação da sua conta para o e-mail: <b><?php echo $sessao_primeiro_acesso['email_troca_senha']; ?></b>. Verifique sua caixa de entrada. 
+								<?php echo "<a href='".$url."account/gera_codigo_ativacao/".$sessao_primeiro_acesso['id_troca_senha']."/redirect'>Reenviar código</a>"; ?>
 							</span><br /><br />
 							<div class="form-group">
 								<input id="codigo_ativacao" autofocus="true" maxlength="6" autocomplete="false" spellcheck="false" name="codigo_ativacao" type="text" class="input-material">

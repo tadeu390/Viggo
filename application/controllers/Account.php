@@ -5,7 +5,7 @@
 	*/
 	
 	define("LIMITE_TENTATIVA", 3);//TENTATIVAS CONSECUTIVAS
-	define("TEMPO_ESPERA", 60);//TEMPO NECESSÁRIO PARA DESBLOQUEAR A CONTA DO USUÁRIO
+	define("TEMPO_ESPERA", 60);//TEMPO NECESSÁRIO PARA DESBLOQUEAR A CONTA DO USUÁRIO AO EXCEDER O LIMITE ACIMA
 	
 	class Account extends Geral 
 	{
@@ -14,23 +14,40 @@
 		{
 			parent::__construct();
 			$this->load->model('Logs_model');
+			$this->load->library('email');
 			$this->data['controller'] = strtolower(get_class($this));
+
+			$config['protocol'] = 'smtp';
+			//$config['mailpath'] = '/usr/sbin/sendmail';
+			$config['smtp_host'] = '127.0.0.1';
+			$config['mailtype'] = 'html';
+			$config['user'] = 'tadeu_local';
+			$config['pass'] = '123456789';
+			
+			$config['charset'] = 'utf-8';
+			$config['wordwrap'] = TRUE;
+
+			$this->email->initialize($config);
 
 		}
 		/*
+#################### AQUI COMEÇA OS MÉTODOS REFERENTES AO LOGIN DO USUÁRIO
+
 			RESPONSÁVEL POR CARREGAR O FORMULÁRIO DE LOGIN NA TELA, CASO HAJA UMA SESSÃO ATIVA ELE AUTOMATICAMENTE
 			REDIRECIONA O USUÁRIO PARA A TELA CORRETA.
 		*/
 		public function login()
 		{
-			unset($_SESSION['nome_primeiro_acesso']);//deleta a sessao utilizada para o primeiro acesso
-			unset($_SESSION['email_primeiro_acesso']);//deleta a sessao utilizada para o primeiro acesso
-			unset($_SESSION['id_primeiro_acesso']);//deleta a sessao utilizada para o primeiro acesso
+			unset($_SESSION['id_troca_senha']);//deleta a sessao utilizada para o primeiro acesso
+			unset($_SESSION['email_troca_senha']);//deleta a sessao utilizada para o primeiro acesso
+			unset($_SESSION['nome_troca_senha']);//deleta a sessao utilizada para o primeiro acesso
 
-			$this->data['title'] = 'Login';
+			$this->data['title'] = 'CEP - Login';
+			
 			$this->load->view('templates/header', $this->data);
 			$this->load->view('account/login', $this->data);
 			$this->load->view('templates/footer', $this->data);
+			
 			if($this->Account_model->session_is_valid()['status'] == "ok")
 				redirect('admin/dashboard');
 		}
@@ -64,7 +81,7 @@
 			$data['title'] = 'Login';
 
 
-			if($this->Account_model->session_is_valid() == "ok")//verifica se ja existe uma sessao, caso sim apenas ira recarregar a pagina
+			if($this->Account_model->session_is_valid()['status'] == "ok")//verifica se ja existe uma sessao, caso sim apenas ira recarregar a pagina
 				$login = 'valido';
 			else if($login['rows'] > 0)
 			{
@@ -78,7 +95,7 @@
 				else
 				{
 					$this->gera_codigo_ativacao($login['Id'], FALSE);
-					$this->set_sessao_primeiro_acesso($login);
+					$this->set_sessao_troca_senha($login);
 					$login = "primeiro_acesso";//para o js redirecionar
 				}
 			}
@@ -93,28 +110,6 @@
 			$arr = array('response' => $login);
 			header('Content-Type: application/json');
 			echo json_encode($arr);
-		}
-		/*
-			RESPONSÁVEL POR GERAR O CÓDIGO DE ATIVAÇÃO PARA A CONTA EM QUESTÃO E PASSA O MESMO PARA A FUNÇÃO DE ENVIO DE EMAIL
-		*/
-		public function gera_codigo_ativacao($id, $redirect)
-		{
-			$this->Account_model->gera_codigo_ativacao($id);
-			$Usuario = $this->Usuario_model->get_usuario(FALSE, $id, FALSE);
-
-			if($Usuario['Redefinir_senha'] == 1) //só envia email se ainda não foi redefinido a senha
-				$this->envia_email_primeiro_acesso($Usuario);
-			if($redirect != FALSE)
-				redirect("account/primeiro_acesso");
-		}
-		/*
-			RESPONSÁVEL POR ENVIAR O CÓDIGO DE ACESSO PARA O EMAIL DO USUÁRIO
-
-			$Usuario -> Contém os dados do usupário que receberá o e-mail com ó código de ativação
-		*/
-		public function envia_email_primeiro_acesso($Usuario)
-		{
-			//enviar email para o usuario
 		}
 		/*
 			RESPONSÁVEL POR CRIAR TODAS AS SESSÕES DO LOGIN
@@ -152,40 +147,67 @@
 	  		}
 		}
 		/*
-			RESPONSÁVEL POR CRIAR A SESSÃO PARA A TELA DE TROCA DE SENHA NO PRIMEIRO ACESSO
-			$Usuario -> Contém os dados do usuário que está fazendo seu primeiro acesso ao sistema
+#################### AQUI COMEÇA OS MÉTODOS REFERENTES AO PROCESSO DE PRIMEIRA ACESSO
+					 DO USUÁRIO AO SISTEMA
+
+			RESPONSÁVEL POR GERAR O CÓDIGO DE ATIVAÇÃO PARA A CONTA EM QUESTÃO E PASSA O MESMO PARA A FUNÇÃO DE ENVIO DE EMAIL
 		*/
-		public function set_sessao_primeiro_acesso($Usuario)
+		public function gera_codigo_ativacao($id, $redirect)
 		{
-			$primeiro_acesso = array(
-				'id_primeiro_acesso'  => $Usuario['Id'],
-				'nome_primeiro_acesso'  => $Usuario['Nome'],
-				'email_primeiro_acesso'  => $Usuario['Email']
-			);
-			$this->session->set_userdata($primeiro_acesso);
+			$codigo = $this->Account_model->gera_codigo_ativacao($id);
+			$Usuario = $this->Usuario_model->get_usuario(FALSE, $id, FALSE);
+
+			if($Usuario['Redefinir_senha'] == 1 && $this->Account_model->session_is_valid()['status'] != "ok") //só envia email se ainda não foi redefinido a senha e se não houver ninguém já conectado
+				$this->envia_email_primeiro_acesso($Usuario, $codigo);
+			if($redirect != FALSE)
+				redirect("account/primeiro_acesso");
 		}
 		/*
-			RESPONSÁVEL POR CARREGAR O FORMULÁRIO DE REDEFINIÇÃO DE SENHA QUANDO ESQUECER
+			RESPONSÁVEL POR ENVIAR O CÓDIGO DE ACESSO PARA O EMAIL DO USUÁRIO
+
+			$Usuario -> Contém os dados do usupário que receberá o e-mail com ó código de ativação
+			$codigo -> Contém o código gerado para o usuário que está tentando ativar sua conta
 		*/
-		public function redefinir_senha()
+		public function envia_email_primeiro_acesso($Usuario, $codigo)
 		{
-			$this->data['title'] = 'Redefinir senha';
-			$this->load->view('templates/header', $this->data);
-			$this->load->view('account/redefinir_senha', $this->data);
-			$this->load->view('templates/footer', $this->data);
+			$this->email->from('tadeu_local@localhost.com', 'CEP - Centro de Educação Profissional "Tancredo Neves"');
+			$this->email->to($Usuario['Email']);
+			//$this->email->cc('another@another-example.com');
+			//$this->email->bcc('them@their-example.com');
+			$mensagem = "Este é o seu primeiro acesso a sua conta. Segue abaixo o seu código de ativação. <br /><br /> Código: <b>".$codigo."</b>";
+			$this->email->subject('Ativação da sua conta');
+			$this->email->message($mensagem);
+
+			$this->email->send();
+		}
+		/*
+			RESPONSÁVEL POR CRIAR A SESSÃO PARA A TELA DE TROCA DE SENHA NO PRIMEIRO ACESSO OU NA
+			REDEFINIÇÃO DA SENHA QUANDO ESQUECER
+			$Usuario -> Contém os dados do usuário que está fazendo seu primeiro acesso ao sistema
+		*/
+		public function set_sessao_troca_senha($Usuario)
+		{
+			$troca_senha = array(
+				'id_troca_senha'  => $Usuario['Id'],
+				'nome_troca_senha'  => $Usuario['Nome_usuario'],
+				'email_troca_senha'  => $Usuario['Email']
+			);
+			$this->session->set_userdata($troca_senha);
 		}
 		/*
 			RESPONSÁVEL POR CARREGAR O FORMULÁRIO DE TROCA DE SENHA NO PRIMEIRO ACESSO
 		*/
 		public function primeiro_acesso()
 		{
-			if(empty($this->session->email_primeiro_acesso))
+			$sessao_troca_senha = $this->Account_model->session_is_valid_troca_senha();
+			//nesse caso nao precisa de verificar se há alguem logado, pois quando alguém loga, todas as sessoes de redefinicao de senha sao apagadas
+			//sendo assim, ao passar pela verificação abaixo, a mesma falhará e assim redirecionando o usuário para a tela de login
+
+			if(empty($sessao_troca_senha))//se nenhuma sessão válida foi encontrada, redireciona para o login
 				redirect('account/login');
 
-			$this->data['sessao_primeiro_acesso']['id_primeiro_acesso'] = $this->session->id_primeiro_acesso;
-			$this->data['sessao_primeiro_acesso']['nome_primeiro_acesso'] = $this->session->nome_primeiro_acesso;
-			$this->data['sessao_primeiro_acesso']['email_primeiro_acesso'] = $this->session->email_primeiro_acesso;
-
+			$Usuario = $this->Usuario_model->get_usuario(FALSE, $sessao_troca_senha['id_troca_senha'], FALSE);
+			$this->data['sessao_primeiro_acesso'] = $sessao_troca_senha;
 			$this->data['title'] = 'Primeiro acesso';
 			$this->load->view('templates/header', $this->data);
 			$this->load->view('account/primeiro_acesso', $this->data);
@@ -197,39 +219,162 @@
 		public function altera_senha_primeiro_acesso()
 		{
 			$resultado = "";
-			$codigo_ativacao = $this->input->post('codigo_ativacao');
-			$nova_senha = $this->input->post('nova_senha');
-			$usuario = $this->Usuario_model->get_usuario(FALSE, $this->session->id_primeiro_acesso, FALSE);
-			
-			if($usuario['Codigo_ativacao'] != 0 && $usuario['Codigo_ativacao'] == $codigo_ativacao && $usuario['Redefinir_senha'] == 1)
-			{
-				$data = array(
-					'Usuario_id' => $this->session->id_primeiro_acesso,
-					'Valor' => $nova_senha
-				);
-				//atualiza a senha
-				$this->Senha_model->set_senha($data);
-				//valida novamente os dados de login (agora com a senha nova)
-				$login = $this->Account_model->valida_login($this->session->email_primeiro_acesso, $nova_senha);
-
-				//cria a sessao
-				if($login['rows'] > 0)
-					$this->set_sessao($login, 0);
-
-				$this->Account_model->reset_auxiliar_login($this->session->id_primeiro_acesso);
-
+			if($this->Account_model->session_is_valid()['status'] == "ok")//se alguém já estiver logado, cancela esta operação
 				$resultado = "sucesso";
-			}
 			else
 			{
-				$resultado = "O código de ativação informado está incorreto";
-				if($this->Account_model->tentativas_erro($this->session->id_primeiro_acesso) == LIMITE_TENTATIVA)
+				$sessao_troca_senha = $this->Account_model->session_is_valid_troca_senha();
+				$codigo_ativacao = $this->input->post('codigo_ativacao');
+				$nova_senha = $this->input->post('nova_senha');
+
+				$usuario = $this->Usuario_model->get_usuario(FALSE, $sessao_troca_senha['id_troca_senha'], FALSE);
+				
+				
+				if($usuario['Codigo_ativacao'] != 0 && $usuario['Codigo_ativacao'] == $codigo_ativacao && $usuario['Redefinir_senha'] == 1)
 				{
-					$this->gera_codigo_ativacao($this->session->id_primeiro_acesso, FALSE);
-					$resultado = "Limite de tentativas para o código gerado foi excedido. Um novo código de ativação foi enviado para o seu e-mail.";	
+					$data = array(
+						'Usuario_id' => $sessao_troca_senha['id_troca_senha'],
+						'Valor' => $nova_senha
+					);
+					//atualiza a senha
+					$this->Senha_model->set_senha($data);
+					//valida novamente os dados de login (agora com a senha nova)
+					$login = $this->Account_model->valida_login($sessao_troca_senha['email_troca_senha'], $nova_senha);
+
+					//cria a sessao
+					if($login['rows'] > 0)
+						$this->set_sessao($login, 0);
+
+					$this->Account_model->reset_auxiliar_login($sessao_troca_senha['id_troca_senha']);
+
+					$resultado = "sucesso";
+				}
+				else
+				{
+					$resultado = "O código de ativação informado está incorreto";
+					if($this->Account_model->tentativas_erro($sessao_troca_senha['id_troca_senha']) == LIMITE_TENTATIVA)
+					{
+						$this->gera_codigo_ativacao($sessao_troca_senha['id_troca_senha'], FALSE);
+						$resultado = "Limite de tentativas para o código gerado foi excedido. Um novo código de ativação foi enviado para o seu e-mail.";	
+					}
 				}
 			}
 
+			$arr = array('response' => $resultado);
+			header('Content-Type: application/json');
+			echo json_encode($arr);
+		}
+		/*
+#################### AQUI COMEÇA OS MÉTODOS REFERENTES A REDEFINIÇAO DE SENHA QUANDO
+					 O USUÁRIO A ESQUECE.
+
+			RESPONSÁVEL POR CARREGAR O FORMULÁRIO DE REDEFINIÇÃO DE SENHA QUANDO ESQUECER
+		*/
+		public function redefinir_senha()
+		{
+			if($this->Account_model->session_is_valid()['status'] == "ok")//se alguém já estiver logado, cancela esta operação
+				redirect('admin/dashboard');
+			$this->data['title'] = 'Redefinir senha';
+			$this->load->view('templates/header', $this->data);
+			$this->load->view('account/redefinir_senha', $this->data);
+			$this->load->view('templates/footer', $this->data);
+		}
+		/*
+			RESPONSÁVEL POR VALIDAR O EMAIL QUE O USUARIO SOLICITOU A REDEFINIÇÃO DA SENHA
+			SE EXISTIR ELE ENVIA UM EMAIL COM O LINK, SE NÃO, ELE APENAS NOTIFICA O USUARIO
+			SOBRE A INEXISTÊNCIA DO E-MAIL
+		*/
+		public function valida_redefinir_senha()
+		{
+			$resultado = "sucesso";
+			$email = $this->input->post('email');
+			$Usuario = $this->Usuario_model->get_usuario_por_email($email);
+
+			if(empty($Usuario))
+				$resultado = "Este e-mail não se encontra cadastrado em nosso sistema";
+			else
+			{
+				$codigo = $this->Account_model->gera_codigo_alteracao($Usuario['Id']);
+				$this->envia_email_redefinir_senha($Usuario, $codigo);
+			}
+
+			$arr = array('response' => $resultado);
+			header('Content-Type: application/json');
+			echo json_encode($arr);
+		}
+		/*
+			RESPONSÁVEL POR ENVIAR UM E-MAIL COM UM LINK PARA O USUÁRIO PODER REDEFINIR A SUA
+			SENHA
+
+			$Usuario -> objeto usuário que contém todas as informações do mesmo
+			$codigo -> código de alteração de senha gerado
+		*/
+		public function envia_email_redefinir_senha($Usuario, $codigo)
+		{
+			$this->email->from('tadeu_local@localhost.com', 'CEP - Centro de Educação Profissional "Tancredo Neves"');
+			$this->email->to($Usuario['Email']);
+			$mensagem = "Você solicitou a alteração da sua senha. Segue abaixo o link para que possa efetuar a ação";
+
+			$mensagem = $mensagem."<br /> <a href='".$this->data['url']."account/alterando_senha/".$Usuario['Id']."/".$codigo."'>
+			".$this->data['url']."account/alterando_senha/".$Usuario['Id']."/".$codigo."</a>";
+			$this->email->subject('Alteração de senha');
+			
+			$this->email->message($mensagem);
+
+			$this->email->send();	
+		}
+		/*
+			RESPONSÁVEL POR CARREGAR O FORMULÁRIO DE REDEFINIÇÃO DE SENHA QUANDO ESQUECER, É ONDE O USUÁRIO INSERE A NOVA SENHA
+			
+			$id -> id do usuário
+			$codigo -> codigo de alteração de senha gerado na solicitação da alteração
+		*/
+		public function alterando_senha($id, $codigo)//PEGAR TAMBEM ID PARA GERAR A SESSAO(criptografar)
+		{
+			$Usuario = $this->Usuario_model->get_usuario(FALSE, $id, FALSE);
+
+			if($codigo != $Usuario['Codigo_ativacao'] || $Usuario['Redefinir_senha'] != 2 || $this->Account_model->session_is_valid()['status'] == "ok")
+				redirect('account/login');
+
+			$this->set_sessao_troca_senha($Usuario);
+			$sessao_troca_senha = $this->Account_model->session_is_valid_troca_senha();
+			$this->data['sessao_primeiro_acesso'] = $sessao_troca_senha;
+
+			$this->data['title'] = 'Alterar senha';
+
+			$this->load->view('templates/header', $this->data);
+			$this->load->view('account/alterando_senha', $this->data);
+			$this->load->view('templates/footer', $this->data);
+		}
+		/*
+			RESPONSÁVEL POR CAPTURAR A SENHA NOVA INSERIDA NO FORMULÁRIO
+		*/
+		public function alterar_senha()
+		{
+			$resultado = "sucesso";
+			if($this->Account_model->session_is_valid()['status'] != "ok")
+			{
+				$nova_senha = $this->input->post('nova_senha');
+				$sessao_troca_senha = $this->Account_model->session_is_valid_troca_senha();
+				
+				if(!empty($sessao_troca_senha))
+				{
+					$Usuario = $this->Usuario_model->get_usuario(FALSE, $sessao_troca_senha['id_troca_senha'], FALSE);
+					$senha = array(
+						'Usuario_id' => $Usuario['Id'],
+						'Valor' => $nova_senha
+					);
+					$this->Senha_model->set_senha($senha);
+
+					$login = $this->Account_model->valida_login($sessao_troca_senha['email_troca_senha'], $nova_senha);
+
+					//cria a sessao
+					if($login['rows'] > 0)
+						$this->set_sessao($login, 0);
+
+					$this->Account_model->reset_auxiliar_login($sessao_troca_senha['id_troca_senha']);
+				}
+			}
 			$arr = array('response' => $resultado);
 			header('Content-Type: application/json');
 			echo json_encode($arr);

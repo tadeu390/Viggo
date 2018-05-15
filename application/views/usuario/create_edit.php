@@ -1,4 +1,5 @@
-<div class='row padding30'>
+<br /><br />
+<div class='row padding20'>
 	<div class='col-lg-8 offset-lg-2 padding background_dark'>
 		<div>
 			<a href='javascript:window.history.go(-1)' title='Voltar'>
@@ -79,6 +80,7 @@
 				}
 			?>
 			<div class='form-group'>
+				<br />
 				<div class='checkbox checbox-switch switch-success custom-controls-stacked'>
 					<?php
 						$checked = "";

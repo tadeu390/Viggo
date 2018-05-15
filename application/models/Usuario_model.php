@@ -13,7 +13,7 @@
 			PARA O PARÂMETRO Id. PAGINA O RESULTADO QUANDO NECESSÁRIO E VOLTA SOMENTE REGISTRO(S) ATIVOS SE FOR PASSA TRUE PARA
 			O PRIMEIRO PARÂMETRO
 		*/
-		public function get_Usuario($Ativo, $Id = FALSE, $page = false)
+		public function get_usuario($Ativo, $Id = FALSE, $page = false)
 		{
 			$Ativos = "";
 			if($Ativo == true)
@@ -31,7 +31,7 @@
 				
 				$query = $this->db->query("
 					SELECT (SELECT count(*) FROM  Usuario) AS Size, u.Id, 
-					u.Nome as Nome_usuario, u.Email, u.Ativo, g.Nome AS Nome_grupo 
+					u.Nome as Nome_usuario, u.Email, u.Ativo, g.Nome AS Nome_grupo, u.Codigo_ativacao, u.Redefinir_senha   
 					FROM Usuario u 
 					LEFT JOIN Grupo g ON u.Grupo_id = g.Id WHERE TRUE ".$Ativos."
 					ORDER BY u.Data_registro ASC ".$pagination."");
@@ -84,7 +84,7 @@
 		public function get_usuario_por_email($Email)
 		{
 			$query = $this->db->query("
-				SELECT Id FROM Usuario WHERE Email = ".$this->db->escape($Email)."");
+				SELECT * FROM Usuario WHERE Email = ".$this->db->escape($Email)."");
 			return $query->row_array();
 		}
 		/*

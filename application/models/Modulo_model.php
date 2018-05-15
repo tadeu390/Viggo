@@ -83,5 +83,17 @@
 				return $this->db->update('Modulo', $data);
 			}
 		}
+		/*
+			RESPONSÁVEL POR RETORNAR UM OBJETO DE MÓDULO CONFORME O NOME
+
+			$nome -> Contém o nome do módulo a ser buscado no banco de dados
+		*/
+		public function get_modulo_por_nome($nome)
+		{
+			$nome = mb_strtolower($nome);
+			$query = $this->db->query("
+				SELECT * FROM Modulo m WHERE LOWER(m.Nome) = ".$this->db->escape($nome)."");
+			return $query->row_array();
+		}
 	}
 ?>

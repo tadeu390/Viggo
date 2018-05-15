@@ -113,5 +113,17 @@
 				$this->db->update('Grupo', $data);
 			}
 		}
+		/*
+			RESPONSÁVEL POR RETORNAR UM OBJETO DE GRUPO CONFORME O NOME
+
+			$nome -> Contém o nome do grupo a ser buscado no banco de dados
+		*/
+		public function get_grupo_por_nome($nome)
+		{
+			$nome = mb_strtolower($nome);//usar mb_strtolower em vez de strtolower, pois pode vir caracter especial na string
+			$query = $this->db->query("
+				SELECT * FROM Grupo m WHERE LOWER(m.Nome) = ".$this->db->escape($nome)."");
+			return $query->row_array();
+		}
 	}
 ?>

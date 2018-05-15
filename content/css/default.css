@@ -696,7 +696,7 @@ background: url('../imagens/fundo.jpg');
 }
 
 .login-page .form-holder {
-  width: 100%;
+  width: 85%;
   border-radius: 5px;
   overflow: hidden;
   margin-bottom: 50px;

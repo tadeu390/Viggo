@@ -23,7 +23,7 @@
 			if($page === false)
 				$page = 1;
 			
-			$this->data['title'] = 'Administração - Menus';
+			$this->data['title'] = 'Menus';
 			if($this->Geral_model->get_permissao(READ, get_class($this)) == true)
 			{
 				$this->data['lista_menus'] = $this->Menu_model->get_menu(FALSE, FALSE, $page);
@@ -51,7 +51,7 @@
 		*/
 		public function edit($id = false)
 		{
-			$this->data['title'] = 'Menu - Cadastro';
+			$this->data['title'] = 'Editar Menu';
 			if($this->Geral_model->get_permissao(UPDATE, get_class($this)) == true)
 			{
 				$this->data['obj'] = $this->Menu_model->get_menu(FALSE, $id, FALSE);
@@ -65,7 +65,7 @@
 		*/
 		public function create()
 		{
-			$this->data['title'] = 'Menu - Cadastro';
+			$this->data['title'] = 'Novo Menu';
 			if($this->Geral_model->get_permissao(CREATE, get_class($this)) == true)
 			{
 				$this->data['obj'] = $this->Menu_model->get_menu(FALSE, 0, FALSE);
@@ -89,7 +89,12 @@
 
 			//bloquear acesso direto ao metodo store
 			 if(!empty($dataToSave['Nome']))
+			 {
+			 	if(empty($this->Menu_model->get_menu_por_nome($dataToSave['Nome'])))
 					$this->Menu_model->set_menu($dataToSave);
+				else
+					$resultado = "O nome informado para o Menu já se encontra cadastrado no sistema.";
+			 }
 			 else
 				redirect('admin/dashboard');
 			

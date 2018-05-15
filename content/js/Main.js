@@ -262,5 +262,32 @@ var Main = {
 			Main.show_error("confirmar_nova_senha", 'As senhas não coincidem', 'is-invalid');
 		else
 			Main.create_edit();
+	},
+	validar_redefinir_senha : function()
+	{
+		var email = $("#email").val();
+
+		if(email == "")
+			Main.show_error("email", 'Informe o e-mail de usuário', 'is-invalid');
+		else if(Main.valida_email(email) == false)
+			Main.show_error("email", 'Formato de e-mail inválido', 'is-invalid');
+		else
+			Main.create_edit();
+	},
+	validar_nova_senha : function()
+	{
+		var nova_senha = $("#nova_senha").val();
+		var confirmar_nova_senha = $("#confirmar_nova_senha").val();
+
+		if(nova_senha.length == 0)
+			Main.show_error("nova_senha", 'Insira a nova senha', 'is-invalid');
+		else if(nova_senha.length < 8)
+			Main.show_error("nova_senha", 'A senha deve conter no mínimo 8 caracteres.', 'is-invalid');
+		else if(confirmar_nova_senha == 0)
+			Main.show_error("confirmar_nova_senha", 'Confirme a nova senha', 'is-invalid');
+		else if(nova_senha != confirmar_nova_senha)
+			Main.show_error("confirmar_nova_senha", 'As senhas não coincidem', 'is-invalid');
+		else
+			Main.create_edit();
 	}
 };

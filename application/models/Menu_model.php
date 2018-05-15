@@ -91,5 +91,17 @@
 				return $this->db->update('Menu', $data);
 			}
 		}
+		/*
+			RESPONSÁVEL POR RETORNAR UM OBJETO DE MENU CONFORME O NOME
+
+			$nome -> Contém o nome do menu a ser buscado no banco de dados
+		*/
+		public function get_menu_por_nome($nome)
+		{
+			$nome = mb_strtolower($nome);
+			$query = $this->db->query("
+				SELECT * FROM Menu m WHERE LOWER(m.Nome) = ".$this->db->escape($nome)."");
+			return $query->row_array();
+		}
 	}
 ?>

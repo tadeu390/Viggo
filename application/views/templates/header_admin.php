@@ -1,6 +1,6 @@
 <html lang="pt-br">
 	<head> 
-		
+		<?php echo"<link rel='shortcut icon' href='".$url."content/imagens/favicon.ico'>"; ?>
 		<title><?php echo $title; ?></title>
 		<meta charset="utf-8">
 		<?= link_tag('content/css/bootstrap.css') ?>

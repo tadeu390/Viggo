@@ -22,13 +22,13 @@
 			RESPONSÁVEL POR LISTAR TODOS OS GRUPOS NA TELA
 			$page -> número da página atual registros
 		*/
-		public function index($page = false)
+		public function index($page = FALSE)
 		{
 			if($page === false)
 				$page = 1;
 
-			$this->data['title'] = 'Administração - dashboard';
-			if($this->Geral_model->get_permissao(READ, get_class($this)) == true)
+			$this->data['title'] = 'Grupos';
+			if($this->Geral_model->get_permissao(READ, get_class($this)) == TRUE)
 			{
 				$this->data['lista_grupos'] = $this->Grupo_model->get_grupo(FALSE, FALSE, $page);
 				$this->data['paginacao']['size'] = $this->data['lista_grupos'][0]['Size'];
@@ -42,22 +42,10 @@
 			RESPONSÁVEL POR OCULTAR UM GRUPO DO SISTEMA
 			$id -> id de um grupo
 		*/
-		public function deletar($id = false)
+		public function deletar($id = FALSE)
 		{
-			if($this->Geral_model->get_permissao(DELETE, get_class($this)) == true)
+			if($this->Geral_model->get_permissao(DELETE, get_class($this)) == TRUE)
 				$this->Grupo_model->deletar($id);
-			else
-				$this->view("templates/permissao", $this->data);
-		}
-
-		public function detalhes($id = FALSE)
-		{
-			$this->data['title'] = 'Grupo - Detalhes';
-			if($this->Geral_model->get_permissao(READ, get_class($this)) == TRUE)
-			{
-				$this->data['obj'] = $this->Grupo_model->get_grupo(FALSE, $id, FALSE);
-				$this->view("grupo/detalhes", $this->data);
-			}
 			else
 				$this->view("templates/permissao", $this->data);
 		}
@@ -67,7 +55,7 @@
 		*/
 		public function edit($id = FALSE)
 		{
-			$this->data['title'] = 'Grupo - Cadastro';
+			$this->data['title'] = 'Editar Grupo';
 			if($this->Geral_model->get_permissao(UPDATE, get_class($this)) == TRUE)
 			{
 				$this->data['obj'] = $this->Grupo_model->get_grupo(FALSE, $id, FALSE);
@@ -81,7 +69,7 @@
 		*/
 		public function create()
 		{
-			$this->data['title'] = 'Grupo - Cadastro';
+			$this->data['title'] = 'Novo Grupo';
 			if($this->Geral_model->get_permissao(CREATE, get_class($this)) == TRUE)
 			{
 				$this->data['obj'] = $this->Grupo_model->get_grupo(FALSE, 0, FALSE);
@@ -104,7 +92,12 @@
 
 			//bloquear acesso direto ao metodo store
 			 if(!empty($dataToSave['Nome']))
+			 {
+			 	if(empty($this->Grupo_model->get_grupo_por_nome($dataToSave['Nome'])))
 					$this->Grupo_model->set_grupo($dataToSave);
+				else
+					$resultado = "O nome informado para o Grupo já se encontra cadastrado no sistema.";
+			 }
 			 else
 				redirect('grupo/index');
 
@@ -121,7 +114,7 @@
 		{
 			if($this->Geral_model->get_permissao(UPDATE, get_class($this)) == TRUE)
 			{
-				$this->data['title'] = 'Grupos - Permissões';
+				$this->data['title'] = 'Permissões do grupo';
 				$this->data['grupo_id'] = $id;
 				$this->data['lista_grupo_acesso'] = $this->Grupo_model->get_grupo_acesso($id);
 				$this->data['grupo'] = $this->Grupo_model->get_grupo(FALSE, $id, FALSE)['Nome_grupo'];
