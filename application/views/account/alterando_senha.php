@@ -1,32 +1,3 @@
-<div class="modal fade" id="login_modal_aguardar" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-      </div>
-      <div class="modal-body text-center">
-		Aguarde... validando seus dados.
-      </div>
-      <div class="modal-footer text-center" style='display: block;'>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="modal fade" id="login_modal_erro" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-
-      <div class="modal-header">
-      </div>
-      <div class="modal-body text-center">
-		E-mail não cadastrado.
-      </div>
-      <div class="modal-footer text-center" style='display: block;'>
-        <button type="button" class="btn btn-danger" data-dismiss="modal">Fechar</button>
-      </div>
-    </div>
-  </div>
-</div>
 <div class="login-page">
 	<div class="container d-flex align-items-center">
 	<div class="form-holder has-shadow">
@@ -46,12 +17,12 @@
 								Insira abaixo a sua nova senha
 							</span><br /><br />
 							<div class="form-group">
-								<input id="nova_senha" autocomplete="false" spellcheck="false" name="nova_senha" type="password" class="input-material">
+								<input id="nova_senha" name="nova_senha" type="password" class="input-material">
 								<label for="nova_senha" class="label-material">Nova senha (mínimo 8 caracteres)</label>
 								<div class='input-group mb-2 mb-sm-0 text-danger' id='error-nova_senha'></div>
 							</div>
 							<div class="form-group">
-								<input id="confirmar_nova_senha" autocomplete="false" spellcheck="false" name="confirmar_nova_senha" type="password" class="input-material">
+								<input id="confirmar_nova_senha" name="confirmar_nova_senha" type="password" class="input-material">
 								<label for="confirmar_nova_senha" class="label-material">Confirme sua senha</label>
 								<div class='input-group mb-2 mb-sm-0 text-danger' id='error-confirmar_nova_senha'></div>
 							</div>

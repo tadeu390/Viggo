@@ -12,7 +12,7 @@ var Main = {
 	login : function () {
 		if(Main.login_isvalid() == true)
 		{
-			$('#login_modal_aguardar').modal({
+			$('#modal_aguardar').modal({
 				keyboard: false,
 				backdrop : 'static'
 			});
@@ -30,13 +30,17 @@ var Main = {
 					else
 					{
 						setTimeout(function(){
-							$('#login_modal_aguardar').modal('hide');
+							$('#modal_aguardar').modal('hide');
 						},500);
 						Main.limpa_login();
-						$("#mensagem_login").html(msg.response);
-						$('#login_modal_erro').modal({
+						$("#mensagem_aviso").html(msg.response);
+						$('#modal_aviso').modal({
 							keyboard: false,
 							backdrop : 'static'
+						})
+
+						$('#modal_aviso').on('shown.bs.modal', function () {
+						  $('#bt_close_modal_aviso').trigger('focus')
 						})
 					}
 				}
@@ -53,7 +57,7 @@ var Main = {
 	},
 	logout : function (){
 		$("#mensagem").html("Aguarde... encerrando sessão");
-		$('#admin_modal').modal({
+		$('#modal_aguardar').modal({
 			keyboard: false,
 			backdrop : 'static'
 		});
@@ -107,8 +111,8 @@ var Main = {
 		$("#senha-login").focus();
 	},
 	create_edit : function (){
-		$("#mensagem").html("Aguarde... processando dados");
-		$('#admin_modal').modal({
+		$("#mensagem_aguardar").html("Aguarde... processando dados");
+		$('#modal_aguardar').modal({
 			keyboard: false,
 			backdrop : 'static'
 		})
@@ -127,19 +131,22 @@ var Main = {
 			success: function (msg) {
 				if(msg.response == "sucesso")
 				{
-					$("#mensagem").html("Dados salvos com sucesso");
+					$("#mensagem_aguardar").html("Dados salvos com sucesso");
 					window.location.assign(Main.base_url+$("#controller").val()+"/index");
 				}
 				else
 				{
 					setTimeout(function(){
-						$("#admin_modal").modal('hide');
+						$("#modal_aguardar").modal('hide');
 						
-						$("#mensagem_warning").html(msg.response);
-						$('#admin_warning_modal').modal({
+						$("#mensagem_aviso").html(msg.response);
+						$('#modal_aviso').modal({
 							keyboard: false,
-							backdrop : 'static'
-						})	
+							backdrop : 'static',
+						});
+						$('#modal_aviso').on('shown.bs.modal', function () {
+						  $('#bt_close_modal_aviso').trigger('focus')
+						})
 					},500);
 				}
 			}
@@ -263,7 +270,7 @@ var Main = {
 		else
 			Main.create_edit();
 	},
-	validar_redefinir_senha : function()
+	validar_redefinir_senha : function()//validar na solicitação de uma nova senha
 	{
 		var email = $("#email").val();
 
@@ -274,7 +281,7 @@ var Main = {
 		else
 			Main.create_edit();
 	},
-	validar_nova_senha : function()
+	validar_nova_senha : function()//validar a senha nova que o usuário está inserindo
 	{
 		var nova_senha = $("#nova_senha").val();
 		var confirmar_nova_senha = $("#confirmar_nova_senha").val();

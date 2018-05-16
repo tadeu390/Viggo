@@ -1,32 +1,3 @@
-<div class="modal fade" id="login_modal_aguardar" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-      </div>
-      <div class="modal-body text-center">
-		Aguarde... validando seus dados.
-      </div>
-      <div class="modal-footer text-center" style='display: block;'>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="modal fade" id="login_modal_erro" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-
-      <div class="modal-header">
-      </div>
-      <div class="modal-body text-center" id="mensagem_login">
-		
-      </div>
-      <div class="modal-footer text-center" style='display: block;'>
-        <button type="button" class="btn btn-danger" data-dismiss="modal">Fechar</button>
-      </div>
-    </div>
-  </div>
-</div>
 <div class="login-page">
 	<div class="container d-flex align-items-center">
 	<div class="form-holder has-shadow">
@@ -40,7 +11,7 @@
 						?> 
 							<img class="mx-auto d-block img-login" src="<?php echo $url;?>/content/imagens/logo.png">	
 							<div class="form-group">
-								<input id="email-login" autofocus="true" autocomplete="false" spellcheck="false" name="email-login" type="text" class="input-material">
+								<input id="email-login" autofocus="true" autocomplete="off" spellcheck="false" name="email-login" type="text" class="input-material">
 								<label for="email-login" class="label-material active">E-mail</label>
 								<div class='input-group mb-2 mb-sm-0 text-danger' id='error-email-login'></div>
 							</div>

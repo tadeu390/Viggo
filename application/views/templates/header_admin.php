@@ -32,7 +32,7 @@
 		</script>
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	</head >
-	<body id='c' class="admin-fundo">
+	<body>
 		<div class='container-fluid'>
 			<nav class="side-navbar">
 				<div class="sidenav-header d-flex align-items-center justify-content-center">
@@ -80,13 +80,13 @@
 				</div>
 			</nav>
 
-			<div class="modal fade" id="admin_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+			<div class="modal fade" id="modal_aguardar" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 			  <div class="modal-dialog" role="document">
 				<div class="modal-content">
 				  <div class="modal-header">
 					
 				  </div>
-				  <div class="modal-body text-center" id='mensagem'>
+				  <div class="modal-body text-center" id='mensagem_aguardar'>
 					
 				  </div>
 				  <div class="modal-footer">
@@ -116,26 +116,8 @@
 			  </div>
 			</div>
 
-			<div id="admin_conselho_modal" class="modal fade" tabindex="-1" role="dialog">
-			  <div class="modal-dialog modal-lg" role="document">
-				<div class="modal-content">
-				  <div class="modal-header text-center" id='info_geral' style="background: rgb(241,193,0);">
-					
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-					  <span aria-hidden="true">&times;</span>
-					</button>
-				  </div>
-				  <div id="mensagem_conselho" class="modal-body text-center">
-					
-				  </div>
-				  <div class="modal-footer">
-					<button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="location.reload();">Fechar</button>
-				  </div>
-				</div>
-			  </div>
-			</div>
 
-			<div id="admin_warning_modal" class="modal fade" tabindex="-1" role="dialog">
+			<div id="modal_aviso" class="modal fade" tabindex="-1" role="dialog">
 			  <div class="modal-dialog" role="document">
 				<div class="modal-content">
 				  <div class="modal-header text-center" style="background: rgb(241,193,0);">
@@ -144,11 +126,11 @@
 					  <span aria-hidden="true">&times;</span>
 					</button>
 				  </div>
-				  <div id="mensagem_warning" class="modal-body text-center">
+				  <div id="mensagem_aviso" class="modal-body text-center">
 					
 				  </div>
 				  <div class="modal-footer">
-					<button type="button" class="btn btn-secondary" data-dismiss="modal">Ok</button>
+					<button type="button" class="btn btn-secondary" id="bt_close_modal_aviso" data-dismiss="modal">Fechar</button>
 				  </div>
 				</div>
 			  </div>

@@ -10,7 +10,7 @@
 			parent::__construct();
 
 			if(empty($this->Account_model->session_is_valid($this->session->id)['id']))
-				redirect('Account/login');
+				redirect('account/login');
 
 			$this->load->model('Grupo_model');
 			$this->load->model('Usuario_model');
@@ -165,7 +165,7 @@
 						
 						if($this->input->post("flagre".$j) == 'Warning')
 							unset($dataAcessoToSave['Remover']);
-						//print_r($dataAcessoToSave);
+
 						$this->Acesso_model->set_acesso($dataAcessoToSave);
 					}
 				}	

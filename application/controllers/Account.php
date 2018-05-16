@@ -4,8 +4,8 @@
 		ESTA CLASSE TEM POR FUNÇÃO CONTROLAR TUDO RELACIONADO AO ACESSO DOS USUÁRIOS
 	*/
 	
-	define("LIMITE_TENTATIVA", 3);//TENTATIVAS CONSECUTIVAS
-	define("TEMPO_ESPERA", 60);//TEMPO NECESSÁRIO PARA DESBLOQUEAR A CONTA DO USUÁRIO AO EXCEDER O LIMITE ACIMA
+	define("LIMITE_TENTATIVA", 300);//TENTATIVAS CONSECUTIVAS
+	define("TEMPO_ESPERA", 5);//TEMPO NECESSÁRIO PARA DESBLOQUEAR A CONTA DO USUÁRIO AO EXCEDER O LIMITE ACIMA
 	
 	class Account extends Geral 
 	{
@@ -18,6 +18,7 @@
 			$this->data['controller'] = strtolower(get_class($this));
 
 			$config['protocol'] = 'smtp';
+			//$config['smtp_crypto'] = 'tls';
 			//$config['mailpath'] = '/usr/sbin/sendmail';
 			$config['smtp_host'] = '127.0.0.1';
 			$config['mailtype'] = 'html';
@@ -38,9 +39,9 @@
 		*/
 		public function login()
 		{
-			unset($_SESSION['id_troca_senha']);//deleta a sessao utilizada para o primeiro acesso
-			unset($_SESSION['email_troca_senha']);//deleta a sessao utilizada para o primeiro acesso
-			unset($_SESSION['nome_troca_senha']);//deleta a sessao utilizada para o primeiro acesso
+			unset($_SESSION['id_troca_senha']);//deleta a sessao utilizada para o primeiro acesso ou para a redefinição de senha
+			unset($_SESSION['email_troca_senha']);//deleta a sessao utilizada para o primeiro acesso ou para a redefinição de senha
+			unset($_SESSION['nome_troca_senha']);//deleta a sessao utilizada para o primeiro acesso ou para a redefinição de senha
 
 			$this->data['title'] = 'CEP - Login';
 			
@@ -208,7 +209,7 @@
 
 			$Usuario = $this->Usuario_model->get_usuario(FALSE, $sessao_troca_senha['id_troca_senha'], FALSE);
 			$this->data['sessao_primeiro_acesso'] = $sessao_troca_senha;
-			$this->data['title'] = 'Primeiro acesso';
+			$this->data['title'] = 'CEP - Primeiro acesso';
 			$this->load->view('templates/header', $this->data);
 			$this->load->view('account/primeiro_acesso', $this->data);
 			$this->load->view('templates/footer', $this->data);
@@ -265,7 +266,7 @@
 			echo json_encode($arr);
 		}
 		/*
-#################### AQUI COMEÇA OS MÉTODOS REFERENTES A REDEFINIÇAO DE SENHA QUANDO
+#################### AQUI COMEÇA OS MÉTODOS REFERENTES A REDEFINIÇÃO DE SENHA QUANDO
 					 O USUÁRIO A ESQUECE.
 
 			RESPONSÁVEL POR CARREGAR O FORMULÁRIO DE REDEFINIÇÃO DE SENHA QUANDO ESQUECER
@@ -274,7 +275,7 @@
 		{
 			if($this->Account_model->session_is_valid()['status'] == "ok")//se alguém já estiver logado, cancela esta operação
 				redirect('admin/dashboard');
-			$this->data['title'] = 'Redefinir senha';
+			$this->data['title'] = 'CEP - Alterar senha';
 			$this->load->view('templates/header', $this->data);
 			$this->load->view('account/redefinir_senha', $this->data);
 			$this->load->view('templates/footer', $this->data);
@@ -340,7 +341,7 @@
 			$sessao_troca_senha = $this->Account_model->session_is_valid_troca_senha();
 			$this->data['sessao_primeiro_acesso'] = $sessao_troca_senha;
 
-			$this->data['title'] = 'Alterar senha';
+			$this->data['title'] = 'CEP - Altere sua senha';
 
 			$this->load->view('templates/header', $this->data);
 			$this->load->view('account/alterando_senha', $this->data);
