@@ -104,7 +104,7 @@
 			//bloquear acesso direto ao metodo store
 			 if(!empty($dataToSave['Nome']))
 			 {
-				if(empty($this->Modulo_model->get_modulo_por_nome($dataToSave['Nome'])))
+				if(empty($this->Modulo_model->get_modulo_por_nome($dataToSave['Nome']))  || !empty($dataToSave['Id']))
 					$this->Modulo_model->set_modulo($dataToSave);
 				else
 					$resultado = "O nome informado para o módulo já se encontra cadastrado no sistema.";

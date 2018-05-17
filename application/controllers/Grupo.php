@@ -59,6 +59,7 @@
 			if($this->Geral_model->get_permissao(UPDATE, get_class($this)) == TRUE)
 			{
 				$this->data['obj'] = $this->Grupo_model->get_grupo(FALSE, $id, FALSE);
+				$this->data['lista_acesso_padrao'] = $this->Acesso_padrao_model->get_acesso_padrao($id);
 			}
 			else
 				$this->view("templates/permissao", $this->data);
@@ -73,6 +74,7 @@
 			if($this->Geral_model->get_permissao(CREATE, get_class($this)) == TRUE)
 			{
 				$this->data['obj'] = $this->Grupo_model->get_grupo(FALSE, 0, FALSE);
+				$this->data['lista_acesso_padrao'] = $this->Acesso_padrao_model->get_acesso_padrao();
 				$this->view("grupo/create_edit", $this->data);
 			}
 			else
@@ -93,13 +95,33 @@
 			//bloquear acesso direto ao metodo store
 			 if(!empty($dataToSave['Nome']))
 			 {
-			 	if(empty($this->Grupo_model->get_grupo_por_nome($dataToSave['Nome'])))
+			 	//se estiver editando um grupo, ao salvar é preciso retirar da verificação o seu nome, pois se não o sistema mostrará uma mensagem de que o nome de grupo já existe
+			 	if(empty($this->Grupo_model->get_grupo_por_nome($dataToSave['Nome'])) || !empty($dataToSave['Id']))
+			 	{
 					$this->Grupo_model->set_grupo($dataToSave);
+					$Grupo_id = $this->Grupo_model->get_grupo_por_nome($dataToSave['Nome'])['Id'];
+
+					//grava no banco as permissões padrões
+					for($i = 0; $this->input->post('modulo_id'.$i) != null; $i++)
+					{
+						$dataAcessoToSave = array(
+							'Id' => $this->input->post("acesso_padrao_id".$i.""),
+							'Grupo_id' => $Grupo_id,
+							'Modulo_id' => $this->input->post("modulo_id".$i.""),
+							'Criar' => (($this->input->post("linha".$i."col0") == null) ? 0 : 1),
+							'Ler' => (($this->input->post("linha".$i."col1") == null) ? 0 : 1),
+							'Atualizar' => (($this->input->post("linha".$i."col2") == null) ? 0 : 1),
+							'Remover' => (($this->input->post("linha".$i."col3") == null) ? 0 : 1)
+						);
+						$this->Acesso_padrao_model->set_acesso_padrao($dataAcessoToSave);
+					}
+			 	}
 				else
 					$resultado = "O nome informado para o Grupo já se encontra cadastrado no sistema.";
 			 }
 			 else
 				redirect('grupo/index');
+
 
 			$arr = array('response' => $resultado);
 			header('Content-Type: application/json');

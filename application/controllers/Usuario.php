@@ -214,12 +214,12 @@
 							'Valor' => $this->input->post('senha')
 						);
 						$this->Senha_model->set_senha($data);
-						$this->permissoes_default($Usuario_id);
+						$this->permissoes_default($Usuario_id, $dataToSave['Grupo_id']);
 					}
 				}
 			 }
 			 else
-				redirect('Usuario/index');
+				redirect('usuario/index');
 			
 			$arr = array('response' => $resultado);
 			header('Content-Type: application/json');
@@ -228,22 +228,23 @@
 		/*
 			RESPONSÁVEL POR CADASTRAR AS PERMISSÕES DEFAULT DO USUÁRIO
 
-			$id -> id do usuário 
+			$id -> id do usuário
+			$grupo_id id do grupo que usuário foi colocado 
 		*/
-		public function permissoes_default($id)
+		public function permissoes_default($id, $grupo_id)
 		{
-			$modulos = $this->Modulo_model->get_modulo(FALSE, FALSE, FALSE);
+			$permissoes_default = $this->Acesso_padrao_model->get_acesso_padrao($grupo_id);
 
-			for($i = 0; $i < COUNT($modulos); $i++)
+			for($i = 0; $i < COUNT($permissoes_default); $i++)
 			{
 				$dataAcessoToSave = array(
 					'Id' => '',
 					'Usuario_id' => $id,
-					'Modulo_id' => $modulos[$i]['Id'],
-					'Criar' => 0,
-					'Ler' => 0,
-					'Atualizar' => 0,
-					'Remover' => 0
+					'Modulo_id' => $permissoes_default[$i]['Modulo_id'],
+					'Criar' => $permissoes_default[$i]['Criar'],
+					'Ler' => $permissoes_default[$i]['Ler'],
+					'Atualizar' => $permissoes_default[$i]['Atualizar'],
+					'Remover' => $permissoes_default[$i]['Remover']
 				);
 				$this->Acesso_model->set_acesso($dataAcessoToSave);
 			}

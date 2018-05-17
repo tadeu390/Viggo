@@ -2,17 +2,21 @@
 <?php $this->load->helper("paginacao");?>
 <br /><br />
 <div class='row padding20' id='container' name='container'>
+	<?php
+    	echo"<div class='col-lg-10 offset-lg-1 padding0'>";
+			echo"<nav aria-label='breadcrumb'>";
+  				echo"<ol class='breadcrumb'>";
+    				echo "<li class='breadcrumb-item' aria-current='page'>Grupos</li>";
+    			echo "</ol>";
+			echo"</nav>";
+		echo "</div>";
+    ?>
 	<input type='hidden' id='controller' value='<?php echo $controller; ?>'/>
 	<?php
 		echo "<div class='col-lg-10 offset-lg-1 padding background_dark'>";
 			echo "<div class='table-responsive'>";
 				echo "<table class='table table-striped table-hover text-white'>";
 					echo "<thead>";
-						echo"<tr>";
-							echo"<td class='text-center' colspan='4'>";
-								echo"<p style='color: white; margin-top: 10px;'>Todos os grupos</p>";
-							echo"</td>";
-						echo"</tr>";
 						echo"<tr>";
 							echo"<td class='text-right' colspan='4'>";
 							if(permissao::get_permissao(CREATE,$controller))
@@ -38,7 +42,7 @@
 								echo "<td $cor>".(($lista_grupos[$i]['Ativo'] == 1) ? 'Sim' : 'Não')."</td>";
 								echo "<td class='text-right'>";
 								if(permissao::get_permissao(UPDATE,$controller))
-										echo "<a href='".$url."$controller/permissoes/".$lista_grupos[$i]['Id']."' title='Permissões' style='cursor: 	pointer;' class='glyphicon glyphicon-ok-sign text-danger'></a> | ";
+										echo "<a href='".$url."$controller/permissoes/".$lista_grupos[$i]['Id']."' title='Permissões dos usuários deste grupo' style='cursor: 	pointer;' class='glyphicon glyphicon-ok-sign text-danger'></a> | ";
 								if(permissao::get_permissao(UPDATE,$controller))
 									echo "<a href='".$url."$controller/edit/".$lista_grupos[$i]['Id']."' title='Editar' style='cursor: pointer;' class='glyphicon glyphicon-edit text-danger'></a>  ";
 									//echo "<a href='".$url."$controller/detalhes/".$lista_grupos[$i]['Id']."' title='Detalhes' style='color: #dc3545; cursor: pointer;' class='glyphicon glyphicon-th'></a>";

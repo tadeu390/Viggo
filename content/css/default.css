@@ -696,7 +696,7 @@ background: url('../imagens/fundo.jpg');
 }
 
 .login-page .form-holder {
-  width: 85%;
+  width: 100%;
   border-radius: 5px;
   overflow: hidden;
   margin-bottom: 50px;
@@ -900,7 +900,7 @@ body {
 }
 
 a {
-  color: #dc3545;
+  color: #336CD2;
   text-decoration: none;
 }
 

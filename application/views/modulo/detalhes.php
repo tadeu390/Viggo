@@ -1,6 +1,16 @@
 <br /><br />
 <div class='row' id='container' name='container' style='padding: 20px;'>
 	<?php
+    	echo"<div class='col-lg-10 offset-lg-1 padding0'>";
+			echo"<nav aria-label='breadcrumb'>";
+  				echo"<ol class='breadcrumb'>";
+    				echo"<li class='breadcrumb-item'><a href='".$url."modulo'>Módulos</a></li>";
+    				echo "<li class='breadcrumb-item active' aria-current='page'>Detalhes</li>";
+    			echo "</ol>";
+			echo"</nav>";
+		echo "</div>";
+    ?>
+	<?php
 		echo "<div class='col-lg-10 offset-lg-1' style='background: #393836;'>";
 			echo"<a href='javascript:window.history.go(-1)' class='link padding' title='Voltar'>";
 				echo"<span class='glyphicon glyphicon-arrow-left' style='font-size: 25px; color: white;'></span>";

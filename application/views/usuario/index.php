@@ -3,6 +3,15 @@
 <?php $this->load->helper("mstring");?>
 <br /><br />
 <div class='row padding20' id='container' name='container'>
+	<?php
+    	echo"<div class='col-lg-10 offset-lg-1 padding0'>";
+			echo"<nav aria-label='breadcrumb'>";
+  				echo"<ol class='breadcrumb'>";
+    				echo "<li class='breadcrumb-item' aria-current='page'>Usuários</li>";
+    			echo "</ol>";
+			echo"</nav>";
+		echo "</div>";
+    ?>
 	<input type='hidden' id='controller' value='<?php echo $controller; ?>'/>
 	<?php
 		echo "<div class='col-lg-10 offset-lg-1 padding background_dark'>";
@@ -11,7 +20,7 @@
 					echo "<thead>";
 						echo"<tr>";
 							echo"<td class='text-center' colspan='4'>";
-								echo"<p style='color: white; margin-top: 10px;'>Todos os usuários</p>";
+								//echo""; FILTROS AQUI
 							echo"</td>";
 						echo"</tr>";
 						echo"<tr>";

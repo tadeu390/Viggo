@@ -1,5 +1,15 @@
 <br /><br />
 <div class='row padding20' id='container' name='container'>
+	    <?php
+    	echo"<div class='col-lg-10 offset-lg-1 padding0'>";
+			echo"<nav aria-label='breadcrumb'>";
+  				echo"<ol class='breadcrumb'>";
+    				echo"<li class='breadcrumb-item'><a href='".$url."modulo'>Usuários</a></li>";
+    				echo "<li class='breadcrumb-item active' aria-current='page'>Detalhes</li>";
+    			echo "</ol>";
+			echo"</nav>";
+		echo "</div>";
+    ?>
 	<?php
 		echo "<div class='col-lg-10 offset-lg-1 background_dark'>";
 			echo"<a href='javascript:window.history.go(-1)' class='padding' title='Voltar'>";
@@ -7,13 +17,7 @@
 			echo"</a>";
 			echo "<div class='table-responsive'>";
 				echo "<table class='table table-striped table-hover text-white'>";
-					echo"<tr>";
-						echo "<td colspan='2'>";
-							echo"<p  class='text-center' style='margin-top: 10px; color: white;'>";
-								echo"Detalhes do usuário selecionado";
-							echo"</p>";
-						echo"</td>";
-					echo"</tr>";
+					
 					echo"</tr>";
 					echo "<tr>";
 						echo "<td>Nome</td>";

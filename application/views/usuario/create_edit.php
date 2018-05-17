@@ -1,14 +1,22 @@
 <br /><br />
 <div class='row padding20'>
+	    <?php
+    	echo"<div class='col-lg-8 offset-lg-2 padding0'>";
+			echo"<nav aria-label='breadcrumb'>";
+  				echo"<ol class='breadcrumb'>";
+    				echo"<li class='breadcrumb-item'><a href='".$url."usuario'>Usuários</a></li>";
+    				echo "<li class='breadcrumb-item active' aria-current='page'>".((isset($obj['Id'])) ? 'Editar usuário' : 'Novo usuário')."</li>";
+    			echo "</ol>";
+			echo"</nav>";
+		echo "</div>";
+    ?>
 	<div class='col-lg-8 offset-lg-2 padding background_dark'>
 		<div>
 			<a href='javascript:window.history.go(-1)' title='Voltar'>
 				<span class='glyphicon glyphicon-arrow-left text-white' style='font-size: 25px;'></span>
 			</a>
 		</div>
-		<div>
-			<p class="text-center padding text-white"><?php echo((isset($obj['Id'])) ? 'Editar usuário' : 'Novo usuário'); ?></p>					
-		</div>
+		<br /><br />
 		<?php $atr = array("id" => "form_cadastro_$controller", "name" => "form_cadastro"); 
 			echo form_open("$controller/store", $atr); 
 		?>

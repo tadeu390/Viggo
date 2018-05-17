@@ -10,7 +10,7 @@
 				echo"</div>";
 				echo "<br />";
 
-				echo "<div class='text-white'>Permissões do grupo: <span class='text-warning'>".$grupo."</span></div>";
+				echo "<div class='text-white'>Permissões dos usuários do grupo: <span class='text-warning'>".$grupo."</span></div>";
 				echo "<br />";
 				$atr = array("id" => "form_cadastro_".$controller."_permissoes", "name" => "form_cadastro"); 
 				echo form_open("$controller/store_permissoes", $atr);

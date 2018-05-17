@@ -2,17 +2,21 @@
 <?php $this->load->helper("paginacao");?>
 <br /><br />
 <div class='row padding20' id='container' name='container'>
+	<?php
+    	echo"<div class='col-lg-10 offset-lg-1 padding0'>";
+			echo"<nav aria-label='breadcrumb'>";
+  				echo"<ol class='breadcrumb'>";
+    				echo "<li class='breadcrumb-item' aria-current='page'>Módulos</li>";
+    			echo "</ol>";
+			echo"</nav>";
+		echo "</div>";
+    ?>
 	<input type='hidden' id='controller' value='<?php echo $controller; ?>'/>
 	<?php
 		echo "<div class='col-lg-10 offset-lg-1 padding background_dark'>";
 			echo "<div class='table-responsive'>";
 				echo "<table class='table table-striped table-hover text-white'>";
 					echo "<thead>";
-						echo"<tr>";
-							echo"<td class='text-center' colspan='4'>";
-								echo"<p style='color: white; margin-top: 10px;'>Todos os módulos</p>";
-							echo"</td>";
-						echo"</tr>";
 						echo"<tr>";
 							echo"<td class='text-right' colspan='4'>";
 								if(permissao::get_permissao(CREATE,$controller))

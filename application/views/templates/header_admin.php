@@ -96,21 +96,21 @@
 			  </div>
 			</div>
 
-			<div id="admin_confirm_modal" class="modal" tabindex="-1" role="dialog">
+			<div id="modal_confirm" class="modal fade" tabindex="-1" role="dialog">
 			  <div class="modal-dialog" role="document">
 				<div class="modal-content">
-				  <div class="modal-header text-center">
-					<h5 class="modal-title">Atenção</h5>
+				  <div class="modal-header text-center" style="background: rgb(241,193,0);">
+					<h5 class="modal-title text-white"><span class="glyphicon glyphicon-warning-sign" style="color: white;"></span>&nbsp;&nbsp;Atenção</h5>
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 					  <span aria-hidden="true">&times;</span>
 					</button>
 				  </div>
-				  <div id="menssagem_confirm" class="modal-body text-center">
+				  <div id="mensagem_confirm" class="modal-body text-center">
 					
 				  </div>
 				  <div class="modal-footer">
-					<button type="button" class="btn btn-primary" id="bt_delete">Sim</button>
-					<button type="button" class="btn btn-secondary" data-dismiss="modal">Não</button>
+					<button type="button" class="btn btn-danger" id="bt_delete">Sim</button>
+					<button type="button" class="btn btn-secondary" id="bt_confirm_modal" data-dismiss="modal">Não</button>
 				  </div>
 				</div>
 			  </div>

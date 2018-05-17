@@ -1,5 +1,15 @@
 <br /><br />
 <div class='row padding20' id='container' name='container'>
+	    <?php
+    	echo"<div class='col-lg-10 offset-lg-1 padding0'>";
+			echo"<nav aria-label='breadcrumb'>";
+  				echo"<ol class='breadcrumb'>";
+    				echo"<li class='breadcrumb-item'><a href='".$url."usuario'>Usuários</a></li>";
+    				echo "<li class='breadcrumb-item active' aria-current='page'>Permissões do usuário: ".$usuario."</li>";
+    			echo "</ol>";
+			echo"</nav>";
+		echo "</div>";
+    ?>
 	<?php
 		echo "<div class='col-lg-10 offset-lg-1 background_dark padding20'>";
 			echo "<div class='form-group'>";
@@ -9,8 +19,6 @@
 					echo"</a>";
 				echo"</div>";
 				echo "<br />";
-
-				echo "<div class='text-white'>Permissões do usuário: <span class='text-warning'>".$usuario."</span></div>";
 				echo "<br />";				
 				$atr = array("id" => "form_cadastro_".$controller."_permissoes", "name" => "form_cadastro"); 
 				echo form_open("$controller/store_permissoes", $atr);

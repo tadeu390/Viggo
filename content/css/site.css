@@ -31,6 +31,11 @@ nav::-webkit-scrollbar-thumb {
   padding: 30px;
 }
 
+.padding0{
+  padding: 0px;
+}
+
+
 .background_dark
 {
 	background-color: #393836;
@@ -154,4 +159,9 @@ a.text-info:hover
 {
   background-color: #DD3068;
   border-color: #DD3068;
+}
+
+.pointer
+{
+	cursor: pointer;
 }

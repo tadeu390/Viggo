@@ -7,6 +7,7 @@ var Main = {
 			$('#cep').mask('00000-000'),
 			$('#cpf').mask('000.000.000-00')
 			$('#codigo_ativacao').mask('999999')
+			$('[data-toggle="tooltip"]').tooltip()   
 		});
 	},
 	login : function () {
@@ -230,11 +231,16 @@ var Main = {
 	id_registro : "",
 	confirm_delete : function(id){
 		Main.id_registro = id;
-		$("#menssagem_confirm").html("Deseja realmente excluir o registro selecionado?");
-		$('#admin_confirm_modal').modal({
+					
+		$("#mensagem_confirm").html('Deseja realmente excluir o registro selecionado?');
+		$('#modal_confirm').modal({
 			keyboard: false,
-			backdrop : 'static'
+			backdrop : 'static',
 		});
+		$('#modal_confirm').on('shown.bs.modal', function () {
+		  $('#bt_confirm_modal').trigger('focus')
+		})
+
 	},
 	delete_registro : function(){
 		$.ajax({

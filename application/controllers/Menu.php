@@ -90,7 +90,7 @@
 			//bloquear acesso direto ao metodo store
 			 if(!empty($dataToSave['Nome']))
 			 {
-			 	if(empty($this->Menu_model->get_menu_por_nome($dataToSave['Nome'])))
+			 	if(empty($this->Menu_model->get_menu_por_nome($dataToSave['Nome'])) || !empty($dataToSave['Id']))
 					$this->Menu_model->set_menu($dataToSave);
 				else
 					$resultado = "O nome informado para o Menu já se encontra cadastrado no sistema.";
