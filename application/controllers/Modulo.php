@@ -112,17 +112,22 @@
 			//bloquear acesso direto ao metodo store
 			 if(!empty($dataToSave['Nome']))
 			 {
-				if(empty($this->Modulo_model->get_modulo_por_nome($dataToSave['Nome']))  || !empty($dataToSave['Id']))
-					$this->Modulo_model->set_modulo($dataToSave);
+				if($this->Geral_model->get_permissao(CREATE, get_class($this)) == TRUE || $this->Geral_model->get_permissao(UPDATE, get_class($this)) == TRUE)
+				{
+					if(empty($this->Modulo_model->get_modulo_por_nome($dataToSave['Nome']))  || !empty($dataToSave['Id']))
+						$this->Modulo_model->set_modulo($dataToSave);
+					else
+						$resultado = "O nome informado para o módulo já se encontra cadastrado no sistema.";
+				}
 				else
-					$resultado = "O nome informado para o módulo já se encontra cadastrado no sistema.";
+					$resultado = "Você não tem permissão para realizar esta ação.";
+
+				$arr = array('response' => $resultado);
+				header('Content-Type: application/json');
+				echo json_encode($arr);
 			 }
 			 else
 				redirect('modulo/index');
-
-			$arr = array('response' => $resultado);
-			header('Content-Type: application/json');
-			echo json_encode($arr);
 		}
 		/*
 			RESPONSÁVEL POR EXIBIR TODOS OS ATRIBUTOS DE UM MÓDULO.

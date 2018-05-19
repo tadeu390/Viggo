@@ -156,15 +156,15 @@
 										    	{
 											    	echo "<li>";
 											    		echo"<a class='btn-block' href='".$url."usuario/edit'>";
-											    			echo"<span class='glyphicon glyphicon-user'></span>&nbsp; &nbsp; &nbsp; Meus dados";
+											    			echo"<span class='glyphicon glyphicon-user'></span>&nbsp; Meus dados";
 											    		echo"</a>";
 											    	echo"</li>";
 									    		}
 									    		else
 									    		{
 									    			echo "<li>";
-											    		echo"<a class='btn-block' href='".$url."usuario/meus_dados'>";
-											    			echo"<span class='glyphicon glyphicon-user'></span>&nbsp; &nbsp; &nbsp; Meus dados";
+											    		echo"<a class='btn-block' href='".$url."account/meus_dados'>";
+											    			echo"<span class='glyphicon glyphicon-user'></span>&nbsp; Meus dados";
 											    		echo"</a>";
 											    	echo"</li>";	
 									    		}
@@ -172,14 +172,14 @@
 										    	{
 											    	echo "<li>";
 											    		echo "<a class='btn-block' href='".$url."configuracoes/geral'>";
-											    			echo "<span class='glyphicon glyphicon-cog'></span>&nbsp; &nbsp; &nbsp; Configurações";
+											    			echo "<span class='glyphicon glyphicon-cog'></span>&nbsp; Configurações";
 											    		echo "</a>";
 											    	echo "</li>";
 											    }
 										    	?>
 										    	<li>
-										    		<a class="btn-block" href="#" onclick="Main.logout();">
-										    			<span class="glyphicon glyphicon-log-out"></span>&nbsp; &nbsp; &nbsp; Sair
+										    		<a class="btn-block" href="#" id="bt_logout">
+										    			<span class="glyphicon glyphicon-log-out"></span>&nbsp; &nbsp; Sair
 										    		</a>
 										    	</li>
 										  	</ul>

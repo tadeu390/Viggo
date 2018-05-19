@@ -8,7 +8,6 @@
 					  <?php
 							$atr = array('id' => 'form_redefinir_senha_primeiro_acesso','name' => 'form_cadastro');
 							echo form_open('account/altera_senha_primeiro_acesso',$atr);
-							echo "<input type='hidden' id='method' value='altera_senha_primeiro_acesso'>";
 							echo "<input type='hidden' id='controller' value='$controller'>";
 						?> 
 							<img class="mx-auto d-block img-senha" src="<?php echo $url;?>/content/imagens/logo.png">	

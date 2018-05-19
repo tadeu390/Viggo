@@ -98,17 +98,22 @@
 			//bloquear acesso direto ao metodo store
 			 if(!empty($dataToSave['Nome']))
 			 {
-			 	if(empty($this->Menu_model->get_menu_por_nome($dataToSave['Nome'])) || !empty($dataToSave['Id']))
-					$this->Menu_model->set_menu($dataToSave);
+			 	if($this->Geral_model->get_permissao(CREATE, get_class($this)) == TRUE || $this->Geral_model->get_permissao(UPDATE, get_class($this)) == TRUE)
+				{
+				 	if(empty($this->Menu_model->get_menu_por_nome($dataToSave['Nome'])) || !empty($dataToSave['Id']))
+						$this->Menu_model->set_menu($dataToSave);
+					else
+						$resultado = "O nome informado para o Menu já se encontra cadastrado no sistema.";
+				}
 				else
-					$resultado = "O nome informado para o Menu já se encontra cadastrado no sistema.";
+					$resultado = "Você não tem permissão para realizar esta ação.";
+
+				$arr = array('response' => $resultado);
+				header('Content-Type: application/json');
+				echo json_encode($arr);
 			 }
 			 else
 				redirect('menu/index');
-			
-			$arr = array('response' => $resultado);
-			header('Content-Type: application/json');
-			echo json_encode($arr);
 		}
 	}
 ?>

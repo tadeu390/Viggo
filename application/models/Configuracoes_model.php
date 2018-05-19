@@ -17,7 +17,7 @@
 		public function get_configuracoes($id = FALSE)
 		{
 			$query = $this->db->query("
-				SELECT Id, Itens_por_pagina FROM 
+				SELECT Id, Itens_por_pagina, Email_redefinicao_de_senha FROM 
 				Settings");
 			return $query->row_array();
 		}

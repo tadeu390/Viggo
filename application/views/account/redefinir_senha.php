@@ -9,7 +9,6 @@
 							$atr = array('id' => 'form_redefinir_senha','name' => 'form_cadastro');
 							echo form_open('account/valida_redefinir_senha',$atr);
 							echo "<input type='hidden' id='controller' value='$controller'>";
-							echo "<input type='hidden' id='method' value='valida_redefinir_senha'>";
 						?> 
 							<img class="mx-auto d-block img-senha" src="<?php echo $url;?>/content/imagens/logo.png">	<span class="text-info" style='font-size: 17px;'>Recuperar senha</span><br /><br />
 							<div class="form-group">

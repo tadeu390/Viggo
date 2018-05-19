@@ -20,6 +20,11 @@ $(document).ready(
     $('#senha-login').blur(function() {
       if (this.value != '') Main.show_error("senha-login", '', '');
     });
+
+    $('#bt_logout').click(function() {
+        Main.logout();
+    });
+
     //LOGIN
 
 
@@ -64,6 +69,10 @@ $(document).ready(
       if (this.value != '') Main.show_error("url_modulo", '', 'is-valid');
     });
 
+    $('#itens_por_pagina').blur(function() {
+      if (this.value != '') Main.show_error("itens_por_pagina", '', 'is-valid');
+    });
+
     $('#icone').blur(function() {
       /*if(this.value != '')*/
       Main.show_error("icone", '', 'is-valid');
@@ -95,6 +104,11 @@ $(document).ready(
     });
 
     //BTN CADASTROS
+    $("#form_cadastro_configuracoes_email").submit(function(event) {//quando o usuário está inserindo a senha nova do esqueceu sua senha
+      event.preventDefault();
+      Main.validar_config_email();
+    });
+
     $("#form_alterar_senha").submit(function(event) {//quando o usuário está inserindo a senha nova do esqueceu sua senha
       event.preventDefault();
       Main.validar_nova_senha();
@@ -110,7 +124,7 @@ $(document).ready(
       Main.validar_senha_primeiro_acesso();
     });
 
-    $("#form_cadastro_geral_configuracoes").submit(function(event) {
+    $("#form_cadastro_configuracoes_geral").submit(function(event) {
       event.preventDefault();
       Main.settings_geral_validar();
     });

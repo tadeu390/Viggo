@@ -7,6 +7,7 @@ var Main = {
 			$('#cep').mask('00000-000'),
 			$('#cpf').mask('000.000.000-00'),
 			$('#codigo_ativacao').mask('999999'),
+			$('#itens_por_pagina').mask('000'),
 			$('[data-toggle="tooltip"]').tooltip()   
 		});
 	},
@@ -134,21 +135,26 @@ var Main = {
 		$("#senha-login").val("");
 		$("#senha-login").focus();
 	},
+	method : '',
+	form : '',
 	create_edit : function (){
 		$("#mensagem_aguardar").html("Aguarde... processando dados");
 		$('#modal_aguardar').modal({
 			keyboard: false,
 			backdrop : 'static'
 		})
+		//QUANDO NÃO FOR DEFINIDO NENHUM MÉTODO NO 'init.js', POR DEFAULT É CONSIDERADO O METÓDO STORE PARA RECEBER OS DADOS
 		
-		//QUANDO NÃO FOR DEFINIDO NENHUM MÉTODO NA VIEW, POR DEFAULT É CONSIDERADO O METÓDO STORE PARA RECEBER OS DADOS
-		var method = "store";
-		if(document.getElementById("method") != undefined)
-			method = $("#method").val();
+		if(Main.method == "" || Main.method == null)
+			Main.method = "store";
+		
+		//QUANDO NÃO HÁ NECESSIDADE DE COLOCAR UM NOME ESPECÍFICO PRO FORMULÁRIO, USA O NOME PADRÃO ESPECIFICADO ABAIXO
+		if(Main.form == "" || Main.form == null)
+			Main.form = "form_cadastro";
 
 		$.ajax({
-			url: Main.base_url+$("#controller").val()+'/'+method,
-			data: $("#"+$("form[name=form_cadastro]").attr("id")).serialize(),
+			url: Main.base_url+$("#controller").val()+'/'+Main.method,
+			data: $("#"+$("form[name="+Main.form+"]").attr("id")).serialize(),
 			dataType:'json',
 			cache: false,
 			type: 'POST',
@@ -175,9 +181,6 @@ var Main = {
 				}
 			}
 		});
-	},
-	settings_geral_validar : function(){
-		Main.create_edit();
 	},
 	usuario_validar : function(){
 		if($("#nome").val() == "")
@@ -276,10 +279,10 @@ var Main = {
 			}
 		});
 	},
-	settings : function(){
-		$("#settings").modal('show');
-	},
 	validar_senha_primeiro_acesso : function() {
+		
+		Main.method = "altera_senha_primeiro_acesso";
+
 		var codigo_ativacao = $("#codigo_ativacao").val();
 		var nova_senha = $("#nova_senha").val();
 		var confirmar_nova_senha = $("#confirmar_nova_senha").val();
@@ -301,6 +304,8 @@ var Main = {
 	},
 	validar_redefinir_senha : function()//validar na solicitação de uma nova senha
 	{
+		Main.method = "valida_redefinir_senha";
+
 		var email = $("#email").val();
 
 		if(email == "")
@@ -312,6 +317,8 @@ var Main = {
 	},
 	validar_nova_senha : function()//validar a senha nova que o usuário está inserindo
 	{
+		Main.method = "alterar_senha";
+
 		var nova_senha = $("#nova_senha").val();
 		var confirmar_nova_senha = $("#confirmar_nova_senha").val();
 
@@ -323,6 +330,29 @@ var Main = {
 			Main.show_error("confirmar_nova_senha", 'Confirme a nova senha', 'is-invalid');
 		else if(nova_senha != confirmar_nova_senha)
 			Main.show_error("confirmar_nova_senha", 'As senhas não coincidem', 'is-invalid');
+		else
+			Main.create_edit();
+	},
+	settings_geral_validar : function()
+	{
+		Main.form = "form_cadastro_configuracoes_geral";
+
+		if($("#itens_por_pagina").val() == "")
+			Main.show_error("itens_por_pagina", 'Informe a quantidade de ítens por página', 'is-invalid');
+		else if($("#itens_por_pagina").val() < 0)
+			Main.show_error("itens_por_pagina", 'Informe um número positivo', 'is-invalid');
+		else
+			Main.create_edit();
+	},
+	validar_config_email : function()
+	{
+		Main.form = "form_cadastro_configuracoes_email";
+		Main.method = "store_email";
+		
+		if($("#email").val() == "")
+			Main.show_error("email", 'Informe um e-mail válido', 'is-invalid');
+		else if(Main.valida_email($("#email").val()) == false)
+			Main.show_error("email", 'Formato de e-mail inválido', 'is-invalid');
 		else
 			Main.create_edit();
 	}

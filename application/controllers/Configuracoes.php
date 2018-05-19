@@ -17,7 +17,7 @@
 				$url_redirect = str_replace("/","-x",$url_redirect);
 				redirect('account/login/'.$url_redirect);
 			}
-			else if($this->Account_model->session_is_valid()['grupo_id'] != 1)
+			else if($this->Account_model->session_is_valid()['grupo_id'] != ADMIN)
 				redirect("academico/dashboard");
 			
 			$this->load->model('Configuracoes_model');
@@ -26,31 +26,68 @@
 			$this->data['menu_selectd'] = $this->Geral_model->get_identificador_menu(strtolower(get_class($this)));
 		}
 		/*
-			RESPONSÁVEL POR CARREGAR A VIEW DE CONFIGURAÇÕES NA TELA
+			RESPONSÁVEL POR CARREGAR A VIEW DE CONFIGURAÇÕES NA TELA COM TODAS AS CONFIGURAÇÕES DO SISTEMA
 		*/
 		public function geral()
 		{
-			$this->data['title'] = 'Configurações gerais';
-			$this->data['obj'] = $this->Configuracoes_model->get_configuracoes();
-			$this->view("configuracoes/geral",$this->data);
+			if($this->Account_model->session_is_valid()['grupo_id'] == ADMIN)
+			{
+				$this->data['title'] = 'Configurações gerais';
+				$this->data['obj'] = $this->Configuracoes_model->get_configuracoes();
+				$this->view("configuracoes/geral",$this->data);
+			}
+			else
+				$this->view("templates/permissao",$this->data);
 		}
 		/*
 			RESPONSÁVEL POR RECEBER OS DADOS DE CONFIGURAÇÕES DO FORMULÁRIO SUBMETIDO PELO USUÁRIO
 		*/
 		public function store()
 		{
-			$resultado = "sucesso";
-			$dataToSave = array(
-				'Id' => $this->input->post('id'),
-				'Itens_por_pagina' => $this->input->post('itens_por_pagina')
-				
-			);
+			if($this->Account_model->session_is_valid()['grupo_id'] == ADMIN)
+			{
+				$resultado = "sucesso";
+				$dataToSave = array(
+					'Id' => $this->input->post('id'),
+					'Itens_por_pagina' => $this->input->post('itens_por_pagina')
+					
+				);
 
-			//bloquear acesso direto ao metodo store
-			 if(!empty($dataToSave['Id']))
-					$this->Configuracoes_model->set_configuracoes($dataToSave);
-			 else
-				redirect('academico/dashboard');
+				//bloquear acesso direto ao metodo store
+				 if(!empty($dataToSave['Id']))
+						$this->Configuracoes_model->set_configuracoes($dataToSave);
+				 else
+					redirect('academico/dashboard');
+			}
+			else
+				$resultado = "Você não tem permissão para realizar esta ação.";
+
+			$arr = array('response' => $resultado);
+			header('Content-Type: application/json');
+			echo json_encode($arr);
+		}
+		/*
+			RESPONSÁVEL POR RECEBER OS DADOS DE E-MAIL DO FORMULÁRIO SUBMETIDO PELO USUÁRIO
+		*/
+		public function store_email()
+		{
+			$resultado = "sucesso";
+
+			if($this->Account_model->session_is_valid()['grupo_id'] == ADMIN)
+			{
+				$dataToSave = array(
+					'Id' => $this->input->post('id'),
+					'Email_redefinicao_de_senha' => $this->input->post('email')
+					
+				);
+				//bloquear acesso direto ao metodo store
+				if(!empty($dataToSave['Id']))
+						$this->Configuracoes_model->set_configuracoes($dataToSave);
+				 else
+					redirect('academico/dashboard');
+			}
+			else
+				$resultado = "Você não tem permissão para realizar esta ação.";
 			
 			$arr = array('response' => $resultado);
 			header('Content-Type: application/json');
@@ -62,7 +99,7 @@
 		*/
 		public function index()
 		{
-			redirect("academico/dashboard");
+			redirect("configuracoes/geral");
 		}
 	}
 ?>

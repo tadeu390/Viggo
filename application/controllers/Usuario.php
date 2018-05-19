@@ -102,22 +102,30 @@
 		*/
 		public function store_permissoes()
 		{
+			
+			//NÃO PERMITE ACESSO DIRETO A METODO STORE
 			if(!empty($this->input->post("usuario_id")))
 			{
-				$resultado = "sucesso";
-				for($i = 0; $this->input->post('modulo_id'.$i) != null; $i++)
+				if($this->Geral_model->get_permissao(CREATE, get_class($this)) == TRUE || $this->Geral_model->get_permissao(UPDATE, get_class($this)) == TRUE)
 				{
-					$dataAcessoToSave = array(
-						'Id' => $this->input->post("acesso_id".$i.""),
-						'Usuario_id' => $this->input->post("usuario_id"),
-						'Modulo_id' => $this->input->post("modulo_id".$i.""),
-						'Criar' => (($this->input->post("linha".$i."col0") == null) ? 0 : 1),
-						'Ler' => (($this->input->post("linha".$i."col1") == null) ? 0 : 1),
-						'Atualizar' => (($this->input->post("linha".$i."col2") == null) ? 0 : 1),
-						'Remover' => (($this->input->post("linha".$i."col3") == null) ? 0 : 1)
-					);
-					$this->Acesso_model->set_acesso($dataAcessoToSave);
+					$resultado = "sucesso";
+					for($i = 0; $this->input->post('modulo_id'.$i) != null; $i++)
+					{
+						$dataAcessoToSave = array(
+							'Id' => $this->input->post("acesso_id".$i.""),
+							'Usuario_id' => $this->input->post("usuario_id"),
+							'Modulo_id' => $this->input->post("modulo_id".$i.""),
+							'Criar' => (($this->input->post("linha".$i."col0") == null) ? 0 : 1),
+							'Ler' => (($this->input->post("linha".$i."col1") == null) ? 0 : 1),
+							'Atualizar' => (($this->input->post("linha".$i."col2") == null) ? 0 : 1),
+							'Remover' => (($this->input->post("linha".$i."col3") == null) ? 0 : 1)
+						);
+						$this->Acesso_model->set_acesso($dataAcessoToSave);
+					}
 				}
+				else
+					$resultado = "Você não tem permissão para realizar esta ação.";
+
 				$arr = array('response' => $resultado);
 				header('Content-Type: application/json');
 				echo json_encode($arr);
@@ -190,53 +198,58 @@
 			//BLOQUEIA ACESSO DIRETO AO MÉTODO
 			 if(!empty($dataToSave['Nome']))
 			 {
-				if($this->Usuario_model->email_valido($dataToSave['Email'],$dataToSave['Id']) == "invalido")
-					$resultado = "O e-mail informado já está em uso.";
-				else if($this->Account_model->session_is_valid()['grupo_id'] > 1 && 
-					$this->Senha_model->get_senha($dataToSave['Id'])['Senha'] != $dataToSave['Senha'])
-					$resultado = "A senha atual fornecida é inválida";
-				else
+			 	if($this->Geral_model->get_permissao(CREATE, get_class($this)) == TRUE || $this->Geral_model->get_permissao(UPDATE, get_class($this)) == TRUE)
 				{
-					//se trocar o usuario de grupo, setar para este as permissões padrões 
-					//do novo grupo atribuído a ele
-					$Usuario = $this->Usuario_model->get_usuario(FALSE, $dataToSave['Id'], FALSE);
-					
-					if($dataToSave['Id'] >= 1)//somente se estiver editando
+					if($this->Usuario_model->email_valido($dataToSave['Email'],$dataToSave['Id']) == "invalido")
+						$resultado = "O e-mail informado já está em uso.";
+					else if($this->Account_model->session_is_valid()['grupo_id'] > 1 && 
+						$this->Senha_model->get_senha($dataToSave['Id'])['Senha'] != $dataToSave['Senha'])
+						$resultado = "A senha atual fornecida é inválida";
+					else
 					{
-						if($dataToSave['Grupo_id'] != $Usuario['Grupo_id'])
-							$this->permissoes_default($dataToSave['Id'], $dataToSave['Grupo_id']);
-					}
-					$Usuario_id = $this->Usuario_model->set_usuario($dataToSave);
+						//se trocar o usuario de grupo, setar para este as permissões padrões 
+						//do novo grupo atribuído a ele
+						$Usuario = $this->Usuario_model->get_usuario(FALSE, $dataToSave['Id'], FALSE);
+						
+						if($dataToSave['Id'] >= 1)//somente se estiver editando
+						{
+							if($dataToSave['Grupo_id'] != $Usuario['Grupo_id'])
+								$this->permissoes_default($dataToSave['Id'], $dataToSave['Grupo_id']);
+						}
+						$Usuario_id = $this->Usuario_model->set_usuario($dataToSave);
 
-					if($dataToSave['Id'] >= 1)//somente se estiver editando
-					{
-						//SE O CAMPO CONTER ALGO ENTÃO SIGNIFICA QUE A SENHA DEVE SER ALTERADA.
-						if($this->input->post('nova_senha') != NULL && !empty($this->input->post('nova_senha')))
+						if($dataToSave['Id'] >= 1)//somente se estiver editando
+						{
+							//SE O CAMPO CONTER ALGO ENTÃO SIGNIFICA QUE A SENHA DEVE SER ALTERADA.
+							if($this->input->post('nova_senha') != NULL && !empty($this->input->post('nova_senha')))
+							{
+								$data = array(
+									'Usuario_id' => $Usuario_id,
+									'Valor' => $this->input->post('nova_senha')
+								);
+								$this->Senha_model->set_senha($data);
+							}
+						}
+						else
 						{
 							$data = array(
 								'Usuario_id' => $Usuario_id,
-								'Valor' => $this->input->post('nova_senha')
+								'Valor' => $this->input->post('senha')
 							);
 							$this->Senha_model->set_senha($data);
+							$this->permissoes_default($Usuario_id, $dataToSave['Grupo_id']);
 						}
 					}
-					else
-					{
-						$data = array(
-							'Usuario_id' => $Usuario_id,
-							'Valor' => $this->input->post('senha')
-						);
-						$this->Senha_model->set_senha($data);
-						$this->permissoes_default($Usuario_id, $dataToSave['Grupo_id']);
-					}
 				}
-			 }
-			 else
+				else
+					$resultado = "Você não tem permissão para realizar esta ação.";
+		
+				$arr = array('response' => $resultado);
+				header('Content-Type: application/json');
+				echo json_encode($arr);
+			}
+			else
 				redirect('usuario/index');
-			
-			$arr = array('response' => $resultado);
-			header('Content-Type: application/json');
-			echo json_encode($arr);
 		}
 		/*
 			RESPONSÁVEL POR CADASTRAR AS PERMISSÕES DEFAULT DO USUÁRIO

@@ -32,6 +32,23 @@
 
 		}
 		/*
+			RESPONSÁVEL POR CARREGAR OS DADOS DE USUARIO PARA QUALQUER USUARIO QUE NÃO FOR ADMINISTRADOR
+		*/
+		public function meus_dados()
+		{
+			$sessao = $this->Account_model->session_is_valid();
+			if($sessao['status'] == "ok")
+			{
+				$this->set_menu();
+				$this->data['title'] = 'Meus dados';
+				$this->data['obj'] = $this->Usuario_model->get_usuario(FALSE, $sessao['id'], FALSE);
+				$this->data['obj']['Ultimo_acesso'] = $this->Logs_model->get_last_access_user($this->data['obj']['Id'])['Data_registro'];
+				$this->view("account/meus_dados", $this->data);
+			}
+			else
+				redirect("account/login");
+		}
+		/*
 #################### AQUI COMEÇA OS MÉTODOS REFERENTES AO LOGIN DO USUÁRIO
 
 			RESPONSÁVEL POR CARREGAR O FORMULÁRIO DE LOGIN NA TELA, CASO HAJA UMA SESSÃO ATIVA ELE AUTOMATICAMENTE
@@ -173,7 +190,7 @@
 		*/
 		public function envia_email_primeiro_acesso($Usuario, $codigo)
 		{
-			$this->email->from('tadeu_local@localhost.com', 'CEP - Centro de Educação Profissional "Tancredo Neves"');
+			$this->email->from($this->Configuracoes_model->get_configuracoes()['Email_redefinicao_de_senha'], 'CEP - Centro de Educação Profissional "Tancredo Neves"');
 			$this->email->to($Usuario['Email']);
 			//$this->email->cc('another@another-example.com');
 			//$this->email->bcc('them@their-example.com');
@@ -314,7 +331,7 @@
 		*/
 		public function envia_email_redefinir_senha($Usuario, $codigo)
 		{
-			$this->email->from('tadeu_local@localhost.com', 'CEP - Centro de Educação Profissional "Tancredo Neves"');
+			$this->email->from($this->Configuracoes_model->get_configuracoes()['Email_redefinicao_de_senha'], 'CEP - Centro de Educação Profissional "Tancredo Neves"');
 			$this->email->to($Usuario['Email']);
 			$mensagem = "Você solicitou a alteração da sua senha. Segue abaixo o link para que possa efetuar a ação";
 

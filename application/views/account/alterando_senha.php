@@ -8,7 +8,6 @@
 					  <?php
 							$atr = array('id' => 'form_alterar_senha','name' => 'form_cadastro');
 							echo form_open('Account/alterar_senha',$atr);
-							echo "<input type='hidden' id='method' value='alterar_senha'>";
 							echo "<input type='hidden' id='controller' value='$controller'>";
 						?> 
 							<img class="mx-auto d-block img-senha" src="<?php echo $url;?>/content/imagens/logo.png">	

@@ -9,6 +9,7 @@
 	define("UPDATE", 'Atualizar');
 	define("DELETE", 'Remover');
 	
+	define("ADMIN", 1);
 	class Geral extends CI_Controller 
 	{
 		//VARIAVEL RESPONSÁVEL POR ARMAZENZAR TODO O CONTEÚDO A SER EXIBIDO NAS VIEWS
@@ -19,7 +20,9 @@
 		public function __construct()
 		{
 			parent::__construct();
+			
 			$this->load->model('Configuracoes_model');
+
 			define("ITENS_POR_PAGINA", $this->Configuracoes_model->get_configuracoes()['Itens_por_pagina']);
 
 			$this->load->library('pdfgenerator');
