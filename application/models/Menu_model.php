@@ -61,7 +61,7 @@
 			$CI->load->model("Account_model");
 
 			$query = $this->db->query("SELECT Nome_menu, Menu_id FROM Modulo_acesso_view 
-			WHERE Usuario_id = ".$CI->Account_model->session_is_valid()['id']." GROUP BY 1,2 ORDER BY Ordem");
+			WHERE Usuario_id = ".$CI->Account_model->session_is_valid()['id']." AND Ativo = 1 GROUP BY 1,2 ORDER BY Ordem");
 			
 			return $query->result_array();
 		}

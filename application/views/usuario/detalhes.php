@@ -4,7 +4,7 @@
     	echo"<div class='col-lg-10 offset-lg-1 padding0'>";
 			echo"<nav aria-label='breadcrumb'>";
   				echo"<ol class='breadcrumb'>";
-    				echo"<li class='breadcrumb-item'><a href='".$url."modulo'>Usuários</a></li>";
+    				echo"<li class='breadcrumb-item'><a href='".$url."usuario'>Usuários</a></li>";
     				echo "<li class='breadcrumb-item active' aria-current='page'>Detalhes</li>";
     			echo "</ol>";
 			echo"</nav>";

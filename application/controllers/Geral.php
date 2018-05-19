@@ -64,5 +64,40 @@
 			$this->load->view($v, $dt);
 			$this->load->view('templates/footer', $dt);
 		}
+		/*
+			RESPONSÁVEL POR CRIAR UM COOKIE CONTENDO A PÁGINA ATUAL DA LISTAGEM DE REGISTROS
+			DE QUALQUER MÓDULO DO SISTEMA. ISSO AUXILIA NO REDIRECIONAMENTO PARA A PÁGINA CORRETA AO
+			EDITAR UM DETERMINADO REGISTRO DE UM DETERMINADO MÓDULO, OU SEJA, SE O USUÁRIO CLICAR NO BOTÃO
+			EDITAR, DE UM REGISTRO NA PÁGINA X, AO SALVAR AS ALTERAÇÕES O SISTEMA UTILIZARÁ O COOKIE PARA
+			SABER PRA QUAL PÁGINA DA LISTAGEM REDIRECIONAR O USUÁRIO
+			
+			$page -> pagina atual da listagem de registros 
+		*/
+		public function set_page_cookie($page)
+		{
+			$cookie = array(
+		            'name'   => 'page',
+		            'value'  => $page,
+		            'expire' => 100000000,
+		            'secure' => FALSE
+	            );
+		  	$this->input->set_cookie($cookie);
+		}
+		/*
+			RESPONSÁVEL POR CRIAR UM COOKIE QUE CONTÉM A URL EM QUE O USUÁRIO ESTÁ TRABALHANDO, É NECESSÁRIO QUANDO A SESSÃO EXPIRA E REDIRECIONA O USUÁRIO 
+			PRA TELA DE LOGIN, COM ISSO AO FAZER O LOGIN NOVAMENTE, ELE CONTINUA DE ONDE ESTAVA
+
+			$url_redirect -> Url em que o usuário está
+		*/
+		public function set_url_redirect_cookie($url_redirect)///NÃO CONCLUÍDO AINDA.
+		{
+			$cookie = array(
+				'name' => 'url_redirect',
+				'value' => $url_redirect,
+				'expire' => 100000000,
+				'secure' => FALSE
+			);
+			$this->input->set_cookie($cookie);
+		}
 	}
 ?>

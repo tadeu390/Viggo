@@ -7,7 +7,8 @@
 					<div class="content" id="login">
 					  <?php
 							$atr = array('id' => 'form_login','name' => 'form_login');
-							echo form_open('Account/validar',$atr);
+							echo form_open('account/validar',$atr);
+							echo"<input type='hidden' value='".$url_redirect."' id='url_redirect'>";
 						?> 
 							<img class="mx-auto d-block img-login" src="<?php echo $url;?>/content/imagens/logo.png">	
 							<div class="form-group">

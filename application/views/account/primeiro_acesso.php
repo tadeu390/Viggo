@@ -7,7 +7,7 @@
 					<div class="content" id="login">
 					  <?php
 							$atr = array('id' => 'form_redefinir_senha_primeiro_acesso','name' => 'form_cadastro');
-							echo form_open('Account/altera_senha_primeiro_acesso',$atr);
+							echo form_open('account/altera_senha_primeiro_acesso',$atr);
 							echo "<input type='hidden' id='method' value='altera_senha_primeiro_acesso'>";
 							echo "<input type='hidden' id='controller' value='$controller'>";
 						?> 

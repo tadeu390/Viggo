@@ -8,8 +8,14 @@
 		public function __construct()
 		{
 			parent::__construct();
-			if(empty($this->Account_model->session_is_valid($this->session->id)['id']))
-				redirect('account/login');
+			
+			if(empty($this->Account_model->session_is_valid()['id']))
+			{
+				$url_redirect = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+				$url_redirect = str_replace("/","-x",$url_redirect);
+				redirect('account/login/'.$url_redirect);
+			}
+			
 			$this->set_menu();
 			$this->data['controller'] = strtolower(get_class($this));
 			$this->data['menu_selectd'] = $this->Geral_model->get_identificador_menu(strtolower(get_class($this)));
@@ -23,6 +29,8 @@
 		{
 			if($page === false)
 				$page = 1;
+			
+			$this->set_page_cookie($page);
 			
 			$this->data['title'] = 'Módulos';
 			if($this->Geral_model->get_permissao(READ, get_class($this)) == true)

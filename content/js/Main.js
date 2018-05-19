@@ -5,10 +5,25 @@ var Main = {
 			$('[data-toggle="popover"]').popover(),
 			$('#telefone').mask('(00) 0000-00009'),
 			$('#cep').mask('00000-000'),
-			$('#cpf').mask('000.000.000-00')
-			$('#codigo_ativacao').mask('999999')
+			$('#cpf').mask('000.000.000-00'),
+			$('#codigo_ativacao').mask('999999'),
 			$('[data-toggle="tooltip"]').tooltip()   
 		});
+	},
+	get_cookie : function(cname) {
+		var name = cname + "=";
+		var decodedCookie = decodeURIComponent(document.cookie);
+		var ca = decodedCookie.split(';');
+		for(var i = 0; i <ca.length; i++) {
+			var c = ca[i];
+			while (c.charAt(0) == ' ') {
+				c = c.substring(1);
+			}
+			if (c.indexOf(name) == 0) {
+				return c.substring(name.length, c.length);
+			}
+		}
+		return "";
 	},
 	login : function () {
 		if(Main.login_isvalid() == true)
@@ -27,7 +42,15 @@ var Main = {
 					if(msg.response == "primeiro_acesso")
 						window.location.assign(Main.base_url+"account/primeiro_acesso");
 					else if(msg.response == "valido")
-						location.reload();
+					{
+						var url_redirect = $("#url_redirect").val();
+						url_redirect = url_redirect.replace(/-x/g,"/");
+						
+						if($("#url_redirect").val() != "")
+							window.location.assign(url_redirect);
+						else
+							location.reload();
+					}
 					else
 					{
 						setTimeout(function(){
@@ -57,7 +80,7 @@ var Main = {
 		document.getElementById("flag"+idd).value = "success";
 	},
 	logout : function (){
-		$("#mensagem").html("Aguarde... encerrando sessão");
+		$("#mensagem_aguardar").html("Aguarde... encerrando sessão");
 		$('#modal_aguardar').modal({
 			keyboard: false,
 			backdrop : 'static'
@@ -65,7 +88,7 @@ var Main = {
 		$.ajax({
 			type: "POST",
 			dataType: "json",
-			url: Main.base_url+"Account/logout",
+			url: Main.base_url+"account/logout",
 			complete: function(data) {
 				 location.reload();
 			}
@@ -133,7 +156,7 @@ var Main = {
 				if(msg.response == "sucesso")
 				{
 					$("#mensagem_aguardar").html("Dados salvos com sucesso");
-					window.location.assign(Main.base_url+$("#controller").val()+"/index");
+					window.location.assign(Main.base_url+$("#controller").val()+"/index/"+Main.get_cookie("page"));
 				}
 				else
 				{

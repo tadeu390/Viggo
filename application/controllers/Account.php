@@ -37,20 +37,21 @@
 			RESPONSÁVEL POR CARREGAR O FORMULÁRIO DE LOGIN NA TELA, CASO HAJA UMA SESSÃO ATIVA ELE AUTOMATICAMENTE
 			REDIRECIONA O USUÁRIO PARA A TELA CORRETA.
 		*/
-		public function login()
+		public function login($url_redirect = FALSE)
 		{
 			unset($_SESSION['id_troca_senha']);//deleta a sessao utilizada para o primeiro acesso ou para a redefinição de senha
 			unset($_SESSION['email_troca_senha']);//deleta a sessao utilizada para o primeiro acesso ou para a redefinição de senha
 			unset($_SESSION['nome_troca_senha']);//deleta a sessao utilizada para o primeiro acesso ou para a redefinição de senha
 
 			$this->data['title'] = 'CEP - Login';
+			$this->data['url_redirect'] = $url_redirect;
 			
 			$this->load->view('templates/header', $this->data);
 			$this->load->view('account/login', $this->data);
 			$this->load->view('templates/footer', $this->data);
 			
 			if($this->Account_model->session_is_valid()['status'] == "ok")
-				redirect('admin/dashboard');
+				redirect('academico/dashboard');
 		}
 		/*
 			RESPONSÁVEL POR APAGAR TODAS AS SESSÕES ATIVAS NO COMPUTADOR DO CLIENTE
@@ -60,6 +61,7 @@
 			unset($_SESSION['id']);
 			unset($_SESSION['grupo_id']);
 			delete_cookie ('id');
+			delete_cookie('url_redirect');
 			delete_cookie ('grupo_id');
 		}
 		/*

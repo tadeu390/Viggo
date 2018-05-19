@@ -3,7 +3,7 @@
 	/*
 		ESTA CLASSE TEM POR FUNÇÃO CARREGAR O DASHOBOARD PARA ADM
 	*/
-	class Admin extends Geral 
+	class Academico extends Geral 
 	{
 		/*
 			CONSTRUTOR RESPONSÁVEL POR VALIDAR A SESSÃO E VERIFICAR O MENU SELECIONADO
@@ -24,7 +24,7 @@
 		public function dashboard()
 		{
 			$this->data['title'] = 'Acadêmico';
-			$this->view("admin/dashboard", $this->data);
+			$this->view("academico/dashboard", $this->data);
 		}
 	}
 ?>

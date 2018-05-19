@@ -165,3 +165,13 @@ a.text-info:hover
 {
 	cursor: pointer;
 }
+
+a.logotipo
+{
+	background-color: transparent !important;
+}
+
+.line-height
+{
+	line-height: 30px;
+}

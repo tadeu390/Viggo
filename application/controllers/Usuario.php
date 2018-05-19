@@ -11,11 +11,13 @@
 		public function __construct()
 		{
 			parent::__construct();
-			
-			if(empty($this->Account_model->session_is_valid($this->session->id)['id']))
-				redirect('account/login');
-			
-			
+
+			if(empty($this->Account_model->session_is_valid()['id']))
+			{
+				$url_redirect = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+				$url_redirect = str_replace("/","-x",$url_redirect);
+				redirect('account/login/'.$url_redirect);
+			}
 			$this->load->model('Grupo_model');
 			$this->load->model('Senha_model');
 			$this->load->model('Logs_model');
@@ -32,6 +34,8 @@
 		{
 			if($page === FALSE)//QUANDO A PÁGINA NÃO É ESPECIFICADA, POR DEFAULT CARREGA A PRIMEIRA PÁGINA
 				$page = 1;
+			
+			$this->set_page_cookie($page);
 			
 			$this->data['title'] = 'usuários';
 
@@ -154,9 +158,9 @@
 				
 				$this->data['read'] = ""; //para deixar como somente leitura o campo de senha, caso o usuario logado seja um adm
 
-				if($this->session->grupo_id > 1)
+				if($this->Account_model->session_is_valid()['grupo_id'] > 1)
 					$this->data['obj']['Senha'] = "";
-				if($this->session->grupo_id == 1)
+				else if($this->Account_model->session_is_valid()['grupo_id'] == 1)
 				{
 					$this->data['obj']['Senha'] = "xxx";//qualquer coisa, so pra nao deixar o campo de senha vazio
 					$this->data['read'] = "readonly='readonly'";
@@ -188,11 +192,20 @@
 			 {
 				if($this->Usuario_model->email_valido($dataToSave['Email'],$dataToSave['Id']) == "invalido")
 					$resultado = "O e-mail informado já está em uso.";
-				else if($this->session->Grupo_id > 1 && 
+				else if($this->Account_model->session_is_valid()['grupo_id'] > 1 && 
 					$this->Senha_model->get_senha($dataToSave['Id'])['Senha'] != $dataToSave['Senha'])
 					$resultado = "A senha atual fornecida é inválida";
 				else
 				{
+					//se trocar o usuario de grupo, setar para este as permissões padrões 
+					//do novo grupo atribuído a ele
+					$Usuario = $this->Usuario_model->get_usuario(FALSE, $dataToSave['Id'], FALSE);
+					
+					if($dataToSave['Id'] >= 1)//somente se estiver editando
+					{
+						if($dataToSave['Grupo_id'] != $Usuario['Grupo_id'])
+							$this->permissoes_default($dataToSave['Id'], $dataToSave['Grupo_id']);
+					}
 					$Usuario_id = $this->Usuario_model->set_usuario($dataToSave);
 
 					if($dataToSave['Id'] >= 1)//somente se estiver editando
@@ -234,11 +247,13 @@
 		public function permissoes_default($id, $grupo_id)
 		{
 			$permissoes_default = $this->Acesso_padrao_model->get_acesso_padrao($grupo_id);
-
+			$permissoes_current = $this->Acesso_model->get_acesso($id);
+			
+			
 			for($i = 0; $i < COUNT($permissoes_default); $i++)
 			{
 				$dataAcessoToSave = array(
-					'Id' => '',
+					'Id' => $permissoes_current[$i]['Acesso_id'],
 					'Usuario_id' => $id,
 					'Modulo_id' => $permissoes_default[$i]['Modulo_id'],
 					'Criar' => $permissoes_default[$i]['Criar'],

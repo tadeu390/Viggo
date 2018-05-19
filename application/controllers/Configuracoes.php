@@ -1,5 +1,8 @@
 <?php
-	require_once("Geral.php");
+	require_once("Geral.php");//INCLUI A CLASSE GENÉRICA
+	/*
+		ESTA CLASSE TEM POR FUNÇÃO CONTROLAR TUDO REFERENTE AS CONFIGURAÇÕE DO SISTEMA
+	*/
 	class Configuracoes extends Geral {
 		/*
 			no construtor carregamos as bibliotecas necessarias e tambem nossa model
@@ -7,21 +10,33 @@
 		public function __construct()
 		{
 			parent::__construct();
-			if(empty($this->Account_model->session_is_valid($this->session->id)['id']))
-				redirect('account/login');
-				$this->load->model('Configuracoes_model');
+			
+			if(empty($this->Account_model->session_is_valid()['id']))
+			{
+				$url_redirect = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+				$url_redirect = str_replace("/","-x",$url_redirect);
+				redirect('account/login/'.$url_redirect);
+			}
+			else if($this->Account_model->session_is_valid()['grupo_id'] != 1)
+				redirect("academico/dashboard");
+			
+			$this->load->model('Configuracoes_model');
 			$this->set_menu();
 			$this->data['controller'] = strtolower(get_class($this));
 			$this->data['menu_selectd'] = $this->Geral_model->get_identificador_menu(strtolower(get_class($this)));
 		}
-		
+		/*
+			RESPONSÁVEL POR CARREGAR A VIEW DE CONFIGURAÇÕES NA TELA
+		*/
 		public function geral()
 		{
 			$this->data['title'] = 'Configurações gerais';
 			$this->data['obj'] = $this->Configuracoes_model->get_configuracoes();
-			$this->view("Configuracoes/geral",$this->data);
+			$this->view("configuracoes/geral",$this->data);
 		}
-
+		/*
+			RESPONSÁVEL POR RECEBER OS DADOS DE CONFIGURAÇÕES DO FORMULÁRIO SUBMETIDO PELO USUÁRIO
+		*/
 		public function store()
 		{
 			$resultado = "sucesso";
@@ -35,16 +50,19 @@
 			 if(!empty($dataToSave['Id']))
 					$this->Configuracoes_model->set_configuracoes($dataToSave);
 			 else
-				redirect('admin/dashboard');
+				redirect('academico/dashboard');
 			
 			$arr = array('response' => $resultado);
 			header('Content-Type: application/json');
 			echo json_encode($arr);
 		}
-
+		/*
+			RESPONSÁVEL POR REDIRECIONAR PARA PARA A PÁGINA INICIAL QUANDO SE SUBMETE O FORMULÁRIO
+			DE CONFIGURAÇÕES, QUEM REDIRECIONA PRA ESSE MÉTODO É O JAVASCRIPT
+		*/
 		public function index()
 		{
-			redirect("admin/dashboard");
+			redirect("academico/dashboard");
 		}
 	}
 ?>

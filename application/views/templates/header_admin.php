@@ -37,8 +37,8 @@
 			<nav class="side-navbar">
 				<div class="sidenav-header d-flex align-items-center justify-content-center">
 					<div class="sidenav-header-inner  text-center">
-						<img class="img-fluid rounded-circle" src="<?php echo $url;?>/content/imagens/logo.png" title='CEP - Centro de Educação Profissional "Tancredo Neves"'>
-						<h2>CEP - Admin</h2> <br />
+						<a class='logotipo' href="<?php echo $url; ?>academico/dashboard"><img class="img-fluid rounded-circle" src="<?php echo $url;?>/content/imagens/logo.png" title='CEP - Centro de Educação Profissional "Tancredo Neves"'></a>
+						<h3 class='line-height' title='CEP - Centro de Educação Profissional "Tancredo Neves"'>ACADÊMICO</h3>
 
 					</div>
 					<div style="margin-top: 15px;" class="sidenav-header-logo"><a href="#" class="brand-small text-center">
@@ -51,11 +51,11 @@
 						for ($i = 0; $i < count($menu); $i++) {
 							$status = "false";
 							$classe = "collapse list-unstyled";
-							if($menu_selectd == $menu[$i]['Menu_id'])
-							{
+							//if($menu_selectd == $menu[$i]['Menu_id'])
+							//{
 								$status = "true";
 								$classe = "collapse list-unstyled show";
-							}
+							//}
 							echo "<li>";
 							echo "<a href='#pages-nav-list" . $i . "' data-toggle='collapse' aria-expanded='".$status."'>";
 							echo "<i class='icon-interface-windows'></i>";
@@ -145,13 +145,45 @@
 									<span class="glyphicon glyphicon-align-justify" style='line-height: 40px; transform: scale(2.5);'> </span></a>
 								</div>
 								<ul class="nav-menu list-unstyled d-flex flex-md-row align-items-md-center">
+								
 									<li class="nav-item">
-										<div class="text-white" style=" padding-right: 20px"><?php echo $usuario; ?></div>
-									</li>
-									<li class="nav-item">
-										<?php
-										echo "<button class='btn btn-outline-danger btn-block' onclick='Main.logout()'><span class='glyphicon glyphicon-log-out'></span> Sair</button>";
-										  ?>
+										<div class="dropdown">
+										  	<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><?php echo $usuario; ?>
+										  	<span class="caret"></span></button>
+										  	<ul class="dropdown-menu">
+										    	<?php
+										    	if($this->input->cookie('grupo_id') == 1 || $this->session->grupo_id == 1)
+										    	{
+											    	echo "<li>";
+											    		echo"<a class='btn-block' href='".$url."usuario/edit'>";
+											    			echo"<span class='glyphicon glyphicon-user'></span>&nbsp; &nbsp; &nbsp; Meus dados";
+											    		echo"</a>";
+											    	echo"</li>";
+									    		}
+									    		else
+									    		{
+									    			echo "<li>";
+											    		echo"<a class='btn-block' href='".$url."usuario/meus_dados'>";
+											    			echo"<span class='glyphicon glyphicon-user'></span>&nbsp; &nbsp; &nbsp; Meus dados";
+											    		echo"</a>";
+											    	echo"</li>";	
+									    		}
+										    	if($this->input->cookie('grupo_id') == 1 || $this->session->grupo_id == 1)
+										    	{
+											    	echo "<li>";
+											    		echo "<a class='btn-block' href='".$url."configuracoes/geral'>";
+											    			echo "<span class='glyphicon glyphicon-cog'></span>&nbsp; &nbsp; &nbsp; Configurações";
+											    		echo "</a>";
+											    	echo "</li>";
+											    }
+										    	?>
+										    	<li>
+										    		<a class="btn-block" href="#" onclick="Main.logout();">
+										    			<span class="glyphicon glyphicon-log-out"></span>&nbsp; &nbsp; &nbsp; Sair
+										    		</a>
+										    	</li>
+										  	</ul>
+										</div>
 									</li>
 								</ul>
 							</div>
