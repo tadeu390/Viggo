@@ -17,8 +17,10 @@
 		public function valida_login($email, $senha)
 		{
 			$query = $this->db->query("
-				SELECT u.Id, u.Grupo_id, u.Redefinir_senha, u.Contador_tentativa, s.Valor, u.Nome AS Nome_usuario, u.Email 
-				FROM Usuario u INNER JOIN Senha s ON u.Id = s.Usuario_id 
+				SELECT u.Id, u.Grupo_id, u.Redefinir_senha, u.Contador_tentativa, s.Valor, u.Nome AS Nome_usuario, u.Email, u.Ativo, g.Ativo AS g_ativo  
+				FROM Usuario u 
+				INNER JOIN Senha s ON u.Id = s.Usuario_id 
+				INNER JOIN Grupo g ON u.Grupo_id = g.Id 
 				WHERE Email = ".$this->db->escape($email)." AND s.Valor = ".$this->db->escape($senha)." 
 					AND s.Ativo = 1 AND (u.Contador_tentativa < ".LIMITE_TENTATIVA." OR (NOW() - Data_ultima_tentativa) >= ".TEMPO_ESPERA.")");
 			 
@@ -59,7 +61,7 @@
 				$query = $this->db->query("
 					SELECT Id, Grupo_id 
 						FROM Usuario 
-					WHERE Id = ".$this->db->escape($id)." AND
+					WHERE Id = ".$this->db->escape($id)." AND Ativo = 1 AND 
 					Grupo_id = ".$this->db->escape($grupo_id)."");
 
 				if($query->num_rows() > 0)

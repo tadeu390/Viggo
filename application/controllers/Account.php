@@ -14,22 +14,16 @@
 		{
 			parent::__construct();
 			$this->load->model('Logs_model');
-			$this->load->library('email');
 			$this->data['controller'] = strtolower(get_class($this));
+		}
 
-			$config['protocol'] = 'smtp';
-			//$config['smtp_crypto'] = 'tls';
-			//$config['mailpath'] = '/usr/sbin/sendmail';
-			$config['smtp_host'] = '127.0.0.1';
-			$config['mailtype'] = 'html';
-			$config['user'] = 'tadeu_local';
-			$config['pass'] = '123456789';
-			
-			$config['charset'] = 'utf-8';
-			$config['wordwrap'] = TRUE;
+		public function teste_template()
+		{
+			$this->data['codigo'] = 133412;
+			$this->data['Nome_usuario'] = 133412;
+			$this->data['url'] = base_url();
 
-			$this->email->initialize($config);
-
+			$this->load->view('templates/email_primeiro_acesso', $this->data);
 		}
 		/*
 			RESPONSÁVEL POR CARREGAR OS DADOS DE USUARIO PARA QUALQUER USUARIO QUE NÃO FOR ADMINISTRADOR
@@ -56,12 +50,10 @@
 		*/
 		public function login($url_redirect = FALSE)
 		{
-			unset($_SESSION['id_troca_senha']);//deleta a sessao utilizada para o primeiro acesso ou para a redefinição de senha
-			unset($_SESSION['email_troca_senha']);//deleta a sessao utilizada para o primeiro acesso ou para a redefinição de senha
-			unset($_SESSION['nome_troca_senha']);//deleta a sessao utilizada para o primeiro acesso ou para a redefinição de senha
-
 			$this->data['title'] = 'CEP - Login';
 			$this->data['url_redirect'] = $url_redirect;
+			
+			$this->limpa_sessao_troca_senha();
 			
 			$this->load->view('templates/header', $this->data);
 			$this->load->view('account/login', $this->data);
@@ -80,6 +72,15 @@
 			delete_cookie ('id');
 			delete_cookie('url_redirect');
 			delete_cookie ('grupo_id');
+		}
+		/*
+			RESPONSÁVEL ELIMINAR AS SESSÕES UTILIZADAS NA TROCA DE SENHA TANTO NO PRIMEIRO ACESSO QUANTO PARA REDEFINIÇÃO DE SENHA
+		*/
+		public function limpa_sessao_troca_senha()
+		{
+			unset($_SESSION['id_troca_senha']);//deleta a sessao utilizada para o primeiro acesso ou para a redefinição de senha
+			unset($_SESSION['email_troca_senha']);//deleta a sessao utilizada para o primeiro acesso ou para a redefinição de senha
+			unset($_SESSION['nome_troca_senha']);//deleta a sessao utilizada para o primeiro acesso ou para a redefinição de senha
 		}
 		/*
 			QUANDO TROCA A SENHA NO PRIMEIRO ACESSO, O JS REDIRECIONA PRA CÁ, AI REDIRECIONA PARA A TELA DE LOGIN
@@ -106,7 +107,10 @@
 			else if($login['rows'] > 0)
 			{
 				$this->Logs_model->set_log($login['Id']);
-				if($login['Redefinir_senha'] == 0)
+				
+				if($login['Ativo'] == 0 || $login['g_ativo'] == 0)
+					$login = "Conta desativada. Entre em contato com a sua escola para mais detalhes.";
+				else if($login['Redefinir_senha'] != 1)
 				{
 					$this->set_sessao($login, $conectado);
 					$this->Account_model->reset_auxiliar_login($login['Id']);
@@ -194,7 +198,11 @@
 			$this->email->to($Usuario['Email']);
 			//$this->email->cc('another@another-example.com');
 			//$this->email->bcc('them@their-example.com');
-			$mensagem = "Este é o seu primeiro acesso a sua conta. Segue abaixo o seu código de ativação. <br /><br /> Código: <b>".$codigo."</b>";
+			//$mensagem = "Este é o seu primeiro acesso a sua conta. Segue abaixo o seu código de ativação. <br /><br /> Código: <b>".$codigo."</b>";
+			$Usuario['codigo'] = $codigo;
+			$Usuario['url'] =  base_url();
+
+			$mensagem = $this->load->view("templates/email_primeiro_acesso", $Usuario, TRUE);
 			$this->email->subject('Ativação da sua conta');
 			$this->email->message($mensagem);
 

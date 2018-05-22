@@ -26,7 +26,7 @@
 						echo"<tr>";
 							echo"<td class='text-right' colspan='4'>";
 							if(permissao::get_permissao(CREATE, $controller))
-								echo"<a class='btn btn-success' href='".$url."$controller/create/0/'>Novo usuário</a>";
+								echo"<a class='btn btn-success' href='".$url."$controller/create/0/'><span class='glyphicon glyphicon-plus'></span> Novo usuário</a>";
 							echo"</td>";
 						echo"</tr>";
 						echo "<tr>";

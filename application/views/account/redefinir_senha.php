@@ -25,7 +25,4 @@
 			</div>
 		</div>
 	</div>
-	<div class="copyrights text-center">
-		<p> <?php echo date("Y");?>  - Developed By Tadeu R. Torres</p>
-	</div>
 </div>

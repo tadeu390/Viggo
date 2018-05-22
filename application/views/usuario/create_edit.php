@@ -89,16 +89,33 @@
 			?>
 			<div class='form-group'>
 				<br />
-				<div class='checkbox checbox-switch switch-success custom-controls-stacked'>
-					<?php
-						$checked = "";
-						if($obj['Ativo'] == 1)
-							$checked = "checked";
-						
-						echo"<label for='conta_ativa' class='text-white'>";
-							echo "<input type='checkbox' $checked id='conta_ativa' name='conta_ativa' value='1' /><span></span> Conta ativa";
-						echo"</label>";
-					?>
+				<div class="row">
+					<div class="col-lg-2">
+						<div class='checkbox checbox-switch switch-success custom-controls-stacked'>
+							<?php
+								$checked = "";
+								if($obj['Ativo'] == 1)
+									$checked = "checked";
+								
+								echo"<label for='conta_ativa' class='text-white'>";
+									echo "<input type='checkbox' $checked id='conta_ativa' name='conta_ativa' value='1' /><span></span> Conta ativa";
+								echo"</label>";
+							?>
+						</div>
+					</div>
+					<div class="col-lg-4">
+						<div class='checkbox checbox-switch switch-success custom-controls-stacked'>
+							<?php
+								$checked = "";
+								if($obj['Email_notifica_nova_conta'] == 1)
+									$checked = "checked";
+								
+								echo"<label for='email_notifica_nova_conta' class='text-white'>";
+									echo "<input type='checkbox' $checked id='email_notifica_nova_conta' name='email_notifica_nova_conta' value='1' /><span></span> Enviar e-mail de notificação?";
+								echo"</label>";
+							?>
+						</div>
+					</div>
 				</div>
 			</div>
 			<?php

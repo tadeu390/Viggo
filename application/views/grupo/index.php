@@ -20,7 +20,7 @@
 						echo"<tr>";
 							echo"<td class='text-right' colspan='4'>";
 							if(permissao::get_permissao(CREATE,$controller))
-								echo"<a class='btn btn-success' href='".$url."$controller/create/'>Novo grupo</a>";
+								echo"<a class='btn btn-success' href='".$url."$controller/create/'><span class='glyphicon glyphicon-plus'></span> Novo grupo</a>";
 							echo"</td>";
 						echo"</tr>";
 						echo "<tr>";

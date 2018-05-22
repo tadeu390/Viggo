@@ -39,11 +39,29 @@
 			$this->load->helper('html');
 			$this->load->helper('form');
 			$this->load->library('session');
+			$this->load->library('email');
 			$this->load->helper('cookie');
 			$this->data['url'] = base_url();
 			$this->data['paginacao']['url'] = base_url();
 			$this->data['paginacao']['itens_por_pagina'] = ITENS_POR_PAGINA;
 			$this->data['usuario'] = $this->Usuario_model->get_usuario(1, $this->Account_model->session_is_valid()['id'], FALSE)['Nome_usuario'];
+
+			$this->config_email_server();
+		}
+		public function config_email_server()
+		{
+			$config['protocol'] = 'smtp';
+			//$config['smtp_crypto'] = 'tls';
+			//$config['mailpath'] = '/usr/sbin/sendmail';
+			$config['smtp_host'] = '127.0.0.1';
+			$config['mailtype'] = 'html';
+			$config['user'] = 'tadeu_local';
+			$config['pass'] = '123456789';
+			
+			$config['charset'] = 'utf-8';
+			$config['wordwrap'] = TRUE;
+
+			$this->email->initialize($config);
 		}
 		/*
 			RESPONSÁVEL POR CARREGAR OS MENUS E OS MÓDULOS DO SISTEMA

@@ -34,15 +34,12 @@
 							</div>
 							<div class="row text-center">
 								<div class="col-lg-6"><button type="submit" class="btn btn-success col-lg-11">Alterar senha</button><br /><br/></div>
-								<div class="col-lg-6"><a href="javascript:window.history.go(-1)" class="btn btn-danger col-lg-11">Voltar</a></div>
+								<div class="col-lg-6"><a href="<?php echo $url; ?>account/login" class="btn btn-danger col-lg-11">Voltar</a></div>
 							</div>
 						</form>
 					</div>
 				</div>
 			</div>
 		</div>
-	</div>
-	<div class="copyrights text-center">
-		<p> <?php echo date("Y");?>  - Developed By Tadeu R. Torres</p>
 	</div>
 </div>

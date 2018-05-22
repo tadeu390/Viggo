@@ -192,7 +192,8 @@
 				'Ativo' => $this->input->post('conta_ativa'),
 				'Nome' => $this->input->post('nome'),
 				'Email' => $this->input->post('email'),
-				'Grupo_id' => $this->input->post('grupo_id')
+				'Grupo_id' => $this->input->post('grupo_id'),
+				'Email_notifica_nova_conta' => $this->input->post('email_notifica_nova_conta')
 			);
 
 			//BLOQUEIA ACESSO DIRETO AO MÉTODO
@@ -250,6 +251,24 @@
 			}
 			else
 				redirect('usuario/index');
+		}
+		/*
+			RESPONSÁVEL POR ENVIAR E-MAIL PARA O USUÁRIO QUANDO SUA CONTA FOR CRIADA NO SISTEMA
+
+			$Usuario -> dados do usuário
+		*/
+		public function envia_email_nova_conta($Usuario)
+		{
+			$this->email->from($this->Configuracoes_model->get_configuracoes()['Email_redefinicao_de_senha'], 'CEP - Centro de Educação Profissional "Tancredo Neves"');
+			$this->email->to($Usuario['Email']);
+			//$this->email->cc('another@another-example.com');
+			//$this->email->bcc('them@their-example.com');
+			$mensagem = 'Seja bem vindo ao CEP - Centro de Educação Profissional "Tancredo Neves". Segue abaixo as suas credenciais para realizar seu acesso a sua conta através do portal da instituição e ficar por dentro do seu histórico de notas e faltas. <br /><br />E-mail: '.$Usuario['Email'].'<br />Senha: '.$Usuario['Valor'].'<br /><br /><a href="'.$this->data['url'] .'">Clique aqui</a> para acessar o portal.';
+			
+			$this->email->subject('Bem vindo ao CEP');
+			$this->email->message($mensagem);
+
+			$this->email->send();
 		}
 		/*
 			RESPONSÁVEL POR CADASTRAR AS PERMISSÕES DEFAULT DO USUÁRIO

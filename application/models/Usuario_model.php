@@ -43,8 +43,9 @@
 				SELECT u.Id, u.Nome as Nome_usuario, u.Email, u.Ativo, 
 				DATE_FORMAT(u.Data_registro, '%d/%m/%Y') as Data_registro, 
 				g.Nome AS Nome_grupo, u.Redefinir_senha, u.Codigo_ativacao,  
-				u.Grupo_id  
+				u.Grupo_id, u.Email_notifica_nova_conta, s.Valor   
 					FROM Usuario u 
+				INNER JOIN Senha s ON u.Id = s.Usuario_id 
 				LEFT JOIN Grupo g ON u.Grupo_id = g.Id
 				WHERE TRUE ".$Ativos." AND u.Id = ".$this->db->escape($Id)."");
 			return $query->row_array();
