@@ -31,7 +31,7 @@
 				
 				$query = $this->db->query("
 					SELECT (SELECT count(*) FROM  Usuario) AS Size, u.Id, 
-					u.Nome as Nome_usuario, u.Email, u.Ativo, g.Nome AS Nome_grupo, u.Codigo_ativacao, u.Redefinir_senha   
+					u.Nome as Nome_usuario, u.Email, u.Ativo, g.Nome AS Nome_grupo, u.Codigo_ativacao, u.Status   
 					FROM Usuario u 
 					LEFT JOIN Grupo g ON u.Grupo_id = g.Id WHERE TRUE ".$Ativos."
 					ORDER BY u.Data_registro ASC ".$pagination."");
@@ -42,7 +42,7 @@
 			$query =  $this->db->query("
 				SELECT u.Id, u.Nome as Nome_usuario, u.Email, u.Ativo, 
 				DATE_FORMAT(u.Data_registro, '%d/%m/%Y') as Data_registro, 
-				g.Nome AS Nome_grupo, u.Redefinir_senha, u.Codigo_ativacao,  
+				g.Nome AS Nome_grupo, u.Status, u.Codigo_ativacao,  
 				u.Grupo_id, u.Email_notifica_nova_conta, s.Valor   
 					FROM Usuario u 
 				INNER JOIN Senha s ON u.Id = s.Usuario_id 

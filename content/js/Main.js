@@ -191,6 +191,8 @@ var Main = {
 			Main.show_error("email", 'Formato de e-mail inválido', 'is-invalid');
 		else if($("#senha").val() == "")
 			Main.show_error("senha", 'Informe a senha de usuário', 'is-invalid');
+		else if(document.getElementById("senha") != undefined && $("#senha").val().length < 8)
+			Main.show_error("senha", 'A senha deve conter no mínimo 8 caracteres.', 'is-invalid');
 		else
 		{
 			var trava = 0;
@@ -213,7 +215,9 @@ var Main = {
 					Main.show_error("grupo_id", 'Selecione um tipo de usuário', '');
 				else if($("#nova_senha").val() != "")
 				{
-					if($("#confirmar_nova_senha").val() == "")
+					if(document.getElementById("nova_senha") != undefined && $("#nova_senha").val().length < 8)
+						Main.show_error("nova_senha", 'A senha deve conter no mínimo 8 caracteres.', 'is-invalid');
+					else if($("#confirmar_nova_senha").val() == "")
 						Main.show_error("confirmar_nova_senha", 'Repita a nova senha', 'is-invalid');
 					else if($("#nova_senha").val() != $("#confirmar_nova_senha").val())
 						Main.show_error("confirmar_nova_senha", 'Senha especificada é diferente da anterior', 'is-invalid');

@@ -25,6 +25,28 @@
 
 			$this->load->view('templates/email_primeiro_acesso', $this->data);
 		}
+		
+		public function teste_template_r()
+		{
+			$this->data['codigo'] = 133412;
+			$this->data['Nome'] = 'Tadeu';
+			$this->data['url'] = base_url();
+			$this->data['Id'] = 1;
+			
+			$this->load->view('templates/email_redefinir_senha', $this->data);
+		}
+
+		public function teste_template_u()
+		{
+			$this->data['codigo'] = 133412;
+			$this->data['Nome_usuario'] = 'Tadeu';
+			$this->data['Email'] = 'tadeu.390@gmail.com';
+			$this->data['Valor'] = '123@mudar';
+			$this->data['url'] = base_url();
+			$this->data['Id'] = 1;
+			
+			$this->load->view('templates/email_nova_conta', $this->data);
+		}
 		/*
 			RESPONSÁVEL POR CARREGAR OS DADOS DE USUARIO PARA QUALQUER USUARIO QUE NÃO FOR ADMINISTRADOR
 		*/
@@ -110,17 +132,17 @@
 				
 				if($login['Ativo'] == 0 || $login['g_ativo'] == 0)
 					$login = "Conta desativada. Entre em contato com a sua escola para mais detalhes.";
-				else if($login['Redefinir_senha'] != 1)
-				{
-					$this->set_sessao($login, $conectado);
-					$this->Account_model->reset_auxiliar_login($login['Id']);
-					$login = 'valido';
-				}
-				else
+				else if($this->Senha_model->get_senha($login['Id'])['rows'] < 2)
 				{
 					$this->gera_codigo_ativacao($login['Id'], FALSE);
 					$this->set_sessao_troca_senha($login);
 					$login = "primeiro_acesso";//para o js redirecionar
+				}	
+				else
+				{
+					$this->set_sessao($login, $conectado);
+					$this->Account_model->reset_auxiliar_login($login['Id']);
+					$login = 'valido';
 				}
 			}
 			else
@@ -181,7 +203,7 @@
 			$codigo = $this->Account_model->gera_codigo_ativacao($id);
 			$Usuario = $this->Usuario_model->get_usuario(FALSE, $id, FALSE);
 
-			if($Usuario['Redefinir_senha'] == 1 && $this->Account_model->session_is_valid()['status'] != "ok") //só envia email se ainda não foi redefinido a senha e se não houver ninguém já conectado
+			if($Usuario['Status'] == 1 && $this->Account_model->session_is_valid()['status'] != "ok") //só envia email se ainda não foi redefinido a senha e se não houver ninguém já conectado
 				$this->envia_email_primeiro_acesso($Usuario, $codigo);
 			if($redirect != FALSE)
 				redirect("account/primeiro_acesso");
@@ -258,7 +280,7 @@
 				$usuario = $this->Usuario_model->get_usuario(FALSE, $sessao_troca_senha['id_troca_senha'], FALSE);
 				
 				
-				if($usuario['Codigo_ativacao'] != 0 && $usuario['Codigo_ativacao'] == $codigo_ativacao && $usuario['Redefinir_senha'] == 1)
+				if($usuario['Codigo_ativacao'] != 0 && $usuario['Codigo_ativacao'] == $codigo_ativacao)
 				{
 					$data = array(
 						'Usuario_id' => $sessao_troca_senha['id_troca_senha'],
@@ -301,7 +323,7 @@
 		public function redefinir_senha()
 		{
 			if($this->Account_model->session_is_valid()['status'] == "ok")//se alguém já estiver logado, cancela esta operação
-				redirect('admin/dashboard');
+				redirect('academico/dashboard');
 			$this->data['title'] = 'CEP - Alterar senha';
 			$this->load->view('templates/header', $this->data);
 			$this->load->view('account/redefinir_senha', $this->data);
@@ -341,11 +363,16 @@
 		{
 			$this->email->from($this->Configuracoes_model->get_configuracoes()['Email_redefinicao_de_senha'], 'CEP - Centro de Educação Profissional "Tancredo Neves"');
 			$this->email->to($Usuario['Email']);
-			$mensagem = "Você solicitou a alteração da sua senha. Segue abaixo o link para que possa efetuar a ação";
+			//$mensagem = "Você solicitou a alteração da sua senha. Segue abaixo o link para que possa efetuar a ação";
 
-			$mensagem = $mensagem."<br /> <a href='".$this->data['url']."account/alterando_senha/".$Usuario['Id']."/".$codigo."'>
-			".$this->data['url']."account/alterando_senha/".$Usuario['Id']."/".$codigo."</a>";
+			//$mensagem = $mensagem."<br /> <a href='".$this->data['url']."account/alterando_senha/".$Usuario['Id']."/".$codigo."'>
+			//".$this->data['url']."account/alterando_senha/".$Usuario['Id']."/".$codigo."</a>";
 			$this->email->subject('Alteração de senha');
+			
+			$Usuario['url'] =  base_url();
+			$Usuario['codigo'] =  $codigo;
+
+			$mensagem = $this->load->view("templates/email_redefinir_senha", $Usuario, TRUE);
 			
 			$this->email->message($mensagem);
 
@@ -361,7 +388,7 @@
 		{
 			$Usuario = $this->Usuario_model->get_usuario(FALSE, $id, FALSE);
 
-			if($codigo != $Usuario['Codigo_ativacao'] || $Usuario['Redefinir_senha'] != 2 || $this->Account_model->session_is_valid()['status'] == "ok")
+			if($codigo != $Usuario['Codigo_ativacao'] || $Usuario['Status'] != 2 || $this->Account_model->session_is_valid()['status'] == "ok")
 				redirect('account/login');
 
 			$this->set_sessao_troca_senha($Usuario);

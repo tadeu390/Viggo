@@ -1,8 +1,22 @@
 body{
 	font-size: 0.9em !important;
 }
+
+body::-webkit-scrollbar {
+    width: 10px;
+}
+ 
+body::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px darkgrey;  
+}
+
+body::-webkit-scrollbar-thumb {
+  background-color: darkgrey;
+  outline: 1px solid slategrey;
+}
+
 nav::-webkit-scrollbar {
-    width:6px;
+    width: 4px;
 }
  
 nav::-webkit-scrollbar-track {
@@ -34,7 +48,6 @@ nav::-webkit-scrollbar-thumb {
 .padding0{
   padding: 0px;
 }
-
 
 .background_dark
 {
@@ -126,7 +139,6 @@ a.text-info:hover
 .btn-success:focus 
 {
   background-color: #4E9216  !important;
-  border-color: #4E9216 !important;
 }
 
 .btn-danger
@@ -174,4 +186,9 @@ a.logotipo
 .line-height
 {
 	line-height: 30px;
+}
+
+ol.breadcrumb
+{
+	border: 1px solid #336CD2;
 }

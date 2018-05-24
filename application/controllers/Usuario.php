@@ -37,7 +37,7 @@
 			
 			$this->set_page_cookie($page);
 			
-			$this->data['title'] = 'usuários';
+			$this->data['title'] = 'Usuários';
 
 			if($this->Geral_model->get_permissao(READ, get_class($this)) == TRUE)
 			{
@@ -86,7 +86,7 @@
 		*/
 		public function permissoes($id = FALSE)
 		{
-			if($this->Geral_model->get_permissao(UPDATE, get_class($this)) == TRUE)
+			if($this->Account_model->session_is_valid()['grupo_id'] == ADMIN)
 			{
 				$this->data['title'] = 'Permissões do usuário';
 				$this->data['usuario_id'] = $id;
@@ -95,7 +95,7 @@
 				$this->view("usuario/permissoes", $this->data);
 			}
 			else
-				$this->view("templates/permissao", $this->data);
+				redirect("academico/dashboard", $this->data);
 		}
 		/*
 			RESPONSÁVEL POR CAPTAR OS DADOS DE PERMISSÕES PARA TODOS OS MÓDULOS COM RELAÇÃO A UM DETERMINADO USUÁRIO
@@ -203,16 +203,13 @@
 				{
 					if($this->Usuario_model->email_valido($dataToSave['Email'],$dataToSave['Id']) == "invalido")
 						$resultado = "O e-mail informado já está em uso.";
-					else if($this->Account_model->session_is_valid()['grupo_id'] > 1 && 
-						$this->Senha_model->get_senha($dataToSave['Id'])['Senha'] != $dataToSave['Senha'])
-						$resultado = "A senha atual fornecida é inválida";
 					else
 					{
 						//se trocar o usuario de grupo, setar para este as permissões padrões 
 						//do novo grupo atribuído a ele
 						$Usuario = $this->Usuario_model->get_usuario(FALSE, $dataToSave['Id'], FALSE);
 						
-						if($dataToSave['Id'] >= 1)//somente se estiver editando
+						if($dataToSave['Id'] >= 1)//somente se estiver editando, esse trecho é necessário ser executado antes da próxima linha depois do if
 						{
 							if($dataToSave['Grupo_id'] != $Usuario['Grupo_id'])
 								$this->permissoes_default($dataToSave['Id'], $dataToSave['Grupo_id']);
@@ -240,6 +237,14 @@
 							$this->Senha_model->set_senha($data);
 							$this->permissoes_default($Usuario_id, $dataToSave['Grupo_id']);
 						}
+
+						if($dataToSave['Email_notifica_nova_conta'] == 1 && empty($Usuario))
+						{
+							$dataToSave['Nome_usuario'] = $dataToSave['Nome'];
+							$this->envia_email_nova_conta($dataToSave);
+						}
+						else if($dataToSave['Email_notifica_nova_conta'] == 1 && $Usuario['Email_notifica_nova_conta'] == 0)
+							$this->envia_email_nova_conta($Usuario);
 					}
 				}
 				else
@@ -263,8 +268,9 @@
 			$this->email->to($Usuario['Email']);
 			//$this->email->cc('another@another-example.com');
 			//$this->email->bcc('them@their-example.com');
-			$mensagem = 'Seja bem vindo ao CEP - Centro de Educação Profissional "Tancredo Neves". Segue abaixo as suas credenciais para realizar seu acesso a sua conta através do portal da instituição e ficar por dentro do seu histórico de notas e faltas. <br /><br />E-mail: '.$Usuario['Email'].'<br />Senha: '.$Usuario['Valor'].'<br /><br /><a href="'.$this->data['url'] .'">Clique aqui</a> para acessar o portal.';
-			
+			$Usuario['url'] = base_url();
+
+			$mensagem = $this->load->view("templates/email_nova_conta", $Usuario, TRUE);
 			$this->email->subject('Bem vindo ao CEP');
 			$this->email->message($mensagem);
 

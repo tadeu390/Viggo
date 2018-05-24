@@ -53,6 +53,11 @@ $(document).ready(
       else Main.show_error("nova_senha", 'A senha deve conter no mínimo 8 caracteres.', 'is-invalid');
     });
 
+    $('#senha').blur(function() {
+      if (this.value != '' && this.value.length >= 8) Main.show_error("senha", '', 'is-valid');
+      else Main.show_error("senha", 'A senha deve conter no mínimo 8 caracteres.', 'is-invalid');
+    });
+
     $('#confirmar_nova_senha').blur(function() {
       if (this.value != '' && this.value.length >= 8) Main.show_error("confirmar_nova_senha", '', 'is-valid');
     });
@@ -136,11 +141,13 @@ $(document).ready(
 
     $("#form_cadastro_usuario_permissoes").submit(function(event) {
       event.preventDefault();
+      Main.method = "store_permissoes";
       Main.create_edit();
     });
 
     $("#form_cadastro_grupo_permissoes").submit(function(event) {
       event.preventDefault();
+      Main.method = "store_permissoes";
       Main.create_edit();
     });
 

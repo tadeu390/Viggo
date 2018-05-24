@@ -53,7 +53,7 @@
 								//echo "<td $cor>".$usuarios[$i]['email']."</td>";
 								//echo "<td $cor>".$usuarios[$i]['nome_grupo']."</td>";
 								echo "<td class='text-right'>";
-									if(permissao::get_permissao(UPDATE, $controller))
+									if($this->session->grupo_id == 1 || $this->input->cookie('grupo_id') == 1)
 										echo "<a href='".$url."$controller/permissoes/".$usuarios[$i]['Id']."' title='Permissões' style='color:cursor: 	pointer;' class='glyphicon glyphicon-ok-sign text-danger'></a> | ";
 									if(permissao::get_permissao(UPDATE, $controller))
 										echo "<a href='".$url."$controller/edit/".$usuarios[$i]['Id']."' title='Editar' style='cursor: pointer;' class='glyphicon glyphicon-edit text-danger'></a> | ";

@@ -17,7 +17,8 @@
 		public function valida_login($email, $senha)
 		{
 			$query = $this->db->query("
-				SELECT u.Id, u.Grupo_id, u.Redefinir_senha, u.Contador_tentativa, s.Valor, u.Nome AS Nome_usuario, u.Email, u.Ativo, g.Ativo AS g_ativo  
+				SELECT u.Id, u.Grupo_id, u.Status, u.Contador_tentativa, 
+				s.Valor, u.Nome AS Nome_usuario, u.Email, u.Ativo, g.Ativo AS g_ativo, u.Codigo_ativacao  
 				FROM Usuario u 
 				INNER JOIN Senha s ON u.Id = s.Usuario_id 
 				INNER JOIN Grupo g ON u.Grupo_id = g.Id 
@@ -111,7 +112,7 @@
 							SELECT Id FROM Usuario 
 							WHERE Id = ".$this->db->escape($id_troca_senha)." AND 
 							Nome = ".$this->db->escape($nome_troca_senha)." AND 
-							Email = ".$this->db->escape($email_troca_senha)." AND (Redefinir_senha = 1 OR Redefinir_senha = 2)");
+							Email = ".$this->db->escape($email_troca_senha)." AND (Status = 1 OR Status = 2)");
 						
 						if($query->num_rows() > 0)
 						{
@@ -137,7 +138,7 @@
 			$codigo = rand(100000,999999);
 			$this->db->query("
 				UPDATE Usuario SET Codigo_ativacao = ".$this->db->escape($codigo).", Contador_tentativa = 0 
-				WHERE Id = ".$this->db->escape($id)."AND Redefinir_senha = 1");
+				WHERE Id = ".$this->db->escape($id)."");
 			return $codigo;
 		}
 		/*
@@ -149,7 +150,7 @@
 		public function reset_auxiliar_login($id)
 		{
 			$this->db->query("
-				UPDATE Usuario SET Redefinir_senha = 0, Codigo_ativacao = 0, Contador_tentativa = 0,Data_ultima_tentativa = '0000-00-00'  
+				UPDATE Usuario SET Status = 0, Codigo_ativacao = 0, Contador_tentativa = 0,Data_ultima_tentativa = '0000-00-00'  
 				WHERE Id = ".$this->db->escape($id)."");
 		}
 		/*
@@ -177,7 +178,7 @@
 		{
 			$codigo = rand(100000,999999);
 			$this->db->query("
-				UPDATE Usuario SET Codigo_ativacao = ".$this->db->escape($codigo).", Contador_tentativa = 0, Redefinir_senha = 2 
+				UPDATE Usuario SET Codigo_ativacao = ".$this->db->escape($codigo).", Contador_tentativa = 0, Status = 2 
 				WHERE Id = ".$this->db->escape($id)."");
 			return $codigo;
 		}

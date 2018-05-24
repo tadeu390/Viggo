@@ -50,38 +50,25 @@
 				<div style="background-color: white; width: 90%; margin-left: 5%; border: 2px solid #336CD2; border-bottom: none;">
 					<div style="display: -webkit-box; display: -ms-flexbox; display: flex; -ms-flex-wrap: wrap; flex-wrap: wrap; margin-right: -15px; margin-left: -15px;">
 						<div style="width: 60%">
-							<div style="padding: 20px;line-height: 20px; font-size: 20px; color: black;">
-								
+							<div style="padding: 20px;line-height: 20px; font-size: 20px; color: black;">	<br />
 								<table>
 									<tr>
-										<td>
+										<td style="vertical-align: top;">
 											<img style="width: 30px;" src="<?php echo $url;?>content/imagens/info.png">
 										</td>
-										<td style="padding-left: 10px;"><br />
-											<?php echo $Nome_usuario; ?>, seja bem vindo ao CEP. Siga os passos abaixo para realizar o seu primeiro acesso.
+										<td style="padding-left: 10px; color: black;">
+											<?php echo $Nome; ?>, você solicitou por meio do portal do CEP a alteração da sua senha.
+											<br /><br /><br />
+											Segue o link abaixo para prosseguir com a alteração da sua senha.<br/><br />
+											<?php echo"<a href='".$url."account/alterando_senha/".$Id."/".$codigo."'>".$url."account/alterando_senha/".$Id."/".$codigo."</a>"; ?>
 										</td>
 									</tr>
 								</table>
 							</div>
-							 <div style="padding: 20px;line-height: 20px;">
-								<br />
-								<h3 style="color: black;">1º Passo</h3>
-								<h4 style="color: black;">Copie o código fornecido nesse e-mail</h4>
-							</div>
-							<div style="padding: 20px;line-height: 20px;">
-								<br />
-								<h3 style="color: black;">2º Passo</h3>
-								<h4 style="color: black;">Cole o código na área definida</h4>
-							</div>
-							<div style="padding: 20px;line-height: 20px;">
-								<br />
-								<h3 style="color: black;">3º Passo</h3>
-								<h4 style="color: black;">Crie sua senha de acesso</h4>
-							</div>
 						</div>
 						<div style="width: 35%; text-align: center;">
 							<div style="height: 100%; width: 100%">
-								<br /><br /><br />
+								<br />
 								<table style="width: 100%">
 									<tr>
 										<td>
@@ -95,23 +82,11 @@
 									</tr>
 									<tr>
 										<td>
-											Seu código  de acesso é<br /><br />
-										</td>
-									</tr>
-									<tr>
-										<td>
-											<div style="padding: 20px;line-height: 20px;">
-												<span style="padding: 20px; padding-right: 40px; padding-left: 40px; font-size: 20px; color: #336CD2; border: 3px solid #336CD2;"><?php echo $codigo; ?></span>
-											</div>
-										</td>
-									</tr>
-									<tr>
-										<td>
-										<br />
 											<h4 style="line-height: 30px; color: #DD3068; text-align: left;">
-												Não compartilhe o conteúdo deste e-mail com ninguém, pois <br />
-											este pode fazer com que usuários não autorizados tenham acesso<br />
-											as suas informações.</h4>
+												Não compartilhe o conteúdo deste e-mail com ninguém, pois
+												este pode fazer com que usuários não autorizados tenham acesso
+												as suas informações.</h4>
+											<br /><br />
 										</td>
 									</tr>
 								</table>

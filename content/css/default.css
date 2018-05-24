@@ -98,11 +98,14 @@ table {
   top: 0;
   right: 0;
   -webkit-transition: width 0.3s linear;
+  
   transition: width 0.3s linear;
   width: calc(100% - 200px);
   background-color: #F4F7FA;
   min-height: 100vh;
   padding-bottom: 50px;
+  background: url('../imagens/fundo.jpg');
+  background-position: right;
 }
 
 .page.active {

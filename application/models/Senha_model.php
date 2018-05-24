@@ -15,14 +15,20 @@
 		 	SE NÃO FOR PASSADO ARGUMENTO NA CHAMADA DO MÉTODO
 
 		 	$Usuario_id -> id de um usuário
+		 	$All -> especifica se é pra voltar todas as senha de um determinado usuario ou simplesmente a última senha ativa
 		 */
-		public function get_senha($Usuario_id = FALSE)
+		public function get_senha($Usuario_id = FALSE, $All = FALSE)
 		{
-			if($Usuario_id === FALSE)
+			if($All === FALSE)
 			{
-				$query = $this->db->query("SELECT * FROM Senha");
-				return $query->result_array();
+				$query = $this->db->query("SELECT * FROM Senha WHERE Usuario_id = ".$this->db->escape($Usuario_id)."");
+				
+				$data = $query->result_array();
+				$data['rows'] = $query->num_rows();
+				
+				return $data;
 			}
+			
 			$query = $this->db->query("
 				SELECT * FROM Senha 
 				WHERE Usuario_id = ".$this->db->escape($Usuario_id)." AND Ativo = 1");

@@ -18,7 +18,7 @@
 		<br /><br />
 		
 		<div class="row padding10">
-			<div class="nav flex-column nav-pills col-lg-2" id="v-pills-tab" style="border-right: 1px solid white" role="tablist" aria-orientation="vertical">
+			<div class="nav flex-column nav-pills" id="v-pills-tab" style="border-right: 1px solid white" role="tablist" aria-orientation="vertical">
 				<a class="nav-link active text-white" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-home" role="tab" aria-controls="v-pills-home" aria-selected="true">
 					<span class="glyphicon glyphicon-cog"></span> Geral
 				</a>
@@ -26,12 +26,12 @@
 					<span class="glyphicon glyphicon-envelope"></span> Contas de e-mail
 				</a>
 				<?php 
-			    		echo"<a class='nav-link text-white' href='".$url."usuario/edit'>";
-			    			echo"<span class='glyphicon glyphicon-user'></span>&nbsp; Meus dados";
-			    		echo"</a>";
+					echo"<a class='nav-link text-white' href='".$url."usuario/edit'>";
+						echo"<span class='glyphicon glyphicon-user'></span>&nbsp; Meus dados";
+					echo"</a>";
 				?>
 			</div>
-			<div class="tab-content col-lg-10" style="padding-left: 20px" id="v-pills-tabContent">
+			<div class="tab-content col-lg-8" style="padding-left: 20px" id="v-pills-tabContent">
 				<div class="tab-pane fade show active" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab">
 					<?php $atr = array("id" => "form_cadastro_".$controller."_geral", "name" => "form_cadastro_".$controller."_geral"); 
 						echo form_open("$controller/store", $atr); 

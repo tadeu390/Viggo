@@ -34,15 +34,15 @@
 				<label for="email" class="label-material">E-mail</label>
 				<div class='input-group mb-2 mb-sm-0 text-danger' id='error-email'></div>
 			</div>
-
-			<div class="form-group relative">
-				<input id="senha" name="senha" value='<?php echo (!empty($obj['Senha']) ? $obj['Senha']:''); ?>' type="password" class="input-material">
-				<label for="senha" class="label-material">Senha</label>
-				<div class='input-group mb-2 mb-sm-0 text-danger' id='error-senha'></div>
-			</div>
 			<?php 
 				if(empty($obj['Id']))
 				{
+					echo "<div class='form-group relative'>";
+						echo "<input id='senha' name='senha' value='".(!empty($obj['Senha']) ? $obj['Senha']:'')."' type='password' class='input-material'>";
+						echo "<label for='senha' class='label-material'>Senha</label>";
+						echo "<div class='input-group mb-2 mb-sm-0 text-danger' id='error-senha'></div>";
+					echo "</div>";
+			
 					echo"<div class='form-group relative'>";
 						echo"<input id='confirmar_senha' name='confirmar_senha' value='".(!empty($obj['Senha']) ? $obj['Senha']:'')."' type='password' class='input-material'>";
 						echo"<label for='confirmar_senha' class='label-material'>Confirmar senha</label>";
@@ -90,7 +90,7 @@
 			<div class='form-group'>
 				<br />
 				<div class="row">
-					<div class="col-lg-2">
+					<div class="col-lg-4">
 						<div class='checkbox checbox-switch switch-success custom-controls-stacked'>
 							<?php
 								$checked = "";
@@ -103,18 +103,21 @@
 							?>
 						</div>
 					</div>
-					<div class="col-lg-4">
-						<div class='checkbox checbox-switch switch-success custom-controls-stacked'>
-							<?php
-								$checked = "";
-								if($obj['Email_notifica_nova_conta'] == 1)
-									$checked = "checked";
-								
-								echo"<label for='email_notifica_nova_conta' class='text-white'>";
-									echo "<input type='checkbox' $checked id='email_notifica_nova_conta' name='email_notifica_nova_conta' value='1' /><span></span> Enviar e-mail de notificação?";
-								echo"</label>";
-							?>
-						</div>
+					<div class="col-lg-8 text-white">
+						
+						<?php
+							if($obj['Email_notifica_nova_conta'] == 0)
+							{
+								echo"<div class='checkbox checbox-switch switch-success custom-controls-stacked'>";
+									echo"<label for='email_notifica_nova_conta' class='text-white'>";
+										echo "<input type='checkbox' id='email_notifica_nova_conta' name='email_notifica_nova_conta' value='1' /><span></span> Enviar e-mail de notificação";
+									echo"</label>";
+								echo "</div>";
+							}
+							else
+								echo "<span class='glyphicon glyphicon-ok-sign'></span> O E-mail de notificação já foi enviado para este usuário.";
+						?>
+						
 					</div>
 				</div>
 			</div>
