@@ -2,7 +2,7 @@
 <html lang="pt-br">
 	<head>
 		<meta charset="utf-8">
-
+		<?php echo"<link rel='shortcut icon' href='".$url."content/imagens/favicon.ico'>"; ?>
 		<style>
 			.fundo{
 				background-image: url("<?php echo $url; ?>content/imagens/luz.png");
@@ -47,7 +47,7 @@
 			</div>
 
 			<div >
-				<div style="background-color: white; width: 90%; margin-left: 5%; border: 2px solid #336CD2; border-bottom: none;">
+				<div style="background-color: white; width: 90%; margin-left: 5%;">
 					<div style="display: -webkit-box; display: -ms-flexbox; display: flex; -ms-flex-wrap: wrap; flex-wrap: wrap; margin-right: -15px; margin-left: -15px;">
 						<div style="width: 60%">
 							<div style="padding: 20px;line-height: 20px; font-size: 20px; color: black;">	<br />

@@ -21,6 +21,7 @@
 				redirect("academico/dashboard");
 			
 			$this->load->model('Configuracoes_model');
+			
 			$this->set_menu();
 			$this->data['controller'] = strtolower(get_class($this));
 			$this->data['menu_selectd'] = $this->Geral_model->get_identificador_menu(strtolower(get_class($this)));
@@ -34,6 +35,7 @@
 			{
 				$this->data['title'] = 'Configurações gerais';
 				$this->data['obj'] = $this->Configuracoes_model->get_configuracoes();
+				$this->data['obj_email'] = $this->Configuracoes_email_model->get_configuracoes_email();
 				$this->view("configuracoes/geral",$this->data);
 			}
 			else
@@ -77,12 +79,17 @@
 			{
 				$dataToSave = array(
 					'Id' => $this->input->post('id'),
-					'Email_redefinicao_de_senha' => $this->input->post('email')
-					
+					'Email' => $this->input->post('email'),
+					'Descricao' => $this->input->post('descricao'),
+					'Usuario' => $this->input->post('usuario'),
+					'Senha' => $this->input->post('senha'),
+					'Protocolo' => $this->input->post('protocolo'),
+					'Host' => $this->input->post('host'),
+					'Porta' => $this->input->post('porta')
 				);
 				//bloquear acesso direto ao metodo store
 				if(!empty($dataToSave['Id']))
-						$this->Configuracoes_model->set_configuracoes($dataToSave);
+						$this->Configuracoes_email_model->set_configuracoes_email($dataToSave);
 				 else
 					redirect('academico/dashboard');
 			}

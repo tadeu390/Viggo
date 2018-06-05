@@ -9,24 +9,29 @@
 		<?= link_tag('content/css/glyphicons.css') ?>
 		<?= link_tag('content/css/site.css') ?>
 		<?= link_tag('content/css/default.css') ?>
+		<?= link_tag('content/css/bootstrap-datepicker.min.css') ?>
+		<?= link_tag('content/css/bootstrap-datepicker3.min.css') ?>
 		<style>
 			.form-control, .form-control:focus, .form-control:hover {
 			border: none;
 				border-radius: 0px;
 				border-bottom: 1px solid #444951;
 				background-color: rgba(255,255,255,0);
-				outline: none;
+				outline: 0 none !important;
 				color: #8a8d93;
 			}
-			.form-control:focus{
-				border-bottom: 1px solid #dc3545;
-				outline: none;
+			.form-control:focus {
+			  border-color: none;
+			    box-shadow: none;
+			    -webkit-box-shadow: none;
+			    outline: -webkit-focus-ring-color auto 5px;
 			}
 		</style>
 		<script type="text/javascript">
 			window.onload = function()
 			{
-		       	if($("#id").val() != 0 && $("#id").val() != '')
+				//normalmente é a id de todo registro que vai pra tela(id de usuario, id de grupo, etc)
+		       	if($("#id").val() != 0 && $("#id").val() != '' && $("#id").val() != undefined)
 		    		$(".input-material").siblings('.label-material').addClass('active');
 			}
 		</script>
@@ -41,7 +46,7 @@
 						<h3 class='line-height' title='CEP - Centro de Educação Profissional "Tancredo Neves"'>ACADÊMICO</h3>
 
 					</div>
-					<div style="margin-top: 15px;" class="sidenav-header-logo"><a href="#" class="brand-small text-center">
+					<div style="margin-top: 15px;" class="sidenav-header-logo"><a href="<?php echo $url; ?>academico/dashboard" class="brand-small text-center">
 						<strong title='CEP - Centro de Educação Profissional "Tancredo Neves"'>CEP</strong></a>
 					</div>
 				</div>
@@ -141,11 +146,25 @@
 					<nav class="navbar">
 						<div class="container-fluid">
 							<div class="navbar-holder d-flex align-items-center justify-content-between">
-								<div class="navbar-header"><a id="toggle-btn" href="#" class="menu-btn">
-									<span class="glyphicon glyphicon-align-justify" style='line-height: 40px; transform: scale(2.5);'> </span></a>
+								<div class="navbar-header">
+									<a id="toggle-btn" href="#" class="menu-bt">
+										<span class="glyphicon glyphicon-align-justify menu-color" style="transform: scale(3);" > </span>
+									</a>
 								</div>
 								<ul class="nav-menu list-unstyled d-flex flex-md-row align-items-md-center">
-								
+									<li class="nav-item" style="padding-right: 10px;">
+										<div class="dropdown">
+											<?php
+												if($this->input->cookie('grupo_id') != 2 || $this->session->grupo_id != 2) //não pode ser aluno
+												{
+													$atr = array("id" => "form_filtros", "name" => "form_filtros", "method" => "get", "style" => "margin-bottom: 0em;"); 
+													echo form_open("usuario/index", $atr);
+														echo"<input autofocus id='nome_pesquisa_rapida' value='".((!empty($filtros['outros']['nome'])) ? $filtros['outros']['nome'] : '')."' placeholder='Pesquisar aluno' name='nome_pesquisa_rapida' type='text' class='form-control relative'  style='top:1px; background-color: white;'>";
+													echo"</form>";
+												}
+											?>
+										</div>
+									</li>
 									<li class="nav-item">
 										<div class="dropdown">
 										  	<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><?php echo $usuario; ?>

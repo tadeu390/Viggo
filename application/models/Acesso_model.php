@@ -51,7 +51,7 @@
 
 			$query = $this->db->query("
 				SELECT * FROM Modulo_acesso_view m 
-				WHERE m.Usuario_id = ".$CI->Account_model->session_is_valid()['id']." ORDER BY m.Ordem");
+				WHERE m.Usuario_id = ".$CI->Account_model->session_is_valid()['id']." ORDER BY m.Ordem_modulo");
 
 			return $query->result_array();
 		}

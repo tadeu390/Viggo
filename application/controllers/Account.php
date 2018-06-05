@@ -216,7 +216,7 @@
 		*/
 		public function envia_email_primeiro_acesso($Usuario, $codigo)
 		{
-			$this->email->from($this->Configuracoes_model->get_configuracoes()['Email_redefinicao_de_senha'], 'CEP - Centro de Educação Profissional "Tancredo Neves"');
+			$this->email->from($this->Configuracoes_email_model->get_configuracoes_email()['Email'], 'CEP - Centro de Educação Profissional "Tancredo Neves"');
 			$this->email->to($Usuario['Email']);
 			//$this->email->cc('another@another-example.com');
 			//$this->email->bcc('them@their-example.com');
@@ -361,7 +361,7 @@
 		*/
 		public function envia_email_redefinir_senha($Usuario, $codigo)
 		{
-			$this->email->from($this->Configuracoes_model->get_configuracoes()['Email_redefinicao_de_senha'], 'CEP - Centro de Educação Profissional "Tancredo Neves"');
+			$this->email->from($this->Configuracoes_email_model->get_configuracoes_email()['Email'], 'CEP - Centro de Educação Profissional "Tancredo Neves"');
 			$this->email->to($Usuario['Email']);
 			//$mensagem = "Você solicitou a alteração da sua senha. Segue abaixo o link para que possa efetuar a ação";
 

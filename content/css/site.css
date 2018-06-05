@@ -1,3 +1,10 @@
+select:hover,
+select:focus,
+select:active,
+select:focus {
+  color: red;
+  transition:0s;
+}}
 body{
 	font-size: 0.9em !important;
 }
@@ -26,6 +33,16 @@ nav::-webkit-scrollbar-track {
 nav::-webkit-scrollbar-thumb {
   background-color: darkgrey;
   outline: 1px solid slategrey;
+}
+
+.menu-color{
+	
+	transition: 0.5s;
+}
+
+.menu-color:hover{
+	color: darkgrey;
+	transition: 0.5s;
 }
 
 .padding{

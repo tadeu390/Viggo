@@ -104,8 +104,9 @@ table {
   background-color: #F4F7FA;
   min-height: 100vh;
   padding-bottom: 50px;
-  background: url('../imagens/fundo.jpg');
+  background: url('../imagens/fundo.jpg') fixed;
   background-position: right;
+
 }
 
 .page.active {

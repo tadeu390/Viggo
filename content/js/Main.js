@@ -1,5 +1,6 @@
 var Main = {
-	base_url : "http://"+window.location.host+"/git/TCC/",
+	base_url : ((window.location.href.split("/")[2] == "localhost") ? "http://"+window.location.host+"/git/TCC/" : "http://"+window.location.host+"/"),
+	//base_url : "http://"+window.location.host+"/git/TCC/",//localhost (pra qualquer dispositivo na rede local)
 	load_mask : function(){
 		$(document).ready(function(){
 			$('[data-toggle="popover"]').popover(),
@@ -8,7 +9,18 @@ var Main = {
 			$('#cpf').mask('000.000.000-00'),
 			$('#codigo_ativacao').mask('999999'),
 			$('#itens_por_pagina').mask('000'),
-			$('[data-toggle="tooltip"]').tooltip()   
+			$('#porta').mask('0000'),
+			$('#data_nascimento').mask('00/00/0000'),
+			$('[data-toggle="tooltip"]').tooltip(),
+			$('#data1 input').datepicker({
+		    	language: "pt-BR",
+		    	 clearBtn: true,
+		    	todayHighlight: true//,
+		    	//autoclose: true
+			}),
+			$('#clearDates').on('click', function(){
+			     
+			})   
 		});
 	},
 	get_cookie : function(cname) {
@@ -183,10 +195,17 @@ var Main = {
 		});
 	},
 	usuario_validar : function(){
-		if($("#nome").val() == "")
+		if($("#grupo_id").val() == "0")
+			Main.show_error("grupo_id", 'Selecione um tipo de usuário', '');
+		else if($("#nome").val() == "")
 			Main.show_error("nome", 'Informe o nome de usuário', 'is-invalid');
 		else if($("#email").val() == "")
 			Main.show_error("email", 'Informe o e-mail de usuário', 'is-invalid');
+		else if($("#data_nascimento").val() == "")
+			Main.show_error("data_nascimento", 'Informe a data de nascimento do usuário', 'is-invalid');
+
+		else if($("#form_cadastro_"+$("#controller").val()).find("input[name='sexo']:checked").length == 0)
+			Main.show_error("sexo","Selecione o sexo do usuário","");
 		else if(Main.valida_email($("#email").val()) == false)
 			Main.show_error("email", 'Formato de e-mail inválido', 'is-invalid');
 		else if($("#senha").val() == "")
@@ -211,9 +230,8 @@ var Main = {
 			}
 			if(trava == 0)
 			{
-				if($("#grupo_id").val() == "0")
-					Main.show_error("grupo_id", 'Selecione um tipo de usuário', '');
-				else if($("#nova_senha").val() != "")
+				
+				if($("#nova_senha").val() != "")
 				{
 					if(document.getElementById("nova_senha") != undefined && $("#nova_senha").val().length < 8)
 						Main.show_error("nova_senha", 'A senha deve conter no mínimo 8 caracteres.', 'is-invalid');
@@ -222,13 +240,21 @@ var Main = {
 					else if($("#nova_senha").val() != $("#confirmar_nova_senha").val())
 						Main.show_error("confirmar_nova_senha", 'Senha especificada é diferente da anterior', 'is-invalid');
 					else
-						Main.create_edit();
+						return true;
 				}
 				else
-					Main.create_edit();
+					return true;
 			}
 		}
 	},
+	aluno_validar : function()
+	{
+		if($("#matricula").val() == "")
+			Main.show_error("matricula", 'Informe a matricula', 'is-invalid');	
+		else
+			return true;
+	}
+	,
 	menu_validar : function()
 	{
 		if($("#nome").val() == "")
@@ -359,5 +385,21 @@ var Main = {
 			Main.show_error("email", 'Formato de e-mail inválido', 'is-invalid');
 		else
 			Main.create_edit();
+	},
+	altera_tipo_cadastro_usuario : function(tipo,registro,method)
+	{
+		if(tipo != 0)
+		{
+			$("#mensagem_aguardar").html("Aguarde um momento");
+			$('#modal_aguardar').modal({
+					keyboard: false,
+					backdrop : 'static'
+				});
+
+			if(tipo == 1 || tipo == 3 || tipo == 4)//admin||secretaria||professor
+				window.location.assign(Main.base_url+"usuario/"+method+"/"+registro+"/"+tipo);
+			else if(tipo == 2)//aluno
+				window.location.assign(Main.base_url+"aluno/"+method+"/"+registro+"/"+tipo);
+		}
 	}
 };

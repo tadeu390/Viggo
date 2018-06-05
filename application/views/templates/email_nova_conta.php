@@ -2,7 +2,7 @@
 <html lang="pt-br">
 	<head>
 		<meta charset="utf-8">
-
+		<?php echo"<link rel='shortcut icon' href='".$url."content/imagens/favicon.ico'>"; ?>
 		<style>
 			.fundo{
 				background-image: url("<?php echo $url; ?>content/imagens/luz.png");
@@ -47,7 +47,7 @@
 			</div>
 
 			<div >
-				<div style="background-color: white; width: 90%; margin-left: 5%; border: 2px solid #336CD2; border-bottom: none;">
+				<div style="background-color: white; width: 90%; margin-left: 5%;">
 					<div style="display: -webkit-box; display: -ms-flexbox; display: flex; -ms-flex-wrap: wrap; flex-wrap: wrap; margin-right: -15px; margin-left: -15px;">
 						<div style="width: 60%">
 							<div style="padding: 20px;line-height: 20px; font-size: 20px; color: black;">	<br />
@@ -57,7 +57,7 @@
 											<img style="width: 30px;" src="<?php echo $url;?>content/imagens/info.png">
 										</td>
 										<td style="padding-left: 10px; color: black; line-height: 25px;">
-											<?php echo"Olá ".$Nome_usuario.", seja bem vindo ao CEP - Centro de Educação Profissional \"Tancredo Neves\". Segue abaixo as suas credenciais para realizar seu acesso a sua conta através do portal da instituição e ficar por dentro do seu histórico escolar. <br /><br />E-mail: <b>".$Email."</b><br />Senha: <b>Utilize a senha que a escola lhe forneceu</b>. Esqueceu sua senha? <a  style='color: #336CD2;' href='".$url."account/redefinir_senha'>Clique aqui</a><br /><br /> Para acessar o portal <a style='color: #336CD2;' href='".$url ."'>Clique aqui</a>";?>
+											<?php echo"Olá ".$Nome_usuario.", seja bem vindo ao CEP - Centro de Educação Profissional \"Tancredo Neves\". Segue abaixo as suas credenciais para realizar seu acesso a sua conta através do portal da instituição e ficar por dentro do seu histórico escolar. <br /><br />E-mail: <b>".$Email."</b><br />Senha: <b>Utilize a senha que a escola lhe forneceu</b>. Esqueceu sua senha? <a  style='color: #336CD2;' href='".$url."account/redefinir_senha'>Clique aqui</a><br /><br /> Para entrar no portal e acessar a sua conta <a style='color: #336CD2;' href='".$url ."'>Clique aqui</a>";?>
 										</td>
 									</tr>
 								</table>

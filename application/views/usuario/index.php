@@ -11,18 +11,20 @@
     			echo "</ol>";
 			echo"</nav>";
 		echo "</div>";
+		 
+		$atr = array("id" => "form_filtros", "name" => "form_filtros","class" => "col-lg-10 offset-lg-1 padding20 background_dark", "method" => "get"); 
+		echo form_open("$controller/index", $atr);
+
+		$this->load->view("usuario/_filtro", $filtros);
+				
+		echo "</form>";
     ?>
 	<input type='hidden' id='controller' value='<?php echo $controller; ?>'/>
 	<?php
-		echo "<div class='col-lg-10 offset-lg-1 padding background_dark'>";
+		echo "<div class='col-lg-10 offset-lg-1 padding background_dark' style='margin-top: 10px;'>";
 			echo "<div class='table-responsive'>";
 				echo "<table class='table table-striped table-hover text-white'>";
 					echo "<thead>";
-						echo"<tr>";
-							echo"<td class='text-center' colspan='4'>";
-								//echo""; FILTROS AQUI
-							echo"</td>";
-						echo"</tr>";
 						echo"<tr>";
 							echo"<td class='text-right' colspan='4'>";
 							if(permissao::get_permissao(CREATE, $controller))
@@ -53,13 +55,13 @@
 								//echo "<td $cor>".$usuarios[$i]['email']."</td>";
 								//echo "<td $cor>".$usuarios[$i]['nome_grupo']."</td>";
 								echo "<td class='text-right'>";
+									if(permissao::get_permissao(UPDATE, $controller))
+										echo "<a href='".$url.$usuarios[$i]['Method']."/edit/".$usuarios[$i]['Id']."' title='Editar' style='cursor: pointer;' class='glyphicon glyphicon-edit text-danger'></a> | ";
+									echo "<a href='".$url.$usuarios[$i]['Method']."/detalhes/".$usuarios[$i]['Id']."' title='Detalhes' style='cursor: pointer;' class='glyphicon glyphicon-th text-danger'></a> | ";
 									if($this->session->grupo_id == 1 || $this->input->cookie('grupo_id') == 1)
 										echo "<a href='".$url."$controller/permissoes/".$usuarios[$i]['Id']."' title='Permissões' style='color:cursor: 	pointer;' class='glyphicon glyphicon-ok-sign text-danger'></a> | ";
-									if(permissao::get_permissao(UPDATE, $controller))
-										echo "<a href='".$url."$controller/edit/".$usuarios[$i]['Id']."' title='Editar' style='cursor: pointer;' class='glyphicon glyphicon-edit text-danger'></a> | ";
-									echo "<a href='".$url."$controller/detalhes/".$usuarios[$i]['Id']."' title='Detalhes' style='cursor: pointer;' class='glyphicon glyphicon-th text-danger'></a>";
 									if(permissao::get_permissao(DELETE, $controller))
-										echo " | <span onclick='Main.confirm_delete(". $usuarios[$i]['Id'] .");' id='sp_lead_trash' name='sp_lead_trash' title='Apagar' style='cursor: pointer;' class='glyphicon glyphicon-trash text-danger'></span>";
+										echo " <span onclick='Main.confirm_delete(". $usuarios[$i]['Id'] .");' id='sp_lead_trash' name='sp_lead_trash' title='Apagar' style='cursor: pointer;' class='glyphicon glyphicon-trash text-danger'></span>";
 								echo "</td>";
 							echo "</tr>";
 						}

@@ -136,7 +136,14 @@ $(document).ready(
 
     $("#form_cadastro_usuario").submit(function(event) {
       event.preventDefault();
-      Main.usuario_validar();
+      if(Main.usuario_validar() == true)
+        Main.create_edit();
+    });
+
+    $("#form_cadastro_Aluno").submit(function(event) {
+      event.preventDefault();
+      if(Main.usuario_validar() == true && Main.aluno_validar() == true)
+        Main.create_edit();
     });
 
     $("#form_cadastro_usuario_permissoes").submit(function(event) {

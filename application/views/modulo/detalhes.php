@@ -17,13 +17,6 @@
 			echo"</a>";
 			echo "<div class='table-responsive'>";
 				echo "<table class='table table-striped table-hover' style='color: white;'>";
-					echo"<tr>";
-						echo "<td colspan='2'>";
-							echo"<p  class='text-center' style='margin-top: 10px; color: white;'>";
-								echo"Detalhes do módulo selecionado";
-							echo"</p>";
-						echo"</td>";
-					echo"</tr>";
 					echo"</tr>";
 					echo "<tr>";
 						echo "<td>Nome</td>";

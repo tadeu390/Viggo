@@ -25,26 +25,90 @@
 			$this->data['controller'] = strtolower(get_class($this));
 			$this->data['menu_selectd'] = $this->Geral_model->get_identificador_menu(strtolower(get_class($this)));
 		}
+
+		public function filtro_for_pagination($dataToFilter)
+		{
+			$filter = "";
+			
+			if($dataToFilter['grupo_id'] != 0) $filter = $filter."/".$dataToFilter['grupo_id'];
+			else $filter = "/0";
+			if(!empty($dataToFilter['data_registro_inicio'])) 
+				$filter = $filter."/".$this->convert_date($dataToFilter['data_registro_inicio'], "en");//data tem barra 
+			else $filter = $filter."/0";
+			if(!empty($dataToFilter['data_registro_fim'])) 
+				$filter = $filter."/".$this->convert_date($dataToFilter['data_registro_fim'], "en");//data tem barra 
+			else $filter = $filter."/0";
+			if(!empty($dataToFilter['nome'])) $filter = $filter."/".$dataToFilter['nome'];
+			else $filter = $filter."/0";
+			if(!empty($dataToFilter['email'])) $filter = $filter."/".$dataToFilter['email'];
+			else $filter = $filter."/0";
+			if($dataToFilter['ativo'] != 0) $filter = $filter."/".$dataToFilter['ativo'];
+			else $filter = $filter."/0";
+			if(!empty($dataToFilter['data_nascimento_inicio'])) 
+				$filter = $filter."/".$this->convert_date($dataToFilter['data_nascimento_inicio'], "en");//data tem barra 
+			else $filter = $filter."/0";
+			if(!empty($dataToFilter['data_nascimento_fim'])) 
+				$filter = $filter."/".$this->convert_date($dataToFilter['data_nascimento_fim'], "en");//data tem barra 
+			else $filter = $filter."/0";
+
+			return $filter;
+		}
+
 		/*
 			RESPONSÁVEL POR CARREGAR A LISTA DE USUÁRIOS
 
 			$page -> número da página atual registros
 		*/
-		public function index($page = FALSE)
+		public function index($page = FALSE, $tipo_usuario = FALSE, $data_registro_inicio = FALSE, $data_registro_fim = FALSE,
+								$nome = FALSE, $email = FALSE, $ativo =FALSE, $data_nascimento_inicio = FALSE, $data_nascimento_fim = FALSE)
 		{
 			if($page === FALSE)//QUANDO A PÁGINA NÃO É ESPECIFICADA, POR DEFAULT CARREGA A PRIMEIRA PÁGINA
 				$page = 1;
-			
+
 			$this->set_page_cookie($page);
 			
 			$this->data['title'] = 'Usuários';
+			$dataToFilter = "";
+			if(!empty($this->input->get()))
+			{
+				$dataToFilter = array(
+					'grupo_id' => $this->input->get('grupo_id'),
+					'data_registro_inicio' => $this->input->get('data_registro_inicio'),
+					'data_registro_fim' => $this->input->get('data_registro_fim'),
+					'nome' => (!empty($this->input->get('nome')) ? $this->input->get('nome') : $this->input->get('nome_pesquisa_rapida')),
+					'email' => $this->input->get('email'),
+					'ativo' => $this->input->get('ativo'),
+					'data_nascimento_inicio' => $this->input->get('data_nascimento_inicio'),
+					'data_nascimento_fim' => $this->input->get('data_nascimento_fim')
+				);
+				$filter = $this->filtro_for_pagination($dataToFilter);
+			}
+			else
+			{
+				$dataToFilter = array(
+					'grupo_id' => $tipo_usuario,
+					'data_registro_inicio' => $this->convert_date($data_registro_inicio, "pt"),
+					'data_registro_fim' => $this->convert_date($data_registro_fim, "pt"),
+					'nome' => $nome,
+					'email' => $email,
+					'ativo' => $ativo,
+					'data_nascimento_inicio' => $this->convert_date($data_nascimento_inicio, "pt"),
+					'data_nascimento_fim' => $this->convert_date($data_nascimento_fim, "pt")
+				);
+				$filter = $this->filtro_for_pagination($dataToFilter);
+			}
+
+			$this->data['paginacao']['filter'] = $filter;
 
 			if($this->Geral_model->get_permissao(READ, get_class($this)) == TRUE)
 			{
-				$this->data['usuarios'] = $this->Usuario_model->get_usuario(FALSE, FALSE, $page);
-				$this->data['paginacao']['size'] = $this->data['usuarios'][0]['Size'];
+				$this->data['usuarios'] = $this->Usuario_model->get_usuario(FALSE, FALSE, $page, $dataToFilter);
+				$this->data['paginacao']['size'] = (!empty($this->data['usuarios']) ? $this->data['usuarios'][0]['Size'] : 0);
 				$this->data['paginacao']['pg_atual'] = $page;
-				
+				//--FILTROS--//
+				$this->data['filtros']['grupos'] = $this->Grupo_model->get_grupo(FALSE, FALSE, FALSE);
+				$this->data['filtros']['outros'] = $dataToFilter;
+				//--FILTROS--//
 				$this->view("usuario/index", $this->data);
 			}
 			else
@@ -135,15 +199,17 @@
 		}
 		/*
 			RESPONSÁVEL POR RENDERIZAR O FORMULÁRIO DE CADASTRO DO USUÁRIO PARA CRIAR
+			$type -> contém um numero inteiro, que diz respeito ao tipo de usuário que se quer criar
 		*/
-		public function create()
+		public function create($id = FALSE, $type = NULL)
 		{
 			if($this->Geral_model->get_permissao(CREATE, get_class($this)) == TRUE)
 			{
+				$this->data['type'] = $type;
 				$this->data['obj'] = $this->Usuario_model->get_usuario(FALSE, 0, FALSE);
 				$this->data['title'] = 'Novo usuário';
 				$this->data['grupos_usuario'] = $this->Grupo_model->get_grupo(FALSE, FALSE, FALSE);
-				$this->view("usuario/create_edit", $this->data);
+				$this->view("usuario/create", $this->data);
 			}
 			else
 				$this->view("templates/permissao", $this->data);
@@ -153,7 +219,7 @@
 			
 			$id -> id de um usuário
 		*/
-		public function edit($id = FALSE)
+		public function edit($id = FALSE, $type = NULL)
 		{
 			if($id === FALSE)
 				$id = $this->Account_model->session_is_valid()['id'];
@@ -161,26 +227,76 @@
 			if($this->Geral_model->get_permissao(UPDATE, get_class($this)) == TRUE)
 			{
 				$this->data['title'] = 'Editar usuário';
-				
 				$this->data['obj'] = $this->Usuario_model->get_usuario(FALSE, $id, FALSE);
 				
-				$this->data['read'] = ""; //para deixar como somente leitura o campo de senha, caso o usuario logado seja um adm
+				if($type == NULL)
+					$this->data['type'] = $this->data['obj']['Grupo_id'];
+				else
+					$this->data['type'] = $type;
 
-				if($this->Account_model->session_is_valid()['grupo_id'] > 1)
-					$this->data['obj']['Senha'] = "";
-				else if($this->Account_model->session_is_valid()['grupo_id'] == 1)
-				{
-					$this->data['obj']['Senha'] = "xxx";//qualquer coisa, so pra nao deixar o campo de senha vazio
-					$this->data['read'] = "readonly='readonly'";
-				}
-				
 				$this->data['grupos_usuario'] = $this->Grupo_model->get_grupo(FALSE, FALSE, FALSE);
-	
-				$this->view("usuario/create_edit", $this->data);
+				$this->view("usuario/create", $this->data);
 			}
 			else
 				$this->view("templates/permissao", $this->data);
 		}
+
+		public function store_banco($dataToSave)
+		{
+			if($this->Geral_model->get_permissao(CREATE, "Usuario") == TRUE || $this->Geral_model->get_permissao(UPDATE, "Usuario") == TRUE)
+			{
+				if($this->Usuario_model->email_valido($dataToSave['Email'],$dataToSave['Id']) == "invalido")
+					return "O e-mail informado já está em uso.";
+				else
+				{
+					//se trocar o usuario de grupo, setar para este as permissões padrões 
+					//do novo grupo atribuído a ele
+					$Usuario = $this->Usuario_model->get_usuario(FALSE, $dataToSave['Id'], FALSE);
+					
+					if($dataToSave['Id'] >= 1)//somente se estiver editando, esse trecho é necessário ser executado antes da próxima linha depois do if
+					{
+						if($dataToSave['Grupo_id'] != $Usuario['Grupo_id'])
+							$this->permissoes_default($dataToSave['Id'], $dataToSave['Grupo_id']);
+					}
+					$Usuario_id = $this->Usuario_model->set_usuario($dataToSave);
+
+					if($dataToSave['Id'] >= 1)//somente se estiver editando
+					{
+						//SE O CAMPO CONTER ALGO ENTÃO SIGNIFICA QUE A SENHA DEVE SER ALTERADA.
+						if($this->input->post('nova_senha') != NULL && !empty($this->input->post('nova_senha')))
+						{
+							$data = array(
+								'Usuario_id' => $Usuario_id,
+								'Valor' => $this->input->post('nova_senha')
+							);
+							$this->Senha_model->set_senha($data);
+						}
+					}
+					else
+					{
+						$data = array(
+							'Usuario_id' => $Usuario_id,
+							'Valor' => $this->input->post('senha')
+						);
+						$this->Senha_model->set_senha($data);
+						$this->permissoes_default($Usuario_id, $dataToSave['Grupo_id']);
+					}
+
+					if($dataToSave['Email_notifica_nova_conta'] == 1 && empty($Usuario))
+					{
+						$dataToSave['Nome_usuario'] = $dataToSave['Nome'];
+						$this->envia_email_nova_conta($dataToSave);
+					}
+					else if($dataToSave['Email_notifica_nova_conta'] == 1 && $Usuario['Email_notifica_nova_conta'] == 0)
+						$this->envia_email_nova_conta($Usuario);
+
+					return $Usuario_id;
+				}
+			}
+			else
+				return "Você não tem permissão para realizar esta ação.";
+		}
+
 		/*
 			RESPONSÁVEL POR RECEBER, CADASTRAR OU ATUALIZAR OS DADOS DE USUÁRIO NO BANCO DE DADOS
 		*/
@@ -192,64 +308,25 @@
 				'Ativo' => $this->input->post('conta_ativa'),
 				'Nome' => $this->input->post('nome'),
 				'Email' => $this->input->post('email'),
+				'Data_nascimento' => $this->input->post('data_nascimento'),
+				'Sexo' => $this->input->post('sexo'),
 				'Grupo_id' => $this->input->post('grupo_id'),
 				'Email_notifica_nova_conta' => $this->input->post('email_notifica_nova_conta')
 			);
 
+			$dataToSave['Data_nascimento'] = $this->convert_date($dataToSave['Data_nascimento'], "en");
+
+
+			if(empty($dataToSave['Email_notifica_nova_conta']))
+				$dataToSave['Email_notifica_nova_conta'] = 0;
+			
 			//BLOQUEIA ACESSO DIRETO AO MÉTODO
 			 if(!empty($dataToSave['Nome']))
 			 {
-			 	if($this->Geral_model->get_permissao(CREATE, get_class($this)) == TRUE || $this->Geral_model->get_permissao(UPDATE, get_class($this)) == TRUE)
-				{
-					if($this->Usuario_model->email_valido($dataToSave['Email'],$dataToSave['Id']) == "invalido")
-						$resultado = "O e-mail informado já está em uso.";
-					else
-					{
-						//se trocar o usuario de grupo, setar para este as permissões padrões 
-						//do novo grupo atribuído a ele
-						$Usuario = $this->Usuario_model->get_usuario(FALSE, $dataToSave['Id'], FALSE);
-						
-						if($dataToSave['Id'] >= 1)//somente se estiver editando, esse trecho é necessário ser executado antes da próxima linha depois do if
-						{
-							if($dataToSave['Grupo_id'] != $Usuario['Grupo_id'])
-								$this->permissoes_default($dataToSave['Id'], $dataToSave['Grupo_id']);
-						}
-						$Usuario_id = $this->Usuario_model->set_usuario($dataToSave);
+			 	$resultado = $this->store_banco($dataToSave);
+				if(is_numeric($resultado))
+					$resultado = "sucesso";
 
-						if($dataToSave['Id'] >= 1)//somente se estiver editando
-						{
-							//SE O CAMPO CONTER ALGO ENTÃO SIGNIFICA QUE A SENHA DEVE SER ALTERADA.
-							if($this->input->post('nova_senha') != NULL && !empty($this->input->post('nova_senha')))
-							{
-								$data = array(
-									'Usuario_id' => $Usuario_id,
-									'Valor' => $this->input->post('nova_senha')
-								);
-								$this->Senha_model->set_senha($data);
-							}
-						}
-						else
-						{
-							$data = array(
-								'Usuario_id' => $Usuario_id,
-								'Valor' => $this->input->post('senha')
-							);
-							$this->Senha_model->set_senha($data);
-							$this->permissoes_default($Usuario_id, $dataToSave['Grupo_id']);
-						}
-
-						if($dataToSave['Email_notifica_nova_conta'] == 1 && empty($Usuario))
-						{
-							$dataToSave['Nome_usuario'] = $dataToSave['Nome'];
-							$this->envia_email_nova_conta($dataToSave);
-						}
-						else if($dataToSave['Email_notifica_nova_conta'] == 1 && $Usuario['Email_notifica_nova_conta'] == 0)
-							$this->envia_email_nova_conta($Usuario);
-					}
-				}
-				else
-					$resultado = "Você não tem permissão para realizar esta ação.";
-		
 				$arr = array('response' => $resultado);
 				header('Content-Type: application/json');
 				echo json_encode($arr);
@@ -264,7 +341,7 @@
 		*/
 		public function envia_email_nova_conta($Usuario)
 		{
-			$this->email->from($this->Configuracoes_model->get_configuracoes()['Email_redefinicao_de_senha'], 'CEP - Centro de Educação Profissional "Tancredo Neves"');
+			$this->email->from($this->Configuracoes_email_model->get_configuracoes_email()['Email'], 'CEP - Centro de Educação Profissional "Tancredo Neves"');
 			$this->email->to($Usuario['Email']);
 			//$this->email->cc('another@another-example.com');
 			//$this->email->bcc('them@their-example.com');

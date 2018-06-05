@@ -12,6 +12,8 @@
 				<script type="text/javascript" src="<?php echo $url; ?>content/js/Main.js"></script>
 				<script type="text/javascript" src="<?php echo $url; ?>content/js/Chart.js"></script>
 				<script type="text/javascript" src="<?php echo $url; ?>content/js/legend.js"></script>
+				<script type="text/javascript" src="<?php echo $url; ?>content/js/bootstrap-datepicker.min.js"></script>
+				<script type="text/javascript" src="<?php echo $url; ?>content/js/bootstrap-datepicker.pt-BR.min.js"></script>
 
 			</div>
 		</body> 

@@ -38,6 +38,7 @@
 			$this->load->helper('url');
 			$this->load->helper('html');
 			$this->load->helper('form');
+			$this->load->model('Configuracoes_email_model');
 			$this->load->library('session');
 			$this->load->library('email');
 			$this->load->helper('cookie');
@@ -48,15 +49,19 @@
 
 			$this->config_email_server();
 		}
+		/*
+			RESPONSÁVEL POR CONFIGURAR A CLASSE DE E-MAIL PARA QUE  O SISTEMA POSSA REALIZAR O ENVIO DE E-MAILS QUANDO NECESSÁRIO
+		*/
 		public function config_email_server()
 		{
-			$config['protocol'] = 'smtp';
+			$config_email = $this->Configuracoes_email_model->get_configuracoes_email();
+			$config['protocol'] = $config_email['Protocolo'];
 			//$config['smtp_crypto'] = 'tls';
 			//$config['mailpath'] = '/usr/sbin/sendmail';
-			$config['smtp_host'] = '127.0.0.1';
+			$config['smtp_host'] = $config_email['Host'];
 			$config['mailtype'] = 'html';
-			$config['user'] = 'tadeu_local';
-			$config['pass'] = '123456789';
+			$config['user'] = $config_email['Usuario'];
+			$config['pass'] = $config_email['Senha'];
 			
 			$config['charset'] = 'utf-8';
 			$config['wordwrap'] = TRUE;
@@ -119,6 +124,32 @@
 				'secure' => FALSE
 			);
 			$this->input->set_cookie($cookie);
+		}
+		/*
+			RESPONSÁVEL POR CONVERTER UMA DATA NO FORMATO BRASILEIRO PARA O FORMATO AMERICANO
+
+			$data -> Data que se deseja converter
+		*/
+		public function convert_date($data, $region)
+		{
+			$dataTemp = "";
+			if(!empty($data) && $region == "en")
+			{
+				$dataTemp = str_replace("/", "-", $data);
+
+				$dataTemp = explode("-", $dataTemp);
+
+				$dataTemp = $dataTemp[2]."-".$dataTemp[1]."-".$dataTemp[0];
+			}
+			else if(!empty($data) && $region == "pt")
+			{
+				$dataTemp = str_replace("-", "/", $data);
+
+				$dataTemp = explode("/", $dataTemp);
+
+				$dataTemp = $dataTemp[2]."/".$dataTemp[1]."/".$dataTemp[0];	
+			}
+			return $dataTemp;
 		}
 	}
 ?>

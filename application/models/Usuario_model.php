@@ -13,7 +13,7 @@
 			PARA O PARÂMETRO Id. PAGINA O RESULTADO QUANDO NECESSÁRIO E VOLTA SOMENTE REGISTRO(S) ATIVOS SE FOR PASSA TRUE PARA
 			O PRIMEIRO PARÂMETRO
 		*/
-		public function get_usuario($Ativo, $Id = FALSE, $page = false)
+		public function get_usuario($Ativo, $Id = FALSE, $page = FALSE, $filter = FALSE)
 		{
 			$Ativos = "";
 			if($Ativo == true)
@@ -21,6 +21,8 @@
 
 			if ($Id === FALSE)
 			{
+				$filtros = $this->filtros($filter);
+				
 				$limit = $page * ITENS_POR_PAGINA;
 				$inicio = $limit - ITENS_POR_PAGINA;
 				$step = ITENS_POR_PAGINA;
@@ -30,18 +32,25 @@
 					$pagination = "";
 				
 				$query = $this->db->query("
-					SELECT (SELECT count(*) FROM  Usuario) AS Size, u.Id, 
-					u.Nome as Nome_usuario, u.Email, u.Ativo, g.Nome AS Nome_grupo, u.Codigo_ativacao, u.Status   
+					SELECT (SELECT count(*) FROM  Usuario u WHERE TRUE ".$filtros.") AS Size, u.Id, 
+					u.Nome as Nome_usuario, u.Email, u.Ativo, g.Nome AS Nome_grupo, u.Codigo_ativacao, u.Status, u.Sexo,   
+					CASE 
+						WHEN u.Grupo_id = 2 THEN
+							'aluno'
+						ELSE 'usuario'
+					END AS Method 
 					FROM Usuario u 
-					LEFT JOIN Grupo g ON u.Grupo_id = g.Id WHERE TRUE ".$Ativos."
-					ORDER BY u.Data_registro ASC ".$pagination."");
+					LEFT JOIN Grupo g ON u.Grupo_id = g.Id 
+					WHERE TRUE ".$Ativos."".$filtros."
+					ORDER BY u.Id ASC ".$pagination."");
 
 				return $query->result_array();
 			}
 
 			$query =  $this->db->query("
-				SELECT u.Id, u.Nome as Nome_usuario, u.Email, u.Ativo, 
+				SELECT u.Id, u.Nome as Nome_usuario, u.Email, u.Ativo, u.Sexo,
 				DATE_FORMAT(u.Data_registro, '%d/%m/%Y') as Data_registro, 
+				DATE_FORMAT(u.Data_nascimento, '%d/%m/%Y') as Data_nascimento, 
 				g.Nome AS Nome_grupo, u.Status, u.Codigo_ativacao,  
 				u.Grupo_id, u.Email_notifica_nova_conta, s.Valor   
 					FROM Usuario u 
@@ -49,6 +58,31 @@
 				LEFT JOIN Grupo g ON u.Grupo_id = g.Id
 				WHERE TRUE ".$Ativos." AND u.Id = ".$this->db->escape($Id)."");
 			return $query->row_array();
+		}
+
+		public function filtros($filter)
+		{
+			$filtros = "";
+			if(!empty($filter))
+			{
+				if($filter['grupo_id'] != 0)
+					$filtros = " AND u.Grupo_id = ".$this->db->escape($filter['grupo_id']);
+				if(!empty($filter['data_registro_inicio']))
+					$filtros = $filtros." AND u.Data_registro >= DATE_FORMAT(STR_TO_DATE(".$this->db->escape($filter['data_registro_inicio']).", '%d/%m/%Y'), '%Y-%m-%d')";
+				if(!empty($filter['data_registro_fim']))
+					$filtros = $filtros." AND u.Data_registro <= DATE_FORMAT(STR_TO_DATE(".$this->db->escape($filter['data_registro_fim']).", '%d/%m/%Y'), '%Y-%m-%d')";
+				if(!empty($filter['nome']))
+					$filtros = $filtros." AND u.Nome LIKE ".$this->db->escape($filter['nome']."%");
+				if(!empty($filter['email']))
+					$filtros = $filtros." AND u.Email LIKE ".$this->db->escape($filter['email']."%");
+				if($filter['ativo'] != 0)
+					$filtros = $filtros." AND u.Ativo = ".$this->db->escape($filter['ativo']);
+				if(!empty($filter['data_nascimento_inicio']))
+					$filtros = $filtros." AND u.Data_nascimento >= DATE_FORMAT(STR_TO_DATE(".$this->db->escape($filter['data_nascimento_inicio']).", '%d/%m/%Y'), '%Y-%m-%d')";
+				if(!empty($filter['data_nascimento_fim']))
+					$filtros = $filtros." AND u.Data_nascimento <= DATE_FORMAT(STR_TO_DATE(".$this->db->escape($filter['data_nascimento_fim']).", '%d/%m/%Y'), '%Y-%m-%d')";
+			}
+			return $filtros;
 		}
 		/*
 			REPONSÁVEL POR OCULTAR UM USUÁRIO NO BANCO DE DADOS

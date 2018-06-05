@@ -16,6 +16,12 @@
 
 			if(ceil($qtd_paginas) > 1)
 			{
+				$filtros = "";
+				//VERIFICAR SE HÁ FILTROS
+				if(!empty($paginacao['filter']))
+					$filtros = $paginacao['filter'];
+				/////
+
 				$inicio = $paginacao['pg_atual'] - 2;
 				
 				$offset = 0;
@@ -42,7 +48,7 @@
 						echo"<ul class='pagination'>";
 							echo"<li class='page-item'>";
 								if(!empty($paginacao['pg_atual']) && $paginacao['pg_atual'] > 1)						
-									echo"<a class='page-link disabled' href='".$paginacao['url'] . $controller."/".$method."/".$parameter. ($paginacao['pg_atual'] - 1) ."' aria-label='Previous'><span class='glyphicon glyphicon-menu-left'></span>&nbsp;</a>";
+									echo"<a class='page-link disabled' href='".$paginacao['url'] . $controller."/".$method."/".$parameter. ($paginacao['pg_atual'] - 1).$filtros."' aria-label='Previous'><span class='glyphicon glyphicon-menu-left'></span>&nbsp;</a>";
 							echo"</li>";
 							for($i = $inicio; $i <= $fim; $i++)
 							{
@@ -50,12 +56,12 @@
 								if($i == $paginacao['pg_atual'])
 									$active = "active";
 								echo"<li class='page-item ".$active."'>";
-									echo"<a class='page-link' href='".$paginacao['url'] . $controller."/".$method."/".$parameter.$i."'>".$i."</a>";
+									echo"<a class='page-link' href='".$paginacao['url'] . $controller."/".$method."/".$parameter.$i.$filtros."'>".$i."</a>";
 								echo"</li>";
 							}
 							echo"<li class='page-item'>";
 								if($paginacao['pg_atual'] < ceil($qtd_paginas))
-									echo"<a class='page-link' href='".$paginacao['url'] . $controller."/".$method."/".$parameter. ($paginacao['pg_atual'] + 1) ."' aria-label='Next'><span class='glyphicon glyphicon-menu-right'></span>&nbsp;</a>";
+									echo"<a class='page-link' href='".$paginacao['url'] . $controller."/".$method."/".$parameter. ($paginacao['pg_atual'] + 1).$filtros."' aria-label='Next'><span class='glyphicon glyphicon-menu-right'></span>&nbsp;</a>";
 							echo"</li>";
 						echo"</ul>";
 					echo"</nav>";

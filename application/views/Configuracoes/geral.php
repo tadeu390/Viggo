@@ -54,13 +54,43 @@
 					<?php $atr = array("id" => "form_cadastro_".$controller."_email", "name" => "form_cadastro_".$controller."_email"); 
 						echo form_open("$controller/store_email", $atr);
 					?>
-						<input type='hidden' id='id' name='id' value='<?php if(!empty($obj['Id'])) echo $obj['Id']; ?>'/>
+						<input type='hidden' id='id' name='id' value='<?php if(!empty($obj_email['Id'])) echo $obj_email['Id']; ?>'/>
 						<input type='hidden' id='controller' value='<?php echo $controller; ?>'/>
 
 						<div class='form-group'>
-							<div class='input-group-addon'>Redefinição de senha</div>
-							<input spellcheck="false" name='email' id='email' value='<?php echo (!empty($obj['Email_redefinicao_de_senha']) ? $obj['Email_redefinicao_de_senha']:''); ?>' type='text' class='input-material' />
+							<div class='input-group-addon'>E-mail</div>
+							<input spellcheck="false" name='email' id='email' value='<?php echo (!empty($obj_email['Email']) ? $obj_email['Email']:''); ?>' type='text' class='input-material' />
 							<div class='input-group mb-2 mb-sm-0 text-danger' id='error-email'></div>
+						</div>
+						<div class='form-group'>
+							<div class='input-group-addon'>Descrição</div>
+							<input name='descricao' id='descricao' value='<?php echo (!empty($obj_email['Descricao']) ? $obj_email['Descricao']:''); ?>' type='text' class='input-material' />
+							<div class='input-group mb-2 mb-sm-0 text-danger' id='error-descricao'></div>
+						</div>
+						<div class='form-group'>
+							<div class='input-group-addon'>Usuario</div>
+							<input name='usuario' id='usuario' spellcheck='false' value='<?php echo (!empty($obj_email['Usuario']) ? $obj_email['Usuario']:''); ?>' type='text' class='input-material' />
+							<div class='input-group mb-2 mb-sm-0 text-danger' id='error-usuario'></div>
+						</div>
+						<div class='form-group'>
+							<div class='input-group-addon'>Senha</div>
+							<input name='senha' id='senha' value='<?php echo (!empty($obj_email['Senha']) ? $obj_email['Senha']:''); ?>' type='password' class='input-material' />
+							<div class='input-group mb-2 mb-sm-0 text-danger' id='error-senha'></div>
+						</div>
+						<div class='form-group'>
+							<div class='input-group-addon'>Protocolo</div>
+							<input name='protocolo' id='protocolo' value='<?php echo (!empty($obj_email['Protocolo']) ? $obj_email['Protocolo']:''); ?>' type='text' class='input-material' />
+							<div class='input-group mb-2 mb-sm-0 text-danger' id='error-protocolo'></div>
+						</div>
+						<div class='form-group'>
+							<div class='input-group-addon'>Host</div>
+							<input name='host' spellcheck='false' id='host' value='<?php echo (!empty($obj_email['Host']) ? $obj_email['Host']:''); ?>' type='text' class='input-material' />
+							<div class='input-group mb-2 mb-sm-0 text-danger' id='error-host'></div>
+						</div>
+						<div class='form-group'>
+							<div class='input-group-addon'>Porta</div>
+							<input name='porta' id='porta' value='<?php echo (!empty($obj_email['Porta']) ? $obj_email['Porta']:''); ?>' type='text' class='input-material' />
+							<div class='input-group mb-2 mb-sm-0 text-danger' id='error-porta'></div>
 						</div>
 						<br />
 						<?php
