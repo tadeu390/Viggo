@@ -83,6 +83,7 @@
 			
 			if($this->Account_model->session_is_valid()['status'] == "ok")
 				redirect('academico/dashboard');
+			$this->logout();
 		}
 		/*
 			RESPONSÁVEL POR APAGAR TODAS AS SESSÕES ATIVAS NO COMPUTADOR DO CLIENTE
@@ -91,7 +92,10 @@
 		{
 			unset($_SESSION['id']);
 			unset($_SESSION['grupo_id']);
+			unset($_SESSION['token']);
 			delete_cookie ('id');
+			delete_cookie ('token');
+			delete_cookie ('page');
 			delete_cookie('url_redirect');
 			delete_cookie ('grupo_id');
 		}
@@ -126,7 +130,7 @@
 
 			if($this->Account_model->session_is_valid()['status'] == "ok")//verifica se ja existe uma sessao, caso sim apenas ira recarregar a pagina
 				$login = 'valido';
-			else if($login['rows'] > 0)
+			else if($login['rows'] > 0 && $this->valida_data_hashing($login['Valor'], $senha) == TRUE)
 			{
 				$this->Logs_model->set_log($login['Id']);
 				
@@ -182,12 +186,21 @@
 		            'secure' => FALSE
 		            );
 		  		$this->input->set_cookie($cookie);
+
+		  		$cookie = array(
+		            'name'   => 'token',
+		            'value'  => $Usuario['Valor'],
+		            'expire' => 100000000,
+		            'secure' => FALSE
+		            );
+		  		$this->input->set_cookie($cookie);
 	  		}
 	  		else
 	  		{
 	  			$login = array(
 					'id'  => $Usuario['Id'],
-					'grupo_id'  => $Usuario['Grupo_id']
+					'grupo_id'  => $Usuario['Grupo_id'],
+					'token'  => $Usuario['Valor'],
 					);
 				$this->session->set_userdata($login);
 	  		}
@@ -284,7 +297,7 @@
 				{
 					$data = array(
 						'Usuario_id' => $sessao_troca_senha['id_troca_senha'],
-						'Valor' => $nova_senha
+						'Valor' => $this->hashing($nova_senha)
 					);
 					//atualiza a senha
 					$this->Senha_model->set_senha($data);
@@ -417,7 +430,7 @@
 					$Usuario = $this->Usuario_model->get_usuario(FALSE, $sessao_troca_senha['id_troca_senha'], FALSE);
 					$senha = array(
 						'Usuario_id' => $Usuario['Id'],
-						'Valor' => $nova_senha
+						'Valor' => $this->hashing($nova_senha)
 					);
 					$this->Senha_model->set_senha($senha);
 

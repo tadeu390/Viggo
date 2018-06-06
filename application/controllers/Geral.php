@@ -2,7 +2,6 @@
 	/*
 		ESTA CLASSE FORNECE RECURSOS GENÉRICOS QUE SÃO REUTILIZADOS EM DIVERSAS PARTES DO SISTEMA
 	*/
-
 	//SETA OS TIPOS DE PERMISSÕES NO SISTEMA
 	define("CREATE", 'Criar');
 	define("READ", 'Ler');
@@ -150,6 +149,28 @@
 				$dataTemp = $dataTemp[2]."/".$dataTemp[1]."/".$dataTemp[0];	
 			}
 			return $dataTemp;
+		}
+		/*
+			RESPONSÁVEL POR CRIPTOGRAFAR QUALQUER INFORMAÇÃO e retorna-la
+			
+			$data -> contém a string a ser criptografada
+		*/
+		public function hashing($data)
+		{
+			return password_hash($data, PASSWORD_DEFAULT);
+		}
+		/*
+			RESPONSÁVEL POR VALIDAR SE UMA STRING CORRESPONDE A UMA HASH
+			
+			$hash -> contém a hash 
+			$data -> contém uma string que será verificada se corresponde a hash informada
+		*/
+		public function valida_data_hashing($hash, $data)
+		{
+			if (password_verify($data, $hash))
+				return 1;
+			else
+				return 0;
 		}
 	}
 ?>

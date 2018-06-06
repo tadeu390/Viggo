@@ -69,21 +69,27 @@
 				$this->view("templates/permissao", $this->data);	
 		}
 		/*
-			RESPONSÁVEL POR VALIDAR OS DADOS ANTES DE ENVIA-LO AO BANCO
+			RESPONSÁVEL POR VALIDAR OS DADOS NECESSÁRIOS DOS USUÁRIOS
 
-			$dataToSave -> Contém os dados do aluno
+			$Usuario -> Contém todos os dados do usuário a ser validado
 		*/
-		public function store_banco($dataToSave)
+		public function valida_aluno($Aluno)
 		{
-			$matrícula = $this->Aluno_model->get_aluno_por_matricula($dataToSave['Matricula']);
+			$matricula = $this->Aluno_model->get_aluno_por_matricula($Aluno['Matricula']);
 
-			if(empty($matrícula) || $matrícula['Usuario_id'] == $dataToSave['Usuario_id'])
-			{
-				$this->Aluno_model->set_aluno($dataToSave);
-				return "sucesso";
-			}
+			if(empty($matricula) || $matricula['Usuario_id'] == $Aluno['Usuario_id'])
+				return 1;
 			else
 				return "O número de matrícula informado já está em uso para outro aluno";
+		}
+		/*
+			RESPONSÁVEL POR ENVIAR AO MODEL OS DADOS DO ALUNO E FAZER TRATAMENTOS QUANDO NECESSÁRIO
+
+			$Aluno -> Contém todos os dados de um aluno a ser cadastrado / editado
+		*/
+		public function store_banco($Aluno)
+		{
+			$this->Aluno_model->set_aluno($dataToSave);
 		}
 		/*
 			RESPONSÁVEL POR CAPTAR OS DADOS SUBMETIDOS DO FORMULÁRIO
@@ -103,6 +109,7 @@
 				'Email_notifica_nova_conta' => $this->input->post('email_notifica_nova_conta')
 			);
 
+
 			$dataToSave['Data_nascimento'] = $this->convert_date($dataToSave['Data_nascimento'], "en");
 
 
@@ -110,20 +117,29 @@
 				$dataToSave['Email_notifica_nova_conta'] = 0;
 
 			//BLOQUEIA ACESSO DIRETO AO MÉTODO
-			 if(!empty($dataToSave['Nome']))
+			 if(!empty($this->input->post()))
 			 {
 			 	if($this->Geral_model->get_permissao(CREATE, get_parent_class($this)) == TRUE || $this->Geral_model->get_permissao(UPDATE, get_parent_class($this)) == TRUE)
 				{
-				 	$resultado = parent::store_banco($dataToSave);
+					$resultado = parent::valida_usuario($dataToSave);
 
-					if(is_numeric($resultado))
-					{
-						$dataToSaveAluno = array(
-							'Usuario_id' => $resultado,
+				 	if($resultado == 1)
+				 	{
+				 		$dataToSaveAluno = array(
+							'Usuario_id' => $this->input->post('id'),
 							'Matricula' => $this->input->post('matricula')
 						);
-						$resultado = $this->store_banco($dataToSaveAluno);
-					}
+						$resultado = $this->valida_aluno($dataToSaveAluno);
+						if($resultado == 1)
+						{
+							$resultado = parent::store_banco($dataToSave);
+
+							$dataToSaveAluno['Usuario_id'] = $resultado;//QUANDO ESTIVER CRIANDO ISSO É NECESSARIO, POIS O POST DO ID VIRÁ VAZIO
+
+							$resultado = $this->store_banco($dataToSaveAluno);	
+							$resultado = "sucesso";
+						}
+				 	}
 				}
 				else
 					$resultado = "Você não tem permissão para realizar esta ação.";

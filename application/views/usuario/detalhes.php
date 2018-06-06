@@ -15,6 +15,8 @@
 			echo"<a href='javascript:window.history.go(-1)' class='padding' title='Voltar'>";
 				echo"<span class='glyphicon glyphicon-arrow-left' style='font-size: 25px; color: white;'></span>";
 			echo"</a>";
+			echo "<br />";
+			echo "<br />";
 			echo "<div class='table-responsive'>";
 				$this->load->view("usuario/_detalhes",$obj);
 			echo "</div>";

@@ -240,61 +240,67 @@
 			else
 				$this->view("templates/permissao", $this->data);
 		}
+		/*
+			RESPONSÁVEL POR VALIDAR OS DADOS NECESSÁRIOS DOS USUÁRIOS
 
+			$Usuario -> Contém todos os dados do usuário a ser validado
+		*/
+		public function valida_usuario($Usuario)
+		{
+			if($this->Usuario_model->email_valido($Usuario['Email'],$Usuario['Id']) == "invalido")
+				return "O e-mail informado já está em uso.";
+			else
+				return 1;
+		}
+		/*
+			RESPONSÁVEL POR ENVIAR AO MODEL OS DADOS DO USUÁRIO E FAZER TRATAMENTOS QUANDO NECESSÁRIO
+
+			$dataToSave -> Contém todos os dados usuário a ser cadastrado / editado
+		*/
 		public function store_banco($dataToSave)
 		{
-			if($this->Geral_model->get_permissao(CREATE, "Usuario") == TRUE || $this->Geral_model->get_permissao(UPDATE, "Usuario") == TRUE)
+			//se trocar o usuario de grupo, setar para este as permissões padrões 
+			//do novo grupo atribuído a ele
+			$Usuario = $this->Usuario_model->get_usuario(FALSE, $dataToSave['Id'], FALSE);
+			
+			if($dataToSave['Id'] >= 1)//somente se estiver editando, esse trecho é necessário ser executado antes da próxima linha depois do if
 			{
-				if($this->Usuario_model->email_valido($dataToSave['Email'],$dataToSave['Id']) == "invalido")
-					return "O e-mail informado já está em uso.";
-				else
+				if($dataToSave['Grupo_id'] != $Usuario['Grupo_id'])
+					$this->permissoes_default($dataToSave['Id'], $dataToSave['Grupo_id']);
+			}
+			$Usuario_id = $this->Usuario_model->set_usuario($dataToSave);
+
+			if($dataToSave['Id'] >= 1)//somente se estiver editando
+			{
+				//SE O CAMPO CONTER ALGO ENTÃO SIGNIFICA QUE A SENHA DEVE SER ALTERADA.
+				if($this->input->post('nova_senha') != NULL && !empty($this->input->post('nova_senha')))
 				{
-					//se trocar o usuario de grupo, setar para este as permissões padrões 
-					//do novo grupo atribuído a ele
-					$Usuario = $this->Usuario_model->get_usuario(FALSE, $dataToSave['Id'], FALSE);
-					
-					if($dataToSave['Id'] >= 1)//somente se estiver editando, esse trecho é necessário ser executado antes da próxima linha depois do if
-					{
-						if($dataToSave['Grupo_id'] != $Usuario['Grupo_id'])
-							$this->permissoes_default($dataToSave['Id'], $dataToSave['Grupo_id']);
-					}
-					$Usuario_id = $this->Usuario_model->set_usuario($dataToSave);
-
-					if($dataToSave['Id'] >= 1)//somente se estiver editando
-					{
-						//SE O CAMPO CONTER ALGO ENTÃO SIGNIFICA QUE A SENHA DEVE SER ALTERADA.
-						if($this->input->post('nova_senha') != NULL && !empty($this->input->post('nova_senha')))
-						{
-							$data = array(
-								'Usuario_id' => $Usuario_id,
-								'Valor' => $this->input->post('nova_senha')
-							);
-							$this->Senha_model->set_senha($data);
-						}
-					}
-					else
-					{
-						$data = array(
-							'Usuario_id' => $Usuario_id,
-							'Valor' => $this->input->post('senha')
-						);
-						$this->Senha_model->set_senha($data);
-						$this->permissoes_default($Usuario_id, $dataToSave['Grupo_id']);
-					}
-
-					if($dataToSave['Email_notifica_nova_conta'] == 1 && empty($Usuario))
-					{
-						$dataToSave['Nome_usuario'] = $dataToSave['Nome'];
-						$this->envia_email_nova_conta($dataToSave);
-					}
-					else if($dataToSave['Email_notifica_nova_conta'] == 1 && $Usuario['Email_notifica_nova_conta'] == 0)
-						$this->envia_email_nova_conta($Usuario);
-
-					return $Usuario_id;
+					$data = array(
+						'Usuario_id' => $Usuario_id,
+						'Valor' => $this->hashing($this->input->post('nova_senha'))
+					);
+					$this->Senha_model->set_senha($data);
 				}
 			}
 			else
-				return "Você não tem permissão para realizar esta ação.";
+			{
+				$data = array(
+					'Usuario_id' => $Usuario_id,
+					'Valor' => $this->hashing($this->input->post('senha'))
+				);
+				$this->Senha_model->set_senha($data);
+				$this->permissoes_default($Usuario_id, $dataToSave['Grupo_id']);
+			}
+
+			if($dataToSave['Email_notifica_nova_conta'] == 1 && empty($Usuario))
+			{
+				$dataToSave['Nome_usuario'] = $dataToSave['Nome'];
+				$this->envia_email_nova_conta($dataToSave);
+			}
+			else if($dataToSave['Email_notifica_nova_conta'] == 1 && $Usuario['Email_notifica_nova_conta'] == 0)
+				$this->envia_email_nova_conta($Usuario);
+
+			return $Usuario_id;
 		}
 
 		/*
@@ -321,11 +327,20 @@
 				$dataToSave['Email_notifica_nova_conta'] = 0;
 			
 			//BLOQUEIA ACESSO DIRETO AO MÉTODO
-			 if(!empty($dataToSave['Nome']))
+			 if(!empty($this->input->post()))
 			 {
-			 	$resultado = $this->store_banco($dataToSave);
-				if(is_numeric($resultado))
-					$resultado = "sucesso";
+			 	if($this->Geral_model->get_permissao(CREATE, "Usuario") == TRUE || $this->Geral_model->get_permissao(UPDATE, "Usuario") == TRUE)
+				{
+				 	$resultado = $this->valida_usuario($dataToSave);
+
+				 	if($resultado == 1)
+				 	{ 
+				 		$this->store_banco($dataToSave);
+				 		$resultado = "sucesso";
+				 	}
+				}
+				else
+					$resultado = "Você não tem permissão para realizar esta ação";
 
 				$arr = array('response' => $resultado);
 				header('Content-Type: application/json');

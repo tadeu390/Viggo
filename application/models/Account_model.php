@@ -22,7 +22,7 @@
 				FROM Usuario u 
 				INNER JOIN Senha s ON u.Id = s.Usuario_id 
 				INNER JOIN Grupo g ON u.Grupo_id = g.Id 
-				WHERE Email = ".$this->db->escape($email)." AND s.Valor = ".$this->db->escape($senha)." 
+				WHERE Email = ".$this->db->escape($email)."  
 					AND s.Ativo = 1 AND (u.Contador_tentativa < ".LIMITE_TENTATIVA." OR (NOW() - Data_ultima_tentativa) >= ".TEMPO_ESPERA.")");
 			 
 			 $data = $query->row_array();
@@ -36,22 +36,31 @@
 		{
 			$id = "";
 			$grupo_id = "";
+			$token = "";
 		
 			//verificar se existe uma sessao ou cookie
 			if(!empty($this->session->id))
 			{
 				if(!empty($this->session->grupo_id))
 				{
-					$id = $this->session->id;
-					$grupo_id = $this->session->grupo_id;
+					if(!empty($this->session->token))
+					{
+						$id = $this->session->id;
+						$grupo_id = $this->session->grupo_id;
+						$token = $this->session->token;
+					}
 				}
 			}
 			else if(!empty($this->input->cookie('id')))
 			{
 				if(!empty($this->input->cookie('grupo_id')))
 				{
-					$id = $this->input->cookie('id');
-					$grupo_id = $this->input->cookie('grupo_id');
+					if(!empty($this->input->cookie('token')))
+					{
+						$id = $this->input->cookie('id');
+						$grupo_id = $this->input->cookie('grupo_id');
+						$token = $this->input->cookie('token');
+					}
 				}
 			}
 
@@ -60,24 +69,27 @@
 			if($id != "")
 			{
 				$query = $this->db->query("
-					SELECT Id, Grupo_id 
-						FROM Usuario 
-					WHERE Id = ".$this->db->escape($id)." AND Ativo = 1 AND 
-					Grupo_id = ".$this->db->escape($grupo_id)."");
+					SELECT u.Id, u.Grupo_id, s.Valor  
+						FROM Usuario u
+						INNER JOIN Senha s ON u.Id = s.Usuario_id 
+					WHERE u.Id = ".$this->db->escape($id)." AND u.Ativo = 1 AND 
+					u.Grupo_id = ".$this->db->escape($grupo_id)." AND s.Valor = ".$this->db->escape($token)."");
 
 				if($query->num_rows() > 0)
 				{
 					$sessao = array(
 						'status' => 'ok',
 						'id' => $query->row_array()['Id'],
-						'grupo_id' => $query->row_array()['Grupo_id']
+						'grupo_id' => $query->row_array()['Grupo_id'],
+						'token' => $query->row_array()['Valor']
 					);
 					return $sessao;
 				}
 				$sessao = array(
 					'status' => 'invalido',
 					'id' => '0',
-					'grupo_id' => '0'
+					'grupo_id' => '0',
+					'token' => '0'
 				);
 				return $sessao;
 			}
@@ -85,7 +97,8 @@
 			$sessao = array(
 				'status' => 'inexistente',
 				'id' => '0',
-				'grupo_id' => '0'
+				'grupo_id' => '0',
+				'token' => '0'
 			);
 			return $sessao;
 		}

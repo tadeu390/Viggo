@@ -54,7 +54,7 @@
 				g.Nome AS Nome_grupo, u.Status, u.Codigo_ativacao,  
 				u.Grupo_id, u.Email_notifica_nova_conta, s.Valor   
 					FROM Usuario u 
-				INNER JOIN Senha s ON u.Id = s.Usuario_id 
+				LEFT JOIN Senha s ON u.Id = s.Usuario_id 
 				LEFT JOIN Grupo g ON u.Grupo_id = g.Id
 				WHERE TRUE ".$Ativos." AND u.Id = ".$this->db->escape($Id)."");
 			return $query->row_array();

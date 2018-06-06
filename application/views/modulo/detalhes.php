@@ -15,6 +15,8 @@
 			echo"<a href='javascript:window.history.go(-1)' class='link padding' title='Voltar'>";
 				echo"<span class='glyphicon glyphicon-arrow-left' style='font-size: 25px; color: white;'></span>";
 			echo"</a>";
+			echo "<br />";
+			echo "<br />";
 			echo "<div class='table-responsive'>";
 				echo "<table class='table table-striped table-hover' style='color: white;'>";
 					echo"</tr>";
