@@ -9,7 +9,9 @@
 					for($i = 0; $i < count($grupos); $i++)
 					{
 						$selected = "";
-						if($grupos[$i]['Id'] == $outros['grupo_id'])
+						$grupo_id_filtro = (isset($outros['grupo_id']) ? $outros['grupo_id'] : 0);
+
+						if($grupos[$i]['Id'] == $grupo_id_filtro)
 							$selected = "selected";
 
 						echo"<option $selected class='background_dark' value='". $grupos[$i]['Id'] ."'>".$grupos[$i]['Nome_grupo']."</option>";
@@ -36,7 +38,7 @@
 <div class="row" style="margin-right: 0px;">
 	<div class="col-lg-4">
 		<div class="form-group relative">
-			<input id="nome" name="nome" value='<?php echo (!empty($outros['nome']) ? $outros['nome']:''); ?>' type="text" class="input-material">
+			<input id="nome" name="nome" value='<?php echo (!empty($outros['nome']) ? $outros['nome']:'').(!empty($outros['nome_pesquisa_rapida']) ? $outros['nome_pesquisa_rapida']:''); ?>' type="text" class="input-material">
 			<label for="nome" class="label-material active">Nome</label>
 		</div>
 	</div>
@@ -50,13 +52,15 @@
 	<div class="col-lg-4">
 		<div class='form-group'>
 				<?php
+					$ativo_filtro = (isset($outros['grupo_id']) ? $outros['ativo'] : 0);
+					
 					echo"<select name='ativo' id='ativo' class='form-control padding0'>";
 					echo"<option value='0' class='background_dark'>Ativo</option>";
-					if($outros['ativo'] == 1)
+					if($ativo_filtro == 1)
 						echo"<option value='1' selected class='background_dark'>Sim</option>";
 					else
 						echo"<option value='1' class='background_dark'>Sim</option>";
-					if($outros['ativo'] == 2)
+					if($ativo_filtro == 2)
 						echo"<option value='2' selected class='background_dark'>Não</option>";
 					else
 						echo"<option value='2' class='background_dark'>Não</option>";

@@ -159,7 +159,7 @@
 												{
 													$atr = array("id" => "form_filtros", "name" => "form_filtros", "method" => "get", "style" => "margin-bottom: 0em;"); 
 													echo form_open("usuario/index", $atr);
-														echo"<input autofocus id='nome_pesquisa_rapida' value='".((!empty($filtros['outros']['nome'])) ? $filtros['outros']['nome'] : '')."' placeholder='Pesquisar aluno' name='nome_pesquisa_rapida' type='text' class='form-control relative'  style='top:1px; background-color: white;'>";
+														echo"<input autofocus id='nome_pesquisa_rapida' value='".((!empty($filtros['outros']['nome'])) ? $filtros['outros']['nome'] : '').((!empty($filtros['outros']['nome_pesquisa_rapida'])) ? $filtros['outros']['nome_pesquisa_rapida'] : '')."' placeholder='Pesquisar aluno' name='nome_pesquisa_rapida' type='text' class='form-control relative'  style='top:1px; background-color: white;'>";
 													echo"</form>";
 												}
 											?>

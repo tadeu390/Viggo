@@ -25,42 +25,12 @@
 			$this->data['controller'] = strtolower(get_class($this));
 			$this->data['menu_selectd'] = $this->Geral_model->get_identificador_menu(strtolower(get_class($this)));
 		}
-
-		public function filtro_for_pagination($dataToFilter)
-		{
-			$filter = "";
-			
-			if($dataToFilter['grupo_id'] != 0) $filter = $filter."/".$dataToFilter['grupo_id'];
-			else $filter = "/0";
-			if(!empty($dataToFilter['data_registro_inicio'])) 
-				$filter = $filter."/".$this->convert_date($dataToFilter['data_registro_inicio'], "en");//data tem barra 
-			else $filter = $filter."/0";
-			if(!empty($dataToFilter['data_registro_fim'])) 
-				$filter = $filter."/".$this->convert_date($dataToFilter['data_registro_fim'], "en");//data tem barra 
-			else $filter = $filter."/0";
-			if(!empty($dataToFilter['nome'])) $filter = $filter."/".$dataToFilter['nome'];
-			else $filter = $filter."/0";
-			if(!empty($dataToFilter['email'])) $filter = $filter."/".$dataToFilter['email'];
-			else $filter = $filter."/0";
-			if($dataToFilter['ativo'] != 0) $filter = $filter."/".$dataToFilter['ativo'];
-			else $filter = $filter."/0";
-			if(!empty($dataToFilter['data_nascimento_inicio'])) 
-				$filter = $filter."/".$this->convert_date($dataToFilter['data_nascimento_inicio'], "en");//data tem barra 
-			else $filter = $filter."/0";
-			if(!empty($dataToFilter['data_nascimento_fim'])) 
-				$filter = $filter."/".$this->convert_date($dataToFilter['data_nascimento_fim'], "en");//data tem barra 
-			else $filter = $filter."/0";
-
-			return $filter;
-		}
-
 		/*
 			RESPONSÁVEL POR CARREGAR A LISTA DE USUÁRIOS
 
 			$page -> número da página atual registros
 		*/
-		public function index($page = FALSE, $tipo_usuario = FALSE, $data_registro_inicio = FALSE, $data_registro_fim = FALSE,
-								$nome = FALSE, $email = FALSE, $ativo =FALSE, $data_nascimento_inicio = FALSE, $data_nascimento_fim = FALSE)
+		public function index($page = FALSE)
 		{
 			if($page === FALSE)//QUANDO A PÁGINA NÃO É ESPECIFICADA, POR DEFAULT CARREGA A PRIMEIRA PÁGINA
 				$page = 1;
@@ -68,46 +38,17 @@
 			$this->set_page_cookie($page);
 			
 			$this->data['title'] = 'Usuários';
-			$dataToFilter = "";
-			if(!empty($this->input->get()))
-			{
-				$dataToFilter = array(
-					'grupo_id' => $this->input->get('grupo_id'),
-					'data_registro_inicio' => $this->input->get('data_registro_inicio'),
-					'data_registro_fim' => $this->input->get('data_registro_fim'),
-					'nome' => (!empty($this->input->get('nome')) ? $this->input->get('nome') : $this->input->get('nome_pesquisa_rapida')),
-					'email' => $this->input->get('email'),
-					'ativo' => $this->input->get('ativo'),
-					'data_nascimento_inicio' => $this->input->get('data_nascimento_inicio'),
-					'data_nascimento_fim' => $this->input->get('data_nascimento_fim')
-				);
-				$filter = $this->filtro_for_pagination($dataToFilter);
-			}
-			else
-			{
-				$dataToFilter = array(
-					'grupo_id' => $tipo_usuario,
-					'data_registro_inicio' => $this->convert_date($data_registro_inicio, "pt"),
-					'data_registro_fim' => $this->convert_date($data_registro_fim, "pt"),
-					'nome' => $nome,
-					'email' => $email,
-					'ativo' => $ativo,
-					'data_nascimento_inicio' => $this->convert_date($data_nascimento_inicio, "pt"),
-					'data_nascimento_fim' => $this->convert_date($data_nascimento_fim, "pt")
-				);
-				$filter = $this->filtro_for_pagination($dataToFilter);
-			}
 
-			$this->data['paginacao']['filter'] = $filter;
+			$this->data['paginacao']['filter'] = (!empty($this->input->get()) ? "?".explode("?",$_SERVER["REQUEST_URI"])[1] : "");
 
 			if($this->Geral_model->get_permissao(READ, get_class($this)) == TRUE)
 			{
-				$this->data['usuarios'] = $this->Usuario_model->get_usuario(FALSE, FALSE, $page, $dataToFilter);
+				$this->data['usuarios'] = $this->Usuario_model->get_usuario(FALSE, FALSE, $page, $this->input->get());
 				$this->data['paginacao']['size'] = (!empty($this->data['usuarios']) ? $this->data['usuarios'][0]['Size'] : 0);
 				$this->data['paginacao']['pg_atual'] = $page;
 				//--FILTROS--//
 				$this->data['filtros']['grupos'] = $this->Grupo_model->get_grupo(FALSE, FALSE, FALSE);
-				$this->data['filtros']['outros'] = $dataToFilter;
+				$this->data['filtros']['outros'] = $this->input->get();
 				//--FILTROS--//
 				$this->view("usuario/index", $this->data);
 			}

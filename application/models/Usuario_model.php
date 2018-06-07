@@ -65,6 +65,11 @@
 			$filtros = "";
 			if(!empty($filter))
 			{
+				//PESQUISA RÁPIDA
+				if(isset($filter['nome_pesquisa_rapida']))
+					return " AND u.Nome LIKE ".$this->db->escape($filter['nome_pesquisa_rapida']."%");
+				//PESQUISA RÁPIDA
+
 				if($filter['grupo_id'] != 0)
 					$filtros = " AND u.Grupo_id = ".$this->db->escape($filter['grupo_id']);
 				if(!empty($filter['data_registro_inicio']))

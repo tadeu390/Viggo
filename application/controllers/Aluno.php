@@ -24,8 +24,7 @@
 
 			$page -> pagina atual
 		*/
-		public function index($page = FALSE, $tipo_usuario = FALSE, $data_registro_inicio = FALSE, $data_registro_fim = FALSE,
-								$nome = FALSE, $email = FALSE, $ativo =FALSE, $data_nascimento_inicio = FALSE, $data_nascimento_fim = FALSE)
+		public function index($page = FALSE)
 		{
 			redirect("usuario/index");
 		}
@@ -89,7 +88,7 @@
 		*/
 		public function store_banco($Aluno)
 		{
-			$this->Aluno_model->set_aluno($dataToSave);
+			$this->Aluno_model->set_aluno($Aluno);
 		}
 		/*
 			RESPONSÁVEL POR CAPTAR OS DADOS SUBMETIDOS DO FORMULÁRIO
