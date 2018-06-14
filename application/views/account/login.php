@@ -19,6 +19,9 @@
 							<div class="form-group">
 								<input id="senha-login" name="senha-login" type="password" class="input-material">
 								<label for="senha-login" class="label-material">Senha</label>
+								<div class='text-right'>
+								<span class="glyphicon glyphicon-eye-open" id="espiar" title="Espiar senha" style="color:#336CD2; margin-top: -26px; cursor: pointer;"></span>
+								</div>
 								<div class='input-group mb-2 mb-sm-0 text-danger' id='error-senha-login'></div>
 							</div>
 							<div class='checkbox checbox-switch switch-success custom-controls-stacked'>

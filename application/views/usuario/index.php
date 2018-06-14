@@ -2,12 +2,12 @@
 <?php $this->load->helper("paginacao");?>
 <?php $this->load->helper("mstring");?>
 <br /><br />
-<div class='row padding20' id='container' name='container'>
+<div class='row padding20 text-white'>
 	<?php
     	echo"<div class='col-lg-10 offset-lg-1 padding0'>";
 			echo"<nav aria-label='breadcrumb'>";
   				echo"<ol class='breadcrumb'>";
-    				echo "<li class='breadcrumb-item' aria-current='page'>Usuários</li>";
+    				echo "<li class='breadcrumb-item active' aria-current='page'>Usuários</li>";
     			echo "</ol>";
 			echo"</nav>";
 		echo "</div>";
@@ -26,13 +26,21 @@
 				echo "<table class='table table-striped table-hover text-white'>";
 					echo "<thead>";
 						echo"<tr>";
+							echo"<td colspan='4' style='font-size: 12px;'>";
+							if(!empty($usuarios[0]['Size']))
+								echo "A busca retornou ".$usuarios[0]['Size']." registro(s)";
+							else
+								echo "A busca não obteve resultados.";
+							echo"</td>";
+						echo"</tr>";
+						echo"<tr>";
 							echo"<td class='text-right' colspan='4'>";
 							if(permissao::get_permissao(CREATE, $controller))
 								echo"<a class='btn btn-success' href='".$url."$controller/create/0/'><span class='glyphicon glyphicon-plus'></span> Novo usuário</a>";
 							echo"</td>";
 						echo"</tr>";
 						echo "<tr>";
-							echo "<td>Id</td>";
+							echo "<td>#</td>";
 							echo "<td>Nome</td>";
 							echo "<td>Ativo</td>";
 							//echo "<td>E-mail</td>";
@@ -47,7 +55,7 @@
 							if($usuarios[$i]['Ativo'] == 0)
 								$cor = "style='background-color: #dc3545;'";
 							echo "<tr>";
-								echo "<td $cor>".$usuarios[$i]['Id']."</td>";
+								echo "<td $cor>".($i + 1)."</td>";
 								echo "<td $cor><span title='".$usuarios[$i]['Nome_usuario']."'>".
 								mstring::corta_string($usuarios[$i]['Nome_usuario'], 25)
 								."</span></td>";

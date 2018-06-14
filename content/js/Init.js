@@ -2,6 +2,22 @@ $(document).ready(
   //inicializa o html adicionando os envetos js especificados abaixo
   function() {
     Main.load_mask();
+	
+	///ESPIAR SENHA DE LOGIN
+	$('#espiar').mousedown(function() {
+        document.getElementById("senha-login").type="text";
+    });
+	
+	  $('#espiar').mouseup(function() {
+        document.getElementById("senha-login").type="password";
+    });
+	
+	window.addEventListener('mouseup', function (e) {
+		if(document.getElementById("senha-login") != undefined)
+			document.getElementById("senha-login").type="password"
+	});
+	///ESPIAR SENHA DE LOGIN	
+	
     //event for form login
     $("#form_login").submit(function(event) {
       event.preventDefault();

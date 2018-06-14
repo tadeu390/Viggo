@@ -1,6 +1,5 @@
-
 <br /><br />
-<div class='row padding20'>
+<div class='row padding20 text-white'>
 	    <?php
     	echo"<div class='col-lg-8 offset-lg-2 padding0'>";
 			echo"<nav aria-label='breadcrumb'>";
@@ -52,7 +51,7 @@
 		<?php
 			$this->load->view("usuario/_create_edit",$obj);
 			echo"<br />";
-			echo "<h3 class='text-white'>Dados de matrícula do aluno</h3>";
+			echo "<h3 class=''>Dados de matrícula do aluno</h3>";
 			echo"<div class='form-group relative'>";
 				echo"<input id='matricula' name='matricula' value='".(!empty($obj_aluno['Matricula']) ? $obj_aluno['Matricula']:'')."' type='text' class='input-material'>";
 					echo"<label for='matricula' class='label-material'>Matricula</label>";
@@ -70,19 +69,19 @@
 								if($obj['Ativo'] == 1)
 									$checked = "checked";
 								
-								echo"<label for='conta_ativa' class='text-white'>";
+								echo"<label for='conta_ativa' class=''>";
 									echo "<input type='checkbox' $checked id='conta_ativa' name='conta_ativa' value='1' /><span></span> Conta ativa";
 								echo"</label>";
 							?>
 						</div>
 					</div>
-					<div class="col-lg-8 text-white">
+					<div class="col-lg-8 ">
 						
 						<?php
 							if($obj['Email_notifica_nova_conta'] == 0)
 							{
 								echo"<div class='checkbox checbox-switch switch-success custom-controls-stacked'>";
-									echo"<label for='email_notifica_nova_conta' class='text-white'>";
+									echo"<label for='email_notifica_nova_conta' class=''>";
 										echo "<input type='checkbox' id='email_notifica_nova_conta' name='email_notifica_nova_conta' value='1' /><span></span> Enviar e-mail de notificação";
 									echo"</label>";
 								echo "</div>";

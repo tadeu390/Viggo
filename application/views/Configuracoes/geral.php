@@ -1,5 +1,5 @@
 <br /><br />
-<div class='row padding20'>
+<div class='row padding20 text-white'>
 	<?php
     	echo"<div class='col-lg-8 offset-lg-2 padding0'>";
 			echo"<nav aria-label='breadcrumb'>";
@@ -9,7 +9,7 @@
 			echo"</nav>";
 		echo "</div>";
     ?>
-	<div class='col-lg-8 offset-lg-2 padding background_dark text-white'>
+	<div class='col-lg-8 offset-lg-2 padding background_dark '>
 		<div>
 			<a href='javascript:window.history.go(-1)' title='Voltar'>
 				<span class='glyphicon glyphicon-arrow-left text-white' style='font-size: 25px;'></span>

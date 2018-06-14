@@ -21,7 +21,7 @@
 		{
 			$Ativos = "";
 			if($Ativo == true)
-				$Ativos = " AND Ativo = 1 ";
+				$Ativos = " AND g.Ativo = 1 ";
 
 			if ($id === FALSE)
 			{
@@ -41,8 +41,13 @@
 				return $query->result_array();
 			}
 
-			$query =  $this->db->query("SELECT Id, Nome AS Nome_grupo, Ativo FROM Grupo 
-										WHERE TRUE ".$Ativos." AND Id = ".$this->db->escape($id)."");
+			$query =  $this->db->query("
+				SELECT g.Id, g.Nome AS Nome_grupo, g.Ativo, 
+				DATE_FORMAT(g.Data_registro, '%d/%m/%Y') as Data_registro,
+				(SELECT COUNT(*) FROM Usuario WHERE Grupo_id = g.Id) as Qtd_usuario,
+				(SELECT COUNT(*) FROM Usuario WHERE Grupo_id = g.Id AND Ativo = 1) as Qtd_usuario_ativo
+				FROM Grupo g
+					WHERE TRUE ".$Ativos." AND g.Id = ".$this->db->escape($id)."");
 			return $query->row_array();
 		}
 		/*

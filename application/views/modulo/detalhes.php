@@ -1,5 +1,5 @@
 <br /><br />
-<div class='row' id='container' name='container' style='padding: 20px;'>
+<div class='row padding20 text-white'>
 	<?php
     	echo"<div class='col-lg-10 offset-lg-1 padding0'>";
 			echo"<nav aria-label='breadcrumb'>";
@@ -11,14 +11,14 @@
 		echo "</div>";
     ?>
 	<?php
-		echo "<div class='col-lg-10 offset-lg-1' style='background: #393836;'>";
+		echo "<div class='col-lg-10 offset-lg-1 background_dark'>";
 			echo"<a href='javascript:window.history.go(-1)' class='link padding' title='Voltar'>";
-				echo"<span class='glyphicon glyphicon-arrow-left' style='font-size: 25px; color: white;'></span>";
+				echo"<span class='glyphicon glyphicon-arrow-left text-white' style='font-size: 25px;'></span>";
 			echo"</a>";
 			echo "<br />";
 			echo "<br />";
 			echo "<div class='table-responsive'>";
-				echo "<table class='table table-striped table-hover' style='color: white;'>";
+				echo "<table class='table table-striped table-hover text-white'>";
 					echo"</tr>";
 					echo "<tr>";
 						echo "<td>Nome</td>";

@@ -1,6 +1,6 @@
 <br /><br />
-<div class='row padding20' id='container' name='container'>
-	    <?php
+<div class='row padding20 text-white'>
+	<?php
     	echo"<div class='col-lg-10 offset-lg-1 padding0'>";
 			echo"<nav aria-label='breadcrumb'>";
   				echo"<ol class='breadcrumb'>";
@@ -28,7 +28,7 @@
 					echo"<input type='hidden' id='method' value='store_permissoes'/>";
 					
 					echo "<div class='table-responsive'>";
-						echo "<table class='table table-striped table-hover' style='color: white;'>";
+						echo "<table class='table table-striped table-hover text-white'>";
 							echo"<thead>";
 								echo "<tr>";
 									echo "<td>Módulo</td>";

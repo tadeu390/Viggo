@@ -1,5 +1,5 @@
 <br /><br />
-<div class='row padding20'>
+<div class='row padding20 text-white'>
     <?php
     	echo"<div class='col-lg-8 offset-lg-2 padding0'>";
 			echo"<nav aria-label='breadcrumb'>";
@@ -36,7 +36,7 @@
 		</div>
 
 		<div class="form-group relative">
-			<input id="url_modulo" name="url_modulo" value='<?php echo (!empty($obj['Url_modulo']) ? $obj['Url_modulo']:''); ?>' type="text" class="input-material">
+			<input id="url_modulo" name="url_modulo" spellcheck="false" value='<?php echo (!empty($obj['Url_modulo']) ? $obj['Url_modulo']:''); ?>' type="text" class="input-material">
 			<label for="url_modulo" class="label-material">URL</label>
 			<div class='input-group mb-2 mb-sm-0 text-danger' id='error-url_modulo'></div>
 		</div>
@@ -48,7 +48,7 @@
 		</div>
 
 		<div class="form-group relative">
-			<input id="icone" name="icone" value='<?php echo (!empty($obj['Icone']) ? $obj['Icone']:''); ?>' type="text" class="input-material">
+			<input id="icone" name="icone" spellcheck="false" value='<?php echo (!empty($obj['Icone']) ? $obj['Icone']:''); ?>' type="text" class="input-material">
 			<label for="icone" class="label-material">Ícone</label>
 			<div class='input-group mb-2 mb-sm-0 text-danger' id='error-icone'></div>
 		</div>
@@ -63,7 +63,7 @@
 						$selected = "";
 						if ($lista_menus[$i]['Id'] == $obj['Menu_id'])
 							$selected = "selected";
-						echo "<option style='background-color: #393836;' $selected value='" . $lista_menus[$i]['Id'] . "'>" . $lista_menus[$i]['Nome'] . "</option>";
+						echo "<option class='background_dark' $selected value='" . $lista_menus[$i]['Id'] . "'>" . $lista_menus[$i]['Nome'] . "</option>";
 					}
 					?>
 				</select>

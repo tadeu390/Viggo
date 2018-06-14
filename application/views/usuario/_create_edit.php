@@ -20,11 +20,11 @@
 	<div class='input-group mb-2 mb-sm-0 text-danger' id='error-data_nascimento'></div>
 </div>
 <div class='form-group'>
-	<div class="card">
+	<div class="card" style="border: 1px solid #8a8d93; background-color: transparent;">
 	  <h4 class="card-header">Sexo</h4>
-	  <div class="card-body">
+	  <div class="card-body" style="border-top: 1px solid #8a8d93;">
 		<ul class="list-group">
-			<li class='list-group-item'>
+			<li class='list-group-item' style=' background-color: transparent;'>
 				<div class='checkbox checbox-switch switch-success custom-controls-stacked'>
 					<label for="masculino">
 						<input name='sexo' id='masculino' value='1' <?php if(!empty($obj['Sexo'])) 
@@ -34,7 +34,7 @@
 					</label>
 				</div>
 			</li>
-			<li class='list-group-item'>
+			<li class='list-group-item' style=' background-color: transparent;'>
 				<div class='checkbox checbox-switch switch-success custom-controls-stacked'>
 					<label for="feminino">
 						<input name='sexo' id='feminino' value='0' <?php if(!empty($obj['Sexo']) ||(isset($obj['Sexo']) && $obj['Sexo'] == 0)) 

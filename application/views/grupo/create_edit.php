@@ -1,5 +1,5 @@
 <br /><br />
-<div class='row padding20'>
+<div class='row padding20 text-white'>
 	<?php
     	echo"<div class='col-lg-8 offset-lg-2 padding0'>";
 			echo"<nav aria-label='breadcrumb'>";
@@ -29,12 +29,12 @@
 				<label for="nome" class="label-material">Nome</label>
 				<div class='input-group mb-2 mb-sm-0 text-danger' id='error-nome'></div>
 			</div>
-			<div class="label-material text-white">
-				<br />Permissões padrões <span class='glyphicon glyphicon-question-sign text-danger pointer'  data-toggle="tooltip" title="Esta tela permite alterar as permissões padrões de cada grupo, isto é, as permissões que serão atribuídas a cada usuário que for cadastrado no sistema."></span> <br /><br />
+			<div class="label-material ">
+				<br />Permissões padrões <span class='glyphicon glyphicon-question-sign text-danger pointer'  data-toggle="tooltip" title="Abaixo é possível alterar as permissões padrões de cada grupo, isto é, as permissões que serão atribuídas a cada usuário que for cadastrado no sistema."></span> <br /><br />
 			</div>
 			<?php
 				echo "<div class='table-responsive'>";
-					echo "<table class='table table-striped table-hover' style='color: white;'>";
+					echo "<table class='table table-striped table-hover text-white'>";
 						echo"<thead>";
 							echo "<tr>";
 								echo "<td>Módulo</td>";
@@ -106,7 +106,7 @@
 							if($obj['Ativo'] == 1)
 								$checked = "checked";
 							
-							echo"<label for='grupo_ativo' style='color: white;'>";
+							echo"<label for='grupo_ativo' >";
 								echo "<input type='checkbox' $checked id='grupo_ativo' name='grupo_ativo' value='1' /><span></span> Grupo ativo";
 							echo"</label>";
 						?>

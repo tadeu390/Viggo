@@ -1,11 +1,11 @@
 <br /><br />
-<div class='row padding20' id='container' name='container'>
+<div class='row padding20 text-white'>
 	<?php
     	echo"<div class='col-lg-10 offset-lg-1 padding0'>";
 			echo"<nav aria-label='breadcrumb'>";
   				echo"<ol class='breadcrumb'>";
     				echo"<li class='breadcrumb-item'><a href='".$url."grupo'>Grupos</a></li>";
-    				echo "<li class='breadcrumb-item active' aria-current='page'>Permissões dos usuários do grupo: ".$grupo."</li>";
+    				echo "<li class='breadcrumb-item active' aria-current='page'>Permissões dos usuários do grupo ".$grupo."</li>";
     			echo "</ol>";
 			echo"</nav>";
 		echo "</div>";
@@ -28,7 +28,7 @@
 					echo"<input type='hidden' id='method' value='store_permissoes'/>";
 					
 					echo "<div class='table-responsive'>";
-						echo "<table class='table table-striped table-hover' style='color: white;'>";
+						echo "<table class='table table-striped table-hover text-white'>";
 							echo"<thead>";
 								echo "<tr>";
 									echo "<td>Módulo</td>";

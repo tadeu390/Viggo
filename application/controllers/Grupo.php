@@ -87,6 +87,23 @@
 				$this->view("templates/permissao", $this->data);
 		}
 		/*
+			RESPONSÁVEL POR EXIBIR TODOS OS ATRIBUTOS DE UM GRUPO.
+
+			$id -> id de um grupo
+		*/
+		public function detalhes($id = FALSE)
+		{
+			if($this->Geral_model->get_permissao(READ, get_class($this)) == TRUE)
+			{
+				$this->data['title'] = 'Detalhes do grupo';
+				$this->data['obj'] = $this->Grupo_model->get_grupo(FALSE, $id, FALSE);
+				$this->data['lista_grupos_acesso'] = $this->Acesso_padrao_model->get_acesso_padrao($id);
+				$this->view("grupo/detalhes", $this->data);
+			}
+			else
+				$this->view("templates/permissao", $this->data);
+		}
+		/*
 			RESPONSÁVEL POR RECEBER OS DADOS DO FORMULÁRIO E OS ENVIA-LO PARA A MODEL
 		*/
 		public function store()

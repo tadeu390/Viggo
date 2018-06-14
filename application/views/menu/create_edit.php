@@ -1,5 +1,5 @@
 <br /><br />
-<div class='row padding20'>
+<div class='row padding20 text-white'>
 	<?php
     	echo"<div class='col-lg-8 offset-lg-2 padding0'>";
 			echo"<nav aria-label='breadcrumb'>";

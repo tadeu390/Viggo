@@ -1,12 +1,12 @@
 <?php $this->load->helper("permissao");?>
 <?php $this->load->helper("paginacao");?>
 <br /><br />
-<div class='row padding20' id='container' name='container'>
+<div class='row padding20 text-white'>
 	<?php
     	echo"<div class='col-lg-10 offset-lg-1 padding0'>";
 			echo"<nav aria-label='breadcrumb'>";
   				echo"<ol class='breadcrumb'>";
-    				echo "<li class='breadcrumb-item' aria-current='page'>Menus</li>";
+    				echo "<li class='breadcrumb-item active' aria-current='page'>Menus</li>";
     			echo "</ol>";
 			echo"</nav>";
 		echo "</div>";
@@ -24,7 +24,7 @@
 							echo"</td>";
 						echo"</tr>";
 						echo "<tr>";
-							echo "<td>Id</td>";
+							echo "<td>#</td>";
 							echo "<td>Nome</td>";
 							//echo "<td>Ordem</td>";
 							echo "<td>Ativo</td>";
@@ -38,7 +38,7 @@
 							if($lista_menus[$i]['Ativo'] == 0)
 								$cor = "style='background-color: #dc3545;'";
 							echo "<tr>";
-								echo "<td $cor>".$lista_menus[$i]['Id']."</td>";
+								echo "<td $cor>".($i + 1)."</td>";
 								echo "<td $cor>".$lista_menus[$i]['Nome']."</td>";
 								//echo "<td $cor>".$lista_menus[$i]['ordem']."</td>";
 								echo "<td $cor>".(($lista_menus[$i]['Ativo'] == 1) ? 'Sim' : 'Não')."</td>";
