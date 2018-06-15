@@ -45,7 +45,7 @@
 							echo "<td>Ativo</td>";
 							//echo "<td>E-mail</td>";
 							//echo "<td>Grupo</td>";
-							echo "<td class='text-right'></td>";
+							echo "<td class='text-right'>Ações</td>";
 						echo "<tr>";
 					echo "</thead>";
 					echo "<tbody>";
@@ -53,7 +53,7 @@
 						{
 							$cor = "";
 							if($usuarios[$i]['Ativo'] == 0)
-								$cor = "style='background-color: #dc3545;'";
+								$cor = "class='color-danger'";
 							echo "<tr>";
 								echo "<td $cor>".($i + 1)."</td>";
 								echo "<td $cor><span title='".$usuarios[$i]['Nome_usuario']."'>".

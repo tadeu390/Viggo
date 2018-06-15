@@ -28,7 +28,7 @@
 							echo "<td>Nome</td>";
 							//echo "<td>Ordem</td>";
 							echo "<td>Ativo</td>";
-							echo "<td class='text-right'></td>";
+							echo "<td class='text-right'>Ações</td>";
 						echo "<tr>";
 					echo "</thead>";
 					echo "<tbody>";
@@ -36,7 +36,7 @@
 						{
 							$cor = "";
 							if($lista_menus[$i]['Ativo'] == 0)
-								$cor = "style='background-color: #dc3545;'";
+								$cor = "class='color-danger'";
 							echo "<tr>";
 								echo "<td $cor>".($i + 1)."</td>";
 								echo "<td $cor>".$lista_menus[$i]['Nome']."</td>";

@@ -38,10 +38,10 @@
 						echo"<thead>";
 							echo "<tr>";
 								echo "<td>Módulo</td>";
-								echo "<td class='text-center'>Criar</td>";
-								echo "<td class='text-center'>Ler</td>";
-								echo "<td class='text-center'>Atualizar</td>";
-								echo "<td class='text-center'>Remover</td>";
+								echo "<td>Criar</td>";
+								echo "<td>Ler</td>";
+								echo "<td>Atualizar</td>";
+								echo "<td>Remover</td>";
 							echo "</tr>";
 						echo"</thead>";
 						echo"<tbody>";
@@ -51,7 +51,7 @@
 									echo"<td>";
 										echo $lista_acesso_padrao[$i]['Nome_modulo'];
 									echo"</td>";
-									echo"<td class='text-center'>";
+									echo"<td>";
 										echo "<input type='hidden' name='modulo_id".$i."' value='".$lista_acesso_padrao[$i]['Modulo_id']."' />";
 										echo "<input type='hidden' name='acesso_padrao_id".$i."' value='".$lista_acesso_padrao[$i]['Acesso_padrao_id']."' />";
 										echo"<div class='checkbox checbox-switch switch-success custom-controls-stacked'>";
@@ -63,7 +63,7 @@
 											echo"</label>";
 										echo"</div>";
 									echo"</td>";
-									echo"<td class='text-center'>";
+									echo"<td>";
 										echo"<div class='checkbox checbox-switch switch-success custom-controls-stacked'>";
 											echo"<label for='ler$i'>";
 												if($lista_acesso_padrao[$i]['Ler'] == 1)
@@ -73,7 +73,7 @@
 											echo"</label>";
 										echo"</div>";
 									echo"</td>";
-									echo"<td class='text-center'>";
+									echo"<td>";
 										echo"<div class='checkbox checbox-switch switch-success custom-controls-stacked'>";
 											echo"<label for='atualizar$i'>";
 												if($lista_acesso_padrao[$i]['Atualizar'] == 1)
@@ -83,7 +83,7 @@
 											echo"</label>";
 										echo"</div>";
 									echo"</td>";
-									echo"<td class='text-center'>";
+									echo"<td>";
 										echo"<div class='checkbox checbox-switch switch-success custom-controls-stacked'>";
 											echo"<label for='remover$i'>";
 												if($lista_acesso_padrao[$i]['Remover'] == 1)

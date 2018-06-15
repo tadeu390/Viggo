@@ -386,6 +386,13 @@ var Main = {
 		else
 			Main.create_edit();
 	},
+	validar_disciplina : function()
+	{
+		if($("#nome").val() == "")
+			Main.show_error("nome", 'Informe um nome de disciplina', 'is-invalid');
+		else
+			Main.create_edit();
+	},
 	altera_tipo_cadastro_usuario : function(tipo,registro,method)
 	{
 		if(tipo != 0)

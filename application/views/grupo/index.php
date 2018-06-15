@@ -19,15 +19,15 @@
 					echo "<thead>";
 						echo"<tr>";
 							echo"<td class='text-right' colspan='4'>";
-							if(permissao::get_permissao(CREATE,$controller))
-								echo"<a class='btn btn-success' href='".$url."$controller/create/'><span class='glyphicon glyphicon-plus'></span> Novo grupo</a>";
+								if(permissao::get_permissao(CREATE, $controller))
+									echo"<a class='btn btn-success' href='".$url."$controller/create/'><span class='glyphicon glyphicon-plus'></span> Novo grupo</a>";
 							echo"</td>";
 						echo"</tr>";
 						echo "<tr>";
 							echo "<td>#</td>";
 							echo "<td>Nome</td>";
 							echo "<td>Ativo</td>";
-							echo "<td class='text-right'></td>";
+							echo "<td class='text-right'>Ações</td>";
 						echo "</tr>";
 					echo "</thead>";
 					echo "<tbody>";
@@ -35,18 +35,18 @@
 						{
 							$cor = "";
 							if($lista_grupos[$i]['Ativo'] == 0)
-								$cor = "style='background-color: #dc3545;'";
+								$cor = "class='color-danger'";
 							echo "<tr>";
 								echo "<td $cor>".($i + 1)."</td>";
 								echo "<td $cor>".$lista_grupos[$i]['Nome_grupo']."</td>";
 								echo "<td $cor>".(($lista_grupos[$i]['Ativo'] == 1) ? 'Sim' : 'Não')."</td>";
 								echo "<td class='text-right'>";
-								if(permissao::get_permissao(UPDATE,$controller))
+								if(permissao::get_permissao(UPDATE, $controller))
 										echo "<a href='".$url."$controller/permissoes/".$lista_grupos[$i]['Id']."' title='Permissões dos usuários deste grupo' style='cursor: pointer;' class='glyphicon glyphicon-ok-sign text-danger'></a> | ";
-								if(permissao::get_permissao(UPDATE,$controller))
+								if(permissao::get_permissao(UPDATE, $controller))
 									echo "<a href='".$url."$controller/edit/".$lista_grupos[$i]['Id']."' title='Editar' style='cursor: pointer;' class='glyphicon glyphicon-edit text-danger'></a>  ";
 									echo " | <a href='".$url."$controller/detalhes/".$lista_grupos[$i]['Id']."' title='Detalhes' style='cursor: pointer;' class='glyphicon glyphicon-th text-danger''></a> ";
-								if(permissao::get_permissao(DELETE,$controller))
+								if(permissao::get_permissao(DELETE, $controller))
 									echo " | <span onclick='Main.confirm_delete(". $lista_grupos[$i]['Id'] .");' id='sp_lead_trash' name='sp_lead_trash' title='Apagar' style='cursor: pointer;' class='glyphicon glyphicon-trash text-danger'></span>";
 								echo "</td>";
 							echo "</tr>";
@@ -54,7 +54,7 @@
 					echo "</tbody>";
 				echo "</table>";
 			echo "</div>";
-			paginacao::get_paginacao($paginacao,$controller);
+			paginacao::get_paginacao($paginacao, $controller);
 		echo "</div>";
 	?>
 </div>

@@ -32,10 +32,10 @@
 							echo"<thead>";
 								echo "<tr>";
 									echo "<td>Módulo</td>";
-									echo "<td class='text-center'>Criar</td>";
-									echo "<td class='text-center'>Ler</td>";
-									echo "<td class='text-center'>Atualizar</td>";
-									echo "<td class='text-center'>Remover</td>";
+									echo "<td>Criar</td>";
+									echo "<td>Ler</td>";
+									echo "<td>Atualizar</td>";
+									echo "<td>Remover</td>";
 								echo "</tr>";
 							echo"</thead>";
 							echo"<tbody>";
@@ -47,7 +47,7 @@
 											echo"<td>";
 												echo $lista_grupo_acesso[$i]['Nome_modulo'];
 											echo"</td>";
-											echo"<td class='text-center'>";
+											echo"<td>";
 												echo "<input type='hidden' name='modulo_id".$i."' value='".$lista_grupo_acesso[$i]['Modulo_id']."' />";
 												echo "<input type='hidden' name='acesso_id".$i."' value='".$lista_grupo_acesso[$i]['Acesso_id']."' />";
 												$p = "success";
@@ -66,7 +66,7 @@
 													echo "<input type='hidden' value='".$p."' id='flag$idd' name='flag$idd'>";
 												echo"</div>";
 											echo"</td>";
-											echo"<td class='text-center'>";
+											echo"<td>";
 												$p = "success";
 												if($lista_grupo_acesso[$i]['Qtd_user'] == $lista_grupo_acesso[$i]['Permissoes_ler'])
 													$p = "success";
@@ -83,7 +83,7 @@
 													echo "<input type='hidden' value='".$p."' id='flag$idd' name='flag$idd'>";
 												echo"</div>";
 											echo"</td>";
-											echo"<td class='text-center'>";
+											echo"<td>";
 												$p = "success";
 												if($lista_grupo_acesso[$i]['Qtd_user'] == $lista_grupo_acesso[$i]['Permissoes_atualizar'])
 													$p = "success";
@@ -100,7 +100,7 @@
 													echo "<input type='hidden' value='".$p."' id='flag$idd' name='flag$idd'>";
 												echo"</div>";
 											echo"</td>";
-											echo"<td class='text-center'>";
+											echo"<td>";
 												$p = "success";
 												if($lista_grupo_acesso[$i]['Qtd_user'] == $lista_grupo_acesso[$i]['Permissoes_remover'])
 													$p = "success";

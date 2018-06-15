@@ -209,3 +209,8 @@ ol.breadcrumb
 {
 	border: 1px solid #336CD2;
 }
+
+.color-danger
+{
+	background-color: #DD3068;
+}

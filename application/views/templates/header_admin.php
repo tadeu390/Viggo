@@ -26,6 +26,12 @@
 			    -webkit-box-shadow: none;
 			    outline: -webkit-focus-ring-color auto 5px;
 			}
+			
+			.card-center-x{
+				margin: 0 auto; 
+				float: none; 
+				margin-bottom: 10px; 
+			}
 		</style>
 		<script type="text/javascript">
 			window.onload = function()
