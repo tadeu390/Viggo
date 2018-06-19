@@ -110,7 +110,7 @@
 			);
 
 			//bloquear acesso direto ao metodo store
-			 if(!empty($dataToSave['Nome']))
+			 if(!empty($this->input->post()))
 			 {
 				if($this->Geral_model->get_permissao(CREATE, get_class($this)) == TRUE || $this->Geral_model->get_permissao(UPDATE, get_class($this)) == TRUE)
 				{

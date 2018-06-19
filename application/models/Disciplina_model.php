@@ -2,8 +2,8 @@
 	/*
 		ESTA MODAL TRATA DAS OPERAÇÕES NO BANCO DE DADOS REFERENTE AOS DADOS DE DISCIPLINAS 
 	*/
-	class Disciplina_model extends CI_Model {
-		
+	class Disciplina_model extends CI_Model 
+	{
 		/*
 			CONECTA AO BANCO DE DADOS DEIXANDO A CONEX�O ACESS�VEL PARA OS METODOS
 			QUE NECESSITAREM REALIZAR CONSULTAS.
@@ -37,7 +37,7 @@
 					$pagination = "";
 					
 				$query = $this->db->query("
-					SELECT (SELECT count(*) FROM  Disciplina WHERE Ativo = 1) AS Size,  
+					SELECT (SELECT count(*) FROM  Disciplina WHERE TRUE ".$Ativos." ) AS Size,  
 					d.Id, d.Nome as Nome_disciplina, d.Ativo, 
 					d.Data_registro 
 						FROM Disciplina d

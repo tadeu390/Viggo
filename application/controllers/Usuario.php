@@ -109,7 +109,7 @@
 		{
 			
 			//NÃO PERMITE ACESSO DIRETO A METODO STORE
-			if(!empty($this->input->post("usuario_id")))
+			if(!empty($this->input->post()))
 			{
 				if($this->Geral_model->get_permissao(CREATE, get_class($this)) == TRUE || $this->Geral_model->get_permissao(UPDATE, get_class($this)) == TRUE)
 				{

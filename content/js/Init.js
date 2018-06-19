@@ -125,13 +125,18 @@ $(document).ready(
     });
 
     //BTN CADASTROS
-    //BTN CADASTROS
-    $("#form_cadastro_disciplina").submit(function(event) {//quando o usuário está inserindo a senha nova do esqueceu sua senha
+
+    $("#form_cadastro_curso").submit(function(event) {
+      event.preventDefault();
+      Main.validar_curso();
+    });
+
+    $("#form_cadastro_disciplina").submit(function(event) {
       event.preventDefault();
       Main.validar_disciplina();
     });
 
-    $("#form_cadastro_configuracoes_email").submit(function(event) {//quando o usuário está inserindo a senha nova do esqueceu sua senha
+    $("#form_cadastro_configuracoes_email").submit(function(event) {
       event.preventDefault();
       Main.validar_config_email();
     });

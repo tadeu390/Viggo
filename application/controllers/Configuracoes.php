@@ -56,7 +56,7 @@
 				);
 
 				//bloquear acesso direto ao metodo store
-				 if(!empty($dataToSave['Id']))
+				 if(!empty($this->input->post()))
 						$this->Configuracoes_model->set_configuracoes($dataToSave);
 				 else
 					redirect('academico/dashboard');
@@ -88,7 +88,7 @@
 					'Porta' => $this->input->post('porta')
 				);
 				//bloquear acesso direto ao metodo store
-				if(!empty($dataToSave['Id']))
+				if(!empty($this->input->post()))
 						$this->Configuracoes_email_model->set_configuracoes_email($dataToSave);
 				 else
 					redirect('academico/dashboard');

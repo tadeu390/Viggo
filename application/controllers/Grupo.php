@@ -116,7 +116,7 @@
 			);
 
 			//bloquear acesso direto ao metodo store
-			 if(!empty($dataToSave['Nome']))
+			 if(!empty($this->input->post()))
 			 {
 			 	if($this->Geral_model->get_permissao(CREATE, get_class($this)) == TRUE || $this->Geral_model->get_permissao(CREATE, get_class($this)) == TRUE)
 			 	{
@@ -178,7 +178,7 @@
 		public function store_permissoes()
 		{
 			//NÃO PERMITE ACESSO DIRET AO METODO STORE
-			if(!empty($this->input->post("grupo_id")))
+			if(!empty($this->input->post()))
 			{
 				if($this->Geral_model->get_permissao(CREATE, get_class($this)) == TRUE || $this->Geral_model->get_permissao(CREATE, get_class($this)) == TRUE)
 			 	{

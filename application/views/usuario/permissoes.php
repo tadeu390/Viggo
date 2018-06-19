@@ -5,7 +5,7 @@
 			echo"<nav aria-label='breadcrumb'>";
   				echo"<ol class='breadcrumb'>";
     				echo"<li class='breadcrumb-item'><a href='".$url."usuario'>Usuários</a></li>";
-    				echo "<li class='breadcrumb-item active' aria-current='page'>Permissões do usuário: ".$usuario."</li>";
+    				echo "<li class='breadcrumb-item active' aria-current='page'>Permissões do usuário ".$usuario."</li>";
     			echo "</ol>";
 			echo"</nav>";
 		echo "</div>";

@@ -11,6 +11,11 @@
 		echo "</div>";
     ?>
 	<div class='col-lg-8 offset-lg-2 padding background_dark'>
+	<div>
+		<a href='javascript:window.history.go(-1)' title='Voltar'>
+			<span class='glyphicon glyphicon-arrow-left text-white' style='font-size: 25px;'></span>
+		</a>
+	</div>
 	<div class='table-responsive'>
 		<?php
 			$atr = array('id' => 'form_cadastro_disciplina','name' => 'form_cadastro');

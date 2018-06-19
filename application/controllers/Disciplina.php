@@ -3,7 +3,8 @@
 	/*
 		ESTA CLASSE TEM POR FUNÇÃO CONTROLAR TUDO REFERENTE AS DISCIPLINAS 
 	*/
-	class Disciplina extends Geral {
+	class Disciplina extends Geral 
+	{
 		/*
 			no construtor carregamos as bibliotecas necessarias e tambem nossa model
 		*/
@@ -100,7 +101,8 @@
 			);
 			//bloquear acesso direto ao metodo store
 			 if(!empty($this->input->post()))
-				$resultado = $this->Disciplina_model->set_disciplina($dataToSave);
+			 	if($this->Geral_model->get_permissao(CREATE, get_class($this)) == TRUE || $this->Geral_model->get_permissao(UPDATE, get_class($this)) == TRUE)
+					$resultado = $this->Disciplina_model->set_disciplina($dataToSave);
 			 else
 				redirect('disciplina/index');
 			
@@ -108,6 +110,5 @@
 			header('Content-Type: application/json');
 			echo json_encode($arr);
 		}
-		
 	}
 ?>

@@ -393,6 +393,15 @@ var Main = {
 		else
 			Main.create_edit();
 	},
+	validar_curso : function()
+	{
+		if($("#nome").val() == "")
+			Main.show_error("nome","Informe o nome do curso","is-invalid");
+		else if($('input:checkbox[name^=disciplinas]:checked').length == 0)
+			Main.show_error("discip","Selecione ao menos uma disciplina","");
+		else
+			Main.create_edit();
+	},
 	altera_tipo_cadastro_usuario : function(tipo,registro,method)
 	{
 		if(tipo != 0)
