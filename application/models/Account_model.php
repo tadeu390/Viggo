@@ -14,7 +14,7 @@
 			$email -> e-mail de usuário
 			$senha -> senha de acesso do usuário
 		*/
-		public function valida_login($email, $senha)
+		public function valida_login($email, $senha) 
 		{
 			$query = $this->db->query("
 				SELECT u.Id, u.Grupo_id, u.Status, u.Contador_tentativa, 
