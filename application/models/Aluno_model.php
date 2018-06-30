@@ -1,6 +1,6 @@
 <?php
-	/*
-		ESTA MODEL TRATA DAS OPERAÇÕES NO BANCO DE DADOS REFERENTE AOS ESPECÍFICOS DO ALUNO.
+	/*!
+	*	ESTA MODEL TRATA DAS OPERAÇÕES NO BANCO DE DADOS REFERENTE AOS ESPECÍFICOS DO ALUNO.
 	*/
 	class Aluno_model extends CI_Model 
 	{
@@ -9,13 +9,12 @@
 		{
 			$this->load->database();
 		}
-		/*
-			RESPONSÁVEL POR RETORNAR UMA SENHA DE ACORDO COM UM ID DE USUARIO OU RETORNA UMA LISTA DE SENHA
-		 	SE NÃO FOR PASSADO ARGUMENTO NA CHAMADA DO MÉTODO
-
-		 	$id -> id do aluno
-		 */
-		public function get_aluno($Id = FALSE)
+		/*!
+		*	RESPONSÁVEL POR RETORNAR OS DADOS DE UM ALUNO DE ACORDO COM UM ID DE USUÁRIO.
+		*
+		*	$id -> Id de usuário do aluno.
+		*/
+		public function get_aluno($Id)
 		{
 			$query =  $this->db->query("
 				SELECT a.Id, a.Matricula 
@@ -24,10 +23,10 @@
 				WHERE a.Usuario_id = ".$this->db->escape($Id)."");
 			return $query->row_array();
 		}
-		/*
-			REPONSÁVEL POR CADASTRAR OU ATUALIZAR OS DADOS DE UM ALUNO
-
-			$data -> Contem os dados do aluno
+		/*!
+		*	REPONSÁVEL POR CADASTRAR OU ATUALIZAR OS DADOS DE UM ALUNO.
+		*
+		*	$data -> Contem os dados do aluno.
 		*/
 		public function set_aluno($data)
 		{
@@ -39,10 +38,10 @@
 				$this->db->update('Aluno', $data);
 			}
 		}
-		/*
-			RESPONSÁVEL POR RETORNAR UM ALUNO DE ACORDO COM A MATRÍCULA
-
-			$matricula -> matricula do aluno
+		/*!
+		*	RESPONSÁVEL POR RETORNAR UM ALUNO DE ACORDO COM A MATRÍCULA.
+		*
+		*	$matricula -> Número de matricula do aluno.
 		*/
 		public function get_aluno_por_matricula($matricula)
 		{

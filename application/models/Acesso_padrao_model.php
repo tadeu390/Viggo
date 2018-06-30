@@ -1,6 +1,6 @@
 <?php
-	/*
-		ESTA MODEL TRATA DAS OPERAÇÕES NO BANCO DE DADOS REFERENTE AS PERMISSÕES PADRÕES POR DE CADA GRUPO EM CADA MÕDULO DO SISTEMA
+	/*!
+	*	ESTA MODEL TRATA DAS OPERAÇÕES NO BANCO DE DADOS REFERENTE AS PERMISSÕES PADRÕES POR CADA GRUPO EM CADA MÓDULO DO SISTEMA.
 	*/
 	class Acesso_padrao_model extends CI_Model 
 	{
@@ -8,10 +8,10 @@
 		{
 			$this->load->database();
 		}
-		/*
-			RESPONSÁVEL POR TRAZR UMA LISTA QUE CONTÉM AS PERMISSÕES PADRÕES A CADA MÓDULO DO SISTEMA POR GRUPO
-
-			$id -> id do grupo que se quer buscar as permissões
+		/*!
+		*	RESPONSÁVEL POR TRAZR UMA LISTA QUE CONTÉM AS PERMISSÕES PADRÕES DE CADA MÓDULO DO SISTEMA POR GRUPO.
+		*
+		*	$id -> Id do grupo que se quer buscar as permissões.
 		*/
 		public function get_acesso_padrao($id = FALSE)
 		{
@@ -30,10 +30,10 @@
 
 			return $query->result_array();
 		}
-		/*
-			RESPONSÁVEL POR ALTERAR AS PERMISSÇOES POR GRUPO
-
-			$data -> Contém os dados de permissões do grupo em questão de cada módulo
+		/*!
+		*	RESPONSÁVEL POR CADASTRAR/EDITAR PERMISSÇOES POR GRUPO.
+		*
+		*	$data -> Contém os dados de permissões do grupo em questão de cada módulo.
 		*/
 		public function set_acesso_padrao($data)
 		{

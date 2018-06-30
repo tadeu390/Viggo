@@ -1,6 +1,6 @@
 <?php
-	/*
-		ESTA MODEL TRATA DAS OPERAÇÕES NO BANCO DE DADOS REFERENTE AS PERMISSÕES DE USUÁRIO OU DE GRUPO DE USUÁRIOS
+	/*!
+	*	ESTA MODEL TRATA DAS OPERAÇÕES NO BANCO DE DADOS REFERENTE AS PERMISSÕES DE USUÁRIO OU DE GRUPO DE USUÁRIOS.
 	*/
 	class Acesso_model extends CI_Model 
 	{
@@ -8,11 +8,11 @@
 		{
 			$this->load->database();
 		}
-		/*
-			RESPONSÁVEL POR RETORNAR OS MODULOS E AS PERMISSÕES POR USUÁRIO PARA PODER VISUALIZAR
-			QUAIS MÓDULO CADA USUÁRIO TEM ACESSO
-
-			$id -> id do usuário
+		/*!
+		*	RESPONSÁVEL POR RETORNAR OS MÓDULOS E AS PERMISSÕES POR USUÁRIO PARA PODER VISUALIZAR
+		*	QUAIS MÓDULOS CADA USUÁRIO TEM ACESSO.
+		*
+		*	$id -> id do usuário.
 		*/
 		public function get_acesso($id)
 		{
@@ -24,10 +24,10 @@
 				WHERE a.Usuario_id = ".$this->db->escape($id)." OR a.Usuario_id IS NULL ORDER BY m.Id");
 			return $query->result_array();
 		}
-		/*
-			RESPONSÁVEL POR ALTERAR O STATUS DAS PERMISSÕES DE UM MÓDULO POR USUÁRIO
-
-			$data -> contém todos os dados de permissão de um módulo por usuário
+		/*!
+		*	RESPONSÁVEL POR CADASTRAR/EDITAR PERMISSÕES DE UM MÓDULO POR USUÁRIO.
+		*
+		*	$data -> Contém todos os dados de permissão de um módulo por usuário.
 		*/
 		public function set_acesso($data)
 		{
@@ -39,10 +39,10 @@
 				$this->db->update('Acesso', $data);
 			}
 		}
-		/*
-			RESPONSÁVEL POR RETORNAR TODOS OS MÓDULOS QUE O USUÁRIO LOGADO PODE VISUALIZAR
-
-			Obs.: modulo_acesso é uma view
+		/*!
+		*	RESPONSÁVEL POR RETORNAR TODOS OS MÓDULOS QUE O USUÁRIO LOGADO PODE VISUALIZAR.
+		*
+		*	Obs.: modulo_acesso é uma view.
 		*/
 		public function get_modulo_acesso()//usado apenas para montar o menu
 		{

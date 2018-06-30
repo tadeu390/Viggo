@@ -1,7 +1,7 @@
 <?php
-	require_once("Geral.php");//INCLUI A CLASSE GENÉRICA
-	/*
-		ESTA CLASSE TEM POR FUNÇÃO CONTROLAR TUDO REFERENTE AOS GRUPOS DO SISTEMA
+	require_once("Geral.php");//INCLUI A CLASSE GENÉRICA.
+	/*!
+	*	ESTA CLASSE TEM POR FUNÇÃO CONTROLAR TUDO REFERENTE AOS GRUPOS DO SISTEMA.
 	*/
 	class Grupo extends Geral 
 	{
@@ -22,9 +22,10 @@
 			$this->data['controller'] = strtolower(get_class($this));
 			$this->data['menu_selectd'] = $this->Geral_model->get_identificador_menu(strtolower(get_class($this)));
 		}
-		/*
-			RESPONSÁVEL POR LISTAR TODOS OS GRUPOS NA TELA
-			$page -> número da página atual registros
+		/*!
+		*	RESPONSÁVEL POR RECEBER DA MODEL TODOS OS GRUPOS CADASTRADOS E ENVIA-LOS A VIEW.
+		*
+		*	$page -> Número da página atual de registros.
 		*/
 		public function index($page = FALSE)
 		{
@@ -44,9 +45,10 @@
 			else
 				$this->view("templates/permissao",$this->data);
 		}
-		/*
-			RESPONSÁVEL POR OCULTAR UM GRUPO DO SISTEMA
-			$id -> id de um grupo
+		/*!
+		*	RESPONSÁVEL POR RECEBER UM ID DE GRUPO PARA "APAGAR".
+		*
+		*	$id -> Id do grupo.
 		*/
 		public function deletar($id = FALSE)
 		{
@@ -55,9 +57,11 @@
 			else
 				$this->view("templates/permissao", $this->data);
 		}
-		/*
-			RESPONSÁVEL POR RENDERIZAR O FORMULÁRIO DE CADASTRO DE GRUPO PARA EDIÇÃO
-			$id -> id de um grupo
+		/*!
+		*	RESPONSÁVEL POR CARREGAR O FORMULÁRIO DE CADASTRO DE CURSO E RECEBER DA MODEL OS DADOS 
+		*	DO GRUPO QUE SE DESEJA EDITAR.
+		*
+		*	$id -> Id do grupo.
 		*/
 		public function edit($id = FALSE)
 		{
@@ -71,8 +75,8 @@
 				$this->view("templates/permissao", $this->data);
 			$this->view("grupo/create_edit", $this->data);
 		}
-		/*
-			RESPONSÁVEL POR RENDERIZAR O FORMULÁRIO DE CADASTRO DE grupo PARA CRIAR
+		/*!
+		*	RESPONSÁVEL POR CARREGAR O FORMULÁRIO DE CADASTRO DO GRUPO.
 		*/
 		public function create()
 		{
@@ -86,10 +90,10 @@
 			else
 				$this->view("templates/permissao", $this->data);
 		}
-		/*
-			RESPONSÁVEL POR EXIBIR TODOS OS ATRIBUTOS DE UM GRUPO.
-
-			$id -> id de um grupo
+		/*!
+		*	RESPONSÁVEL POR RECEBER DA MODEL TODOS OS ATRIBUTOS DE UM GRUPO E OS ENVIA-LOS A VIEW.
+		*
+		*	$id -> Id de um grupo.
 		*/
 		public function detalhes($id = FALSE)
 		{
@@ -103,8 +107,8 @@
 			else
 				$this->view("templates/permissao", $this->data);
 		}
-		/*
-			RESPONSÁVEL POR RECEBER OS DADOS DO FORMULÁRIO E OS ENVIA-LO PARA A MODEL
+		/*!
+		*	RESPONSÁVEL POR CAPTAR OS DADOS DO FORMULÁRIO SUBMETIDO.
 		*/
 		public function store()
 		{
@@ -154,10 +158,11 @@
 			 else
 				redirect('grupo/index');
 		}
-		/*
-			RESPONSÁVEL CARREGAR AS INFORMAÇÕES PARA VIEW QUE MOSTRARÁ AS PERMISSÕES POR MODULOS DE UM DETERMINADO GRUPO
-
-			$id -> id do grupo
+		/*!
+		*	RESPONSÁVEL POR RECEBER DA MODEL AS PERMISSÕES POR MÓDULO DE UM DETERMINADO GRUPO E ENVIA-LAS 
+		*   A VIEW.
+		*
+		*	$id -> Id do grupo.
 		*/
 		public function permissoes($id = FALSE)
 		{
@@ -172,8 +177,10 @@
 			else
 				$this->view("templates/permissao", $this->data);
 		}
-		/*
-			RESPONSÁVEL POR CADASTRAR OU ATUALIZAR PERMISSÕES POR GRUPO. ESTE MÉTODO TAMBÉM IDENTIFICA SE CADA CHECKBOX ESTÁ MARCADO, DESMARCADO OU MARCADO COMO PARCIAL(FICA EM AMARELO E QUANDO É SALVO AS ALTERAÇÕES, TUDO O QUE ESTÁ MARCADO EM AMARELO NÃO ALTERA NADA NO BANCO)
+		/*!
+		*	RESPONSÁVEL CAPTAR AS PERMISSÕES POR GRUPO. 
+		*	ESTE MÉTODO TAMBÉM IDENTIFICA SE CADA CHECKBOX ESTÁ MARCADO, 
+		*	DESMARCADO OU MARCADO COMO PARCIAL(PARCIAL CHECKBOX AMARELO).
 		*/
 		public function store_permissoes()
 		{

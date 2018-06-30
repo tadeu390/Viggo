@@ -1,6 +1,6 @@
 <?php
-	/*
-		ESTA MODAL TRATA DAS OPERAÇÕES NO BANCO DE DADOS REFERENTE AOS DADOS DE USUÁRIOS 
+	/*!
+	*	ESTA MODAL TRATA DAS OPERAÇÕES NO BANCO DE DADOS REFERENTE AS INFORMAÇÕES DE USUÁRIOS .
 	*/
 	class Usuario_model extends CI_Model 
 	{
@@ -8,10 +8,13 @@
 		{
 			$this->load->database();
 		}
-		/*
-			REPONSÁVEL POR RETORNAR UMA LISTA DE USUÁRIOS OU UM USUÁRIO ESPECÍFICO SE FOR PASSADO UM VALOR
-			PARA O PARÂMETRO Id. PAGINA O RESULTADO QUANDO NECESSÁRIO E VOLTA SOMENTE REGISTRO(S) ATIVOS SE FOR PASSA TRUE PARA
-			O PRIMEIRO PARÂMETRO
+		/*!
+		*	RESPONSÁVEL POR RETORNAR UMA LISTA DE USUÁRIOS OU UM USUÁRIO ESPECÍFICO.
+		*	
+		*	$Ativo -> Quando passadO "TRUE" quer dizer pra retornar somente registro(s) ativos(s), se for passado FALSE retorna tudo.
+		*	$id -> Id de um menu específico.
+		*	$page-> Número da página de registros que se quer carregar.
+		*	$filter -> Contém todos os filtros utilizados pelo usuário para a fazer a busca no banco de dados.
 		*/
 		public function get_usuario($Ativo, $Id = FALSE, $page = FALSE, $filter = FALSE)
 		{
@@ -59,7 +62,11 @@
 				WHERE TRUE ".$Ativos." AND u.Id = ".$this->db->escape($Id)."");
 			return $query->row_array();
 		}
-
+		/*!
+		*	RESPONSÁVEL POR MONTAR A STRING SQL DO FILTRO.
+		*	
+		*	$filter -> Contém os filtros a serem colocados na string SQL.
+		*/
 		public function filtros($filter)
 		{
 			$filtros = "";
@@ -89,10 +96,10 @@
 			}
 			return $filtros;
 		}
-		/*
-			REPONSÁVEL POR OCULTAR UM USUÁRIO NO BANCO DE DADOS
-
-			$Id -> id do usuário
+		/*!
+		*	RESPONSÁVEL POR "APAGAR" UM USUÁRIO DO BANCO DE DADOS.
+		*
+		*	$id -> Id do usuário a ser "apagado".
 		*/
 		public function deletar($Id)
 		{
@@ -100,10 +107,10 @@
 				UPDATE Usuario SET Ativo = 0 
 				WHERE Id = ".$this->db->escape($Id)."");
 		}
-		/*
-			RESPONSÁVEL POR CADASTRAR OU ATUALIZAR UM USUÁRIO E EM SEGUIDA RETORNA A ID DO USUÁRIO CADASTRADO
-
-			$data -> Contém todos os dados do usuário
+		/*!
+		*	RESPONSÁVEL POR CADASTRAR/ATUALIZAR UM USUÁRIO E EM SEGUIDA RETORNA A SUA ID.
+		*
+		*	$data -> Contém todos os dados do usuário.
 		*/
 		public function set_usuario($data)
 		{
@@ -116,10 +123,10 @@
 			}
 			return $this->get_usuario_por_email($data['Email'])['Id'];
 		}
-		/*
-			RESPONSÁVEL POR RETORAR UM USUÁRIO DE ACORDO COM UM E-MAIL
-
-			$Email -> Endereço de e-mail do usuário
+		/*!
+		*	RESPONSÁVEL POR RETORAR UM USUÁRIO DE ACORDO COM UM E-MAIL.
+		*
+		*	$Email -> Endereço de e-mail do usuário.
 		*/
 		public function get_usuario_por_email($Email)
 		{
@@ -127,11 +134,11 @@
 				SELECT * FROM Usuario WHERE Email = ".$this->db->escape($Email)."");
 			return $query->row_array();
 		}
-		/*
-			RESPONSÁVEL POR VERIFICAR A DISPONIBILIDADE DE UM ENDEREÇO DE E-MAIL
-
-			$Email -> Endereço de e-mail a ser validado
-			$Id -> Id do usuário
+		/*!
+		*	RESPONSÁVEL POR VERIFICAR SE UM DETERMIANDO E-MAIL JÁ EXISTE NO BANCO DE DADOS.
+		*
+		*	$Email -> Endereço de e-mail a ser validado.
+		*	$Id -> Id do usuário.
 		*/
 		public function email_valido($Email, $Id)
 		{
@@ -145,10 +152,10 @@
 			
 			return "valido";
 		}
-		/*
-			RESPONSÁVEL POR RETORNAR OS USUÁRIOS DE UM DETERMINADO GRUPO
-
-			$Grupo_id -> id de um grupo
+		/*!
+		*	RESPONSÁVEL POR RETORNAR OS USUÁRIOS DE UM DETERMINADO GRUPO.
+		*
+		*	$Grupo_id -> Id de um grupo.
 		*/
 		public function get_usuario_por_grupo($Grupo_id)
 		{

@@ -1,6 +1,6 @@
 <?php
-	/*
-		ESTA MODEL TRATA DAS OPERAÇÕES REFERENTE AOS ACESSOS REALIZADOS POR CADA USUÁRIO
+	/*!
+	*	ESTA MODEL TRATA DAS OPERAÇÕES REFERENTE AOS ACESSOS REALIZADOS POR CADA USUÁRIO.
 	*/
 	class Logs_model extends CI_Model 
 	{
@@ -9,10 +9,10 @@
 		{
 			$this->load->database();
 		}
-		/*
-			RESPONSÁVEL POR CADASTRAR CADA ACESSO DO USUÁRIO
-
-			$Usuario_id -> id do usuário que está logando em sua conta
+		/*!
+		*	RESPONSÁVEL POR CADASTRAR CADA ACESSO DE UM DETERMINADO USUÁRIO.
+		*
+		*	$Usuario_id -> Id do usuário que está logando em sua conta.
 		*/
 		public function set_log($Usuario_id)
 		{
@@ -22,10 +22,10 @@
 			);
 			$query = $this->db->insert('Log',$data);
 		}
-		/*
-			RESPONSÁVEL POR LEVANTAR O ÚLTIMO ACESSO REALIZADO POR UM USUÁRIO
-
-			$Usuario_id -> id do usuário
+		/*!
+		*	RESPONSÁVEL POR LEVANTAR O ÚLTIMO ACESSO REALIZADO POR UM DETERMINADO USUÁRIO.
+		*
+		*	$Usuario_id -> Id do usuário.
 		*/
 		public function get_last_access_user($Usuario_id)
 		{

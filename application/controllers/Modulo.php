@@ -1,7 +1,7 @@
 <?php
-	require_once("Geral.php");//INCLUI A CLASSE GENÉRICA
-	/*
-		ESTA CLASSE TEM POR FUNÇÃO CONTROLAR TODOS OS RECURSOS DOS MODULOS DO SISTEMA
+	require_once("Geral.php");//INCLUI A CLASSE GENÉRICA.
+	/*!
+	*	ESTA CLASSE TEM POR FUNÇÃO CONTROLAR TODOS OS RECURSOS DOS MODULOS DO SISTEMA.
 	*/
 	class Modulo extends Geral 
 	{
@@ -20,10 +20,10 @@
 			$this->data['controller'] = strtolower(get_class($this));
 			$this->data['menu_selectd'] = $this->Geral_model->get_identificador_menu(strtolower(get_class($this)));
 		}
-		/*
-			RESPONSÁVEL POR CARREGAR NA TELA A LISTA DE MÓDULOS PRESENTES NO SISTEMA
-
-			$page -> número da página atual registros
+		/*!
+		*	RESPONSÁVEL POR RECEBER DA MODEL TODOS OS MODULO CADASTRADOS E ENVIA-LOS A VIEW.
+		*
+		*	$page -> Número da página atual de registros.
 		*/
 		public function index($page = false)
 		{
@@ -46,10 +46,10 @@
 			else
 				$this->view("templates/permissao", $this->data);
 		}
-		/*
-			RESPONSÁVEL POR OCULTAR UM MÓDULO DO SISTEMA
-
-			$id -> id de um módulo
+		/*!
+		*	RESPONSÁVEL POR RECEBER UM ID DE MÓDULO PARA "APAGAR".
+		*
+		*	$id -> Id do módulo.
 		*/
 		public function deletar($id = false)
 		{
@@ -58,10 +58,11 @@
 			else
 				$this->view("templates/permissao", $this->data);
 		}
-		/*
-			RESPONSÁVEL POR RENDERIZAR O FORMULÁRIO DE CADASTRO DO MÓDULO PARA EDIÇÃO
-
-			$id -> id de um módulo
+		/*!
+		*	RESPONSÁVEL POR CARREGAR O FORMULÁRIO DE CADASTRO DE MÓDULOS E RECEBER DA MODEL OS DADOS 
+		*	DO MÓDULO QUE SE DESEJA EDITAR.
+		*
+		*	$id -> Id do módulo.
 		*/
 		public function edit($id = false)
 		{
@@ -76,8 +77,8 @@
 			else
 				$this->view("templates/permissao", $this->data);
 		}
-		/*
-			RESPONSÁVEL POR RENDERIZAR O FORMULÁRIO DE CADASTRO DO MÓDULO PARA CRIAR
+		/*!
+		*	RESPONSÁVEL POR CARREGAR O FORMULÁRIO DE CADASTRO DO MÓDULO.
 		*/
 		public function create()
 		{
@@ -92,8 +93,8 @@
 			else
 				$this->view("templates/permissao", $this->data);
 		}
-		/*
-			RESPONSÁVEL POR RECEBER OS DADOS DO FORMULÁRIO E OS ENVIA-LO PARA A MODEL
+		/*!
+		*	RESPONSÁVEL POR CAPTAR OS DADOS DO FORMULÁRIO SUBMETIDO.
 		*/
 		public function store()
 		{
@@ -129,10 +130,10 @@
 			 else
 				redirect('modulo/index');
 		}
-		/*
-			RESPONSÁVEL POR EXIBIR TODOS OS ATRIBUTOS DE UM MÓDULO.
-
-			$id -> id de um módulo
+		/*!
+		*	RESPONSÁVEL POR RECEBER DA MODEL TODOS OS ATRIBUTOS DE UM MÓDULO E OS ENVIA-LOS A VIEW.
+		*
+		*	$id -> Id de um módulo.
 		*/
 		public function detalhes($id = FALSE)
 		{

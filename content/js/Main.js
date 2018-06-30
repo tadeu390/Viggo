@@ -150,7 +150,7 @@ var Main = {
 	method : '',
 	form : '',
 	create_edit : function (){
-		$("#mensagem_aguardar").html("Aguarde... processando dados");
+		$("#mensagem_aguardar").html("Aguarde... processando dados.");
 		$('#modal_aguardar').modal({
 			keyboard: false,
 			backdrop : 'static'

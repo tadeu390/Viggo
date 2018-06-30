@@ -1,11 +1,11 @@
 <?php
-	require_once("Geral.php");//INCLUI A CLASSE GENÉRICA
-	/*
-		ESTA CLASSE TEM POR FUNÇÃO CONTROLAR TUDO REFERENTE AS CONFIGURAÇÕE DO SISTEMA
+	require_once("Geral.php");//INCLUI A CLASSE GENÉRICA.
+	/*!
+	*	ESTA CLASSE TEM POR FUNÇÃO CONTROLAR TUDO REFERENTE AS CONFIGURAÇÕE DO SISTEMA.
 	*/
 	class Configuracoes extends Geral {
 		/*
-			no construtor carregamos as bibliotecas necessarias e tambem nossa model
+			No construtor carregamos as bibliotecas necessarias e tambem nossa model.
 		*/
 		public function __construct()
 		{
@@ -26,8 +26,8 @@
 			$this->data['controller'] = strtolower(get_class($this));
 			$this->data['menu_selectd'] = $this->Geral_model->get_identificador_menu(strtolower(get_class($this)));
 		}
-		/*
-			RESPONSÁVEL POR CARREGAR A VIEW DE CONFIGURAÇÕES NA TELA COM TODAS AS CONFIGURAÇÕES DO SISTEMA
+		/*!
+		*	RESPONSÁVEL RECEBER DA MODEL OS DADOS DE CONFIGURAÇÕES E OS ENVIA-LOS A VIEW.
 		*/
 		public function geral()
 		{
@@ -41,8 +41,8 @@
 			else
 				$this->view("templates/permissao",$this->data);
 		}
-		/*
-			RESPONSÁVEL POR RECEBER OS DADOS DE CONFIGURAÇÕES DO FORMULÁRIO SUBMETIDO PELO USUÁRIO
+		/*!
+		*	RESPONSÁVEL POR CAPTAR OS DADOS DO FORMULÁRIO SUBMETIDO.
 		*/
 		public function store()
 		{
@@ -68,8 +68,8 @@
 			header('Content-Type: application/json');
 			echo json_encode($arr);
 		}
-		/*
-			RESPONSÁVEL POR RECEBER OS DADOS DE E-MAIL DO FORMULÁRIO SUBMETIDO PELO USUÁRIO
+		/*!
+		*	RESPONSÁVEL POR CAPTAR OS DADOS DE E-MAIL DO FORMULÁRIO SUBMETIDO.
 		*/
 		public function store_email()
 		{
@@ -100,9 +100,8 @@
 			header('Content-Type: application/json');
 			echo json_encode($arr);
 		}
-		/*
-			RESPONSÁVEL POR REDIRECIONAR PARA PARA A PÁGINA INICIAL QUANDO SE SUBMETE O FORMULÁRIO
-			DE CONFIGURAÇÕES, QUEM REDIRECIONA PRA ESSE MÉTODO É O JAVASCRIPT
+		/*!
+		*	RESPONSÁVEL POR REDIRECIONAR PARA A PÁGINA INICIAL QUANDO SÃO SALVAS AS ALTERAÇÕES.
 		*/
 		public function index()
 		{

@@ -1,12 +1,12 @@
 <?php
-	require_once("Geral.php");//INCLUI A CLASSE GENÉRICA
-	/*
-		ESTA CLASSE TEM POR FUNÇÃO CONTROLAR TUDO REFERENTE AS DISCIPLINAS 
+	require_once("Geral.php");//INCLUI A CLASSE GENÉRICA.
+	/*!
+	*	ESTA CLASSE TEM POR FUNÇÃO CONTROLAR TUDO REFERENTE AS DISCIPLINAS.
 	*/
 	class Disciplina extends Geral 
 	{
 		/*
-			no construtor carregamos as bibliotecas necessarias e tambem nossa model
+			No construtor carregamos as bibliotecas necessarias e tambem nossa model.
 		*/
 		public function __construct()
 		{
@@ -23,10 +23,10 @@
 			$this->data['controller'] = strtolower(get_class($this));
 			$this->data['menu_selectd'] = $this->Geral_model->get_identificador_menu(strtolower(get_class($this)));
 		}
-		/*
-			RESPONSÁVEL POR CARREGAR TODAS AS DISCIPLINAS CADASTRADAS E ENVIA-LAS A VIEW 
-
-			$page -> Número da página atual de registros
+		/*!
+		*	RESPONSÁVEL POR RECEBER DA MODEL TODAS AS DICIPLINAS CADASTRADAS E ENVIA-LAS A VIEW.
+		*
+		*	$page -> Número da página atual de registros.
 		*/
 		public function index($page = FALSE)
 		{
@@ -38,7 +38,7 @@
 			{
 				$this->data['lista_disciplinas'] = $this->Disciplina_model->get_disciplina(FALSE, FALSE, $page, FALSE);
 				
-				$this->data['paginacao']['size'] = (!empty($this->data['Disciplinas'][0]['Size'])?$this->data['Disciplinas'][0]['Size'] : 0 );
+				$this->data['paginacao']['size'] = (!empty($this->data['lista_disciplinas'][0]['Size'])?$this->data['lista_disciplinas'][0]['Size'] : 0 );
 				$this->data['paginacao']['pg_atual'] = $page;
 				
 				$this->view("disciplina/index", $this->data);
@@ -46,24 +46,25 @@
 			else
 				$this->view("templates/permissao", $this->data);
 		}
-		/*
-			RESPONSÁVEL POR RECEBER UM ID DE DISCIPLINA PARA APAGAR
-
-			$id -> Id da disciplina
+		/*!
+		*	RESPONSÁVEL POR RECEBER UM ID DE DISCIPLINA PARA "APAGAR".
+		*
+		*	$id -> Id da disciplina.
 		*/
-		public function deletar($id = null)
+		public function deletar($id = NULL)
 		{
 			if($this->Geral_model->get_permissao(DELETE, get_class($this)) == TRUE)
 				$this->Disciplina_model->delete_disciplina($id);
 			else
 				$this->view("templates/permissao",$this->data);
 		}
-		/*
-			RESPONSÁVEL POR CARREGAR O FORMULÁRIO DE CADASTRO DA DISCIPLINA JUNTAMENTE COM OS DADOS DA DISCIPLINA QUE SE DESEJA EDITAR
-
-			$id -> id da disciplina
+		/*!
+		*	RESPONSÁVEL POR CARREGAR O FORMULÁRIO DE CADASTRO DE DISCIPLINAS E RECEBER DA MODEL OS DADOS 
+		*	DA DISCIPLINA QUE SE DESEJA EDITAR.
+		*
+		*	$id -> Id da disciplina.
 		*/
-		public function edit($id = null)
+		public function edit($id = NULL)
 		{
 			$this->data['title'] = 'Editar Disciplina';
 			if($this->Geral_model->get_permissao(UPDATE,get_class($this)) == TRUE)
@@ -74,8 +75,8 @@
 			else
 				$this->view("templates/permissao", $this->data);
 		}
-		/*
-			RESPONSÁVEL POR CARREGAR O FORMULÁRIO DE CADASTRO DA DISCIPLINA
+		/*!
+		*	RESPONSÁVEL POR CARREGAR O FORMULÁRIO DE CADASTRO DO DISCIPLINAS.
 		*/
 		public function create()
 		{
@@ -88,8 +89,8 @@
 			else
 				$this->view("templates/permissao", $this->data);
 		}
-		/*
-			RESPONSÁVEL POR CAPTURAR OS DADOS SUBMETIDOS DO FORMULÁRIO E ENVIA-LOS AO MODEL
+		/*!
+		*	RESPONSÁVEL POR CAPTAR OS DADOS DO FORMULÁRIO SUBMETIDO.
 		*/
 		public function store()
 		{

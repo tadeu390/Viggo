@@ -214,3 +214,25 @@ ol.breadcrumb
 {
 	background-color: #DD3068;
 }
+
+.intervalos
+{
+	background-color: white;
+	height: 185px;
+	max-height: 185px;
+	overflow: auto;
+	color: black;
+}
+
+.bimestres
+{
+	background-color: white;
+	height: 185px;
+	max-height: 185px;
+	overflow: auto;
+	color: black;
+}
+
+legend{
+	font-size: 20px;
+}

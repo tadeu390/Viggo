@@ -1,12 +1,12 @@
 <?php
-	require_once("Geral.php");//INCLUI A CLASSE GENÉRICA
-	/*
-		ESTA CLASSE TEM POR FUNÇÃO CONTROLAR TUDO RELATIVO AOS DADOS DO USUÁRIO
+	require_once("Geral.php");//INCLUI A CLASSE GENÉRICA.
+	/*!
+	*	ESTA CLASSE TEM POR FUNÇÃO CONTROLAR TUDO RELATIVO AOS DADOS DO USUÁRIO.
 	*/
 	class Usuario extends Geral 
 	{
 		/*
-			CONSTRUTOR CARREGA OS MODELS E VERIFICAR A EXSISTÊNCIA DA SESSÃO DE USUÁRIO
+			CONSTRUTOR CARREGA OS MODELS E VERIFICAR A EXSISTÊNCIA DA SESSÃO DE USUÁRIO.
 		*/
 		public function __construct()
 		{
@@ -25,10 +25,10 @@
 			$this->data['controller'] = strtolower(get_class($this));
 			$this->data['menu_selectd'] = $this->Geral_model->get_identificador_menu(strtolower(get_class($this)));
 		}
-		/*
-			RESPONSÁVEL POR CARREGAR A LISTA DE USUÁRIOS
-
-			$page -> número da página atual registros
+		/*!
+		*	RESPONSÁVEL POR RECEBER DA MODEL TODOS OS USUÁRIOS CADASTRADOS E ENVIA-LOS A VIEW.
+		*
+		*	$page -> Número da página atual de registros.
 		*/
 		public function index($page = FALSE)
 		{
@@ -55,10 +55,10 @@
 			else
 				$this->view("templates/permissao", $this->data);
 		}
-		/*
-			RESPONSÁVEL POR OCULTAR UM REGISTRO DE USUÁRIO
-
-			$id -> id de um usuário
+		/*!
+		*	RESPONSÁVEL POR RECEBER UM ID DE USUÁRIO PARA "APAGAR".
+		*
+		*	$id -> Id do usuário.
 		*/
 		public function deletar($id = FALSE)
 		{
@@ -67,10 +67,10 @@
 			else
 				$this->view("templates/permissao", $this->data);
 		}
-		/*
-			RESPONSÁVEL POR EXIBIR TODOS OS ATRIBUTOS DE UM USUÁRIO.
-
-			$id -> id de um usuário
+		/*!
+		*	RESPONSÁVEL POR RECEBER DA MODEL TODOS OS ATRIBUTOS DE UM USUÁRIO E OS ENVIA-LOS A VIEW.
+		*
+		*	$id -> Id de um usuário.
 		*/
 		public function detalhes($id = FALSE)
 		{
@@ -84,10 +84,11 @@
 			else
 				$this->view("templates/permissao", $this->data);
 		}
-		/*
-			RESPONSÁVEL POR CARREGAR NA TELA TODAS AS PERMISSÕES DOS MÓDULOS PRA UM DETERMINADO USUÁRIO. TAMBÉM PERMITE ALTERAR AS PERMISSÕES.
-
-			$id -> id do usuário
+		/*!
+		*	RESPONSÁVEL POR RECEBER DA MODEL AS PERMISSÕES POR MÓDULO DE UM DETERMINADO USUÁRIO E ENVIA-LAS 
+		*   A VIEW. É POSSIVEL ALTERAR ESTAS PERMISSÕES.
+		*
+		*	$id -> Id do usuário.
 		*/
 		public function permissoes($id = FALSE)
 		{
@@ -102,8 +103,8 @@
 			else
 				redirect("academico/dashboard", $this->data);
 		}
-		/*
-			RESPONSÁVEL POR CAPTAR OS DADOS DE PERMISSÕES PARA TODOS OS MÓDULOS COM RELAÇÃO A UM DETERMINADO USUÁRIO
+		/*!
+		*	RESPONSÁVEL CAPTAR AS PERMISSÕES DE UM DETERMINADO USUÁRIO DO FORMULÁRIO SUBMETIDO.
 		*/
 		public function store_permissoes()
 		{
@@ -138,9 +139,10 @@
 			else
 				redirect('usuario/index');
 		}
-		/*
-			RESPONSÁVEL POR RENDERIZAR O FORMULÁRIO DE CADASTRO DO USUÁRIO PARA CRIAR
-			$type -> contém um numero inteiro, que diz respeito ao tipo de usuário que se quer criar
+		/*!
+		*	RESPONSÁVEL POR CARREGAR O FORMULÁRIO DE CADASTRO DO USUÁRIO.
+		* 	$id -> Contém a id de um usuário.
+		*	$type -> Contém um número inteiro, que diz respeito ao tipo de usuário que se quer criar.
 		*/
 		public function create($id = FALSE, $type = NULL)
 		{
@@ -155,10 +157,12 @@
 			else
 				$this->view("templates/permissao", $this->data);
 		}
-		/*
-			RESPONSÁVEL POR RENDERIZAR O FORMULÁRIO DE CADASTRO DO USUÁRIO PARA EDIÇÃO
-			
-			$id -> id de um usuário
+		/*!
+		*	RESPONSÁVEL POR CARREGAR O FORMULÁRIO DE CADASTRO DE USUÁRIO E RECEBER DA MODEL OS DADOS 
+		*	DO USUÁRIO QUE SE DESEJA EDITAR.
+		*
+		* 	$id -> Contém a id de um usuário.
+		*	$type -> Contém um número inteiro, que diz respeito ao tipo de usuário que se quer criar.
 		*/
 		public function edit($id = FALSE, $type = NULL)
 		{
@@ -181,10 +185,10 @@
 			else
 				$this->view("templates/permissao", $this->data);
 		}
-		/*
-			RESPONSÁVEL POR VALIDAR OS DADOS NECESSÁRIOS DOS USUÁRIOS
-
-			$Usuario -> Contém todos os dados do usuário a ser validado
+		/*!
+		*	RESPONSÁVEL POR VALIDAR OS DADOS NECESSÁRIOS DOS USUÁRIOS.
+		*
+		*	$Usuario -> Contém todos os dados do usuário a ser validado.
 		*/
 		public function valida_usuario($Usuario)
 		{
@@ -193,10 +197,10 @@
 			else
 				return 1;
 		}
-		/*
-			RESPONSÁVEL POR ENVIAR AO MODEL OS DADOS DO USUÁRIO E FAZER TRATAMENTOS QUANDO NECESSÁRIO
-
-			$dataToSave -> Contém todos os dados usuário a ser cadastrado / editado
+		/*!
+		*	RESPONSÁVEL POR ENVIAR AO MODEL OS DADOS DO USUÁRIO.
+		*
+		*	$dataToSave -> Contém todos os dados usuário a ser cadastrado/editado.
 		*/
 		public function store_banco($dataToSave)
 		{
@@ -243,9 +247,8 @@
 
 			return $Usuario_id;
 		}
-
-		/*
-			RESPONSÁVEL POR RECEBER, CADASTRAR OU ATUALIZAR OS DADOS DE USUÁRIO NO BANCO DE DADOS
+		/*!
+		*	RESPONSÁVEL POR CAPTAR OS DADOS DO FORMULÁRIO SUBMETIDO.
 		*/
 		public function store()
 		{
@@ -262,7 +265,6 @@
 			);
 
 			$dataToSave['Data_nascimento'] = $this->convert_date($dataToSave['Data_nascimento'], "en");
-
 
 			if(empty($dataToSave['Email_notifica_nova_conta']))
 				$dataToSave['Email_notifica_nova_conta'] = 0;
@@ -290,10 +292,11 @@
 			else
 				redirect('usuario/index');
 		}
-		/*
-			RESPONSÁVEL POR ENVIAR E-MAIL PARA O USUÁRIO QUANDO SUA CONTA FOR CRIADA NO SISTEMA
-
-			$Usuario -> dados do usuário
+		/*!
+		*	RESPONSÁVEL POR ENVIAR E-MAIL PARA O USUÁRIO QUANDO SUA CONTA FOR CRIADA NO SISTEMA (ISTO SÓ É EXECUTADO SE QUEM ESTÁ CRIANDO O
+		*	USUÁRIO, MARCAR O CHECKBOX NA TELA DE CADASTRO).
+		*
+		*	$Usuario -> Dados do usuário.
 		*/
 		public function envia_email_nova_conta($Usuario)
 		{
@@ -309,17 +312,17 @@
 
 			$this->email->send();
 		}
-		/*
-			RESPONSÁVEL POR CADASTRAR AS PERMISSÕES DEFAULT DO USUÁRIO
-
-			$id -> id do usuário
-			$grupo_id id do grupo que usuário foi colocado 
+		/*!
+		*	RESPONSÁVEL POR IDENTIFICAR AS PERMISSÕES DEFAULT DO USUÁRIO DE ACORDO COM O GRUPO QUE LHE É SELECIONADO E ENVIAR PARA A MODEL 
+		*	PARA QUE SEJA CADASTRADO CADA PERMISSÃO.
+		*
+		*	$id -> Id -> do usuário.
+		*	$grupo_id -> Id do grupo que usuário foi colocado.
 		*/
 		public function permissoes_default($id, $grupo_id)
 		{
 			$permissoes_default = $this->Acesso_padrao_model->get_acesso_padrao($grupo_id);
 			$permissoes_current = $this->Acesso_model->get_acesso($id);
-			
 			
 			for($i = 0; $i < COUNT($permissoes_default); $i++)
 			{

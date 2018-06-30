@@ -1,6 +1,6 @@
 <?php
-	/*
-		ESTA MODEL TRATA DAS OPERAÇÕES NA BASE DE DADOS REFERENTE AOS MÓDULOS DO SISTEMA
+	/*!
+	*	ESTA MODEL TRATA DAS OPERAÇÕES NA BASE DE DADOS REFERENTE AOS MÓDULOS DO SISTEMA.
 	*/
 	class Modulo_model extends CI_Model 
 	{
@@ -8,13 +8,12 @@
 		{
 			$this->load->database();
 		}
-		/*
-			RESPONSÁVEL POR RETORNAR UMA LISTA DE MÓDULOS OU UM MÓDULO ESPECÍFICO, AMBOS PODENDO INCLUIR
-			APENAS REGISTROS ATIVOS OU TODOS.
-			
-			$Ativo -> Especifica o retorno de módulos ativos ou todos. true p/ ativos false p/ todos
-			$id -> id de um menu específico
-			$page-> número da paginação para retornar a página de registros correta
+		/*!
+		*	RESPONSÁVEL POR RETORNAR UMA LISTA DE MÓDULOS OU UM MÓDULO ESPECÍFICO.
+		*	
+		*	$Ativo -> Quando passadO "TRUE" quer dizer pra retornar somente registro(s) ativos(s), se for passado FALSE retorna tudo.
+		*	$id -> Id de um módulo específico.
+		*	$page-> Número da página de registros que se quer carregar.
 		*/
 		public function get_modulo($Ativo, $id = false, $page = false)
 		{
@@ -55,10 +54,10 @@
 
 			return $query->row_array();
 		}
-		/*
-			RESPONSÁVEL POR OCULTAR UM MÓDULO ESPECÍFICO
-
-			$id -> Id de um Módulo específico
+		/*!
+		*	RESPONSÁVEL POR "APAGAR" UM MÓDULO DO BANCO DE DADOS.
+		*
+		*	$id -> Id do módulo a ser "apagado".
 		*/
 		public function deletar($id)
 		{
@@ -66,10 +65,10 @@
 				UPDATE Modulo SET Ativo = 0 
 				WHERE Id = ".$this->db->escape($id)."");
 		}
-		/*
-			RESPONSÁVEL POR CADASTRAR UM NOVO MÓDULO OU ATUALIZA-LO CASO JÁ EXISTA NO BANCO DE DADOS
-
-			$data -> Contém os dados do menu
+		/*!
+		*	RESPONSÁVEL POR CADASTRAR/ATUALIZAR UM MÓDULO BANCO DE DADOS.
+		*
+		*	$data -> Contém os dados do módulo.
 		*/
 		public function set_modulo($data)
 		{
@@ -83,10 +82,10 @@
 				return $this->db->update('Modulo', $data);
 			}
 		}
-		/*
-			RESPONSÁVEL POR RETORNAR UM OBJETO DE MÓDULO CONFORME O NOME
-
-			$nome -> Contém o nome do módulo a ser buscado no banco de dados
+		/*!
+		*	RESPONSÁVEL POR RETORNAR UM MÓDULO CONFORME O NOME.
+		*
+		*	$nome -> Contém o nome do módulo a ser buscado no banco de dados.
 		*/
 		public function get_modulo_por_nome($nome)
 		{

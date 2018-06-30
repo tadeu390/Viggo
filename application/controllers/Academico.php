@@ -1,12 +1,12 @@
 <?php
-	require_once("Geral.php");//HERDA AS ESPECIFICAÇÕES DA CLASSE GENÉRICA
-	/*
-		ESTA CLASSE TEM POR FUNÇÃO CARREGAR O DASHOBOARD PARA ADM
+	require_once("Geral.php");//HERDA AS ESPECIFICAÇÕES DA CLASSE GENÉRICA.
+	/*!
+	*	ESTA CLASSE TEM POR FUNÇÃO CONTROLAR A TELA INICIAL.
 	*/
 	class Academico extends Geral 
 	{
-		/*
-			CONSTRUTOR RESPONSÁVEL POR VALIDAR A SESSÃO E VERIFICAR O MENU SELECIONADO
+		/*!
+		*	CONSTRUTOR RESPONSÁVEL POR VALIDAR A SESSÃO E VERIFICAR O MENU SELECIONADO.
 		*/
 		public function __construct()
 		{
@@ -17,9 +17,8 @@
 			$this->data['controller'] = get_class($this);
 			$this->data['menu_selectd'] = $this->Geral_model->get_identificador_menu(strtolower(get_class($this)));
 		}
-		
-		/*
-			RESPONSÁVEL POR CARREGAR A TELA INICIAL DO DASHOBOARD PARA O ADM
+		/*!
+		*	RESPONSÁVEL POR CARREGAR A TELA INICIAL DO DASHOBOARD.
 		*/
 		public function dashboard()
 		{

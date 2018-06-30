@@ -72,6 +72,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 		require_once(APPPATH.'config/constants.php');
 	}
 
+	if (function_exists("set_time_limit") == TRUE AND @ini_get("safe_mode") == 0)
+	{
+	    @set_time_limit(300);
+	}
+
 /*
  * ------------------------------------------------------
  *  Load the global functions

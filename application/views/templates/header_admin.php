@@ -107,7 +107,8 @@
 									<li class="nav-item" style="padding-right: 10px;">
 										<div class="dropdown">
 											<?php
-												if($this->input->cookie('grupo_id') != 2 || $this->session->grupo_id != 2) //não pode ser aluno
+												if(($this->input->cookie('grupo_id') == ADMIN || $this->session->grupo_id == ADMIN) OR 
+												   ($this->input->cookie('grupo_id') == SECRETARIA || $this->session->grupo_id == SECRETARIA))
 												{
 													$atr = array("id" => "form_filtros", "name" => "form_filtros", "method" => "get", "style" => "margin-bottom: 0em;"); 
 													echo form_open("usuario/index", $atr);
@@ -123,8 +124,9 @@
 										  	<span class="caret"></span></button>
 										  	<ul class="dropdown-menu">
 										    	<?php
-										    	if($this->input->cookie('grupo_id') == 1 || $this->session->grupo_id == 1)
-										    	{
+										    	if(($this->input->cookie('grupo_id') == ADMIN || $this->session->grupo_id == ADMIN) OR 
+												   ($this->input->cookie('grupo_id') == SECRETARIA || $this->session->grupo_id == SECRETARIA))
+												{
 											    	echo "<li>";
 											    		echo"<a class='btn-block' href='".$url."usuario/edit'>";
 											    			echo"<span class='glyphicon glyphicon-user'></span>&nbsp; Meus dados";

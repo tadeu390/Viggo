@@ -1,12 +1,12 @@
 <?php
-	require_once("Geral.php");//INCLUI A CLASSE GENÉRICA
-	/*
-		ESTA CLASSE TEM POR FUNÇÃO CONTROLAR TUDO REFERENTE AOS CURSOS 
+	require_once("Geral.php");//INCLUI A CLASSE GENÉRICA.
+	/*!
+	*	ESTA CLASSE TEM POR FUNÇÃO CONTROLAR TUDO REFERENTE AOS CURSOS.
 	*/
 	class Curso extends Geral 
 	{
 		/*
-			no construtor carregamos as bibliotecas necessarias e tambem nossa model
+			No construtor carregamos as bibliotecas necessarias e tambem nossa model.
 		*/
 		public function __construct()
 		{
@@ -24,10 +24,10 @@
 			$this->data['controller'] = strtolower(get_class($this));
 			$this->data['menu_selectd'] = $this->Geral_model->get_identificador_menu(strtolower(get_class($this)));
 		}
-		/*
-			RESPONSÁVEL POR CARREGAR TODOS OS CURSOS CADASTRADOS E ENVIA-LAS A VIEW 
-
-			$page -> Número da página atual de registros
+		/*!
+		*	RESPONSÁVEL POR RECEBER DA MODEL TODOS OS CURSOS CADASTRADOS E ENVIA-LOS A VIEW.
+		*
+		*	$page -> Número da página atual de registros.
 		*/
 		public function index($page = FALSE)
 		{
@@ -38,17 +38,17 @@
 			if($this->Geral_model->get_permissao(READ, get_class($this)) == TRUE)
 			{
 				$this->data['lista_cursos'] = $this->Curso_model->get_curso(FALSE, FALSE, $page, FALSE);
-				$this->data['paginacao']['size'] = (!empty($this->data['Cursos'][0]['Size']) ? $this->data['Cursos'][0]['Size'] : 0);
+				$this->data['paginacao']['size'] = (!empty($this->data['lista_cursos'][0]['Size']) ? $this->data['lista_cursos'][0]['Size'] : 0);
 				$this->data['paginacao']['pg_atual'] = $page;
 				$this->view("curso/index", $this->data);
 			}
 			else
 				$this->view("templates/permissao", $this->data);
 		}
-		/*
-			RESPONSÁVEL POR RECEBER UM ID DE CURSOS PARA APAGAR
-
-			$id -> Id do curso
+		/*!
+		*	RESPONSÁVEL POR RECEBER UM ID DE CURSO PARA "APAGAR".
+		*
+		*	$id -> Id do curso.
 		*/
 		public function deletar($id = null)
 		{
@@ -57,10 +57,11 @@
 			else
 				$this->view("templates/permissao", $this->data);
 		}
-		/*
-			RESPONSÁVEL POR CARREGAR O FORMULÁRIO DE CADASTRO DE CURSO JUNTAMENTE COM OS DADOS DO CURSO QUE SE DESEJA EDITAR
-
-			$id -> id do curso
+		/*!
+		*	RESPONSÁVEL POR CARREGAR O FORMULÁRIO DE CADASTRO DE CURSO E RECEBER DA MODEL OS DADOS 
+		*	DO CURSO QUE SE DESEJA EDITAR.
+		*
+		*	$id -> Id do curso.
 		*/
 		public function edit($id = null)
 		{
@@ -75,8 +76,8 @@
 			else
 				$this->view("templates/permissao", $this->data);
 		}
-		/*
-			RESPONSÁVEL POR CARREGAR O FORMULÁRIO DE CADASTRO DO CURSO
+		/*!
+		*	RESPONSÁVEL POR CARREGAR O FORMULÁRIO DE CADASTRO DO CURSO.
 		*/
 		public function create()
 		{
@@ -89,8 +90,8 @@
 			}
 			$this->view("curso/create_edit", $this->data);
 		}
-		/*
-			RESPONSÁVEL POR CAPTURAR OS DADOS SUBMETIDOS DO FORMULÁRIO E ENVIA-LOS AO MODEL
+		/*!
+		*	RESPONSÁVEL POR CAPTAR OS DADOS DO FORMULÁRIO SUBMETIDO.
 		*/
 		public function store()
 		{
@@ -112,10 +113,10 @@
 			header('Content-Type: application/json');
 			echo json_encode($arr);
 		}
-		/*
-			RESPONSÁVEL POR EXIBIR TODOS OS ATRIBUTOS DE UM CURSO.
-
-			$id -> id de um curso
+		/*!
+		*	RESPONSÁVEL POR RECEBER DA MODEL TODOS OS ATRIBUTOS DE UM CURSO E OS ENVIA-LOS A VIEW.
+		*
+		*	$id -> Id de um curso.
 		*/
 		public function detalhes($id = FALSE)
 		{

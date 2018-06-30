@@ -1,7 +1,7 @@
 <?php
-	require_once("Geral.php");//INCLUI A CLASSE GENÉRICA
-	/*
-		ESTA CLASSE TEM POR FUNÇÃO CONTROLAR TUDO REFERENTE AOS MENUS DO SISTEMA
+	require_once("Geral.php");//INCLUI A CLASSE GENÉRICA.
+	/*!
+	*	ESTA CLASSE TEM POR FUNÇÃO CONTROLAR TUDO REFERENTE AOS MENUS DO SISTEMA.
 	*/
 	class Menu extends Geral 
 	{
@@ -20,19 +20,20 @@
 			$this->data['controller'] = strtolower(get_class($this));
 			$this->data['menu_selectd'] = $this->Geral_model->get_identificador_menu(strtolower(get_class($this)));
 		}
-		/*
-			RESPONSÁVEL POR LISTAR TODOS OS MENUS NA TELA
-			$page -> número da página atual registros
+		/*!
+		*	RESPONSÁVEL POR RECEBER DA MODEL TODOS OS MENUS CADASTRADOS E ENVIA-LOS A VIEW.
+		*
+		*	$page -> Número da página atual de registros.
 		*/
-		public function index($page = false)
+		public function index($page = FALSE)
 		{
-			if($page === false)
+			if($page === FALSE)
 				$page = 1;
 			
 			$this->set_page_cookie($page);
 			
 			$this->data['title'] = 'Menus';
-			if($this->Geral_model->get_permissao(READ, get_class($this)) == true)
+			if($this->Geral_model->get_permissao(READ, get_class($this)) == TRUE)
 			{
 				$this->data['lista_menus'] = $this->Menu_model->get_menu(FALSE, FALSE, $page);
 				$this->data['paginacao']['size'] = $this->data['lista_menus'][0]['Size'];
@@ -40,41 +41,44 @@
 				$this->view("menu/index", $this->data);
 			}
 			else
-				$this->view("templates/permissao",$this->data);
+				$this->view("templates/permissao", $this->data);
 		}
-		/*
-			RESPONSÁVEL POR OCULTAR UM MENU DO SISTEMA
-			$id -> id de um menu
+		/*!
+		*	RESPONSÁVEL POR RECEBER UM ID DE MENU PARA "APAGAR".
+		*
+		*	$id -> Id do menu.
 		*/
-		public function deletar($id = false)
+		public function deletar($id = FALSE)
 		{
-			if($this->Geral_model->get_permissao(DELETE, get_class($this)) == true)
+			if($this->Geral_model->get_permissao(DELETE, get_class($this)) == TRUE)
 				$this->Menu_model->deletar($id);
 			else
 				$this->view("templates/permissao", $this->data);
 		}
-		/*
-			RESPONSÁVEL POR RENDERIZAR O FORMULÁRIO DE CADASTRO DE MENU PARA EDIÇÃO
-			$id -> id de um menu
+		/*!
+		*	RESPONSÁVEL POR CARREGAR O FORMULÁRIO DE CADASTRO DE MENU E RECEBER DA MODEL OS DADOS 
+		*	DO MENU QUE SE DESEJA EDITAR.
+		*
+		*	$id -> Id do menu.
 		*/
-		public function edit($id = false)
+		public function edit($id = FALSE)
 		{
 			$this->data['title'] = 'Editar Menu';
-			if($this->Geral_model->get_permissao(UPDATE, get_class($this)) == true)
+			if($this->Geral_model->get_permissao(UPDATE, get_class($this)) == TRUE)
 			{
 				$this->data['obj'] = $this->Menu_model->get_menu(FALSE, $id, FALSE);
 				$this->view("menu/create_edit", $this->data);
 			}
 			else
-				$this->view("templates/permissao",$this->data);
+				$this->view("templates/permissao", $this->data);
 		}
-		/*
-			RESPONSÁVEL POR RENDERIZAR O FORMULÁRIO DE CADASTRO DE MENU PARA CRIAR
+		/*!
+		*	RESPONSÁVEL POR CARREGAR O FORMULÁRIO DE CADASTRO DO MENU.
 		*/
 		public function create()
 		{
 			$this->data['title'] = 'Novo Menu';
-			if($this->Geral_model->get_permissao(CREATE, get_class($this)) == true)
+			if($this->Geral_model->get_permissao(CREATE, get_class($this)) == TRUE)
 			{
 				$this->data['obj'] = $this->Menu_model->get_menu(FALSE, 0, FALSE);
 				$this->view("menu/create_edit", $this->data);
@@ -82,8 +86,8 @@
 			else
 				$this->view("templates/permissao", $this->data);
 		}
-		/*
-			RESPONSÁVEL POR RECEBER OS DADOS DO FORMULÁRIO E OS ENVIA-LO PARA A MODEL
+		/*!
+		*	RESPONSÁVEL POR CAPTAR OS DADOS DO FORMULÁRIO SUBMETIDO.
 		*/
 		public function store()
 		{

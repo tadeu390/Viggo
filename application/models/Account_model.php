@@ -1,6 +1,6 @@
 <?php
-	/*
-		ESTA MODEL TRATA DAS OPERAÇÕES NA BASE DE DADOS REFERENTE AOS ACESSOS DOS USUÁRIOS
+	/*!
+	*	ESTA MODEL TRATA DAS OPERAÇÕES NA BASE DE DADOS REFERENTE AOS ACESSOS DOS USUÁRIOS.
 	*/
 	class Account_model extends CI_Model {
 
@@ -8,11 +8,11 @@
 		{
 			$this->load->database();
 		}
-		/*
-			RESPONSÁVEL POR VALIDAR SE O USUÁRIO E SENHA É UMA CONTA VÁLIDA PARA PERMITIR ACESSO AO SISTEMA
-			
-			$email -> e-mail de usuário
-			$senha -> senha de acesso do usuário
+		/*!
+		*	RESPONSÁVEL POR VALIDAR SE O USUÁRIO E A SENHA É UMA CONTA VÁLIDA PARA PERMITIR ACESSO AO SISTEMA.
+		*	
+		*	$email -> E-mail de usuário.
+		*	$senha -> Senha de acesso do usuário.
 		*/
 		public function valida_login($email, $senha) 
 		{
@@ -29,8 +29,9 @@
 			 $data['rows'] =  $query->num_rows();
 			 return $data;
 		}
-		/*
-			RESPONSÁVEL POR VERIFICAR SE EXISTE COOKIE OU SESSAO E VALIDA ESSES DADOS NO BANCO E RETORNA OS DADOS DA SESSÃO OU DO COOKIE
+		/*!
+		*	RESPONSÁVEL POR VERIFICAR SE EXISTE COOKIE OU SESSÃO, VALIDAR ESSES DADOS NO BANCO E RETORNAR OS DADOS DA SESSÃO OU DO COOKIE SE 
+		*	OS MESMO FOREM VÁLIDOS.
 		*/
 		public function session_is_valid()
 		{
@@ -102,9 +103,9 @@
 			);
 			return $sessao;
 		}
-		/*
-			RESPONSÁVEL POR VERIFICAR SE OS DADOS QUE ESTÃO NA SESSÃO QUANDO ESTÁ TROCANDO A SENHA SÃO VÁLIDOS,
-			SEJA TROCANDO A SENHA NO PRIMEIRO ACESSO OU APENAS REDEFININDO A MESMA CASO O USUÁRIO ESQUEÇA.
+		/*!
+		*	RESPONSÁVEL POR VERIFICAR SE OS DADOS QUE ESTÃO NA SESSÃO QUANDO ESTÁ TROCANDO A SENHA SÃO VÁLIDOS,
+		*	SEJA TROCANDO A SENHA NO PRIMEIRO ACESSO OU APENAS REDEFININDO A MESMA CASO O USUÁRIO ESQUEÇA.
 		*/
 		public function session_is_valid_troca_senha()
 		{
@@ -141,10 +142,10 @@
 			}
 			return $sessao_troca_senha;
 		}
-		/*
-			RESPONSÁVEL POR GERAR E CADASTRAR NO BANCO DE DADOS O CÓDIGO GERADO.
-
-			$id -> id do usuário
+		/*!
+		*	RESPONSÁVEL POR GERAR E CADASTRAR NO BANCO DE DADOS O CÓDIGO DE ATIVAÇÃO.
+		*
+		*	$id -> Id do usuário.
 		*/
 		public function gera_codigo_ativacao($id)
 		{
@@ -154,11 +155,10 @@
 				WHERE Id = ".$this->db->escape($id)."");
 			return $codigo;
 		}
-		/*
-			RESPONSÁVEL POR RESTAURAR OS VALORES PADRÕES DE CAMPOS QUE AUXILIAM NA VALIDAÇÃO DO LOGIN, 
-			ISSO EVITA QUE UMA SENHA SEJA TROCADA MAIS DE UMA VEZ PELA TELA DE PRIMEIRO ACESSO
-
-			$id -> id do usuário
+		/*!
+		*	RESPONSÁVEL POR RESTAURAR OS VALORES PADRÕES DE CAMPOS QUE AUXILIAM NA VALIDAÇÃO DO LOGIN.
+		*
+		*	$id -> Id do usuário.
 		*/
 		public function reset_auxiliar_login($id)
 		{
@@ -166,10 +166,10 @@
 				UPDATE Usuario SET Status = 0, Codigo_ativacao = 0, Contador_tentativa = 0,Data_ultima_tentativa = '0000-00-00'  
 				WHERE Id = ".$this->db->escape($id)."");
 		}
-		/*
-			RESPONSÁVEL POR CONTABILIZAR A QUANTIDADE DE TENTATIVAS AO VALIDAR O CÓDIGO DE ACESSO, AO EXECEDER TRÊS TENTATIVAS, GERAR UM NOVO CÓDIGO
-			
-			$id -> id do usuário
+		/*!
+		*	RESPONSÁVEL POR INCREMENTAR A QUANTIDADE DE TENTATIVAS DE LOGIN TODA VEZ QUE O USUÁRIO ERRAR PRA UMA DETERMINADA CONTA.
+		*	
+		*	$id -> Id do usuário.
 		*/
 		public function tentativas_erro($id)
 		{
@@ -181,11 +181,11 @@
 				SELECT Contador_tentativa FROM Usuario 
 				WHERE Id = ".$this->db->escape($id)."")->row_array()['Contador_tentativa'];
 		}
-		/*
-			RESPONSÁVEL POR gera o código de alteração da senha e marcar o campo
-			com status de solicitação de de alteração de senha com o valor 2
-
-			$id -> id do usuário
+		/*!
+		*	RESPONSÁVEL POR GERAR O CÓDIGO PARA A ALTERAÇÃO DA SENHA (QUANDO O USUÁRIO ESQUECE A MESMA).
+		*	O STATUS É MARCADO COM O VALOR 2 QUE INDICA "ESQUECEU A SENHA".
+		*
+		*	$id -> Id do usuário.
 		*/
 		public function gera_codigo_alteracao($id)
 		{

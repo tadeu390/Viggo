@@ -1,6 +1,6 @@
 <?php
-	/*
-		ESTA MODAL TRATA DAS OPERAÇÕES NO BANCO DE DADOS REFERENTE AOS DADOS DE DISCIPLINAS 
+	/*!
+	*	ESTA MODAL TRATA DAS OPERAÇÕES NO BANCO DE DADOS REFERENTE AS INFORMAÇÕES DE DISCIPLINAS.
 	*/
 	class Disciplina_model extends CI_Model 
 	{
@@ -12,13 +12,13 @@
 		{
 			$this->load->database();
 		}
-		/*
-			RESPONSÁVEL POR RETORNAR UMA LISTA DE DISCIPLINAS OU UMA DISCIPLINA ESPECÍFICA
-
-			$Ativo -> Quando passado como "TRUE", este permite retornar apenas disciplinas que estão ativas no banco de dados.
-			$Id -> Quando passado algum valor inteiro, retorna uma disciplina caso a mesma exista no banco de dados.
-			$page -> Pagina atual
-			$filter -> Quando há filtros, esta recebe os parâmetros utilizados para filtrar
+		/*!
+		*	RESPONSÁVEL POR RETORNAR UMA LISTA DE DISCIPLINAS OU UMA DISCIPLINA ESPECÍFICA.
+		*
+		*	$Ativo -> Quando passado como "TRUE", este permite retornar apenas disciplinas que estão ativas no banco de dados.
+		*	$Id -> Quando passado algum valor inteiro, retorna uma disciplina caso a mesma exista no banco de dados.
+		*	$page -> Pagina atual.
+		*	$filter -> Quando há filtros, esta recebe os parâmetros utilizados para filtrar.
 		*/
 		public function get_disciplina($Ativo, $Id = FALSE, $page = FALSE, $filter = FALSE)
 		{
@@ -54,10 +54,10 @@
 
 			return $query->row_array();
 		}
-		/*
-			RESPONSÁVEL POR RETORNAR TODOS AS DISCIPLINAS DE UM DETERMINADO CURSO
-
-			$id -> id do curso
+		/*!
+		*	RESPONSÁVEL POR RETORNAR TODOS AS DISCIPLINAS DE UM DETERMINADO CURSO.
+		*
+		*	$id -> Id do curso.
 		*/
 		public function get_disciplina_por_curso($id)
 		{
@@ -67,10 +67,10 @@
 				WHERE dc.Curso_id = ".$this->db->escape($id)."");
 			return $query->result_array();
 		}
-		/*
-			RESPONSÁVEL POR CADASTRAR/ATUALIZAR OS DADOS DE UMA DISCIPLINA NO BANCO DE DADOS
-
-			$data-> Contém os dados da disciplina a ser cadastrada/atualizada
+		/*!
+		*	RESPONSÁVEL POR CADASTRAR/ATUALIZAR AS INFORMAÇÕES DE UMA DISCIPLINA NO BANCO DE DADOS.
+		*
+		*	$data-> Contém os dados da disciplina a ser cadastrada/atualizada.
 		*/
 		public function set_disciplina($data)
 		{
@@ -86,10 +86,10 @@
 			}
 			return "sucesso";
 		}
-		/*
-			RESPONSÁVEL POR VALIDAR O NOME DE UMA DISCIPLINA PROCURANDO PELA EXISTÊNCIA DO NOME EM QUESTÃO NO BANCO DE DADOS
-
-			$data -> Contém os dados da disciplina a ser cadastrada/editada
+		/*!
+		*	RESPONSÁVEL POR VALIDAR O NOME DE UMA DISCIPLINA PROCURANDO PELA EXISTÊNCIA DO NOME EM QUESTÃO NO BANCO DE DADOS.
+		*
+		*	$data -> Contém os dados da disciplina a ser cadastrada/editada.
 		*/
 		public function valida_disciplina($data)
 		{
@@ -100,10 +100,10 @@
 
 			return $query->num_rows();
 		}
-		/*
-			RESPONSÁVEL POR "APAGAR" UMA DICIPLINA DO BANCO DE DADOS.
-
-			$id -> id da disciplina a ser "apagada"
+		/*!
+		*	RESPONSÁVEL POR "APAGAR" UMA DICIPLINA DO BANCO DE DADOS.
+		*
+		*	$id -> Id da disciplina a ser "apagada".
 		*/
 		public function delete_disciplina($id)
 		{

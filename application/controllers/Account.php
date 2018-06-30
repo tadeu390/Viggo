@@ -1,15 +1,14 @@
 <?php
-	require_once("Geral.php");//INCLUI A CLASSE GENÉRICA
-	/*
-		ESTA CLASSE TEM POR FUNÇÃO CONTROLAR TUDO RELACIONADO AO ACESSO DOS USUÁRIOS
+	require_once("Geral.php");//INCLUI A CLASSE GENÉRICA.
+	/*!
+	*	ESTA CLASSE TEM POR FUNÇÃO CONTROLAR TUDO RELACIONADO AO ACESSO DOS USUÁRIOS.
 	*/
-	
-	define("LIMITE_TENTATIVA", 3);//TENTATIVAS CONSECUTIVAS
-	define("TEMPO_ESPERA", 60);//TEMPO NECESSÁRIO PARA DESBLOQUEAR A CONTA DO USUÁRIO AO EXCEDER O LIMITE ACIMA (EM SEGUNDOS)
+	define("LIMITE_TENTATIVA", 3);//TENTATIVAS CONSECUTIVAS.
+	define("TEMPO_ESPERA", 60);//TEMPO NECESSÁRIO PARA DESBLOQUEAR A CONTA DO USUÁRIO AO EXCEDER O LIMITE ACIMA (EM SEGUNDOS).
 	
 	class Account extends Geral 
 	{
-		//NO CONSTRUTOR DA CLASSE CARREGA AS MODELS UTILIZADAS NO CONTROLLER, ENTRE OUTRAS CONFIGURAÇÕES
+		//NO CONSTRUTOR DA CLASSE CARREGA AS MODELS UTILIZADAS NO CONTROLLER, ENTRE OUTRAS CONFIGURAÇÕES.
 		public function __construct()
 		{
 			parent::__construct();
@@ -47,8 +46,9 @@
 			
 			$this->load->view('templates/email_nova_conta', $this->data);
 		}
-		/*
-			RESPONSÁVEL POR CARREGAR OS DADOS DE USUARIO PARA QUALQUER USUARIO QUE NÃO FOR ADMINISTRADOR
+		/*!
+		*	RESPONSÁVEL POR RECEBER OS DADOS DE USUARIO DA MODEL E OS ENVIA-LO A VIEW
+		*   (SOMENTE PARA USUÁRIOS QUE NÃO SÃO ADMINISTRADORES E SECRETARIA).
 		*/
 		public function meus_dados()
 		{
@@ -64,11 +64,13 @@
 			else
 				redirect("account/login");
 		}
-		/*
 #################### AQUI COMEÇA OS MÉTODOS REFERENTES AO LOGIN DO USUÁRIO
-
-			RESPONSÁVEL POR CARREGAR O FORMULÁRIO DE LOGIN NA TELA, CASO HAJA UMA SESSÃO ATIVA ELE AUTOMATICAMENTE
-			REDIRECIONA O USUÁRIO PARA A TELA CORRETA.
+		/*!
+		*	RESPONSÁVEL POR CARREGAR O FORMULÁRIO DE LOGIN NA TELA, CASO HAJA UMA SESSÃO ATIVA ELE AUTOMATICAMENTE
+		*	REDIRECIONA O USUÁRIO PARA A TELA CORRETA.
+		*	
+		*	$url_redirect -> Caso haja uma URL para redirecionar o usuário quando realizar seu login
+		*	(Ocorre normalmente quando a sessão é expirada e o usuário é redirecionado para a tela de login).
 		*/
 		public function login($url_redirect = FALSE)
 		{
@@ -85,8 +87,8 @@
 				redirect('academico/dashboard');
 			$this->logout();
 		}
-		/*
-			RESPONSÁVEL POR APAGAR TODAS AS SESSÕES ATIVAS NO COMPUTADOR DO CLIENTE
+		/*!
+		*	RESPONSÁVEL POR APAGAR TODAS AS SESSÕES ATIVAS NO COMPUTADOR DO CLIENTE.
 		*/
 		public function logout()
 		{
@@ -99,8 +101,8 @@
 			delete_cookie('url_redirect');
 			delete_cookie ('grupo_id');
 		}
-		/*
-			RESPONSÁVEL ELIMINAR AS SESSÕES UTILIZADAS NA TROCA DE SENHA TANTO NO PRIMEIRO ACESSO QUANTO PARA REDEFINIÇÃO DE SENHA
+		/*!
+		*	RESPONSÁVEL POR ELIMINAR AS SESSÕES UTILIZADAS NA TROCA DE SENHA TANTO NO PRIMEIRO ACESSO QUANTO PARA REDEFINIÇÃO DE SENHA.
 		*/
 		public function limpa_sessao_troca_senha()
 		{
@@ -108,15 +110,16 @@
 			unset($_SESSION['email_troca_senha']);//deleta a sessao utilizada para o primeiro acesso ou para a redefinição de senha
 			unset($_SESSION['nome_troca_senha']);//deleta a sessao utilizada para o primeiro acesso ou para a redefinição de senha
 		}
-		/*
-			QUANDO TROCA A SENHA NO PRIMEIRO ACESSO, O JS REDIRECIONA PRA CÁ, AI REDIRECIONA PARA A TELA DE LOGIN
+		/*!
+		*	QUANDO TROCA A SENHA NO PRIMEIRO ACESSO, O JS POR PADRÃO REDIRECIONA PARA UM MÉTODO INDEX, 
+		*	SENDO ASSIM, ESTE REDIRECIONA PARA A TELA DE LOGIN.
 		*/
 		public function index()
 		{
 			redirect("account/login");
 		}
-		/*
-			REPONSÁVEL POR REALIZAR TODAS AS VALIDAÇÕES DO LOGIN
+		/*!
+		*	REPONSÁVEL POR REALIZAR TODAS AS VALIDAÇÕES DO LOGIN.
 		*/
 		public function validar()
 		{
@@ -161,11 +164,11 @@
 			header('Content-Type: application/json');
 			echo json_encode($arr);
 		}
-		/*
-			RESPONSÁVEL POR CRIAR TODAS AS SESSÕES DO LOGIN
-			
-			$Usuario -> objeto Usuário 
-			$conecatdo -> flag que pega o status do campo Manter conectado na View de login
+		/*!
+		*	RESPONSÁVEL POR CRIAR TODAS AS SESSÕES DO LOGIN.
+		*	
+		*	$Usuario -> Objeto Usuário, este se refere ao usuário que está realizando seu login.
+		*	$conecatdo -> Flag que pega o status do campo Manter conectado na View de login.
 		*/
 		public function set_sessao($Usuario, $conectado)
 		{
@@ -205,11 +208,10 @@
 				$this->session->set_userdata($login);
 	  		}
 		}
-		/*
-#################### AQUI COMEÇA OS MÉTODOS REFERENTES AO PROCESSO DE PRIMEIRA ACESSO
-					 DO USUÁRIO AO SISTEMA
-
-			RESPONSÁVEL POR GERAR O CÓDIGO DE ATIVAÇÃO PARA A CONTA EM QUESTÃO E PASSA O MESMO PARA A FUNÇÃO DE ENVIO DE EMAIL
+#################### AQUI COMEÇA OS MÉTODOS REFERENTES AO PROCESSO DE PRIMEIRO ACESSO DO USUÁRIO AO SISTEMA.
+		/*!
+		*	RESPONSÁVEL POR GERAR O CÓDIGO DE ATIVAÇÃO PARA A CONTA EM QUESTÃO E PASSAR O 
+		*	MESMO PARA A FUNÇÃO DE ENVIO DE EMAIL.
 		*/
 		public function gera_codigo_ativacao($id, $redirect)
 		{
@@ -221,11 +223,11 @@
 			if($redirect != FALSE)
 				redirect("account/primeiro_acesso");
 		}
-		/*
-			RESPONSÁVEL POR ENVIAR O CÓDIGO DE ACESSO PARA O EMAIL DO USUÁRIO
-
-			$Usuario -> Contém os dados do usupário que receberá o e-mail com ó código de ativação
-			$codigo -> Contém o código gerado para o usuário que está tentando ativar sua conta
+		/*!
+		*	RESPONSÁVEL POR ENVIAR O CÓDIGO DE ACESSO PARA O EMAIL DO USUÁRIO.
+		*
+		*	$Usuario -> Contém os dados do usuário que receberá o e-mail com ó código de ativação.
+		*	$codigo -> Contém o código gerado para o usuário que está tentando ativar sua conta.
 		*/
 		public function envia_email_primeiro_acesso($Usuario, $codigo)
 		{
@@ -243,10 +245,11 @@
 
 			$this->email->send();
 		}
-		/*
-			RESPONSÁVEL POR CRIAR A SESSÃO PARA A TELA DE TROCA DE SENHA NO PRIMEIRO ACESSO OU NA
-			REDEFINIÇÃO DA SENHA QUANDO ESQUECER
-			$Usuario -> Contém os dados do usuário que está fazendo seu primeiro acesso ao sistema
+		/*!
+		*	RESPONSÁVEL POR CRIAR A SESSÃO PARA A TELA DE TROCA DE SENHA NO PRIMEIRO ACESSO OU NA
+		*	REDEFINIÇÃO DA SENHA QUANDO ESQUECER.
+		*	
+		*	$Usuario -> Contém os dados do usuário.
 		*/
 		public function set_sessao_troca_senha($Usuario)
 		{
@@ -257,8 +260,8 @@
 			);
 			$this->session->set_userdata($troca_senha);
 		}
-		/*
-			RESPONSÁVEL POR CARREGAR O FORMULÁRIO DE TROCA DE SENHA NO PRIMEIRO ACESSO
+		/*!
+		*	RESPONSÁVEL POR CARREGAR O FORMULÁRIO DE TROCA DE SENHA NO PRIMEIRO ACESSO.
 		*/
 		public function primeiro_acesso()
 		{
@@ -276,8 +279,9 @@
 			$this->load->view('account/primeiro_acesso', $this->data);
 			$this->load->view('templates/footer', $this->data);
 		}
-		/*
-			RESPONSÁVEL POR RECEBER O CÓDIGO DE ATIVAÇÃO E A NOVA SENHA, VALIDAR O CÓDIGO DE ATIVAÇÃO
+		/*!
+		*	RESPONSÁVEL POR RECEBER O CÓDIGO DE ATIVAÇÃO INFORMADO PELO USUÁRIO E A NOVA SENHA E 
+		*	REALIZA A VALIDAÇÃO EM AMBOS.
 		*/
 		public function altera_senha_primeiro_acesso()
 		{
@@ -327,11 +331,9 @@
 			header('Content-Type: application/json');
 			echo json_encode($arr);
 		}
-		/*
-#################### AQUI COMEÇA OS MÉTODOS REFERENTES A REDEFINIÇÃO DE SENHA QUANDO
-					 O USUÁRIO A ESQUECE.
-
-			RESPONSÁVEL POR CARREGAR O FORMULÁRIO DE REDEFINIÇÃO DE SENHA QUANDO ESQUECER
+#################### AQUI COMEÇA OS MÉTODOS REFERENTES A REDEFINIÇÃO DE SENHA QUANDO O USUÁRIO A ESQUECE.
+		/*!
+		*	RESPONSÁVEL POR CARREGAR O FORMULÁRIO DE REDEFINIÇÃO DE SENHA.
 		*/
 		public function redefinir_senha()
 		{
@@ -342,10 +344,10 @@
 			$this->load->view('account/redefinir_senha', $this->data);
 			$this->load->view('templates/footer', $this->data);
 		}
-		/*
-			RESPONSÁVEL POR VALIDAR O EMAIL QUE O USUARIO SOLICITOU A REDEFINIÇÃO DA SENHA
-			SE EXISTIR ELE ENVIA UM EMAIL COM O LINK, SE NÃO, ELE APENAS NOTIFICA O USUARIO
-			SOBRE A INEXISTÊNCIA DO E-MAIL
+		/*!
+		*	RESPONSÁVEL POR VALIDAR O E-MAIL QUE O USUÁRIO SOLICITOU A REDEFINIÇÃO DA SENHA
+		*	SE EXISTIR ELE ENVIA UM EMAIL COM O LINK, SE NÃO, ELE APENAS NOTIFICA O USUÁRIO
+		*	SOBRE A INEXISTÊNCIA DO E-MAIL NO SISTEMA.
 		*/
 		public function valida_redefinir_senha()
 		{
@@ -365,12 +367,11 @@
 			header('Content-Type: application/json');
 			echo json_encode($arr);
 		}
-		/*
-			RESPONSÁVEL POR ENVIAR UM E-MAIL COM UM LINK PARA O USUÁRIO PODER REDEFINIR A SUA
-			SENHA
-
-			$Usuario -> objeto usuário que contém todas as informações do mesmo
-			$codigo -> código de alteração de senha gerado
+		/*!
+		*	RESPONSÁVEL POR ENVIAR UM E-MAIL COM UM LINK PARA O USUÁRIO PODER REDEFINIR A SUA SENHA.
+		*
+		*	$Usuario -> Objeto usuário que contém todas as informações do mesmo.
+		*	$codigo -> Código de alteração de senha gerado.
 		*/
 		public function envia_email_redefinir_senha($Usuario, $codigo)
 		{
@@ -391,11 +392,12 @@
 
 			$this->email->send();	
 		}
-		/*
-			RESPONSÁVEL POR CARREGAR O FORMULÁRIO DE REDEFINIÇÃO DE SENHA QUANDO ESQUECER, É ONDE O USUÁRIO INSERE A NOVA SENHA
-			
-			$id -> id do usuário
-			$codigo -> codigo de alteração de senha gerado na solicitação da alteração
+		/*!
+		*	RESPONSÁVEL POR CARREGAR O FORMULÁRIO DE REDEFINIÇÃO DE SENHA, É ONDE O USUÁRIO 
+		*	INSERE A NOVA SENHA.
+		*	
+		*	$id -> Id do usuário.
+		*	$codigo -> Codigo de alteração de senha gerado na solicitação da alteração.
 		*/
 		public function alterando_senha($id, $codigo)//PEGAR TAMBEM ID PARA GERAR A SESSAO(criptografar)
 		{
@@ -414,8 +416,8 @@
 			$this->load->view('account/alterando_senha', $this->data);
 			$this->load->view('templates/footer', $this->data);
 		}
-		/*
-			RESPONSÁVEL POR CAPTURAR A SENHA NOVA INSERIDA NO FORMULÁRIO
+		/*!
+		*	RESPONSÁVEL POR CAPTURAR A SENHA NOVA INSERIDA NO FORMULÁRIO.
 		*/
 		public function alterar_senha()
 		{

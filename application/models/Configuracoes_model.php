@@ -1,10 +1,9 @@
 <?php
-	/*
-		A CLASSE ABAIXO RETORNA INFORMAÇÕES DE CONFIGURAÇÕES DO SISTEMA, CADASTRA E ATUALIZA 
-		DADOS DE CONFIGURAÇÕES
+	/*!
+	*	ESTA MODEL TRATA DAS OPERAÇÕES NO BANCO DE DADOS REFERENTE AS INFORMAÇÕES DE CONFIGURAÇÕES DO SISTEMA.
 	*/
-	class Configuracoes_model extends CI_Model {
-		
+	class Configuracoes_model extends CI_Model 
+	{
 		/*
 			CARREGA O DRIVER DO BANCO DE DADOS
 		*/
@@ -12,8 +11,11 @@
 		{
 			$this->load->database();
 		}
-
-		//ESTE MÉTODO É RESPONSÁVEL POR RETORNAR INFORMAÇÕES DE CONFIGURAÇÃO DO SISTEMA
+		/*!
+		*	RESPONSÁVEL POR RETORNAR INFORMAÇÕES DE CONFIGURAÇÃO DO SISTEMA.
+		*
+		*	$id -> Id de uma congifuraçção.
+		*/
 		public function get_configuracoes($id = FALSE)
 		{
 			$query = $this->db->query("
@@ -21,8 +23,11 @@
 				Settings");
 			return $query->row_array();
 		}
-
-		//ESTE MÉTODO É RESPONSÁVEL POR CADASTRAR E ATUALIZAR DADOS DE CONFIGURAÇÕES DO SISTEMA
+		/*!
+		*	RESPONSÁVEL POR CADASTRAR E ATUALIZAR DADOS DE CONFIGURAÇÕES DO SISTEMA.
+		*
+		*	$data -> Contém as configurações.
+		*/
 		public function set_configuracoes($data)
 		{
 			if(empty($data['Id']))

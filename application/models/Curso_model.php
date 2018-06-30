@@ -1,6 +1,6 @@
 <?php
-	/*
-		ESTA MODAL TRATA DAS OPERAÇÕES NO BANCO DE DADOS REFERENTE AOS DADOS DE CURSOS 
+	/*!
+	*	ESTA MODAL TRATA DAS OPERAÇÕES NO BANCO DE DADOS REFERENTE AS INFORMAÇÕES DE CURSOS.
 	*/
 	class Curso_model extends CI_Model 
 	{
@@ -12,13 +12,13 @@
 		{
 			$this->load->database();
 		}
-		/*
-			RESPONSÁVEL POR RETORNAR UMA LISTA DE CURSOS OU UM CURSO ESPECÍFICO
-
-			$Ativo -> Quando passado como "TRUE", este permite retornar apenas cursos que estão ativos no banco de dados.
-			$Id -> Quando passado algum valor inteiro, retorna um curso caso o mesmo exista no banco de dados.
-			$page -> Pagina atual
-			$filter -> Quando há filtros, esta recebe os parâmetros utilizados para filtrar
+		/*!
+		*	RESPONSÁVEL POR RETORNAR UMA LISTA DE CURSOS OU UM CURSO ESPECÍFICO.
+		*
+		*	$Ativo -> Quando passado como "TRUE", este permite retornar apenas cursos que estão ativos no banco de dados.
+		*	$Id -> Quando passado algum valor inteiro, retorna um curso caso o mesmo exista no banco de dados.
+		*	$page -> Pagina atual.
+		*	$filter -> Quando há filtros, esta recebe os parâmetros utilizados para filtrar.
 		*/
 		public function get_curso($Ativo, $id = FALSE, $page = FALSE, $filter = FALSE)
 		{
@@ -33,7 +33,7 @@
 				$step = ITENS_POR_PAGINA;	
 				
 				$pagination = " LIMIT ".$inicio.",".$step;
-				if($page === false)
+				if($page === FALSE)
 					$pagination = "";
 
 				$query = $this->db->query("
@@ -59,11 +59,11 @@
 
 			return $query->row_array();
 		}
-		/*
-			RESPONSÁVEL POR CADASTRAR/ATUALIZAR OS DADOS DE UM CURSO NO BANCO DE DADOS  E 
-			TAMBÉM AS DISCIPLINAS SELECIONADAS PARA O MESMO.
-
-			$data-> Contém os dados do curso a ser cadastrado/atualizado
+		/*!
+		*	RESPONSÁVEL POR CADASTRAR/ATUALIZAR AS INFORMAÇÕES DE UM CURSO NO BANCO DE DADOS  E 
+		*	TAMBÉM AS DISCIPLINAS SELECIONADAS PARA O MESMO.
+		*
+		*	$data-> Contém os dados do curso a ser cadastrado/atualizado.
 		*/
 		public function set_curso($data)
 		{
@@ -101,7 +101,7 @@
 
 				$query = $query->result_array();
 				
-				//DELETA OS QUE FORAM REMOVIDOS NA TELA PELO USUARIO
+				//DELETA OS QUE FORAM REMOVIDOS NA TELA PELO USUARIO.
 				for($i = 0; $i < count($query); $i++)
 				{
 					$flag = 0;
@@ -141,10 +141,10 @@
 			}
 			return "sucesso";
 		}
-		/*
-			RESPONSÁVEL POR VALIDAR O NOME DE UM CURSO PROCURANDO PELA EXISTÊNCIA DO NOME EM QUESTÃO NO BANCO DE DADOS
-
-			$data -> Contém os dados do curso a ser cadastrado/editado
+		/*!
+		*	RESPONSÁVEL POR VALIDAR O NOME DE UM CURSO PROCURANDO PELA EXISTÊNCIA DO NOME EM QUESTÃO NO BANCO DE DADOS.
+		*
+		*	$data -> Contém os dados do curso a ser cadastrado/editado.
 		*/
 		public function valida_curso($data)
 		{
@@ -155,10 +155,10 @@
 
 			return $query->num_rows();
 		}
-		/*
-			RESPONSÁVEL POR "APAGAR" UM CURSO DO BANCO DE DADOS.
-
-			$id -> id do curso a ser "apagado"
+		/*!
+		*	RESPONSÁVEL POR "APAGAR" UM CURSO DO BANCO DE DADOS.
+		*
+		*	$id -> Id do curso a ser "apagado".
 		*/
 		public function delete_curso($id)
 		{

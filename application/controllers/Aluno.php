@@ -1,13 +1,13 @@
 <?php
-	require_once("Usuario.php");//HERDA AS ESPECIFICAÇÕES DA CLASSE DE USUÁRIO
-	/*
-		ESTA CLASSE TEM POR FUNÇÃO CONTROLAR AS INFORMAÇÕES DE ALUNOS 
+	require_once("Usuario.php");//HERDA AS ESPECIFICAÇÕES DA CLASSE DE USUÁRIO.
+	/*!
+	*	ESTA CLASSE TEM POR FUNÇÃO CONTROLAR AS INFORMAÇÕES DE ALUNOS.
 	*/
 	define("ALUNO", 2);
 	class Aluno extends Usuario 
 	{
 		/*
-			CONSTRUTOR RESPONSÁVEL POR VALIDAR A SESSÃO E VERIFICAR O MENU SELECIONADO
+			CONSTRUTOR RESPONSÁVEL POR VALIDAR A SESSÃO E VERIFICAR O MENU SELECIONADO.
 		*/
 		public function __construct()
 		{
@@ -19,19 +19,21 @@
 			$this->load->model('Aluno_model');
 			$this->data['menu_selectd'] = $this->Geral_model->get_identificador_menu("usuario");
 		}
-		/*
-			RESPONSÁVEL POR REDIRECIONAR A PÁGINA PRO INDEX DE USUÁRIOS
-
-			$page -> pagina atual
+		/*!
+		*	RESPONSÁVEL POR REDIRECIONAR A PÁGINA PRO INDEX DE USUÁRIOS. O JS REDIRECIONA PRA ESTE MÉTODO
+		*	QUE POR SUA VEZ REDIRECIONA PARA A LISTAGEM DE USUÁRIOS.
+		*
+		*	$page -> Página atual.
 		*/
 		public function index($page = FALSE)
 		{
 			redirect("usuario/index");
 		}
-		/*
-			RESPONSÁVEL POR CARREGAR O FORMULÁRIO COM CAMPOS DE USUARIO + OS CAMPOS DE ALUNO
-
-			$type -> contém um numero inteiro, que diz respeito ao tipo de usuário que se quer criar
+		/*!
+		*	RESPONSÁVEL POR CARREGAR O FORMULÁRIO COM CAMPOS DE USUARIO + OS CAMPOS DE ALUNO.
+		*
+		*	$id -> Contém a id do aluno.
+		*	$type -> Contém um número inteiro, que diz respeito ao tipo de usuário que se quer criar.
 		*/
 		public function create($id = NULL, $type = NULL)
 		{
@@ -46,12 +48,12 @@
 			else
 				$this->view("templates/permissao", $this->data);
 		}
-		/*
-			RESPONSÁVEL POR CARREGAR OS DADOS DE UM ALUNO QUE ESTÁ EDITANDO + OS DADOS DE USUARIO DO MESMO E EM SEGUIDA CARREGA O FORMULARIO
-			EXBINDO ESTES DADOS
-
-			$id -> id do usuario/aluno 
-			$type -> grupo de usuario
+		/*!
+		*	RESPONSÁVEL POR RECEBER DA MODEL OS DADOS DE UM ALUNO + OS DADOS DE USUÁRIO DO MESMO E 
+		*	EM SEGUIDA ENVIA-LOS A VIEW EXBINDO ESTES DADOS.
+		*
+		*	$id -> Id do usuário/aluno.
+		*	$type -> Grupo de usuário.
 		*/
 		public function edit($id = FALSE, $type = NULL)
 		{
@@ -67,10 +69,10 @@
 			else
 				$this->view("templates/permissao", $this->data);	
 		}
-		/*
-			RESPONSÁVEL POR VALIDAR OS DADOS NECESSÁRIOS DOS USUÁRIOS
-
-			$Usuario -> Contém todos os dados do usuário a ser validado
+		/*!
+		*	RESPONSÁVEL POR VALIDAR OS DADOS NECESSÁRIOS DO ALUNO.
+		*
+		*	$Usuario -> Contém todos os dados do aluno a ser validado.
 		*/
 		public function valida_aluno($Aluno)
 		{
@@ -79,19 +81,19 @@
 			if(empty($matricula) || $matricula['Usuario_id'] == $Aluno['Usuario_id'])
 				return 1;
 			else
-				return "O número de matrícula informado já está em uso para outro aluno";
+				return "O número de matrícula informado já está em uso para outro aluno.";
 		}
-		/*
-			RESPONSÁVEL POR ENVIAR AO MODEL OS DADOS DO ALUNO E FAZER TRATAMENTOS QUANDO NECESSÁRIO
-
-			$Aluno -> Contém todos os dados de um aluno a ser cadastrado / editado
+		/*!
+		*	RESPONSÁVEL POR ENVIAR AO MODEL OS DADOS DO ALUNO.
+		*
+		*	$Aluno -> Contém todos os dados de um aluno a ser cadastrado/editado.
 		*/
 		public function store_banco($Aluno)
 		{
 			$this->Aluno_model->set_aluno($Aluno);
 		}
-		/*
-			RESPONSÁVEL POR CAPTAR OS DADOS SUBMETIDOS DO FORMULÁRIO
+		/*!
+		*	RESPONSÁVEL POR CAPTAR OS DADOS DO FORMULÁRIO SUBMETIDO.
 		*/
 		public function store()
 		{
@@ -108,9 +110,7 @@
 				'Email_notifica_nova_conta' => $this->input->post('email_notifica_nova_conta')
 			);
 
-
 			$dataToSave['Data_nascimento'] = $this->convert_date($dataToSave['Data_nascimento'], "en");
-
 
 			if(empty($dataToSave['Email_notifica_nova_conta']))
 				$dataToSave['Email_notifica_nova_conta'] = 0;
@@ -150,10 +150,10 @@
 			else
 				redirect('usuario/index');
 		}
-		/*
-			RESPONSÁVEL POR EXIBIR TODOS OS ATRIBUTOS DO ALUNO.
-
-			$id -> id do aluno
+		/*!
+		*	RESPONSÁVEL POR RECEBER DA MODEL TODOS OS ATRIBUTOS DE UM ALUNO E OS ENVIA-LOS A VIEW.
+		*
+		*	$id -> Id do aluno.
 		*/
 		public function detalhes($id = FALSE)
 		{
