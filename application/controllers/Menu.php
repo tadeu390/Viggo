@@ -51,7 +51,13 @@
 		public function deletar($id = FALSE)
 		{
 			if($this->Geral_model->get_permissao(DELETE, get_class($this)) == TRUE)
+			{
 				$this->Menu_model->deletar($id);
+				$resultado = "sucesso";
+				$arr = array('response' => $resultado);
+				header('Content-Type: application/json');
+				echo json_encode($arr);
+			}
 			else
 				$this->view("templates/permissao", $this->data);
 		}
@@ -98,7 +104,7 @@
 			else if(mb_strlen($Menu['Nome']) > 20)
 				return "Máximo 20 caracteres";
 			else if($this->Menu_model->nome_valido($Menu['Nome'], $Menu['Id']) == 'invalido')
-				return "O nome informado para o Menu já se encontra cadastrado no sistema.";
+				return "O nome informado para o menu já se encontra cadastrado no sistema.";
 			else if(empty($Menu['Ordem']))
 				return "Informe o número da ordem";
 			else

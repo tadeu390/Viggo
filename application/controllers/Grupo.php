@@ -53,7 +53,13 @@
 		public function deletar($id = FALSE)
 		{
 			if($this->Geral_model->get_permissao(DELETE, get_class($this)) == TRUE)
+			{
 				$this->Grupo_model->deletar($id);
+				$resultado = "sucesso";
+				$arr = array('response' => $resultado);
+				header('Content-Type: application/json');
+				echo json_encode($arr);
+			}
 			else
 				$this->view("templates/permissao", $this->data);
 		}

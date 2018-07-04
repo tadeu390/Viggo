@@ -103,7 +103,7 @@
 
 				<div class="form-group relative">
 					<input id="quantidade_aula" name="quantidade_aula" value='<?php echo (!empty($obj['Quantidade_aula']) ? $obj['Quantidade_aula']:''); ?>' type="text" class="input-material">
-					<label for="quantidade_aula" class="label-material">Quantidade de aulas</label>
+					<label for="quantidade_aula" class="label-material">Quantidade de aulas por dia</label>
 					<div class='input-group mb-2 mb-sm-0 text-danger' id='error-quantidade_aula'></div>
 				</div>
 
@@ -158,10 +158,10 @@
 							echo "<table class='table table-striped table-sm table-hover'>";
 								echo "<thead>";
 									echo "<tr>";
-										echo "<td class='text-center'>Dia</td>";
-										echo "<td class='text-center'>Hora início</td>";
-										echo "<td class='text-center'>Hora fim</td>";
-										echo "<td class='text-center'></td>";
+										echo "<td>Dia</td>";
+										echo "<td>Hora início</td>";
+										echo "<td>Hora fim</td>";
+										echo "<td></td>";
 									echo "</tr>";
 								echo "</thead>";
 
@@ -170,15 +170,15 @@
 									for($i = 0; $i < count($intervalos); $i++)
 									{
 										echo "<tr id='intervalo".$max_value_intervalo."'>";
-											echo "<td class='text-center'>";
+											echo "<td>";
 												echo "<input type='hidden' id='dia".$max_value_intervalo."' name='dia".$max_value_intervalo."' value='".$intervalos[$i]['Dia']."'>";
 												echo $intervalos[$i]['Dia'];
 											echo "</td>";
-											echo "<td class='text-center'>";
+											echo "<td>";
 												echo "<input type='hidden' id='hora_inicio".$max_value_intervalo."' name='hora_inicio".$max_value_intervalo."' value='".$intervalos[$i]['Hora_inicio']."'>";
 												echo $intervalos[$i]['Hora_inicio'];
 											echo "</td>";
-											echo"<td class='text-center'>";
+											echo"<td>";
 												echo "<input type='hidden' id='hora_fim".$max_value_intervalo."' name='hora_fim".$max_value_intervalo."' value='".$intervalos[$i]['Hora_fim']."'>";
 												echo $intervalos[$i]['Hora_fim'];
 											echo "</td>";
@@ -287,11 +287,11 @@
 												echo "</td>";
 												echo "<td>";
 													echo "<input type='hidden' id='data_abertura".$max_value_bimestre."' name='data_abertura".$max_value_bimestre."' value='".$bimestres[$i]['Data_abertura']."'>";
-													echo $bimestres[$i]['Data_abertura'];
+													echo (($bimestres[$i]['Data_abertura'] == '00/00/0000') ? '' : $bimestres[$i]['Data_abertura']);
 												echo "</td>";
 												echo "<td>";
 													echo "<input type='hidden' id='data_fechamento".$max_value_bimestre."' name='data_fechamento".$max_value_bimestre."' value='".$bimestres[$i]['Data_fechamento']."'>";
-													echo $bimestres[$i]['Data_fechamento'];
+													echo (($bimestres[$i]['Data_fechamento'] == '00/00/0000') ? '' : $bimestres[$i]['Data_fechamento']);
 												echo "</td>";
 												echo"<td><span class='glyphicon glyphicon-remove pointer' title='Remover' onclick='Main.remove_elemento(\"bimestre".$max_value_bimestre."\");'></span></td>";
 											echo "</tr>";

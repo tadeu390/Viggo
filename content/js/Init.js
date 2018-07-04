@@ -108,6 +108,14 @@ $(document).ready(
       if (this.value != '') Main.show_error("data_fim", '', '');
     });
 
+    $('#data_abertura').change(function() {
+      if (this.value != '') Main.show_error("data_abertura", '', '');
+    });
+
+    $('#data_fechamento').change(function() {
+      if (this.value != '') Main.show_error("data_fechamento", '', '');
+    });
+
     //REGRAS LETIVAS
     $('#nome').blur(function() {
       if (this.value != '') Main.show_error("nome", '', 'is-valid');

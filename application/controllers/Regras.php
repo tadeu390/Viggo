@@ -207,5 +207,23 @@
 		{
 			return $this->Regras_model->set_regras($data);
 		}
+		/*!
+		*	RESPONSÁVEL POR RECEBER UM ID DE UMA REGRA PARA "APAGAR".
+		*
+		*	$id -> Id de uma determinada regra.
+		*/
+		public function deletar($id = FALSE)
+		{
+			if($this->Geral_model->get_permissao(DELETE, get_class($this)) == TRUE)
+			{
+				$this->Regras_model->delete_regras($id);
+				$resultado = "sucesso";
+				$arr = array('response' => $resultado);
+				header('Content-Type: application/json');
+				echo json_encode($arr);
+			}
+			else
+				$this->view("templates/permissao", $this->data);
+		}
 	}
 ?>

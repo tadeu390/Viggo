@@ -53,8 +53,14 @@
 		*/
 		public function deletar($id = false)
 		{
-			if($this->Geral_model->get_permissao(DELETE, get_class($this)) == true)	
+			if($this->Geral_model->get_permissao(DELETE, get_class($this)) == true)
+			{
 				$this->Modulo_model->deletar($id);
+				$resultado = "sucesso";
+				$arr = array('response' => $resultado);
+				header('Content-Type: application/json');
+				echo json_encode($arr);
+			}
 			else
 				$this->view("templates/permissao", $this->data);
 		}
@@ -120,8 +126,6 @@
 				return "Informe o ícone do módulo";
 			else if(mb_strlen($Modulo['Icone']) > 50)
 				return "Máximo 50 caracteres";
-			else if(empty($Modulo['Menu_id']))
-				return "Informe o menu do módulo";
 			else
 				return 1;
 		}

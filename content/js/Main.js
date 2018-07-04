@@ -32,6 +32,44 @@ var Main = {
 			})   
 		});
 	},
+	modal : function(tipo, mensagem)
+	{
+		$("#mensagem_"+tipo).html(mensagem);
+		$('#modal_'+tipo).modal({
+			keyboard: false,
+			backdrop : 'static',
+		});
+
+		if(tipo == "aviso")
+		{
+			$('#modal_aviso').on('shown.bs.modal', function () {
+			 	$('#bt_close_modal_aviso').trigger('focus')
+			})
+		}
+		else if(tipo == "confirm")
+		{
+			$('#modal_confirm').on('shown.bs.modal', function () {
+		  		$('#bt_confirm_modal').trigger('focus')
+			})
+		}
+	},
+	weekday : function(dia)
+	{
+		var arrayDia = new Array(8);
+		arrayDia[1] = "Segunda";
+		arrayDia[2] = "Terça";
+		arrayDia[3] = "Quarta";
+		arrayDia[4] = "Quinta";
+		arrayDia[5] = "Sexta";
+		arrayDia[6] = "Sábado";
+		arrayDia[7] = "Domingo";
+
+		return arrayDia[dia];
+	},
+	str_to_date : function(str)
+	{
+		return new Date(new Date(str.split('/')[2],str.split('/')[1],str.split('/')[0]));
+	},
 	get_cookie : function(cname) {
 		var name = cname + "=";
 		var decodedCookie = decodeURIComponent(document.cookie);
@@ -50,10 +88,7 @@ var Main = {
 	login : function () {
 		if(Main.login_isvalid() == true)
 		{
-			$('#modal_aguardar').modal({
-				keyboard: false,
-				backdrop : 'static'
-			});
+			Main.modal("aguardar","Aguarde... validando seus dados.");
 			$.ajax({
 				url: Main.base_url+'account/validar',
 				data: $("#form_login").serialize(),
@@ -79,21 +114,13 @@ var Main = {
 							$('#modal_aguardar').modal('hide');
 						},500);
 						Main.limpa_login();
-						$("#mensagem_aviso").html(msg.response);
-						$('#modal_aviso').modal({
-							keyboard: false,
-							backdrop : 'static'
-						})
-
-						$('#modal_aviso').on('shown.bs.modal', function () {
-						  $('#bt_close_modal_aviso').trigger('focus')
-						})
+						Main.modal("aviso", msg.response);
 					}
 				}
 			});
 		}
 	},
-	troca_status: function(idd)
+	troca_status: function(idd)//checkbox de permissões
 	{
 		//settimeout para recuperar o efeito de transição do botão, somente por questões de estética
 		setTimeout(function(){
@@ -102,11 +129,7 @@ var Main = {
 		document.getElementById("flag"+idd).value = "success";
 	},
 	logout : function (){
-		$("#mensagem_aguardar").html("Aguarde... encerrando sessão");
-		$('#modal_aguardar').modal({
-			keyboard: false,
-			backdrop : 'static'
-		});
+		Main.modal("aguardar", "Aguarde... encerrando sessão");
 		$.ajax({
 			type: "POST",
 			dataType: "json",
@@ -158,12 +181,9 @@ var Main = {
 	},
 	method : '',
 	form : '',
-	create_edit : function (){
-		$("#mensagem_aguardar").html("Aguarde... processando dados.");
-		$('#modal_aguardar').modal({
-			keyboard: false,
-			backdrop : 'static'
-		})
+	create_edit : function ()
+	{
+		Main.modal("aguardar", "Aguarde... processando dados.");
 		//QUANDO NÃO FOR DEFINIDO NENHUM MÉTODO NO 'init.js', POR DEFAULT É CONSIDERADO O METÓDO STORE PARA RECEBER OS DADOS
 		
 		if(Main.method == "" || Main.method == null)
@@ -189,25 +209,14 @@ var Main = {
 				{
 					setTimeout(function(){
 						$("#modal_aguardar").modal('hide');
-						$("#mensagem_aviso").html(msg.response);
-						$('#modal_aviso').modal({
-							keyboard: false,
-							backdrop : 'static',
-						});
-						$('#modal_aviso').on('shown.bs.modal', function () {
-						  $('#bt_close_modal_aviso').trigger('focus')
-						})
+						Main.modal("aviso", msg.response);
 					},500);
 				}
 			}
 		}).fail(function(msg){
 			    setTimeout(function(){
 			    	$("#modal_aguardar").modal('hide');
-				    $("#mensagem_aviso").html("Houve um erro ao processar sua requisição. Verifique sua conexão com a internet.");
-					$('#modal_aviso').modal({
-						keyboard: false,
-						backdrop : 'static'
-					})
+				    Main.modal("aviso", "Houve um erro ao processar sua requisição. Verifique sua conexão com a internet.");
 				},500);
 			});
 	},
@@ -307,8 +316,6 @@ var Main = {
 			Main.show_error("icone", 'Informe o ícone do módulo', 'is-invalid');
 		else if($("#icone").val().length > 50)
 			Main.show_error("icone", 'Máximo 50 caracteres', 'is-invalid');
-		else if($("#menu_id").val() == 0)
-			Main.show_error("menu_id", 'Informe o menu do módulo', '');
 		else
 			Main.create_edit();
 	},
@@ -325,15 +332,7 @@ var Main = {
 	confirm_delete : function(id){
 		Main.id_registro = id;
 					
-		$("#mensagem_confirm").html('Deseja realmente excluir o registro selecionado?');
-		$('#modal_confirm').modal({
-			keyboard: false,
-			backdrop : 'static',
-		});
-		$('#modal_confirm').on('shown.bs.modal', function () {
-		  $('#bt_confirm_modal').trigger('focus')
-		})
-
+		Main.modal("confirm", "Deseja realmente excluir o registro selecionado?");
 	},
 	delete_registro : function(){
 		$.ajax({
@@ -341,10 +340,16 @@ var Main = {
 			dataType:'json',
 			cache: false,
 			type: 'POST',
-			complete: function (data) {
-				location.reload();
+			success: function (data) {
+				if(data.response == "sucesso")
+					location.reload();
 			}
-		});
+		}).fail(function(msg){
+			    setTimeout(function(){
+			    	$("#modal_confirm").modal('hide');
+			    	Main.modal("aviso", "Houve um erro ao processar sua requisição. Verifique sua conexão com a internet.");
+				},500);
+			});
 	},
 	senha_primeiro_acesso_validar : function() {
 		
@@ -447,11 +452,7 @@ var Main = {
 	{
 		if(tipo != 0)
 		{
-			$("#mensagem_aguardar").html("Aguarde um momento");
-			$('#modal_aguardar').modal({
-					keyboard: false,
-					backdrop : 'static'
-				});
+			Main.modal("aguardar", "Aguarde um momento");
 
 			if(tipo == 1 || tipo == 3 || tipo == 4)//admin||secretaria||professor
 				window.location.assign(Main.base_url+"usuario/"+method+"/"+registro+"/"+tipo);
@@ -501,7 +502,7 @@ var Main = {
 			var max_value_intervalo  =  $("#max_value_intervalo").val();
 
 			var a = new Array();
-			a.push($("#dia").val());
+			a.push(Main.weekday($("#dia").val()));
 			a.push($("#hora_inicio").val()+":00");
 			a.push($("#hora_fim").val()+":00");
 			a.push("");
@@ -518,8 +519,8 @@ var Main = {
 			for(var i = 0; i < 4; i++)
 			{
 				var node_td = document.createElement("TD");
-				if(i < 3)
-					node_td.className = "text-center";
+				//if(i < 3)
+				//	node_td.className = "text-center";
 				
 				var input_text = document.createElement("INPUT");
 				input_text.setAttribute("type", "hidden");
@@ -558,7 +559,7 @@ var Main = {
 			var max_value_intervalo  =  $("#max_value_intervalo").val();
 
 			var a = new Array();
-			a.push($("#dia").val());
+			a.push(Main.weekday($("#dia").val()));
 			a.push($("#hora_inicio").val()+":00");
 			a.push($("#hora_fim").val()+":00");
 			a.push("");
@@ -569,6 +570,7 @@ var Main = {
 				if($("#dia"+i).val() == a[0] && $("#hora_inicio"+i).val() == a[1] &&
 					$("#hora_fim"+i).val() == a[2])
 					flag = 1;
+				console.log("form"+Main.weekday($("#dia"+i).val()) +" a0: "+a[0]);
 			}
 
 			var flag2 = 0;
@@ -581,21 +583,9 @@ var Main = {
 			}
 
 			if(flag == 1)
-			{
-				$("#mensagem_aviso").html("Este intervalo já existe na lista. Se deseja edita-lo, remova-o da lista e o adicione novamente.");
-				$('#modal_aviso').modal({
-						keyboard: false,
-						backdrop : 'static'
-					});
-			}
+				Main.modal("aviso", "Este intervalo já existe na lista. Se deseja edita-lo, remova-o da lista e o adicione novamente.");
 			else if (flag2 == 1)
-			{
-				$("#mensagem_aviso").html("Horário inválido.");
-				$('#modal_aviso').modal({
-						keyboard: false,
-						backdrop : 'static'
-					});
-			}
+				Main.modal("aviso", "Horário inválido.");
 			else
 				return true;
 		}
@@ -616,8 +606,8 @@ var Main = {
 			a.push($("#valor").val());
 			a.push($("#data_inicio").val());
 			a.push($("#data_fim").val());
-			a.push($("#data_abertura").val());
-			a.push($("#data_fechamento").val());
+			a.push(($("#data_abertura").val() == '') ? '' : $("#data_abertura").val());
+			a.push(($("#data_fechamento").val() == '') ? '' : $("#data_fechamento").val());
 			a.push("");
 
 			var aux = new Array();
@@ -666,39 +656,53 @@ var Main = {
 			Main.show_error("data_inicio", 'Informe a data de início do bimestre.', '');
 		else if($("#data_fim").val() == "")
 			Main.show_error("data_fim", 'Informe a data de fim do bimestre.', '');
-		else if(new Date($("#data_fim").val()) <= new Date($("#data_inicio").val()))
-			Main.show_error("data_fim", 'A data de início deve ser menor que a data de fim.', '');
+		else if(Main.str_to_date($("#data_fim").val()) <= Main.str_to_date($("#data_inicio").val()))
+			Main.show_error("data_fim", 'A data de fim deve ser maior que a data de início.', '');
 		else
 		{
-			var max_value_bimestre  =  $("#max_value_bimestre").val();
-
-			var a = new Array();
-			a.push($("#nome_bimestre").val());
-			a.push($("#valor").val());
-			a.push($("#data_inicio").val());
-			a.push($("#data_fim").val());
-			a.push($("#data_abertura").val());
-			a.push($("#data_fechamento").val());
-			a.push("");
-
-			var flag = 0;
-			for(var i = 0; i < max_value_bimestre; i++)
+			var trava = 0;
+			if($("#data_abertura").val() != "" || $("#data_fechamento").val() != "")//SE HOUVER DATA DE ABERTURA E FECHAMENTO ENTÃO VALIDAR.
 			{
-				if($("#nome_bimestre"+i).val() == a[0] && $("#valor"+i).val() == a[1] &&
-					$("#data_inicio"+i).val() == a[2] && $("#data_fim"+i).val() == a[3])
-					flag = 1;
-			}
-
-			if(flag == 1)
-			{
-				$("#mensagem_aviso").html("Este bimestre já existe na lista. Se deseja edita-lo, remova-o da lista e o adicione novamente.");
-				$('#modal_aviso').modal({
-						keyboard: false,
-						backdrop : 'static'
-					});
+				if($("#data_abertura").val() == "")
+					Main.show_error("data_abertura", 'Informe a data de abertura', '');
+				else if($("#data_fechamento").val() == "")
+					Main.show_error("data_fechamento", 'Informe a data de fechamento', '');
+				else if(Main.str_to_date($("#data_fechamento").val()) <= Main.str_to_date($("#data_abertura").val()))
+					Main.show_error("data_fechamento", 'A data de fechamento deve ser maior que a data de abertura.', '');
+				else if(Main.str_to_date($("#data_abertura").val()) < Main.str_to_date($("#data_inicio").val()) ||
+						Main.str_to_date($("#data_fechamento").val()) > Main.str_to_date($("#data_fim").val()))
+					Main.show_error("data_fechamento", 'Data de abertura / fechamento deve estar entre a data de início e fim.', '');
+				else
+					trava = 1;
 			}
 			else
-				return true;
+				trava = 1;
+			if(trava == 1)
+			{
+				var max_value_bimestre  =  $("#max_value_bimestre").val();
+
+				var a = new Array();
+				a.push($("#nome_bimestre").val());
+				a.push($("#valor").val());
+				a.push($("#data_inicio").val());
+				a.push($("#data_fim").val());
+				a.push($("#data_abertura").val());
+				a.push($("#data_fechamento").val());
+				a.push("");
+
+				var flag = 0;
+				for(var i = 0; i < max_value_bimestre; i++)
+				{
+					if($("#nome_bimestre"+i).val() == a[0] && $("#valor"+i).val() == a[1] &&
+						$("#data_inicio"+i).val() == a[2] && $("#data_fim"+i).val() == a[3])
+						flag = 1;
+				}
+
+				if(flag == 1)
+					Main.modal("aviso", "Este bimestre já existe na lista. Se deseja edita-lo, remova-o da lista e o adicione novamente.");
+				else
+					return true;
+			}
 		}
 	}
 };
