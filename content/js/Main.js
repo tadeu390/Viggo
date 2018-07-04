@@ -11,6 +11,14 @@ var Main = {
 			$('#itens_por_pagina').mask('000'),
 			$('#porta').mask('0000'),
 			$('#data_nascimento').mask('00/00/0000'),
+			$('#periodo').mask('0000/000'),
+			$('#limite_falta').mask('000'),
+			$('#dias_letivos').mask('000'),
+			$('#media').mask('000'),
+			$('#duracao_aula').mask('000'),
+			$('#quantidade_aula').mask('00'),
+			$('#reprovas').mask('00'),
+			$('#valor').mask('00'),
 			$('[data-toggle="tooltip"]').tooltip(),
 			$('#data1 input').datepicker({
 		    	language: "pt-BR",
@@ -416,6 +424,248 @@ var Main = {
 				window.location.assign(Main.base_url+"usuario/"+method+"/"+registro+"/"+tipo);
 			else if(tipo == 2)//aluno
 				window.location.assign(Main.base_url+"aluno/"+method+"/"+registro+"/"+tipo);
+		}
+	},
+	oculta_limite_falta : function()
+	{
+		var a = false;
+		a = document.getElementById("limite_falta").disabled;
+		if($('input:checkbox[name^=avaliar_faltas]:checked').length == 1 && a  == false)
+		{
+			document.getElementById("limite_falta").disabled = true;
+			document.getElementById("limite_falta").value = "";
+		}
+		else
+			document.getElementById("limite_falta").disabled = false;
+	},
+	validar_regras : function()
+	{
+		if($("#modalidade_id").val() == "0")
+			Main.show_error("modalidade_id", 'Selecione uma modalidade.', '');
+		else if($("#periodo").val() == "")
+			Main.show_error("periodo", 'Informe o período letivo.', 'is-invalid');
+		else if($('input:checkbox[name^=avaliar_faltas]:checked').length == 0 && $("#limite_falta").val() == "")
+			Main.show_error("limite_falta", 'Informe o limite de faltas ou marque a opção acima.', 'is-invalid');
+		else if($("#dias_letivos").val() == "")
+			Main.show_error("dias_letivos", 'Informe quantos dias letivos terá este período.', 'is-invalid');
+		else if($("#media").val() == "")
+			Main.show_error("media", 'Informe a média de aprovação.', 'is-invalid');
+		else if($("#duracao_aula").val() == "")
+			Main.show_error("duracao_aula", 'Informe quanto tempo terá cada aula.', 'is-invalid');
+		else if($("#hora_inicio_aula").val() == "")
+			Main.show_error("hora_inicio_aula", 'Informe a hora de início da aula.', 'is-invalid');
+		else if($("#quantidade_aula").val() == "")
+			Main.show_error("quantidade_aula", 'Informe a quantidade de aulas por dia.', 'is-invalid');
+		else if($("#reprovas").val() == "")
+			Main.show_error("reprovas", 'Informe quantas disciplinas o aluno poderá carregar.', 'is-invalid');
+		else 
+			Main.create_edit();
+	},
+	add_intervalo : function()
+	{
+		if(Main.intervalo_validar() == true)
+		{
+			var max_value_intervalo  =  $("#max_value_intervalo").val();
+
+			var a = new Array();
+			a.push($("#dia").val());
+			a.push($("#hora_inicio").val()+":00");
+			a.push($("#hora_fim").val()+":00");
+			a.push("");
+
+			var aux = new Array();
+			aux.push("dia");
+			aux.push("hora_inicio");
+			aux.push("hora_fim");
+			aux.push("");
+
+			var node_tr = document.createElement("TR");
+			node_tr.setAttribute("id","intervalo"+max_value_intervalo);
+			
+			for(var i = 0; i < 4; i++)
+			{
+				var node_td = document.createElement("TD");
+				if(i < 3)
+					node_td.className = "text-center";
+				
+				var input_text = document.createElement("INPUT");
+				input_text.setAttribute("type", "hidden");
+				if(i < 3)
+					input_text.setAttribute("value", a[i]);
+				input_text.setAttribute("id",aux[i]+max_value_intervalo);
+				input_text.setAttribute("name",aux[i]+max_value_intervalo);
+				
+				var textnode = document.createTextNode(a[i]); 
+				node_td.appendChild(input_text);
+				node_td.appendChild(textnode);
+				
+				if(i == 3)
+					node_td.innerHTML = "<span class='glyphicon glyphicon-remove pointer' title='Remover' onclick='Main.remove_elemento(\"intervalo"+max_value_intervalo+"\");'></span>";
+				
+				node_tr.appendChild(node_td);
+				document.getElementById("intervalos").appendChild(node_tr);
+			}
+			$("#max_value_intervalo").val(parseInt(max_value_intervalo) + 1);
+		}
+	},
+	intervalo_validar : function()
+	{
+		if($("#hora_inicio").val() == "")
+			Main.show_error("hora_inicio", 'Informe a hora de início para o intervalo.', '');
+		else if($("#hora_fim").val() == "")
+			Main.show_error("hora_fim", 'Informe a hora de fim para o intervalo.', '');
+		else if($("#hora_inicio").val() > $("#hora_fim").val())
+			Main.show_error("hora_fim", 'O Horário de fim deve ser maior do que o de início.', '');
+		else if($("#hora_inicio").val()+":00" < $("#hora_inicio_aula").val())
+			Main.show_error("hora_inicio", 'O início do intervalo não pode ser inferior ao horário de início da aula', '');
+		else if($("#dia").val() == "0")
+			Main.show_error("dia", 'Informe o dia deste intervalo.', '');
+		else
+		{
+			var max_value_intervalo  =  $("#max_value_intervalo").val();
+
+			var a = new Array();
+			a.push($("#dia").val());
+			a.push($("#hora_inicio").val()+":00");
+			a.push($("#hora_fim").val()+":00");
+			a.push("");
+
+			var flag = 0;
+			for(var i = 0; i < max_value_intervalo; i++)
+			{
+				if($("#dia"+i).val() == a[0] && $("#hora_inicio"+i).val() == a[1] &&
+					$("#hora_fim"+i).val() == a[2])
+					flag = 1;
+			}
+
+			var flag2 = 0;
+			for(var i = 0; i < max_value_intervalo; i++)
+			{
+				if($("#dia"+i).val() == a[0] && (a[1] >= $("#hora_inicio"+i).val()  &&
+					a[1] <= $("#hora_fim"+i).val() || a[2] >= $("#hora_inicio"+i).val()  &&
+					a[2] <= $("#hora_fim"+i).val()))
+					flag2 = 1;
+			}
+
+			if(flag == 1)
+			{
+				$("#mensagem_aviso").html("Este intervalo já existe na lista. Se deseja edita-lo, remova-o da lista e o adicione novamente.");
+				$('#modal_aviso').modal({
+						keyboard: false,
+						backdrop : 'static'
+					});
+			}
+			else if (flag2 == 1)
+			{
+				$("#mensagem_aviso").html("Horário inválido.");
+				$('#modal_aviso').modal({
+						keyboard: false,
+						backdrop : 'static'
+					});
+			}
+			else
+				return true;
+		}
+	},
+	remove_elemento : function (id)
+	{
+		var linha = document.getElementById(id);
+		linha.parentNode.removeChild(linha);
+	},
+	add_bimestre : function ()
+	{
+		if(Main.bimestre_validar() == true)
+		{
+			var max_value_bimestre  =  $("#max_value_bimestre").val();
+
+			var a = new Array();
+			a.push($("#nome_bimestre").val());
+			a.push($("#valor").val());
+			a.push($("#data_inicio").val());
+			a.push($("#data_fim").val());
+			a.push($("#data_abertura").val());
+			a.push($("#data_fechamento").val());
+			a.push("");
+
+			var aux = new Array();
+			aux.push("nome_bimestre");
+			aux.push("valor");
+			aux.push("data_inicio");
+			aux.push("data_fim");
+			aux.push("data_abertura");
+			aux.push("data_fechamento");
+			aux.push("");
+
+			var node_tr = document.createElement("TR");
+			node_tr.setAttribute("id","bimestre"+max_value_bimestre);
+			
+			for(var i = 0; i < 7; i++)
+			{
+				var node_td = document.createElement("TD");
+				
+				var input_text = document.createElement("INPUT");
+				input_text.setAttribute("type", "hidden");
+				if(i < 6)
+					input_text.setAttribute("value", a[i]);
+				input_text.setAttribute("id",aux[i]+max_value_bimestre);
+				input_text.setAttribute("name",aux[i]+max_value_bimestre);
+				
+				var textnode = document.createTextNode(a[i]); 
+				node_td.appendChild(input_text);
+				node_td.appendChild(textnode);
+				
+				if(i == 6)
+					node_td.innerHTML = "<span class='glyphicon glyphicon-remove pointer' title='Remover' onclick='Main.remove_elemento(\"bimestre"+max_value_bimestre+"\");'></span>";
+				
+				node_tr.appendChild(node_td);
+				document.getElementById("bimestres").appendChild(node_tr);
+			}
+			$("#max_value_bimestre").val(parseInt(max_value_bimestre) + 1);
+		}
+	},
+	bimestre_validar : function()
+	{
+		if($("#nome_bimestre").val() == "")
+			Main.show_error("nome_bimestre", 'Informe o nome do bimestre.', '');
+		else if($("#valor").val() == "")
+			Main.show_error("valor", 'Informe o valor do bimestre.', '');
+		else if($("#data_inicio").val() == "")
+			Main.show_error("data_inicio", 'Informe a data de início do bimestre.', '');
+		else if($("#data_fim").val() == "")
+			Main.show_error("data_fim", 'Informe a data de fim do bimestre.', '');
+		else if(new Date($("#data_fim").val()) <= new Date($("#data_inicio").val()))
+			Main.show_error("data_fim", 'A data de início deve ser menor que a data de fim.', '');
+		else
+		{
+			var max_value_bimestre  =  $("#max_value_bimestre").val();
+
+			var a = new Array();
+			a.push($("#nome_bimestre").val());
+			a.push($("#valor").val());
+			a.push($("#data_inicio").val());
+			a.push($("#data_fim").val());
+			a.push($("#data_abertura").val());
+			a.push($("#data_fechamento").val());
+			a.push("");
+
+			var flag = 0;
+			for(var i = 0; i < max_value_bimestre; i++)
+			{
+				if($("#nome_bimestre"+i).val() == a[0] && $("#valor"+i).val() == a[1] &&
+					$("#data_inicio"+i).val() == a[2] && $("#data_fim"+i).val() == a[3])
+					flag = 1;
+			}
+
+			if(flag == 1)
+			{
+				$("#mensagem_aviso").html("Este bimestre já existe na lista. Se deseja edita-lo, remova-o da lista e o adicione novamente.");
+				$('#modal_aviso').modal({
+						keyboard: false,
+						backdrop : 'static'
+					});
+			}
+			else
+				return true;
 		}
 	}
 };

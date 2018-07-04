@@ -234,5 +234,10 @@ ol.breadcrumb
 }
 
 legend{
-	font-size: 20px;
+	font-size: 18px;
+}
+
+input[type="text"]:disabled {
+    background-color: rgb(50,50,50);
+    border-bottom: 1px solid white;
 }

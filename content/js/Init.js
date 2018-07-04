@@ -43,7 +43,72 @@ $(document).ready(
 
     //LOGIN
 
+    //REGRAS LETIVAS
+    $('#modalidade_id').change(function() {
+      if (this.value != '0') Main.show_error("modalidade_id", '', '');
+    });
 
+    $('#periodo').blur(function() {
+      if (this.value != '') Main.show_error("periodo", '', 'is-valid');
+    });
+
+    $('#limite_falta').blur(function() {
+      if (this.value != '') Main.show_error("limite_falta", '', 'is-valid');
+    });
+
+    $('#dias_letivos').blur(function() {
+      if (this.value != '') Main.show_error("dias_letivos", '', 'is-valid');
+    });
+
+    $('#media').blur(function() {
+      if (this.value != '') Main.show_error("media", '', 'is-valid');
+    });
+
+    $('#duracao_aula').blur(function() {
+      if (this.value != '') Main.show_error("duracao_aula", '', 'is-valid');
+    });
+
+    $('#hora_inicio_aula').blur(function() {
+      if (this.value != '') Main.show_error("hora_inicio_aula", '', 'is-valid');
+    });
+
+    $('#quantidade_aula').blur(function() {
+      if (this.value != '') Main.show_error("quantidade_aula", '', 'is-valid');
+    });
+
+    $('#reprovas').blur(function() {
+      if (this.value != '') Main.show_error("reprovas", '', 'is-valid');
+    });
+
+    $('#hora_inicio').blur(function() {
+      if (this.value != '') Main.show_error("hora_inicio", '', 'is-valid');
+    });
+
+    $('#hora_fim').blur(function() {
+      if (this.value != '') Main.show_error("hora_fim", '', 'is-valid');
+    });
+
+    $('#dia').change(function() {
+      if (this.value != '') Main.show_error("dia", '', '');
+    });
+
+    $('#nome_bimestre').change(function() {
+      if (this.value != '') Main.show_error("nome_bimestre", '', '');
+    });
+
+    $('#valor').change(function() {
+      if (this.value != '') Main.show_error("valor", '', '');
+    });
+
+    $('#data_inicio').change(function() {
+      if (this.value != '') Main.show_error("data_inicio", '', '');
+    });
+
+    $('#data_fim').change(function() {
+      if (this.value != '') Main.show_error("data_fim", '', '');
+    });
+
+    //REGRAS LETIVAS
     $('#nome').blur(function() {
       if (this.value != '') Main.show_error("nome", '', 'is-valid');
     });
@@ -125,6 +190,11 @@ $(document).ready(
     });
 
     //BTN CADASTROS
+
+    $("#form_cadastro_Regras").submit(function(event) {
+      event.preventDefault();
+      Main.validar_regras();
+    });
 
     $("#form_cadastro_curso").submit(function(event) {
       event.preventDefault();

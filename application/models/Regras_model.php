@@ -1,6 +1,6 @@
 <?php
 	/*!
-	*	ESTA MODAL TRATA DAS OPERAÇÕES NO BANCO DE DADOS REFERENTE AS REGRAS DO PERÍODO LETIVO.
+	*	ESTA MODEL TRATA DAS OPERAÇÕES NO BANCO DE DADOS REFERENTE AS REGRAS DO PERÍODO LETIVO.
 	*/
 	class Regras_model extends CI_Model 
 	{
@@ -52,8 +52,10 @@
 			$query =  $this->db->query("
 				SELECT pl.Id, pl.Periodo, 
 				DATE_FORMAT(pl.Data_registro, '%d/%m/%Y') as Data_registro,
-				pl.Ativo  
+				pl.Ativo, m.Nome as Nome_modalidade, pl.Limite_falta, pl.Dias_letivos, pl.Media, pl.Duracao_aula, pl.Hora_inicio_aula,
+				pl.Quantidade_aula, pl.Reprovas, pl.Modalidade_id, pl.avaliar_faltas  
 					FROM Periodo_letivo pl 
+					INNER JOIN Modalidade m ON pl.Modalidade_id = m.Id 
 				WHERE TRUE ".$Ativos." AND pl.Id = ".$this->db->escape($id)."");
 
 			return $query->row_array();
@@ -65,8 +67,21 @@
 		*/
 		public function set_regras($data)
 		{
-
-			
+			if(empty($data['Id']))
+			{
+				unset($data['intervalos']);
+				unset($data['bimestres']);
+				$this->db->insert('Periodo_letivo',$data);	
+				return $this->get_regra_por_nome($data)['Id'];
+			}
+			else
+			{	
+				unset($data['intervalos']);
+				unset($data['bimestres']);
+				$this->db->where('Id', $data['Id']);
+				$this->db->update('Periodo_letivo', $data);
+				return $data['Id'];
+			}
 		}
 		/*!
 		*	RESPONSÁVEL POR "APAGAR" UM PERÍODO LETIVO DO BANCO DE DADOS.
@@ -77,6 +92,38 @@
 		{
 			return $this->db->query("
 				UPDATE Periodo_letivo SET Ativo = 0 WHERE Id = ".$this->db->escape($id)."");
+		}
+		/*!
+		*	RESPONSÁVEL POR VALIDAR O PERÍODO PROCURANDO PELA EXISTÊNCIA DO NOME EM QUESTÃO NO BANCO DE DADOS.
+		*
+		*	$nome -> Contém os dados do período letivo a ser cadastrado/editado.
+		*/
+		public function valida_nome_periodo($data)
+		{
+			$query = $this->db->query("
+				SELECT Periodo FROM Periodo_letivo 	
+				WHERE Periodo = ".$this->db->escape($data['Periodo'])." AND 
+				Id != ".$this->db->escape($data['Id'])." AND Modalidade_id = ".$this->db->escape($data['Modalidade_id'])."");
+
+			return $query->num_rows() == 0;
+		}
+		/*
+		*	RESPONSÁVEL POR VOLTAR UMA REGRA POR NOME E POR MODALIDADE.
+		*
+		*   $data -> Contém os dados da regra.
+		*/
+		public function get_regra_por_nome($data)
+		{
+			$query =  $this->db->query("
+				SELECT pl.Id, pl.Periodo, 
+				DATE_FORMAT(pl.Data_registro, '%d/%m/%Y') as Data_registro,
+				pl.Ativo, m.Nome as Nome_modalidade, pl.Limite_falta, pl.Dias_letivos, pl.Media, pl.Duracao_aula, pl.Hora_inicio_aula,
+				pl.Quantidade_aula, pl.Reprovas, pl.Modalidade_id, pl.avaliar_faltas  
+					FROM Periodo_letivo pl 
+					INNER JOIN Modalidade m ON pl.Modalidade_id = m.Id 
+				WHERE pl.Periodo = ".$this->db->escape($data['Periodo'])." 
+				AND pl.Modalidade_id = ".$this->db->escape($data['Modalidade_id'])."");
+			return $query->row_array();
 		}
 	}
 ?>

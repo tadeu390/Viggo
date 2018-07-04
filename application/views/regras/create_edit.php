@@ -24,7 +24,7 @@
 		<input type='hidden' id='controller' value='<?php echo $controller; ?>'/>
 		
 		<div class="row">
-			<div class="col-lg-6">
+			<div class="col-lg-5">
 				<div class='form-group'>
 					<div class='input-group-addon' style="color: #8a8d93;">Modalidade</div>
 					<select name='modalidade_id' id='modalidade_id' class='form-control' style='padding-left: 0px;'>
@@ -49,21 +49,33 @@
 				</div>
 
 				<div class='form-group'>
-					<div class='input-group-addon' style="color: #8a8d93;">Avaliar faltas por: 
-						<span class='glyphicon glyphicon-question-sign text-danger pointer'  data-toggle="tooltip" title="Se o limite de falta for por disciplina, deverá ser especificado o limite para cada disciplina ao criar a turma."></span></div>
-					<select id="avaliar_faltas" name="avaliar_faltas" class='form-control padding0'>
-						<option class='background_dark' value="0">Selecione</option>
-						<option class='background_dark' value="1">Disciplina</option>
-						<option class='background_dark' value="2">Todas</option>
-					</select>
-					<div class='input-group mb-2 mb-sm-0 text-danger' id='error-avaliar_faltas'></div>
+					<div class='checkbox checbox-switch switch-success custom-controls-stacked' onclick="Main.oculta_limite_falta(this.value)">
+						<?php
+						$checked = "";
+						if ($obj['avaliar_faltas'] == 1)
+							$checked = "checked";
+
+						echo "<label for='avaliar_faltas' style='color: #8a8d93;'>";
+						echo "<input type='checkbox' $checked id='avaliar_faltas' name='avaliar_faltas' value='1' /><span></span> Avaliar faltas por disciplina ";
+						echo "</label>";
+						 echo"<span class='glyphicon glyphicon-question-sign text-danger pointer padding10'  data-toggle='tooltip' title='Se o limite de falta for por disciplina, deverá ser especificado o limite para cada disciplina ao criar a turma.'></span>";
+						?>
+					</div>
 				</div>
 
-				<div class="form-group relative">
-					<input id="limite_falta" name="limite_falta" value='<?php echo (!empty($obj['Limite_falta']) ? $obj['Limite_falta']:''); ?>' type="text" class="input-material">
-					<label for="limite_falta" class="label-material">Limite de falta</label>
-					<div class='input-group mb-2 mb-sm-0 text-danger' id='error-limite_falta'></div>
-				</div>
+				<?php if($obj['avaliar_faltas'] == 0 || $obj['avaliar_faltas'] == null):?>	
+					<div class="form-group relative">
+						<input id="limite_falta" name="limite_falta" value='<?php echo (!empty($obj['Limite_falta']) ? $obj['Limite_falta']:''); ?>' type="text" class="input-material">
+						<label for="limite_falta" class="label-material">Limite de falta (%)</label>
+						<div class='input-group mb-2 mb-sm-0 text-danger' id='error-limite_falta'></div>
+					</div>
+				<?php else: ?>	
+					<div class="form-group relative">
+						<input id="limite_falta" name="limite_falta" disabled value='<?php echo (!empty($obj['Limite_falta']) ? $obj['Limite_falta']:''); ?>' type="text" class="input-material">
+						<label for="limite_falta" class="label-material">Limite de falta (%)</label>
+						<div class='input-group mb-2 mb-sm-0 text-danger' id='error-limite_falta'></div>
+					</div>
+				<?php endif; ?>	
 
 				<div class="form-group relative">
 					<input id="dias_letivos" name="dias_letivos" value='<?php echo (!empty($obj['Dias_letivos']) ? $obj['Dias_letivos']:''); ?>' type="text" class="input-material">
@@ -73,7 +85,7 @@
 
 				<div class="form-group relative">
 					<input id="media" name="media" value='<?php echo (!empty($obj['Media']) ? $obj['Media']:''); ?>' type="text" class="input-material">
-					<label for="media" class="label-material">Média de aprovação</label>
+					<label for="media" class="label-material">Média de aprovação (%)</label>
 					<div class='input-group mb-2 mb-sm-0 text-danger' id='error-media'></div>
 				</div>
 
@@ -101,7 +113,7 @@
 					<div class='input-group mb-2 mb-sm-0 text-danger' id='error-reprovas'></div>
 				</div>
 			</div>
-			<div class="col-lg-6">
+			<div class="col-lg-7">
 				<fieldset>
 					<legend>Intervalos <span class='glyphicon glyphicon-question-sign text-danger pointer'  data-toggle="tooltip" title="Define os intervalos que terão em cada dia da semana para o horário de aula da turma."></span></legend>
 					<div class="row">
@@ -137,15 +149,52 @@
 							</div>
 						</div>
 						<div class="col-lg-6">
-							<input type='button' class='btn btn-danger btn-block' value='Adicionar intervalo'>
+							<input type='button' class='btn btn-danger btn-block' onclick="Main.add_intervalo()" value='Adicionar intervalo'>
 						</div>
 					</div>
 
 					<div class="intervalos">
+						<?php
+							echo "<table class='table table-striped table-sm table-hover'>";
+								echo "<thead>";
+									echo "<tr>";
+										echo "<td class='text-center'>Dia</td>";
+										echo "<td class='text-center'>Hora início</td>";
+										echo "<td class='text-center'>Hora fim</td>";
+										echo "<td class='text-center'></td>";
+									echo "</tr>";
+								echo "</thead>";
+
+								echo "<tbody id='intervalos'>";
+									$max_value_intervalo = 0;
+									for($i = 0; $i < count($intervalos); $i++)
+									{
+										echo "<tr id='intervalo".$max_value_intervalo."'>";
+											echo "<td class='text-center'>";
+												echo "<input type='hidden' id='dia".$max_value_intervalo."' name='dia".$max_value_intervalo."' value='".$intervalos[$i]['Dia']."'>";
+												echo $intervalos[$i]['Dia'];
+											echo "</td>";
+											echo "<td class='text-center'>";
+												echo "<input type='hidden' id='hora_inicio".$max_value_intervalo."' name='hora_inicio".$max_value_intervalo."' value='".$intervalos[$i]['Hora_inicio']."'>";
+												echo $intervalos[$i]['Hora_inicio'];
+											echo "</td>";
+											echo"<td class='text-center'>";
+												echo "<input type='hidden' id='hora_fim".$max_value_intervalo."' name='hora_fim".$max_value_intervalo."' value='".$intervalos[$i]['Hora_fim']."'>";
+												echo $intervalos[$i]['Hora_fim'];
+											echo "</td>";
+											echo"<td><span class='glyphicon glyphicon-remove pointer' title='Remover' onclick='Main.remove_elemento(\"intervalo".$max_value_intervalo."\");'></span></td>";
+										echo "</tr>";
+										$max_value_intervalo = $max_value_intervalo + 1;
+									}
+									echo "<input type='hidden' id='max_value_intervalo' name='max_value_intervalo' value='".$max_value_intervalo."' />";
+
+								echo "</tbody>";
+							echo "</table>";
+						?>
 					</div>
 				</fieldset>
-				<fieldset>
-					<legend>Bimestres <span class='glyphicon glyphicon-question-sign text-danger pointer'  data-toggle="tooltip" title="Define a quantidade de bimestres, data em que começa e inicia, valor."></span></legend>
+				<fieldset style="margin-top: 20px;">
+					<legend>Bimestres <span class='glyphicon glyphicon-question-sign text-danger pointer'  data-toggle="tooltip" title="Define a quantidade de bimestres, data em que começa e termina, valor."></span></legend>
 					<div class="row">
 						<div class="col-lg-6">
 							<div class="form-group relative">
@@ -196,10 +245,63 @@
 					</div>
 					<div class="row" style="padding-bottom: 15px;">
 						<div class="col-lg-6">
-							<input type='button' class='btn btn-danger btn-block' value='Adicionar bimestre'>			
+							<input type='button' class='btn btn-danger btn-block' onclick="Main.add_bimestre();" value='Adicionar bimestre'>			
 						</div>
 					</div>
 					<div class="bimestres">
+						<div class="table-responsive" style="width: 900px">
+							<?php
+								echo "<table class='table table-striped table-sm table-hover'>";
+									echo "<thead>";
+										echo "<tr>";
+											echo "<td>Nome</td>";
+											echo "<td>Valor</td>";
+											echo "<td title='Data em que começa o bimestre durante o ano'>Data de início</td>";
+											echo "<td title='Data em que termina o bimestre durante o ano'>Data de fim</td>";
+											echo "<td title='Data em que começa a ser permitido a inserção de notas no portal pelos professores (opcional)'>Data de abertura</td>";
+											echo "<td title='Data em que termina a permissão de inserção de notas no portal pelos professores (opcional)'>Data de fechamento</td>";
+											echo "<td></td>";
+										echo "</tr>";
+									echo "</thead>";
+									
+									echo "<tbody id='bimestres'>";
+										$max_value_bimestre = 0;
+										for($i = 0; $i < count($bimestres); $i++)
+										{
+											echo "<tr id='bimestre".$max_value_bimestre."'>";
+												echo"<td>";
+													echo "<input type='hidden' id='nome_bimestre".$max_value_bimestre."' name='nome_bimestre".$max_value_bimestre."' value='".$bimestres[$i]['Nome']."'>";
+													echo $bimestres[$i]['Nome'];
+												echo "</td>";
+												echo "<td>";
+													echo "<input type='hidden' id='valor".$max_value_bimestre."' name='valor".$max_value_bimestre."' value='".$bimestres[$i]['Valor']."'>";
+													echo $bimestres[$i]['Valor'];
+												echo "</td>";
+												echo "<td>";
+													echo "<input type='hidden' id='data_inicio".$max_value_bimestre."' name='data_inicio".$max_value_bimestre."' value='".$bimestres[$i]['Data_inicio']."'>";
+													echo $bimestres[$i]['Data_inicio'];
+												echo "</td>";
+												echo "<td>";
+													echo "<input type='hidden' id='data_fim".$max_value_bimestre."' name='data_fim".$max_value_bimestre."' value='".$bimestres[$i]['Data_fim']."'>";
+													echo $bimestres[$i]['Data_fim'];
+												echo "</td>";
+												echo "<td>";
+													echo "<input type='hidden' id='data_abertura".$max_value_bimestre."' name='data_abertura".$max_value_bimestre."' value='".$bimestres[$i]['Data_abertura']."'>";
+													echo $bimestres[$i]['Data_abertura'];
+												echo "</td>";
+												echo "<td>";
+													echo "<input type='hidden' id='data_fechamento".$max_value_bimestre."' name='data_fechamento".$max_value_bimestre."' value='".$bimestres[$i]['Data_fechamento']."'>";
+													echo $bimestres[$i]['Data_fechamento'];
+												echo "</td>";
+												echo"<td><span class='glyphicon glyphicon-remove pointer' title='Remover' onclick='Main.remove_elemento(\"bimestre".$max_value_bimestre."\");'></span></td>";
+											echo "</tr>";
+											$max_value_bimestre = $max_value_bimestre + 1;
+										}
+										echo "<input type='hidden' id='max_value_bimestre' name='max_value_bimestre' value='".$max_value_bimestre."' />";
+									echo "</tbody>";
+								echo "</table>";
+							?>
+						</div>
 					</div>
 				</fieldset>
 			</div>
