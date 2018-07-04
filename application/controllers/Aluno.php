@@ -76,12 +76,14 @@
 		*/
 		public function valida_aluno($Aluno)
 		{
-			$matricula = $this->Aluno_model->get_aluno_por_matricula($Aluno['Matricula']);
-
-			if(empty($matricula) || $matricula['Usuario_id'] == $Aluno['Usuario_id'])
-				return 1;
-			else
+			if(empty($Aluno['Matricula']) && $Aluno['Usuario_id'] == NULL)
+				return "Informe a matricula";
+			else if(!is_numeric($Aluno['Matricula']))
+				return "A matrícula deve ser um número inteiro";
+			else if($this->Aluno_model->matricula_valida($Aluno['Matricula'], $Aluno['Usuario_id']) == 'invalido')
 				return "O número de matrícula informado já está em uso para outro aluno.";
+			else
+				return 1;
 		}
 		/*!
 		*	RESPONSÁVEL POR ENVIAR AO MODEL OS DADOS DO ALUNO.
@@ -115,6 +117,9 @@
 			if(empty($dataToSave['Email_notifica_nova_conta']))
 				$dataToSave['Email_notifica_nova_conta'] = 0;
 
+			if(empty($dataToSave['Ativo']))
+				$dataToSave['Ativo'] = 0;
+			
 			//BLOQUEIA ACESSO DIRETO AO MÉTODO
 			 if(!empty($this->input->post()))
 			 {

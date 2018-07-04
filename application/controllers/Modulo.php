@@ -94,6 +94,47 @@
 				$this->view("templates/permissao", $this->data);
 		}
 		/*!
+		*	RESPONSÁVEL POR VALIDAR OS DADOS NECESSÁRIOS DO MODULO.
+		*
+		*	$Modulo -> Contém todos os dados do modulo a ser validado.
+		*/
+		public function valida_modulo($Modulo)
+		{
+			if(empty($Modulo['Nome']))
+				return "Informe o nome de módulo";
+			else if($this->Modulo_model->nome_valido($Modulo['Nome'], $Modulo['Id']) == 'invalido')
+				return "O nome informado para o módulo já se encontra cadastrado no sistema.";
+			else if(mb_strlen($Modulo['Nome']) > 20)
+				return "Máximo 20 caracteres";
+			else if(empty($Modulo['Descricao']))
+				return "Informe a descrição de módulo";
+			else if(mb_strlen($Modulo['Descricao']) > 50)
+				return "Máximo 50 caracteres";
+			else if(empty($Modulo['Url']))
+				return "Informe a url de módulo";
+			else if(mb_strlen($Modulo['Url']) > 20)
+				return "Máximo 20 caracteres";
+			else if(empty($Modulo['Ordem']))
+				return "Informe o número da ordem";
+			else if(empty($Modulo['Icone']))
+				return "Informe o ícone do módulo";
+			else if(mb_strlen($Modulo['Icone']) > 50)
+				return "Máximo 50 caracteres";
+			else if(empty($Modulo['Menu_id']))
+				return "Informe o menu do módulo";
+			else
+				return 1;
+		}
+		/*!
+		*	RESPONSÁVEL POR ENVIAR AO MODEL OS DADOS DO MODULO.
+		*
+		*	$dataToSave -> Contém todos os dados do modulo a ser cadastrado/editado.
+		*/
+		public function store_banco($dataToSave)
+		{
+			$this->Modulo_model->set_modulo($dataToSave);
+		}
+		/*!
 		*	RESPONSÁVEL POR CAPTAR OS DADOS DO FORMULÁRIO SUBMETIDO.
 		*/
 		public function store()
@@ -110,15 +151,21 @@
 				'Ativo' => $this->input->post('modulo_ativo')
 			);
 
+			if(empty($dataToSave['Ativo']))
+				$dataToSave['Ativo'] = 0;
+			
 			//bloquear acesso direto ao metodo store
 			 if(!empty($this->input->post()))
 			 {
 				if($this->Geral_model->get_permissao(CREATE, get_class($this)) == TRUE || $this->Geral_model->get_permissao(UPDATE, get_class($this)) == TRUE)
 				{
-					if(empty($this->Modulo_model->get_modulo_por_nome($dataToSave['Nome']))  || !empty($dataToSave['Id']))
-						$this->Modulo_model->set_modulo($dataToSave);
-					else
-						$resultado = "O nome informado para o módulo já se encontra cadastrado no sistema.";
+					$resultado = $this->valida_modulo($dataToSave);
+
+				 	if($resultado == 1)
+				 	{ 
+				 		$this->store_banco($dataToSave);
+				 		$resultado = "sucesso";
+				 	}
 				}
 				else
 					$resultado = "Você não tem permissão para realizar esta ação.";

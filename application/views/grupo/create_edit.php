@@ -25,7 +25,7 @@
 			<input type='hidden' id='controller' value='<?php echo $controller; ?>'/>
 			
 			<div class="form-group relative">
-				<input id="nome" name="nome" value='<?php echo (!empty($obj['Nome_grupo']) ? $obj['Nome_grupo']:''); ?>' type="text" class="input-material">
+				<input maxlength="20" id="nome" name="nome" value='<?php echo (!empty($obj['Nome_grupo']) ? $obj['Nome_grupo']:''); ?>' type="text" class="input-material">
 				<label for="nome" class="label-material">Nome</label>
 				<div class='input-group mb-2 mb-sm-0 text-danger' id='error-nome'></div>
 			</div>

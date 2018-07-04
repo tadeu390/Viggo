@@ -91,6 +91,33 @@
 			$this->view("curso/create_edit", $this->data);
 		}
 		/*!
+		*	RESPONSÁVEL POR VALIDAR OS DADOS NECESSÁRIOS DO CURSO.
+		*
+		*	$Curso -> Contém todos os dados do curso a ser validado.
+		*/
+		public function valida_curso($Curso)
+		{
+			if(empty($Curso['Nome']))
+				return "Informe o nome do curso";
+			else if(mb_strlen($Curso['Nome']) > 100)
+				return "Máximo 100 caracteres";
+			else if($Curso['Disciplinas_id'] == NULL)
+				return "Selecione ao menos uma disciplina";
+			else if($this->Curso_model->nome_valido($Curso['Nome'], $Curso['Id']) == 'invalido')
+				return "O nome informado para o Curso já se encontra cadastrado no sistema.";
+			else
+				return 1;
+		}
+		/*!
+		*	RESPONSÁVEL POR ENVIAR AO MODEL OS DADOS DO CURSO.
+		*
+		*	$dataToSave -> Contém todos os dados do curso a ser cadastrado/editado.
+		*/
+		public function store_banco($dataToSave)
+		{
+			$this->Curso_model->set_curso($dataToSave);
+		}
+		/*!
 		*	RESPONSÁVEL POR CAPTAR OS DADOS DO FORMULÁRIO SUBMETIDO.
 		*/
 		public function store()
@@ -102,16 +129,32 @@
 				'Nome' => $this->input->post('nome'),
 				'Disciplinas_id' => $this->input->post('disciplinas')
 			);
-			//bloquear acesso direto ao metodo store
-			 if(!empty($this->input->post()))
-				if($this->Geral_model->get_permissao(CREATE, get_class($this)) == TRUE || $this->Geral_model->get_permissao(UPDATE, get_class($this)) == TRUE)
-					$resultado = $this->Curso_model->set_curso($dataToSave);
-			 else
-				redirect('curso/index');
+
+			if(empty($dataToSave['Ativo']))
+				$dataToSave['Ativo'] = 0;
 			
-			$arr = array('response' => $resultado);
-			header('Content-Type: application/json');
-			echo json_encode($arr);
+			//bloquear acesso direto ao metodo store
+			if(!empty($this->input->post()))
+			{
+				if($this->Geral_model->get_permissao(CREATE, get_class($this)) == TRUE || $this->Geral_model->get_permissao(UPDATE, get_class($this)) == TRUE)
+				{
+					$resultado = $this->valida_curso($dataToSave);
+
+				 	if($resultado == 1)
+				 	{ 
+				 		$this->store_banco($dataToSave);
+				 		$resultado = "sucesso";
+				 	}
+				}
+				else
+					$resultado = "Você não tem permissão para realizar esta ação.";
+
+				$arr = array('response' => $resultado);
+				header('Content-Type: application/json');
+				echo json_encode($arr);
+			}
+			else
+				redirect('curso/index');
 		}
 		/*!
 		*	RESPONSÁVEL POR RECEBER DA MODEL TODOS OS ATRIBUTOS DE UM CURSO E OS ENVIA-LOS A VIEW.

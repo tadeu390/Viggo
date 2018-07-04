@@ -10,6 +10,7 @@ var Main = {
 			$('#codigo_ativacao').mask('999999'),
 			$('#itens_por_pagina').mask('000'),
 			$('#porta').mask('0000'),
+			$('#matricula').mask('0000000000'),
 			$('#data_nascimento').mask('00/00/0000'),
 			$('#periodo').mask('0000/000'),
 			$('#limite_falta').mask('000'),
@@ -188,7 +189,6 @@ var Main = {
 				{
 					setTimeout(function(){
 						$("#modal_aguardar").modal('hide');
-						
 						$("#mensagem_aviso").html(msg.response);
 						$('#modal_aviso').modal({
 							keyboard: false,
@@ -200,15 +200,28 @@ var Main = {
 					},500);
 				}
 			}
-		});
+		}).fail(function(msg){
+			    setTimeout(function(){
+			    	$("#modal_aguardar").modal('hide');
+				    $("#mensagem_aviso").html("Houve um erro ao processar sua requisição. Verifique sua conexão com a internet.");
+					$('#modal_aviso').modal({
+						keyboard: false,
+						backdrop : 'static'
+					})
+				},500);
+			});
 	},
 	usuario_validar : function(){
 		if($("#grupo_id").val() == "0")
 			Main.show_error("grupo_id", 'Selecione um tipo de usuário', '');
 		else if($("#nome").val() == "")
 			Main.show_error("nome", 'Informe o nome de usuário', 'is-invalid');
+		else if($("#nome").val().length > 100)
+			Main.show_error("nome", 'Máximo 100 caracteres', 'is-invalid');
 		else if($("#email").val() == "")
 			Main.show_error("email", 'Informe o e-mail de usuário', 'is-invalid');
+		else if($("#email").val().length > 100)
+			Main.show_error("email", 'Máximo 100 caracteres', 'is-invalid');
 		else if($("#data_nascimento").val() == "")
 			Main.show_error("data_nascimento", 'Informe a data de nascimento do usuário', 'is-invalid');
 
@@ -267,6 +280,8 @@ var Main = {
 	{
 		if($("#nome").val() == "")
 			Main.show_error("nome", 'Informe o nome de menu', 'is-invalid');
+		else if($("#nome").val().length > 20)
+			Main.show_error("nome", 'Máximo 20 caracteres', 'is-invalid');
 		else if($("#ordem").val() == "")
 			Main.show_error("ordem", 'Informe o número da ordem', 'is-invalid');
 		else
@@ -276,12 +291,24 @@ var Main = {
 	{
 		if($("#nome").val() == "")
 			Main.show_error("nome", 'Informe o nome de módulo', 'is-invalid');
+		else if($("#nome").val().length > 20)
+			Main.show_error("nome", 'Máximo 20 caracteres', 'is-invalid');
 		else if($("#descricao").val() == "")
 			Main.show_error("descricao", 'Informe a descrição de módulo', 'is-invalid');
+		else if($("#descricao").val().length > 50)
+			Main.show_error("descricao", 'Máximo 50 caracteres', 'is-invalid');
 		else if($("#url_modulo").val() == "")
-			Main.show_error("url_modulo", 'Informe a url de módulo', 'is-invalid');
+			Main.show_error("url_modulo", 'Informe a url do módulo', 'is-invalid');
+		else if($("#url_modulo").val().length > 20)
+			Main.show_error("url_modulo", 'Máximo 20 caracteres', 'is-invalid');
 		else if($("#ordem").val() == "")
 			Main.show_error("ordem", 'Informe o número da ordem', 'is-invalid');
+		else if($("#icone").val() == "")
+			Main.show_error("icone", 'Informe o ícone do módulo', 'is-invalid');
+		else if($("#icone").val().length > 50)
+			Main.show_error("icone", 'Máximo 50 caracteres', 'is-invalid');
+		else if($("#menu_id").val() == 0)
+			Main.show_error("menu_id", 'Informe o menu do módulo', '');
 		else
 			Main.create_edit();
 	},
@@ -289,6 +316,8 @@ var Main = {
 	{
 		if($("#nome").val() == "")
 			Main.show_error("nome", 'Informe o nome de grupo', 'is-invalid');
+		else if($("#nome").val().length > 20)
+			Main.show_error("nome", 'Máximo 20 caracteres', 'is-invalid');
 		else
 			Main.create_edit();
 	},
@@ -317,7 +346,7 @@ var Main = {
 			}
 		});
 	},
-	validar_senha_primeiro_acesso : function() {
+	senha_primeiro_acesso_validar : function() {
 		
 		Main.method = "altera_senha_primeiro_acesso";
 
@@ -340,7 +369,7 @@ var Main = {
 		else
 			Main.create_edit();
 	},
-	validar_redefinir_senha : function()//validar na solicitação de uma nova senha
+	redefinir_senha_validar : function()//validar na solicitação de uma nova senha
 	{
 		Main.method = "valida_redefinir_senha";
 
@@ -353,7 +382,7 @@ var Main = {
 		else
 			Main.create_edit();
 	},
-	validar_nova_senha : function()//validar a senha nova que o usuário está inserindo
+	nova_senha_validar : function()//validar a senha nova que o usuário está inserindo
 	{
 		Main.method = "alterar_senha";
 
@@ -382,7 +411,7 @@ var Main = {
 		else
 			Main.create_edit();
 	},
-	validar_config_email : function()
+	config_email_validar : function()
 	{
 		Main.form = "form_cadastro_configuracoes_email";
 		Main.method = "store_email";
@@ -394,17 +423,21 @@ var Main = {
 		else
 			Main.create_edit();
 	},
-	validar_disciplina : function()
+	disciplina_validar : function()
 	{
 		if($("#nome").val() == "")
 			Main.show_error("nome", 'Informe um nome de disciplina', 'is-invalid');
+		else if($("#nome").val().length > 100)
+			Main.show_error("nome", 'Máximo 100 caracteres', 'is-invalid');
 		else
 			Main.create_edit();
 	},
-	validar_curso : function()
+	curso_validar : function()
 	{
 		if($("#nome").val() == "")
 			Main.show_error("nome","Informe o nome do curso","is-invalid");
+		else if($("#nome").val().length > 100)
+			Main.show_error("nome", 'Máximo 100 caracteres', 'is-invalid');
 		else if($('input:checkbox[name^=disciplinas]:checked').length == 0)
 			Main.show_error("discip","Selecione ao menos uma disciplina","");
 		else

@@ -104,5 +104,23 @@
 				SELECT * FROM Menu m WHERE LOWER(m.Nome) = ".$this->db->escape($nome)."");
 			return $query->row_array();
 		}
+		/*!
+		*	RESPONSÁVEL POR VERIFICAR SE UM DETERMIANDO MENU JÁ EXISTE NO BANCO DE DADOS.
+		*
+		*	$Nome -> Nome do menu a ser validado.
+		*	$Id -> Id do menu.
+		*/
+		public function nome_valido($Nome, $Id)
+		{
+			$query = $this->db->query("
+				SELECT Nome FROM Menu 
+				WHERE Nome = ".$this->db->escape($Nome)."");
+			$query = $query->row_array();
+			
+			if(!empty($query) && $this->get_menu(FALSE ,$Id, FALSE)['Nome'] != $query['Nome'])
+				return "invalido";
+			
+			return "valido";
+		}
 	}
 ?>

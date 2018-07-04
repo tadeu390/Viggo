@@ -24,19 +24,19 @@
 		<input type='hidden' id='controller' value='<?php echo $controller; ?>'/>
 		
 		<div class="form-group relative">
-			<input id="nome" name="nome" value='<?php echo (!empty($obj['Nome_modulo']) ? $obj['Nome_modulo']:''); ?>' type="text" class="input-material">
+			<input maxlength="20" id="nome" name="nome" value='<?php echo (!empty($obj['Nome_modulo']) ? $obj['Nome_modulo']:''); ?>' type="text" class="input-material">
 			<label for="nome" class="label-material">Nome</label>
 			<div class='input-group mb-2 mb-sm-0 text-danger' id='error-nome'></div>
 		</div>
 
 		<div class="form-group relative">
-			<input id="descricao" name="descricao" value='<?php echo (!empty($obj['Descricao']) ? $obj['Descricao']:''); ?>' type="text" class="input-material">
+			<input maxlength="50" id="descricao" name="descricao" value='<?php echo (!empty($obj['Descricao']) ? $obj['Descricao']:''); ?>' type="text" class="input-material">
 			<label for="descricao" class="label-material">Descrição</label>
 			<div class='input-group mb-2 mb-sm-0 text-danger' id='error-descricao'></div>
 		</div>
 
 		<div class="form-group relative">
-			<input id="url_modulo" name="url_modulo" spellcheck="false" value='<?php echo (!empty($obj['Url_modulo']) ? $obj['Url_modulo']:''); ?>' type="text" class="input-material">
+			<input maxlength="20" id="url_modulo" name="url_modulo" spellcheck="false" value='<?php echo (!empty($obj['Url_modulo']) ? $obj['Url_modulo']:''); ?>' type="text" class="input-material">
 			<label for="url_modulo" class="label-material">URL</label>
 			<div class='input-group mb-2 mb-sm-0 text-danger' id='error-url_modulo'></div>
 		</div>
@@ -48,7 +48,7 @@
 		</div>
 
 		<div class="form-group relative">
-			<input id="icone" name="icone" spellcheck="false" value='<?php echo (!empty($obj['Icone']) ? $obj['Icone']:''); ?>' type="text" class="input-material">
+			<input maxlength="50" id="icone" name="icone" spellcheck="false" value='<?php echo (!empty($obj['Icone']) ? $obj['Icone']:''); ?>' type="text" class="input-material">
 			<label for="icone" class="label-material">Ícone</label>
 			<div class='input-group mb-2 mb-sm-0 text-danger' id='error-icone'></div>
 		</div>

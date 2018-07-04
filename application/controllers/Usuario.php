@@ -196,8 +196,12 @@
 				return "Selecione um tipo de usuário";
 			else if(empty($Usuario['Nome']))
 				return "Informe o nome de usuário";
+			else if(mb_strlen($Usuario['Nome']) > 100)
+				return "Máximo 100 caracteres";
 			else if(empty($Usuario['Email']))
 				return "Informe o e-mail de usuário";
+			else if(mb_strlen($Usuario['Email']) > 100)
+				return "Máximo 100 caracteres";
 			else if($this->Usuario_model->email_valido($Usuario['Email'],$Usuario['Id']) == "invalido")
 				return "O e-mail informado já está em uso.";
 			else if(empty($Usuario['Data_nascimento']))

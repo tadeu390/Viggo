@@ -39,15 +39,22 @@
 			}
 		}
 		/*!
-		*	RESPONSÁVEL POR RETORNAR UM ALUNO DE ACORDO COM A MATRÍCULA.
+		*	RESPONSÁVEL POR VERIFICAR SE UMA DETERMINADA MATRICULA JÁ EXISTE NO BANCO DE DADOS.
 		*
-		*	$matricula -> Número de matricula do aluno.
+		*	$Matricula -> Matricula a ser validada.
+		*	$Id -> Id do aluno.
 		*/
-		public function get_aluno_por_matricula($matricula)
+		public function matricula_valida($Matricula, $Id)
 		{
 			$query = $this->db->query("
-				SELECT * FROM Aluno WHERE Matricula = ".$this->db->escape($matricula)."");
-			return $query->row_array();
+				SELECT Matricula FROM Aluno 
+				WHERE Matricula = ".$this->db->escape($Matricula)."");
+			$query = $query->row_array();
+			
+			if(!empty($query) && $this->get_aluno($Id)['Matricula'] != $query['Matricula'])
+				return "invalido";
+			
+			return "valido";
 		}
 	}
 ?>

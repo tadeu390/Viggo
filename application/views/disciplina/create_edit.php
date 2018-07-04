@@ -25,7 +25,7 @@
 			<input type='hidden' id='id' name='id' value='<?= set_value($obj['Id']) ? : (isset($obj['Id']) ? $obj['Id'] : '') ?>'/>
 			<input type='hidden' id='controller' value='<?php echo $controller; ?>'/>
 			<div class='form-group relative'>
-					<input type='text'  class="input-material" name='nome' id='nome' value='<?php echo (!empty($obj['Nome_disciplina']) ? $obj['Nome_disciplina']:''); ?>'>
+					<input maxlength="100" type='text'  class="input-material" name='nome' id='nome' value='<?php echo (!empty($obj['Nome_disciplina']) ? $obj['Nome_disciplina']:''); ?>'>
 					<label for="nome" class="label-material">Nome</label>
 				<div class='input-group mb-2 mb-sm-0 text-danger' id='error-nome'></div>
 			</div>

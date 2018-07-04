@@ -94,5 +94,23 @@
 				SELECT * FROM Modulo m WHERE LOWER(m.Nome) = ".$this->db->escape($nome)."");
 			return $query->row_array();
 		}
+		/*!
+		*	RESPONSÁVEL POR VERIFICAR SE UM DETERMIANDO MODULO JÁ EXISTE NO BANCO DE DADOS.
+		*
+		*	$Nome -> Nome do modulo a ser validado.
+		*	$Id -> Id do modulo.
+		*/
+		public function nome_valido($Nome, $Id)
+		{
+			$query = $this->db->query("
+				SELECT Nome FROM Modulo 
+				WHERE Nome = ".$this->db->escape($Nome)."");
+			$query = $query->row_array();
+			
+			if(!empty($query) && $this->get_modulo(FALSE ,$Id, FALSE)['Nome_modulo'] != $query['Nome'])
+				return "invalido";
+			
+			return "valido";
+		}
 	}
 ?>

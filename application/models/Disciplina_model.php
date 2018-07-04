@@ -110,5 +110,23 @@
 			return $this->db->query("
 				UPDATE Disciplina SET Ativo = 0 WHERE Id = ".$this->db->escape($id)."");
 		}
+		/*!
+		*	RESPONSÁVEL POR VERIFICAR SE UMA DETERMINADA DISCIPLINA JÁ EXISTE NO BANCO DE DADOS.
+		*
+		*	$Nome -> Nome da disciplina a ser validada.
+		*	$Id -> Id da disciplina.
+		*/
+		public function nome_valido($Nome, $Id)
+		{
+			$query = $this->db->query("
+				SELECT Nome FROM Disciplina 
+				WHERE Nome = ".$this->db->escape($Nome)."");
+			$query = $query->row_array();
+			
+			if(!empty($query) && $this->get_disciplina(FALSE ,$Id, FALSE)['Nome_disciplina'] != $query['Nome'])
+				return "invalido";
+			
+			return "valido";
+		}
 	}
 ?>
