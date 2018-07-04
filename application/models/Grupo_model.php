@@ -130,5 +130,23 @@
 				SELECT * FROM Grupo m WHERE LOWER(m.Nome) = ".$this->db->escape($nome)."");
 			return $query->row_array();
 		}
+		/*!
+		*	RESPONSÁVEL POR VERIFICAR SE UM DETERMIANDO GRUPO JÁ EXISTE NO BANCO DE DADOS.
+		*
+		*	$Nome -> Nome do grupo a ser validado.
+		*	$Id -> Id do grupo.
+		*/
+		public function nome_valido($Nome, $Id)
+		{
+			$query = $this->db->query("
+				SELECT Nome FROM Grupo 
+				WHERE UPPER(Nome) = UPPER(".$this->db->escape($Nome).")");
+			$query = $query->row_array();
+			
+			if(!empty($query) && $this->get_grupo(FALSE ,$Id, FALSE)['Nome_grupo'] != $query['Nome'])
+				return "invalido";
+			
+			return "valido";
+		}
 	}
 ?>

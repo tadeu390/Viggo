@@ -88,7 +88,10 @@
 				if(!empty($filter['email']))
 					$filtros = $filtros." AND u.Email LIKE ".$this->db->escape($filter['email']."%");
 				if($filter['ativo'] != 0)
-					$filtros = $filtros." AND u.Ativo = ".$this->db->escape($filter['ativo']);
+				{
+					$ativo = intval($filter['ativo']);
+					$filtros = $filtros." AND u.Ativo = ".(($ativo == 1) ? 1 : 0);
+				}
 				if(!empty($filter['data_nascimento_inicio']))
 					$filtros = $filtros." AND u.Data_nascimento >= DATE_FORMAT(STR_TO_DATE(".$this->db->escape($filter['data_nascimento_inicio']).", '%d/%m/%Y'), '%Y-%m-%d')";
 				if(!empty($filter['data_nascimento_fim']))

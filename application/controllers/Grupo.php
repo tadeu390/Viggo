@@ -108,6 +108,48 @@
 				$this->view("templates/permissao", $this->data);
 		}
 		/*!
+		*	RESPONSÁVEL POR VALIDAR OS DADOS NECESSÁRIOS DO GRUPO.
+		*
+		*	$Grupo -> Contém todos os dados do grupo a ser validado.
+		*/
+		public function valida_grupo($Grupo)
+		{
+			if(empty($Grupo['Nome']))
+				return "Informe o nome de grupo";
+			else if(mb_strlen($Grupo['Nome']) > 20)
+				return "Máximo 20 caracteres";
+			//se estiver editando um grupo, ao salvar é preciso retirar da verificação o seu nome, pois se não o sistema mostrará uma mensagem de que o nome de grupo já existe
+			else if(($this->Grupo_model->nome_valido($Grupo['Nome'], $Grupo['Id']) == 'invalido'))
+				return "O nome informado para o Grupo já se encontra cadastrado no sistema.";
+			else
+				return 1;
+		}
+		/*!
+		*	RESPONSÁVEL POR ENVIAR AO MODEL OS DADOS DO GRUPO.
+		*
+		*	$dataToSave -> Contém todos os dados do grupo a ser cadastrado/editado.
+		*/
+		public function store_banco($dataToSave)
+		{
+			$this->Grupo_model->set_grupo($dataToSave);
+			$Grupo_id = $this->Grupo_model->get_grupo_por_nome($dataToSave['Nome'])['Id'];
+
+			//grava no banco as permissões padrões
+			for($i = 0; $this->input->post('modulo_id'.$i) != null; $i++)
+			{
+				$dataAcessoToSave = array(
+				'Id' => $this->input->post("acesso_padrao_id".$i.""),
+				'Grupo_id' => $Grupo_id,
+				'Modulo_id' => $this->input->post("modulo_id".$i.""),
+				'Criar' => (($this->input->post("linha".$i."col0") == null) ? 0 : 1),
+				'Ler' => (($this->input->post("linha".$i."col1") == null) ? 0 : 1),
+				'Atualizar' => (($this->input->post("linha".$i."col2") == null) ? 0 : 1),
+				'Remover' => (($this->input->post("linha".$i."col3") == null) ? 0 : 1)
+				);
+				$this->Acesso_padrao_model->set_acesso_padrao($dataAcessoToSave);
+			}
+		}
+		/*!
 		*	RESPONSÁVEL POR CAPTAR OS DADOS DO FORMULÁRIO SUBMETIDO.
 		*/
 		public function store()
@@ -119,34 +161,21 @@
 				'Nome' => $this->input->post('nome')
 			);
 
+			if(empty($dataToSave['Ativo']))
+				$dataToSave['Ativo'] = 0;
+			
 			//bloquear acesso direto ao metodo store
 			 if(!empty($this->input->post()))
 			 {
 			 	if($this->Geral_model->get_permissao(CREATE, get_class($this)) == TRUE || $this->Geral_model->get_permissao(CREATE, get_class($this)) == TRUE)
 			 	{
-				 	//se estiver editando um grupo, ao salvar é preciso retirar da verificação o seu nome, pois se não o sistema mostrará uma mensagem de que o nome de grupo já existe
-				 	if(empty($this->Grupo_model->get_grupo_por_nome($dataToSave['Nome'])) || !empty($dataToSave['Id']))
-				 	{
-						$this->Grupo_model->set_grupo($dataToSave);
-						$Grupo_id = $this->Grupo_model->get_grupo_por_nome($dataToSave['Nome'])['Id'];
+				 	$resultado = $this->valida_grupo($dataToSave);
 
-						//grava no banco as permissões padrões
-						for($i = 0; $this->input->post('modulo_id'.$i) != null; $i++)
-						{
-							$dataAcessoToSave = array(
-								'Id' => $this->input->post("acesso_padrao_id".$i.""),
-								'Grupo_id' => $Grupo_id,
-								'Modulo_id' => $this->input->post("modulo_id".$i.""),
-								'Criar' => (($this->input->post("linha".$i."col0") == null) ? 0 : 1),
-								'Ler' => (($this->input->post("linha".$i."col1") == null) ? 0 : 1),
-								'Atualizar' => (($this->input->post("linha".$i."col2") == null) ? 0 : 1),
-								'Remover' => (($this->input->post("linha".$i."col3") == null) ? 0 : 1)
-							);
-							$this->Acesso_padrao_model->set_acesso_padrao($dataAcessoToSave);
-						}
-				 	}
-					else
-						$resultado = "O nome informado para o Grupo já se encontra cadastrado no sistema.";
+					if($resultado == 1)
+					{ 
+						$this->store_banco($dataToSave);
+						$resultado = "sucesso";
+					}
 				}
 				else
 					$resultado = "Você não tem permissão para realizar esta ação";

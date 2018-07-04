@@ -90,6 +90,31 @@
 				$this->view("templates/permissao", $this->data);
 		}
 		/*!
+		*	RESPONSÁVEL POR VALIDAR OS DADOS NECESSÁRIOS DA DISCIPLINA.
+		*
+		*	$Disciplina -> Contém todos os dados da disciplina a ser validada.
+		*/
+		public function valida_disciplina($Disciplina)
+		{
+			if(empty($Disciplina['Nome']))
+				return "Informe o nome da disciplina";
+			else if(mb_strlen($Disciplina['Nome']) > 100)
+				return "Máximo 100 caracteres";
+			else if($this->Disciplina_model->nome_valido($Disciplina['Nome'], $Disciplina['Id']) == 'invalido')
+				return "O nome informado para a Disciplina já se encontra cadastrado no sistema.";
+			else
+				return 1;
+		}
+		/*!
+		*	RESPONSÁVEL POR ENVIAR AO MODEL OS DADOS DA DISCIPLINA.
+		*
+		*	$dataToSave -> Contém todos os dados da disciplina a ser cadastrado/editado.
+		*/
+		public function store_banco($dataToSave)
+		{
+			$this->Disciplina_model->set_disciplina($dataToSave);
+		}
+		/*!
 		*	RESPONSÁVEL POR CAPTAR OS DADOS DO FORMULÁRIO SUBMETIDO.
 		*/
 		public function store()
@@ -100,16 +125,32 @@
 				'Ativo' => $this->input->post('disciplina_ativa'),
 				'Nome' => $this->input->post('nome')
 			);
-			//bloquear acesso direto ao metodo store
-			 if(!empty($this->input->post()))
-			 	if($this->Geral_model->get_permissao(CREATE, get_class($this)) == TRUE || $this->Geral_model->get_permissao(UPDATE, get_class($this)) == TRUE)
-					$resultado = $this->Disciplina_model->set_disciplina($dataToSave);
-			 else
-				redirect('disciplina/index');
 			
-			$arr = array('response' => $resultado);
-			header('Content-Type: application/json');
-			echo json_encode($arr);
+			if(empty($dataToSave['Ativo']))
+				$dataToSave['Ativo'] = 0;
+			
+			//bloquear acesso direto ao metodo store
+			if(!empty($this->input->post()))
+			{
+			 	if($this->Geral_model->get_permissao(CREATE, get_class($this)) == TRUE || $this->Geral_model->get_permissao(UPDATE, get_class($this)) == TRUE)
+			 	{
+					$resultado = $this->valida_disciplina($dataToSave);
+
+				 	if($resultado == 1)
+				 	{ 
+				 		$this->store_banco($dataToSave);
+				 		$resultado = "sucesso";
+				 	}
+				}
+				else
+					$resultado = "Você não tem permissão para realizar esta ação.";
+
+				$arr = array('response' => $resultado);
+				header('Content-Type: application/json');
+				echo json_encode($arr);
+			}
+			else
+				redirect('disciplina/index');	
 		}
 	}
 ?>

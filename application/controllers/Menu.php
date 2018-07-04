@@ -87,6 +87,33 @@
 				$this->view("templates/permissao", $this->data);
 		}
 		/*!
+		*	RESPONSÁVEL POR VALIDAR OS DADOS NECESSÁRIOS DO MENU.
+		*
+		*	$Menu -> Contém todos os dados do menu a ser validado.
+		*/
+		public function valida_menu($Menu)
+		{
+			if(empty($Menu['Nome']))
+				return "Informe o nome de menu";
+			else if(mb_strlen($Menu['Nome']) > 20)
+				return "Máximo 20 caracteres";
+			else if($this->Menu_model->nome_valido($Menu['Nome'], $Menu['Id']) == 'invalido')
+				return "O nome informado para o Menu já se encontra cadastrado no sistema.";
+			else if(empty($Menu['Ordem']))
+				return "Informe o número da ordem";
+			else
+				return 1;
+		}
+		/*!
+		*	RESPONSÁVEL POR ENVIAR AO MODEL OS DADOS DO MENU.
+		*
+		*	$dataToSave -> Contém todos os dados do menu a ser cadastrado/editado.
+		*/
+		public function store_banco($dataToSave)
+		{
+			$this->Menu_model->set_menu($dataToSave);
+		}
+		/*!
 		*	RESPONSÁVEL POR CAPTAR OS DADOS DO FORMULÁRIO SUBMETIDO.
 		*/
 		public function store()
@@ -99,15 +126,21 @@
 				'Ativo' => $this->input->post('menu_ativo')
 			);
 
+			if(empty($dataToSave['Ativo']))
+				$dataToSave['Ativo'] = 0;
+			
 			//bloquear acesso direto ao metodo store
 			 if(!empty($this->input->post()))
 			 {
 			 	if($this->Geral_model->get_permissao(CREATE, get_class($this)) == TRUE || $this->Geral_model->get_permissao(UPDATE, get_class($this)) == TRUE)
 				{
-				 	if(empty($this->Menu_model->get_menu_por_nome($dataToSave['Nome'])) || !empty($dataToSave['Id']))
-						$this->Menu_model->set_menu($dataToSave);
-					else
-						$resultado = "O nome informado para o Menu já se encontra cadastrado no sistema.";
+					$resultado = $this->valida_menu($dataToSave);
+
+				 	if($resultado == 1)
+				 	{ 
+				 		$this->store_banco($dataToSave);
+				 		$resultado = "sucesso";
+				 	}
 				}
 				else
 					$resultado = "Você não tem permissão para realizar esta ação.";

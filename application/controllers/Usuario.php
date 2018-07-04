@@ -191,9 +191,27 @@
 		*	$Usuario -> Contém todos os dados do usuário a ser validado.
 		*/
 		public function valida_usuario($Usuario)
-		{
-			if($this->Usuario_model->email_valido($Usuario['Email'],$Usuario['Id']) == "invalido")
+		{	
+			if($Usuario['Grupo_id'] == 0)
+				return "Selecione um tipo de usuário";
+			else if(empty($Usuario['Nome']))
+				return "Informe o nome de usuário";
+			else if(mb_strlen($Usuario['Nome']) > 100)
+				return "Máximo 100 caracteres";
+			else if(empty($Usuario['Email']))
+				return "Informe o e-mail de usuário";
+			else if(mb_strlen($Usuario['Email']) > 100)
+				return "Máximo 100 caracteres";
+			else if($this->Usuario_model->email_valido($Usuario['Email'],$Usuario['Id']) == "invalido")
 				return "O e-mail informado já está em uso.";
+			else if(empty($Usuario['Data_nascimento']))
+				return "Informe a data de nascimento do usuário";
+			else if($Usuario['Sexo'] == NULL)
+				return "Selecione o sexo do usuário";
+			else if(empty($this->input->post('senha')) && $Usuario['Id'] == NULL)
+				return "Informe a senha de usuário";
+			else if(strlen($this->input->post('senha')) < 8 && $Usuario['Id'] == NULL)
+				return "A senha deve conter no mínimo 8 caracteres.";
 			else
 				return 1;
 		}
@@ -268,6 +286,9 @@
 
 			if(empty($dataToSave['Email_notifica_nova_conta']))
 				$dataToSave['Email_notifica_nova_conta'] = 0;
+
+			if(empty($dataToSave['Ativo']))
+				$dataToSave['Ativo'] = 0;
 			
 			//BLOQUEIA ACESSO DIRETO AO MÉTODO
 			 if(!empty($this->input->post()))

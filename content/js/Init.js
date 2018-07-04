@@ -128,32 +128,32 @@ $(document).ready(
 
     $("#form_cadastro_curso").submit(function(event) {
       event.preventDefault();
-      Main.validar_curso();
+      Main.curso_validar();
     });
 
     $("#form_cadastro_disciplina").submit(function(event) {
       event.preventDefault();
-      Main.validar_disciplina();
+      Main.disciplina_validar();
     });
 
     $("#form_cadastro_configuracoes_email").submit(function(event) {
       event.preventDefault();
-      Main.validar_config_email();
+      Main.config_email_validar();
     });
 
     $("#form_alterar_senha").submit(function(event) {//quando o usuário está inserindo a senha nova do esqueceu sua senha
       event.preventDefault();
-      Main.validar_nova_senha();
+      Main.nova_senha_validar();
     });
 
     $("#form_redefinir_senha").submit(function(event) {//quando o usuário está solicitando a alteração de senha
       event.preventDefault();
-      Main.validar_redefinir_senha();
+      Main.redefinir_senha_validar();
     });
 
     $("#form_redefinir_senha_primeiro_acesso").submit(function(event) {
       event.preventDefault();
-      Main.validar_senha_primeiro_acesso();
+      Main.senha_primeiro_acesso_validar();
     });
 
     $("#form_cadastro_configuracoes_geral").submit(function(event) {

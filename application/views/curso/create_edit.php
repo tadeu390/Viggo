@@ -21,7 +21,7 @@
 			<input type='hidden' id='id' name='id' value='<?php if(!empty($obj['Id'])) echo $obj['Id']; ?>'/>
 			<input type='hidden' id='controller' value='<?php echo $controller; ?>'/>
 			<div class='form-group relative'>
-				<input type='text'  class="input-material"  name='nome' id='nome' value='<?php if(!empty($obj['Nome_curso'])) echo $obj['Nome_curso']; ?>'>
+				<input maxlength="100" type='text'  class="input-material"  name='nome' id='nome' value='<?php if(!empty($obj['Nome_curso'])) echo $obj['Nome_curso']; ?>'>
 				<label for="nome" class="label-material">Nome</label>
 				<div class='input-group mb-2 mb-sm-0 text-danger' id='error-nome'></div>
 			</div>

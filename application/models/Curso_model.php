@@ -133,7 +133,8 @@
 
 				$dataToSave = array(
 					'Id' => $data['Id'],
-					'Nome' => $data['Nome']
+					'Nome' => $data['Nome'],
+					'Ativo' => $data['Ativo']
 				);
 
 				$this->db->where('Id', $data['Id']);
@@ -164,6 +165,24 @@
 		{
 			return $this->db->query("
 				UPDATE Curso SET Ativo = 0 WHERE Id = ".$this->db->escape($id)."");
+		}
+		/*!
+		*	RESPONSÁVEL POR VERIFICAR SE UM DETERMIANDO CURSO JÁ EXISTE NO BANCO DE DADOS.
+		*
+		*	$Nome -> Nome do curso a ser validado.
+		*	$Id -> Id do curso.
+		*/
+		public function nome_valido($Nome, $Id)
+		{
+			$query = $this->db->query("
+				SELECT Nome FROM Curso 
+				WHERE Nome = ".$this->db->escape($Nome)."");
+			$query = $query->row_array();
+			
+			if(!empty($query) && $this->get_curso(FALSE ,$Id, FALSE)['Nome_curso'] != $query['Nome'])
+				return "invalido";
+			
+			return "valido";
 		}
 	}
 ?>
