@@ -111,6 +111,9 @@
 			if(empty($dataToSave['Avaliar_faltas']))
 				$dataToSave['Avaliar_faltas'] = 0;
 
+			if(empty($dataToSave['Ativo']))
+				$dataToSave['Ativo'] = 0;
+
 			$dataIntervaloToSave = array();
 			for($i = 0; $i < $this->input->post('max_value_intervalo'); $i++)
 			{
@@ -191,9 +194,34 @@
 		*
 		*	$data -> Contém todos os dados das regras.
 		*/
-		public function valida_regras($data)
+		public function valida_regras($Regras)
 		{
-			if($this->Regras_model->valida_nome_periodo($data) == FALSE)
+			if($Regras['Avaliar_faltas'] == 1)
+				$Regras['Limite_falta'] = 0;
+
+			if($Regras['Modalidade_id'] == 0)
+				return "Selecione uma modalidade.";
+			else if(empty($Regras['Periodo']))
+				return "Informe o período letivo.";
+			else if(empty($Regras['Limite_falta']) && $Regras['Avaliar_faltas'] == 0)
+				return "Informe o limite de faltas ou marque a opção acima.";
+			else if(($Regras['Limite_falta']) > 100 && $Regras['Avaliar_faltas'] == 0)
+				return "O limite de faltas deve estar entre 0% e 100%.";
+			else if(empty($Regras['Dias_letivos']))
+				return "Informe quantos dias letivos terá este período.";
+			else if(($Regras['Media']) > 100)
+				return "A média de aprovação deve estar entre 0% e 100%.";
+			else if(empty($Regras['Media']))
+				return "Informe a média de aprovação.";
+			else if(empty($Regras['Duracao_aula']))
+				return "Informe quanto tempo terá cada aula.";
+			else if(empty($Regras['Hora_inicio_aula']))
+				return "Informe a hora de início da aula.";
+			else if(empty($Regras['Quantidade_aula']))
+				return "Informe a quantidade de aulas por dia.";
+			else if(empty($Regras['Reprovas']))
+				return "Informe quantas disciplinas o aluno poderá carregar.";
+			else if($this->Regras_model->valida_nome_periodo($Regras) == FALSE)
 				return "Já existe um período cadastrado com este nome para a modalidade em questão.";
 			else
 				return 1;
