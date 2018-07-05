@@ -67,9 +67,6 @@
 		*/
 		public function set_curso($data)
 		{
-			if($this->valida_curso($data) > 0)
-				return "Este curso já está cadastrado no sistema.";
-
 			if(empty($data['Id']))
 			{
 				$dataToSave = array(
@@ -143,20 +140,6 @@
 			return "sucesso";
 		}
 		/*!
-		*	RESPONSÁVEL POR VALIDAR O NOME DE UM CURSO PROCURANDO PELA EXISTÊNCIA DO NOME EM QUESTÃO NO BANCO DE DADOS.
-		*
-		*	$data -> Contém os dados do curso a ser cadastrado/editado.
-		*/
-		public function valida_curso($data)
-		{
-			$query = $this->db->query("
-				SELECT Nome FROM Curso 
-				WHERE UPPER(Nome) = UPPER(".$this->db->escape($data['Nome']).") AND 
-				Id != ".$this->db->escape($data['Id'])."");
-
-			return $query->num_rows();
-		}
-		/*!
 		*	RESPONSÁVEL POR "APAGAR" UM CURSO DO BANCO DE DADOS.
 		*
 		*	$id -> Id do curso a ser "apagado".
@@ -176,10 +159,10 @@
 		{
 			$query = $this->db->query("
 				SELECT Nome FROM Curso 
-				WHERE Nome = ".$this->db->escape($Nome)."");
+				WHERE UPPER(Nome) = UPPER(".$this->db->escape($Nome).")");
 			$query = $query->row_array();
 			
-			if(!empty($query) && $this->get_curso(FALSE ,$Id, FALSE)['Nome_curso'] != $query['Nome'])
+			if(!empty($query) && $this->get_curso(FALSE, $Id, FALSE, FALSE)['Nome_curso'] != $query['Nome'])
 				return "invalido";
 			
 			return "valido";

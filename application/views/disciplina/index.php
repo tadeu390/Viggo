@@ -38,9 +38,10 @@
 								$cor = "class='color-danger'";
 							echo "<tr>";
 								echo "<td $cor>".($i + 1)."</td>";
-								echo "<td $cor>".$lista_disciplinas[$i]['Nome_disciplina']."</td>";
+								echo "<td $cor><span title='".$lista_disciplinas[$i]['Nome_disciplina']."'>".
+								mstring::corta_string($usuarios[$i]['Nome_disciplina'], 25)
+								."</span></td>";
 								echo "<td $cor>".(($lista_disciplinas[$i]['Ativo'] == 1) ? 'Sim' : 'Não')."</td>";
-
 								echo "<td style='text-align: right;'>";
 									if(permissao::get_permissao(UPDATE, $controller))
 										echo "<a href='".$url."index.php/disciplina/edit/".$lista_disciplinas[$i]['Id']."' title='Editar' style='cursor: pointer;' class='glyphicon glyphicon-edit text-danger'></a>  |  ";

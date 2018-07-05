@@ -109,7 +109,10 @@ $(document).ready(
     });
 
     $('#data_abertura').change(function() {
-      if (this.value != '') Main.show_error("data_abertura", '', '');
+      if (this.value != '') {
+        Main.show_error("data_abertura", '', '');
+        Main.show_error("data_fechamento", '', '');
+      }
     });
 
     $('#data_fechamento').change(function() {
@@ -117,6 +120,9 @@ $(document).ready(
     });
 
     //REGRAS LETIVAS
+    $('#apelido').blur(function() {
+      if (this.value != '') Main.show_error("apelido", '', 'is-valid');
+    });
     $('#nome').blur(function() {
       if (this.value != '') Main.show_error("nome", '', 'is-valid');
     });

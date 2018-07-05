@@ -104,10 +104,14 @@
 		{
 			if(empty($Disciplina['Nome']))
 				return "Informe o nome da disciplina";
-			else if(mb_strlen($Disciplina['Nome']) > 100)
-				return "Máximo 100 caracteres";
+			else if(mb_strlen($Disciplina['Nome']) > 200)
+				return "Máximo 200 caracteres";
+			else if(empty($Disciplina['Apelido']))
+				return "Informe o apelido da disciplina";
+			else if(mb_strlen($Disciplina['Apelido']) > 10)
+				return "Máximo 10 caracteres";
 			else if($this->Disciplina_model->nome_valido($Disciplina['Nome'], $Disciplina['Id']) == 'invalido')
-				return "O nome informado para a Disciplina já se encontra cadastrado no sistema.";
+				return "O nome informado para a disciplina já se encontra cadastrado no sistema.";
 			else
 				return 1;
 		}
@@ -129,7 +133,8 @@
 			$dataToSave = array(
 				'Id' => $this->input->post('id'),
 				'Ativo' => $this->input->post('disciplina_ativa'),
-				'Nome' => $this->input->post('nome')
+				'Nome' => $this->input->post('nome'),
+				'Apelido' => $this->input->post('apelido')
 			);
 			
 			if(empty($dataToSave['Ativo']))

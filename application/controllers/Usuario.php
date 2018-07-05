@@ -107,7 +107,7 @@
 				$this->view("usuario/permissoes", $this->data);
 			}
 			else
-				redirect("academico/dashboard", $this->data);
+				$this->view("templates/permissao", $this->data);
 		}
 		/*!
 		*	RESPONSÁVEL CAPTAR AS PERMISSÕES DE UM DETERMINADO USUÁRIO DO FORMULÁRIO SUBMETIDO.

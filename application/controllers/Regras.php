@@ -225,5 +225,23 @@
 			else
 				$this->view("templates/permissao", $this->data);
 		}
+		/*!
+		*	RESPONSÁVEL POR RECEBER DA MODEL TODOS OS ATRIBUTOS DAS REGRA LETIVA E OS ENVIA-LOS A VIEW.
+		*
+		*	$id -> Id de uma regra.
+		*/
+		public function detalhes($id)
+		{
+			if($this->Geral_model->get_permissao(READ, get_class($this)) == TRUE)
+			{		
+				$this->data['title'] = 'Detalhes da regra';
+				$this->data['obj'] = $this->Regras_model->get_regras(FALSE, $id, FALSE, FALSE);
+				$this->data['intervalos'] = $this->Intervalo_model->get_intervalo($id);
+				$this->data['bimestres'] = $this->Bimestre_model->get_bimestre($id);
+				$this->view("regras/detalhes", $this->data);
+			}
+			else
+				$this->view("templates/permissao", $this->data);
+		}
 	}
 ?>

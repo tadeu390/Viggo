@@ -12,7 +12,7 @@
 		*	RESPONSÁVEL POR RETORNAR UMA LISTA DE USUÁRIOS OU UM USUÁRIO ESPECÍFICO.
 		*	
 		*	$Ativo -> Quando passadO "TRUE" quer dizer pra retornar somente registro(s) ativos(s), se for passado FALSE retorna tudo.
-		*	$id -> Id de um menu específico.
+		*	$id -> Id de um usuário específico.
 		*	$page-> Número da página de registros que se quer carregar.
 		*	$filter -> Contém todos os filtros utilizados pelo usuário para a fazer a busca no banco de dados.
 		*/

@@ -47,8 +47,8 @@
 				return $query->result_array();
 			}
 			$query = $this->db->query("
-					SELECT d.Id, d.Nome as Nome_disciplina, d.Ativo, 
-					d.Data_registro 
+					SELECT d.Id, d.Nome as Nome_disciplina, d.Ativo, d.Apelido,
+					DATE_FORMAT(d.Data_registro, '%d/%m/%Y') as Data_registro 
 						FROM Disciplina d
 					WHERE TRUE ".$Ativos." AND Id = ".$this->db->escape($Id)."");
 
@@ -74,9 +74,6 @@
 		*/
 		public function set_disciplina($data)
 		{
-			if($this->valida_disciplina($data) > 0)
-				return "Esta disciplina já está cadastrada no sistema.";
-
 			if(empty($data['Id']))
 				$this->db->insert('Disciplina',$data);	
 			else
@@ -85,20 +82,6 @@
 				$this->db->update('Disciplina', $data);
 			}
 			return "sucesso";
-		}
-		/*!
-		*	RESPONSÁVEL POR VALIDAR O NOME DE UMA DISCIPLINA PROCURANDO PELA EXISTÊNCIA DO NOME EM QUESTÃO NO BANCO DE DADOS.
-		*
-		*	$data -> Contém os dados da disciplina a ser cadastrada/editada.
-		*/
-		public function valida_disciplina($data)
-		{
-			$query = $this->db->query("
-				SELECT Nome FROM Disciplina 
-				WHERE UPPER(Nome) = UPPER(".$this->db->escape($data['Nome']).") AND 
-				Id != ".$this->db->escape($data['Id'])."");
-
-			return $query->num_rows();
 		}
 		/*!
 		*	RESPONSÁVEL POR "APAGAR" UMA DICIPLINA DO BANCO DE DADOS.
@@ -120,10 +103,10 @@
 		{
 			$query = $this->db->query("
 				SELECT Nome FROM Disciplina 
-				WHERE Nome = ".$this->db->escape($Nome)."");
+				WHERE UPPER(Nome) = UPPER(".$this->db->escape($Nome).")");
 			$query = $query->row_array();
 			
-			if(!empty($query) && $this->get_disciplina(FALSE ,$Id, FALSE)['Nome_disciplina'] != $query['Nome'])
+			if(!empty($query) && $this->get_disciplina(FALSE, $Id, FALSE, FALSE)['Nome_disciplina'] != $query['Nome'])
 				return "invalido";
 			
 			return "valido";

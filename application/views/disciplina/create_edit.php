@@ -29,6 +29,11 @@
 					<label for="nome" class="label-material">Nome</label>
 				<div class='input-group mb-2 mb-sm-0 text-danger' id='error-nome'></div>
 			</div>
+			<div class='form-group relative'>
+					<input maxlength="10" type='text'  class="input-material" name='apelido' id='apelido' value='<?php echo (!empty($obj['Apelido']) ? $obj['Apelido']:''); ?>'>
+					<label for="apelido" class="label-material">Apelido</label>
+				<div class='input-group mb-2 mb-sm-0 text-danger' id='error-apelido'></div>
+			</div>
 			<div class='form-group'>
 				<div class='checkbox checbox-switch switch-success custom-controls-stacked'>
 					<?php

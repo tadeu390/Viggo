@@ -114,7 +114,7 @@
 		{
 			$query = $this->db->query("
 				SELECT Nome FROM Menu 
-				WHERE Nome = ".$this->db->escape($Nome)."");
+				WHERE UPPER(Nome) = UPPER(".$this->db->escape($Nome).")");
 			$query = $query->row_array();
 			
 			if(!empty($query) && $this->get_menu(FALSE ,$Id, FALSE)['Nome'] != $query['Nome'])

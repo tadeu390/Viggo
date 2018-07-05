@@ -52,7 +52,7 @@
 					<div class='checkbox checbox-switch switch-success custom-controls-stacked' onclick="Main.oculta_limite_falta(this.value)">
 						<?php
 						$checked = "";
-						if ($obj['avaliar_faltas'] == 1)
+						if ($obj['Avaliar_faltas'] == 1)
 							$checked = "checked";
 
 						echo "<label for='avaliar_faltas' style='color: #8a8d93;'>";
@@ -63,7 +63,7 @@
 					</div>
 				</div>
 
-				<?php if($obj['avaliar_faltas'] == 0 || $obj['avaliar_faltas'] == null):?>	
+				<?php if($obj['Avaliar_faltas'] == 0 || $obj['Avaliar_faltas'] == NULL):?>	
 					<div class="form-group relative">
 						<input id="limite_falta" name="limite_falta" value='<?php echo (!empty($obj['Limite_falta']) ? $obj['Limite_falta']:''); ?>' type="text" class="input-material">
 						<label for="limite_falta" class="label-material">Limite de falta (%)</label>

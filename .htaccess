@@ -1,5 +1,6 @@
 RewriteEngine on
 RewriteCond $1 !^(index\.php|content|robots\.txt)
+RewriteCond $1 !^(index\.php|documentacao|robots\.txt)
 RewriteRule ^(.*)$ index.php/$1 [L]
 <IfModule mod_headers.c>
   <FilesMatch "\.(ttf|ttc|otf|eot|woff|woff2|font.css|css|js)$">

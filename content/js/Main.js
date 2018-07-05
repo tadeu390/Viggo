@@ -432,8 +432,12 @@ var Main = {
 	{
 		if($("#nome").val() == "")
 			Main.show_error("nome", 'Informe um nome de disciplina', 'is-invalid');
-		else if($("#nome").val().length > 100)
-			Main.show_error("nome", 'Máximo 100 caracteres', 'is-invalid');
+		else if($("#nome").val().length > 200)
+			Main.show_error("nome", 'Máximo 200 caracteres', 'is-invalid');
+		else if($("#apelido").val() == "")
+			Main.show_error("apelido", 'Informe o apelido da disciplina', 'is-invalid');
+		else if($("#apelido").val().length > 10)
+			Main.show_error("apelido", 'Máximo 10 caracteres', 'is-invalid');
 		else
 			Main.create_edit();
 	},
@@ -479,11 +483,15 @@ var Main = {
 		else if($("#periodo").val() == "")
 			Main.show_error("periodo", 'Informe o período letivo.', 'is-invalid');
 		else if($('input:checkbox[name^=avaliar_faltas]:checked').length == 0 && $("#limite_falta").val() == "")
-			Main.show_error("limite_falta", 'Informe o limite de faltas ou marque a opção acima.', 'is-invalid');
+			Main.show_error("limite_falta", 'Informe o limite de faltas ou marque a opção acima.', 'is-invalid');				
+		else if($('input:checkbox[name^=avaliar_faltas]:checked').length == 0 && $("#limite_falta").val() > 100)
+			Main.show_error("limite_falta", 'O limite de falta deve estar entre 0 e 100.', 'is-invalid');
 		else if($("#dias_letivos").val() == "")
 			Main.show_error("dias_letivos", 'Informe quantos dias letivos terá este período.', 'is-invalid');
 		else if($("#media").val() == "")
 			Main.show_error("media", 'Informe a média de aprovação.', 'is-invalid');
+		else if($("#media").val() > 100)
+			Main.show_error("media", 'A média de aprovação deve estar entre 0 e 100.');
 		else if($("#duracao_aula").val() == "")
 			Main.show_error("duracao_aula", 'Informe quanto tempo terá cada aula.', 'is-invalid');
 		else if($("#hora_inicio_aula").val() == "")
@@ -658,51 +666,45 @@ var Main = {
 			Main.show_error("data_fim", 'Informe a data de fim do bimestre.', '');
 		else if(Main.str_to_date($("#data_fim").val()) <= Main.str_to_date($("#data_inicio").val()))
 			Main.show_error("data_fim", 'A data de fim deve ser maior que a data de início.', '');
+		else if($("#data_abertura").val() == "")
+			Main.show_error("data_abertura", 'Informe a data de abertura', '');
+		else if($("#data_fechamento").val() == "")
+			Main.show_error("data_fechamento", 'Informe a data de fechamento', '');
+		else if(Main.str_to_date($("#data_fechamento").val()) <= Main.str_to_date($("#data_abertura").val()))
+			Main.show_error("data_fechamento", 'A data de fechamento deve ser maior que a data de abertura.', '');
+		else if(Main.str_to_date($("#data_abertura").val()) < Main.str_to_date($("#data_inicio").val()) ||
+				Main.str_to_date($("#data_fechamento").val()) > Main.str_to_date($("#data_fim").val()))
+			Main.show_error("data_fechamento", 'Data de abertura / fechamento deve estar entre a data de início e fim.', '');
 		else
 		{
-			var trava = 0;
-			if($("#data_abertura").val() != "" || $("#data_fechamento").val() != "")//SE HOUVER DATA DE ABERTURA E FECHAMENTO ENTÃO VALIDAR.
+			var max_value_bimestre  =  $("#max_value_bimestre").val();
+
+			var a = new Array();
+			a.push($("#nome_bimestre").val());
+			a.push($("#valor").val());
+			a.push($("#data_inicio").val());
+			a.push($("#data_fim").val());
+			a.push($("#data_abertura").val());
+			a.push($("#data_fechamento").val());
+			a.push("");
+
+			var flag = 0;
+			for(var i = 0; i < max_value_bimestre; i++)
 			{
-				if($("#data_abertura").val() == "")
-					Main.show_error("data_abertura", 'Informe a data de abertura', '');
-				else if($("#data_fechamento").val() == "")
-					Main.show_error("data_fechamento", 'Informe a data de fechamento', '');
-				else if(Main.str_to_date($("#data_fechamento").val()) <= Main.str_to_date($("#data_abertura").val()))
-					Main.show_error("data_fechamento", 'A data de fechamento deve ser maior que a data de abertura.', '');
-				else if(Main.str_to_date($("#data_abertura").val()) < Main.str_to_date($("#data_inicio").val()) ||
-						Main.str_to_date($("#data_fechamento").val()) > Main.str_to_date($("#data_fim").val()))
-					Main.show_error("data_fechamento", 'Data de abertura / fechamento deve estar entre a data de início e fim.', '');
-				else
-					trava = 1;
+				if($("#nome_bimestre"+i).val() == a[0] && $("#valor"+i).val() == a[1] &&
+					$("#data_inicio"+i).val() == a[2] && $("#data_fim"+i).val() == a[3])
+					flag = 1;
+				else if($("#valor"+i).val() == a[1] &&
+					$("#data_inicio"+i).val() == a[2] && $("#data_fim"+i).val() == a[3])
+					flag = 2;
 			}
+
+			if(flag == 1)
+				Main.modal("aviso", "Este bimestre já existe na lista. Se deseja edita-lo, remova-o da lista e o adicione novamente.");
+			else if(flag == 2)
+				Main.modal("aviso", "As datas informadas já estão em uso para um bimestre na lista.");
 			else
-				trava = 1;
-			if(trava == 1)
-			{
-				var max_value_bimestre  =  $("#max_value_bimestre").val();
-
-				var a = new Array();
-				a.push($("#nome_bimestre").val());
-				a.push($("#valor").val());
-				a.push($("#data_inicio").val());
-				a.push($("#data_fim").val());
-				a.push($("#data_abertura").val());
-				a.push($("#data_fechamento").val());
-				a.push("");
-
-				var flag = 0;
-				for(var i = 0; i < max_value_bimestre; i++)
-				{
-					if($("#nome_bimestre"+i).val() == a[0] && $("#valor"+i).val() == a[1] &&
-						$("#data_inicio"+i).val() == a[2] && $("#data_fim"+i).val() == a[3])
-						flag = 1;
-				}
-
-				if(flag == 1)
-					Main.modal("aviso", "Este bimestre já existe na lista. Se deseja edita-lo, remova-o da lista e o adicione novamente.");
-				else
-					return true;
-			}
+				return true;
 		}
 	}
 };

@@ -104,7 +104,7 @@
 		{
 			$query = $this->db->query("
 				SELECT Nome FROM Modulo 
-				WHERE Nome = ".$this->db->escape($Nome)."");
+				WHERE UPPER(Nome) = UPPER(".$this->db->escape($Nome).")");
 			$query = $query->row_array();
 			
 			if(!empty($query) && $this->get_modulo(FALSE ,$Id, FALSE)['Nome_modulo'] != $query['Nome'])

@@ -110,7 +110,7 @@
 			else if($Curso['Disciplinas_id'] == NULL)
 				return "Selecione ao menos uma disciplina";
 			else if($this->Curso_model->nome_valido($Curso['Nome'], $Curso['Id']) == 'invalido')
-				return "O nome informado para o Curso já se encontra cadastrado no sistema.";
+				return "O nome informado para o curso já se encontra cadastrado no sistema.";
 			else
 				return 1;
 		}
