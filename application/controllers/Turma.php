@@ -3,7 +3,7 @@
 	/*!
 	*	ESTA CLASSE TEM POR FUNÇÃO CONTROLAR TUDO REFERENTE AS TURMAS.
 	*/
-	class Menu extends Geral 
+	class Turma extends Geral 
 	{
 		public function __construct()
 		{
@@ -75,6 +75,9 @@
 			if($this->Geral_model->get_permissao(UPDATE, get_class($this)) == TRUE)
 			{
 				$this->data['obj'] = $this->Turma_model->get_turma(FALSE, $id, FALSE, FALSE);
+				$this->data['lista_cursos'] = NULL;
+				$this->data['lista_modalidades'] = NULL;
+				$this->data['lista_disc_turma'] = array();
 				$this->view("turma/create_edit", $this->data);
 			}
 			else
@@ -89,6 +92,9 @@
 			if($this->Geral_model->get_permissao(CREATE, get_class($this)) == TRUE)
 			{
 				$this->data['obj'] = $this->Turma_model->get_turma(FALSE, 0, FALSE, FALSE);
+				$this->data['lista_cursos'] = NULL;
+				$this->data['lista_modalidades'] = NULL;
+				$this->data['lista_disc_turma'] = NULL;
 				$this->view("turma/create_edit", $this->data);
 			}
 			else
