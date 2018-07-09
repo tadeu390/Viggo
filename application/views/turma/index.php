@@ -38,12 +38,12 @@
 								$cor = "class='color-danger'";
 							echo "<tr>";
 								echo "<td $cor>".($i + 1)."</td>";
-								echo "<td $cor>".$lista_turmas[$i]['Nome']."</td>";
+								echo "<td $cor>".$lista_turmas[$i]['Nome_turma']."</td>";
 								echo "<td $cor>".(($lista_turmas[$i]['Ativo'] == 1) ? 'Sim' : 'Não')."</td>";
 								echo "<td class='text-right'>";
 								if(permissao::get_permissao(UPDATE,$controller))
 									echo "<a href='".$url."$controller/edit/".$lista_turmas[$i]['Id']."' title='Editar' style='cursor: pointer;' class='glyphicon glyphicon-edit  text-danger'></a> | ";
-								echo "<a href='".$url.$lista_turmas[$i]['Method']."/detalhes/".$lista_turmas[$i]['Id']."' title='Detalhes' style='cursor: pointer;' class='glyphicon glyphicon-th text-danger'></a> | ";
+								echo "<a href='".$url."$controller/detalhes/".$lista_turmas[$i]['Id']."' title='Detalhes' style='cursor: pointer;' class='glyphicon glyphicon-th text-danger'></a> | ";
 								if(permissao::get_permissao(DELETE,$controller))
 									echo "<span onclick='Main.confirm_delete(". $lista_turmas[$i]['Id'] .");' id='sp_lead_trash' name='sp_lead_trash' title='Apagar' style='cursor: pointer;' class='glyphicon glyphicon-trash text-danger'></span>";
 								echo "</td>";

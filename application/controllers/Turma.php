@@ -3,7 +3,7 @@
 	/*!
 	*	ESTA CLASSE TEM POR FUNÇÃO CONTROLAR TUDO REFERENTE AS TURMAS.
 	*/
-	class Menu extends Geral 
+	class Turma extends Geral 
 	{
 		public function __construct()
 		{
@@ -17,6 +17,11 @@
 			}
 			
 			$this->load->model("Turma_model");
+			$this->load->model("Curso_model");
+			$this->load->model("Disc_turma_model");
+
+			//$this->load->model("Disciplina_model");
+			$this->load->model("Modalidade_model");
 			
 			$this->set_menu();
 			$this->data['controller'] = strtolower(get_class($this));
@@ -75,6 +80,9 @@
 			if($this->Geral_model->get_permissao(UPDATE, get_class($this)) == TRUE)
 			{
 				$this->data['obj'] = $this->Turma_model->get_turma(FALSE, $id, FALSE, FALSE);
+				$this->data['lista_disc_turma'] = $this->Disc_turma_model->get_disc_turma($id);
+				$this->data['lista_cursos'] = $this->Curso_model->get_curso(TRUE, FALSE, FALSE, FALSE);
+				$this->data['lista_modalidades'] = $this->Modalidade_model->get_modalidade(FALSE);
 				$this->view("turma/create_edit", $this->data);
 			}
 			else
@@ -89,6 +97,8 @@
 			if($this->Geral_model->get_permissao(CREATE, get_class($this)) == TRUE)
 			{
 				$this->data['obj'] = $this->Turma_model->get_turma(FALSE, 0, FALSE, FALSE);
+				$this->data['lista_cursos'] = $this->Curso_model->get_curso(TRUE, FALSE, FALSE, FALSE);
+				$this->data['lista_modalidades'] = $this->Modalidade_model->get_modalidade(FALSE);
 				$this->view("turma/create_edit", $this->data);
 			}
 			else
@@ -134,7 +144,7 @@
 
 			if(empty($dataToSave['Ativo']))
 				$dataToSave['Ativo'] = 0;
-			
+			$this->data['disc_turma']
 			//bloquear acesso direto ao metodo store
 			 if(!empty($this->input->post()))
 			 {
