@@ -11,6 +11,7 @@
 
 			$this->load->model('Grupo_model');
 			$this->load->model('Usuario_model');
+			$this->load->model('Turma_model');
 			$this->set_menu();
 			$this->data['controller'] = strtolower(get_class($this));
 			$this->data['menu_selectd'] = $this->Geral_model->get_identificador_menu(strtolower(get_class($this)));
@@ -21,6 +22,7 @@
 		*/
 		public function index($page = FALSE)
 		{
+			print_r($this->Turma_model->get_turma(FALSE, FALSE, FALSE, FALSE));
 			$this->load->view('templates/testes', $this->data);
 		}
 	}

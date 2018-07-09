@@ -1,5 +1,6 @@
 <?php $this->load->helper("permissao");?>
 <?php $this->load->helper("paginacao");?>
+<?php $this->load->helper("mstring");?>
 <br /><br />
 <div class='row padding20 text-white'>
 	<?php
@@ -39,7 +40,7 @@
 							echo "<tr>";
 								echo "<td $cor>".($i + 1)."</td>";
 								echo "<td $cor><span title='".$lista_disciplinas[$i]['Nome_disciplina']."'>".
-								mstring::corta_string($usuarios[$i]['Nome_disciplina'], 25)
+								mstring::corta_string($lista_disciplinas[$i]['Nome_disciplina'], 50)
 								."</span></td>";
 								echo "<td $cor>".(($lista_disciplinas[$i]['Ativo'] == 1) ? 'Sim' : 'Não')."</td>";
 								echo "<td style='text-align: right;'>";

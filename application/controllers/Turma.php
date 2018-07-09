@@ -1,7 +1,7 @@
 <?php
 	require_once("Geral.php");//INCLUI A CLASSE GENÉRICA.
 	/*!
-	*	ESTA CLASSE TEM POR FUNÇÃO CONTROLAR TUDO REFERENTE AOS MENUS DO SISTEMA.
+	*	ESTA CLASSE TEM POR FUNÇÃO CONTROLAR TUDO REFERENTE AS TURMAS.
 	*/
 	class Menu extends Geral 
 	{
@@ -16,12 +16,14 @@
 				redirect('account/login/'.$url_redirect);
 			}
 			
+			$this->load->model("Turma_model");
+			
 			$this->set_menu();
 			$this->data['controller'] = strtolower(get_class($this));
 			$this->data['menu_selectd'] = $this->Geral_model->get_identificador_menu(strtolower(get_class($this)));
 		}
 		/*!
-		*	RESPONSÁVEL POR RECEBER DA MODEL TODOS OS MENUS CADASTRADOS E ENVIA-LOS A VIEW.
+		*	RESPONSÁVEL POR RECEBER DA MODEL TODOS AS TURMAS CADASTRADAS E ENVIA-LAS A VIEW.
 		*
 		*	$page -> Número da página atual de registros.
 		*/
@@ -32,27 +34,27 @@
 			
 			$this->set_page_cookie($page);
 			
-			$this->data['title'] = 'Menus';
+			$this->data['title'] = 'Turmas';
 			if($this->Geral_model->get_permissao(READ, get_class($this)) == TRUE)
 			{
-				$this->data['lista_menus'] = $this->Menu_model->get_menu(FALSE, FALSE, $page);
-				$this->data['paginacao']['size'] = (!empty($this->data['lista_menus']) ? $this->data['lista_menus'][0]['Size'] : 0);
+				$this->data['lista_turmas'] = $this->Turma_model->get_turma(FALSE, FALSE, $page, FALSE);
+				$this->data['paginacao']['size'] = (!empty($this->data['lista_turmas']) ? $this->data['lista_turmas'][0]['Size'] : 0);
 				$this->data['paginacao']['pg_atual'] = $page;
-				$this->view("menu/index", $this->data);
+				$this->view("turma/index", $this->data);
 			}
 			else
 				$this->view("templates/permissao", $this->data);
 		}
 		/*!
-		*	RESPONSÁVEL POR RECEBER UM ID DE MENU PARA "APAGAR".
+		*	RESPONSÁVEL POR RECEBER UM ID DE UMA TURMA PARA "APAGAR".
 		*
-		*	$id -> Id do menu.
+		*	$id -> Id da turma.
 		*/
 		public function deletar($id = FALSE)
 		{
 			if($this->Geral_model->get_permissao(DELETE, get_class($this)) == TRUE)
 			{
-				$this->Menu_model->deletar($id);
+				$this->Turma_model->deletar($id);
 				$resultado = "sucesso";
 				$arr = array('response' => $resultado);
 				header('Content-Type: application/json');
@@ -62,62 +64,60 @@
 				$this->view("templates/permissao", $this->data);
 		}
 		/*!
-		*	RESPONSÁVEL POR CARREGAR O FORMULÁRIO DE CADASTRO DE MENU E RECEBER DA MODEL OS DADOS 
-		*	DO MENU QUE SE DESEJA EDITAR.
+		*	RESPONSÁVEL POR CARREGAR O FORMULÁRIO DE CADASTRO DE TURMA E RECEBER DA MODEL OS DADOS 
+		*	DA TURMA QUE SE DESEJA EDITAR.
 		*
-		*	$id -> Id do menu.
+		*	$id -> Id da turma.
 		*/
 		public function edit($id = FALSE)
 		{
-			$this->data['title'] = 'Editar menu';
+			$this->data['title'] = 'Editar turma';
 			if($this->Geral_model->get_permissao(UPDATE, get_class($this)) == TRUE)
 			{
-				$this->data['obj'] = $this->Menu_model->get_menu(FALSE, $id, FALSE);
-				$this->view("menu/create_edit", $this->data);
+				$this->data['obj'] = $this->Turma_model->get_turma(FALSE, $id, FALSE, FALSE);
+				$this->view("turma/create_edit", $this->data);
 			}
 			else
 				$this->view("templates/permissao", $this->data);
 		}
 		/*!
-		*	RESPONSÁVEL POR CARREGAR O FORMULÁRIO DE CADASTRO DO MENU.
+		*	RESPONSÁVEL POR CARREGAR O FORMULÁRIO DE CADASTRO DE TURMA.
 		*/
 		public function create()
 		{
-			$this->data['title'] = 'Novo Menu';
+			$this->data['title'] = 'Nova turma';
 			if($this->Geral_model->get_permissao(CREATE, get_class($this)) == TRUE)
 			{
-				$this->data['obj'] = $this->Menu_model->get_menu(FALSE, 0, FALSE);
-				$this->view("menu/create_edit", $this->data);
+				$this->data['obj'] = $this->Turma_model->get_turma(FALSE, 0, FALSE, FALSE);
+				$this->view("turma/create_edit", $this->data);
 			}
 			else
 				$this->view("templates/permissao", $this->data);
 		}
 		/*!
-		*	RESPONSÁVEL POR VALIDAR OS DADOS NECESSÁRIOS DO MENU.
+		*	RESPONSÁVEL POR VALIDAR OS DADOS NECESSÁRIOS DA TURMA.
 		*
-		*	$Menu -> Contém todos os dados do menu a ser validado.
+		*	$Turma -> Contém todos os dados do menu a ser validado.
 		*/
-		public function valida_menu($Menu)
+		public function valida_turma($Turma)
 		{
-			if(empty($Menu['Nome']))
-				return "Informe o nome de menu";
-			else if(mb_strlen($Menu['Nome']) > 20)
+			if(empty($Turma['Nome']))
+				return "Informe o nome da turma";
+			else if(mb_strlen($Turma['Nome']) > 20)
 				return "Máximo 20 caracteres";
-			else if($this->Menu_model->nome_valido($Menu['Nome'], $Menu['Id']) == 'invalido')
-				return "O nome informado para o menu já se encontra cadastrado no sistema.";
-			else if(empty($Menu['Ordem']))
-				return "Informe o número da ordem";
+			else if($this->Turma_model->nome_valido($Turma['Nome'], $Turma['Id']) == 'invalido')
+				return "O nome informado para a turma já se encontra cadastrado no sistema.";
 			else
 				return 1;
 		}
 		/*!
-		*	RESPONSÁVEL POR ENVIAR AO MODEL OS DADOS DO MENU.
+		*	RESPONSÁVEL POR ENVIAR AO MODEL OS DADOS DA TURMA.
 		*
-		*	$dataToSave -> Contém todos os dados do menu a ser cadastrado/editado.
+		*	$dataToSave -> Contém todos os dados da turma a ser cadastrada/editada.
 		*/
 		public function store_banco($dataToSave)
 		{
-			$this->Menu_model->set_menu($dataToSave);
+			$this->Turma_model->set_turma($dataToSave);
 		}
 		/*!
 		*	RESPONSÁVEL POR CAPTAR OS DADOS DO FORMULÁRIO SUBMETIDO.
@@ -140,7 +140,7 @@
 			 {
 			 	if($this->Geral_model->get_permissao(CREATE, get_class($this)) == TRUE || $this->Geral_model->get_permissao(UPDATE, get_class($this)) == TRUE)
 				{
-					$resultado = $this->valida_menu($dataToSave);
+					//$resultado = $this->valida_turma($dataToSave);
 
 				 	if($resultado == 1)
 				 	{ 
@@ -156,7 +156,23 @@
 				echo json_encode($arr);
 			 }
 			 else
-				redirect('menu/index');
+				redirect('turma/index');
+		}
+		/*!
+		*	RESPONSÁVEL POR RECEBER DA MODEL TODOS OS ATRIBUTOS DE UMA TURMA E OS ENVIA-LOS A VIEW.
+		*
+		*	$id -> Id de uma turma.
+		*/
+		public function detalhes($id = FALSE)
+		{
+			if($this->Geral_model->get_permissao(READ, get_class($this)) == TRUE)
+			{
+				$this->data['title'] = 'Detalhes da turma';
+				$this->data['obj'] = $this->Turma_model->get_turma(FALSE, $id, FALSE, FALSE);
+				$this->view("turma/detalhes", $this->data);
+			}
+			else
+				$this->view("templates/permissao", $this->data);
 		}
 	}
 ?>

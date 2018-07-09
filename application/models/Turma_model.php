@@ -19,7 +19,7 @@
 		public function get_turma($Ativo, $Id = FALSE, $page = FALSE, $filter = FALSE)
 		{
 			$Ativos = "";
-			if($Ativo == true)
+			if($Ativo == TRUE)
 				$Ativos = " AND t.Ativo = 1 ";
 
 			if ($Id === FALSE)
@@ -31,12 +31,12 @@
 				$step = ITENS_POR_PAGINA;
 				
 				$pagination = " LIMIT ".$inicio.",".$step;
-				if($page === false)
+				if($page === FALSE)
 					$pagination = "";
 				
 				$query = $this->db->query("
-					SELECT (SELECT count(*) FROM Turma u WHERE TRUE ".$filtros.") AS Size, u.Id, 
-					u.Nome as Nome_turma, u.Ativo 
+					SELECT (SELECT count(*) FROM Turma u WHERE TRUE ".$filtros.") AS Size, t.Id, 
+					t.Nome as Nome_turma, t.Ativo 
 					
 					FROM Turma t 
 					WHERE TRUE ".$Ativos."".$filtros."
@@ -46,10 +46,10 @@
 			}
 
 			$query =  $this->db->query("
-				SELECT t.Id, t.Nome as Nome_turma t.Ativo,
-				DATE_FORMAT(t.Data_registro, '%d/%m/%Y') as Data_registro, 
+				SELECT t.Id, t.Nome as Nome_turma, t.Ativo,
+				DATE_FORMAT(t.Data_registro, '%d/%m/%Y') as Data_registro 
 					FROM Turma t 
-				WHERE TRUE ".$Ativos." AND u.td = ".$this->db->escape($Id)."");
+				WHERE TRUE ".$Ativos." AND t.Id = ".$this->db->escape($Id)."");
 			return $query->row_array();
 		}
 	}
