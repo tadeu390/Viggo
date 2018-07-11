@@ -706,5 +706,14 @@ var Main = {
 			else
 				return true;
 		}
+	},
+	modalidade_validar : function()
+	{
+		if($("#nome").val() == "")
+			Main.show_error("nome", 'Informe o nome da modalidade', 'is-invalid');
+		else if($("#nome").val().length > 100)
+			Main.show_error("nome", 'Máximo 100 caracteres', 'is-invalid');
+		else
+			Main.create_edit();
 	}
 };

@@ -289,6 +289,11 @@ $(document).ready(
       Main.grupo_validar();
     });
 
+    $("#form_cadastro_modalidade").submit(function(event) {
+      event.preventDefault();
+      Main.modalidade_validar();
+    });
+
     $('#data_nascimento').blur(function() {
       if (this.value != '') Main.show_error("data_nascimento", "", "is-valid");
     });

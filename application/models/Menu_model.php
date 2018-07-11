@@ -11,7 +11,7 @@
 		/*!
 		*	RESPONSÁVEL POR RETORNAR UMA LISTA DE MENUS OU UM MENU ESPECÍFICO.
 		*	
-		*	$Ativo -> Quando passadO "TRUE" quer dizer pra retornar somente registro(s) ativos(s), se for passado FALSE retorna tudo.
+		*	$Ativo -> Quando passado "TRUE" quer dizer pra retornar somente registro(s) ativos(s), se for passado FALSE retorna tudo.
 		*	$id -> Id de um menu específico.
 		*	$page-> Número da página de registros que se quer carregar.
 		*/
@@ -105,7 +105,7 @@
 			return $query->row_array();
 		}
 		/*!
-		*	RESPONSÁVEL POR VERIFICAR SE UM DETERMIANDO MENU JÁ EXISTE NO BANCO DE DADOS.
+		*	RESPONSÁVEL POR VERIFICAR SE UM DETERMINADO MENU JÁ EXISTE NO BANCO DE DADOS.
 		*
 		*	$Nome -> Nome do menu a ser validado.
 		*	$Id -> Id do menu.

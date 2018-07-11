@@ -13,29 +13,87 @@
 			$this->load->database();
 		}
 		/*!
-		*	RESPONSÁVEL POR RETORNAR UMA LISTA DE MODALIDADES OU UMA MODALIDADE ESPECÍFICA.
-		*
-		*	$Id -> Quando passado algum valor inteiro, retorna uma modalidade caso a mesma exista no banco de dados.
+		*	RESPONSÁVEL POR RETORNAR UMA LISTA DE MODALIDADE OU UMA MODALIDADE ESPECÍFICA.
+		*	
+		*	$Ativo -> Quando passad "TRUE" quer dizer pra retornar somente registro(s) ativos(s), se for passado FALSE retorna tudo.
+		*	$id -> Id de uma modalidade específica.
+		*	$page-> Número da página de registros que se quer carregar.
 		*/
-		public function get_modalidade($id = FALSE)
+		public function get_modalidade($Ativo = FALSE, $id = false, $page = false)
 		{
-			if ($id === FALSE)//retorna todos se nao passar o parametro
-			{
-				$query = $this->db->query("
-					SELECT m.Id, m.Nome as Nome_modalidade, 
-					DATE_FORMAT(m.Data_registro, '%d/%m/%Y') as Data_registro, m.Ativo   
-					FROM Modalidade m");
+			$Ativos = "";
+			if($Ativo == true)
+				$Ativos = " AND Ativo = 1 ";
 
+			if($id === false)
+			{
+				$limit = $page * ITENS_POR_PAGINA;
+				$inicio = $limit - ITENS_POR_PAGINA;
+				$step = ITENS_POR_PAGINA;
+				
+				$pagination = " LIMIT ".$inicio.",".$step;
+				if($page === false)
+					$pagination = "";
+				
+				$query = $this->db->query("
+					SELECT (SELECT count(*) FROM  Modalidade) AS Size, Id, Nome, Ativo 
+						FROM Modalidade 
+					WHERE TRUE ".$Ativos."
+					ORDER BY Data_registro ASC ".$pagination."");
+				
 				return $query->result_array();
 			}
 
 			$query = $this->db->query("
-					SELECT m.Id, m.Nome as Nome_modalidade, 
-					DATE_FORMAT(m.Data_registro, '%d/%m/%Y') as Data_registro, m.Ativo   
-					FROM Modalidade m 
-					WHERE m.Id = ".$this->db->escape($id)."");
-
+				SELECT Id, Nome, Ativo 
+					FROM Modalidade 
+				WHERE Id = ".$this->db->escape($id)." ".$Ativos."");
+			
 			return $query->row_array();
+		}
+		/*!
+		*	RESPONSÁVEL POR "APAGAR" UMA MODALIDADE DO BANCO DE DADOS.
+		*
+		*	$id -> Id da modalidade a ser "apagada".
+		*/
+		public function deletar($id)
+		{
+			return $this->db->query("
+				UPDATE Modalidade SET Ativo = 0 
+				WHERE Id = ".$this->db->escape($id)."");
+		}
+		/*!
+		*	RESPONSÁVEL POR CADASTRAR/ATUALIZAR UMA MODALIDADE NO BANCO DE DADOS.
+		*
+		*	$data -> Contém os dados da modalidade.
+		*/
+		public function set_modalidade($data)
+		{
+			if(empty($data['Id']))
+				return $this->db->insert('Modalidade',$data);
+			else
+			{
+				$this->db->where('Id', $data['Id']);
+				return $this->db->update('Modalidade', $data);
+			}
+		}
+		/*!
+		*	RESPONSÁVEL POR VERIFICAR SE UMA DETERMINADA MODALIDADE JÁ EXISTE NO BANCO DE DADOS.
+		*
+		*	$Nome -> Nome da modalidade a ser validada.
+		*	$Id -> Id da modalidade.
+		*/
+		public function nome_valido($Nome, $Id)
+		{
+			$query = $this->db->query("
+				SELECT Nome FROM Modalidade 
+				WHERE UPPER(Nome) = UPPER(".$this->db->escape($Nome).")");
+			$query = $query->row_array();
+			
+			if(!empty($query) && $this->get_modalidade(FALSE ,$Id, FALSE)['Nome'] != $query['Nome'])
+				return "invalido";
+			
+			return "valido";
 		}
 	}
 ?>
