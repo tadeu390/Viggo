@@ -9,7 +9,7 @@
 	define("DELETE", 'Remover');
 	
 	define("ADMIN", 1);
-	define("PROFESSOR", 2);
+	define("PROFESSOR", 4);
 	define("SECRETARIA", 3);
 	class Geral extends CI_Controller 
 	{

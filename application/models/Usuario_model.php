@@ -77,7 +77,7 @@
 					return " AND u.Nome LIKE ".$this->db->escape($filter['nome_pesquisa_rapida']."%");
 				//PESQUISA RÁPIDA
 
-				if($filter['grupo_id'] != 0)
+				if(isset($filter['grupo_id']) && $filter['grupo_id'] != 0)
 					$filtros = " AND u.Grupo_id = ".$this->db->escape($filter['grupo_id']);
 				if(!empty($filter['data_registro_inicio']))
 					$filtros = $filtros." AND u.Data_registro >= DATE_FORMAT(STR_TO_DATE(".$this->db->escape($filter['data_registro_inicio']).", '%d/%m/%Y'), '%Y-%m-%d')";
@@ -87,7 +87,7 @@
 					$filtros = $filtros." AND u.Nome LIKE ".$this->db->escape($filter['nome']."%");
 				if(!empty($filter['email']))
 					$filtros = $filtros." AND u.Email LIKE ".$this->db->escape($filter['email']."%");
-				if($filter['ativo'] != 0)
+				if(isset($filter['ativo']) && $filter['ativo'] != 0)
 				{
 					$ativo = intval($filter['ativo']);
 					$filtros = $filtros." AND u.Ativo = ".(($ativo == 1) ? 1 : 0);

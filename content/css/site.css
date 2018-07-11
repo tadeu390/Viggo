@@ -241,3 +241,24 @@ input[type="text"]:disabled {
     background-color: rgb(50,50,50);
     border-bottom: 1px solid white;
 }
+
+.disciplinas
+{
+	background-color: white;
+	height: 400px;
+	max-height: 400px;
+	overflow: auto;
+	color: black;
+	border-radius: 5px; 
+}
+
+.alunos
+{
+	background-color: white;
+	height: 648px;
+	border-radius: 5px 5px 0px 0px;
+	max-height: 648px;
+	overflow-y: auto;
+	overflow-x: hidden;
+	color: black;
+}

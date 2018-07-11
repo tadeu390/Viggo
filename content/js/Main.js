@@ -70,6 +70,13 @@ var Main = {
 	{
 		return new Date(new Date(str.split('/')[2],str.split('/')[1],str.split('/')[0]));
 	},
+	convert_date : function(str,to_region)
+	{
+		if(to_region == "en")
+		{
+			return str.split('/')[2]+'-'+str.split('/')[1]+'-'+str.split('/')[0];
+		}
+	},
 	get_cookie : function(cname) {
 		var name = cname + "=";
 		var decodedCookie = decodeURIComponent(document.cookie);
@@ -601,7 +608,8 @@ var Main = {
 	remove_elemento : function (id)
 	{
 		var linha = document.getElementById(id);
-		linha.parentNode.removeChild(linha);
+		if(linha != undefined)
+			linha.parentNode.removeChild(linha);
 	},
 	add_bimestre : function ()
 	{
@@ -706,5 +714,140 @@ var Main = {
 			else
 				return true;
 		}
+	},
+	load_data_disciplina : function()
+	{
+		if($("#curso_id").val() != 0)
+		{
+			Main.modal("aguardar", "Aguarde...");
+			$.ajax({
+				url: Main.base_url+$("#controller").val()+'/disciplina_por_curso/'+(($("#id").val() == "") ? 0 : $("#id").val())+'/'+$("#curso_id").val(),
+				dataType:'json',
+				cache: false,
+				type: 'POST',
+				success: function (data) 
+				{
+					setTimeout(function(){
+						$("#modal_aguardar").modal('hide');
+					},500);
+					document.getElementById("disciplinas").innerHTML = data.response;
+				}
+			}).fail(function(msg){
+				    setTimeout(function(){
+				    	$("#modal_confirm").modal('hide');
+				    	Main.modal("aviso", "Houve um erro ao processar sua requisição. Verifique sua conexão com a internet.");
+					},500);
+			});
+		}
+	},
+	load_data_aluno : function()
+	{
+		Main.modal("aguardar", "Aguarde...");
+
+		var turma_id = $("#turma_id").val();
+		var nome = (($("#nome_aluno").val() == "") ? 0 : $("#nome_aluno").val());
+		var data_registro_inicio = (($("#data_registro_inicio").val() == "") ? 0 : $("#data_registro_inicio").val());
+		var data_registro_fim = (($("#data_registro_fim").val() == "") ? 0 : $("#data_registro_fim").val());
+		
+		if(data_registro_inicio != 0)
+			data_registro_inicio = Main.convert_date(data_registro_inicio, "en");
+		if(data_registro_fim != 0)
+			data_registro_fim = Main.convert_date(data_registro_fim, "en");
+		
+		$.ajax({
+			url: Main.base_url+$("#controller").val()+'/alunos_por_filtro/'+'/'+turma_id+'/'+nome+'/'+data_registro_inicio+'/'+data_registro_fim,
+			dataType:'json',
+			cache: false,
+			type: 'POST',
+			success: function (data) 
+			{
+				setTimeout(function(){
+					$("#modal_aguardar").modal('hide');
+				},500); 
+				document.getElementById("alunos").innerHTML = data.response;
+			}
+		}).fail(function(msg){
+		    setTimeout(function(){
+		    	$("#modal_confirm").modal('hide');
+		    	Main.modal("aviso", "Houve um erro ao processar sua requisição. Verifique sua conexão com a internet.");
+			},500);
+		});
+	},
+	remove_aluno : function ()//REMOVE OS ALUNOS ADICIONADOS E SELECIONADOS
+	{
+		for(var i = 0; i < $("#limite_aluno_add").val(); i++)
+		{
+			if($('input:checkbox[name^=nome_aluno_add'+i+']:checked').length > 0)
+				Main.remove_elemento("aluno_item_add"+i);
+		}
+	},
+	add_aluno : function ()
+	{
+		var valido = 1;
+		var limite_aluno_add = $("#limite_aluno_add").val();
+		for(var i = 0; i < $("#limite_aluno").val(); i++)
+		{
+			if($('input:checkbox[name^=nome_aluno'+i+']:checked').length > 0)
+			{
+				if(Main.add_aluno_validar($("#aluno_id"+i).val()) == true)
+				{
+					var node_tr = document.createElement("TR");
+					node_tr.setAttribute("id","aluno_item_add"+limite_aluno_add);
+					
+					var node_td = document.createElement("TD");
+					var aluno_id = document.createElement("INPUT");
+					aluno_id.setAttribute("type","hidden");
+					aluno_id.setAttribute("value",$("#aluno_id"+i).val());
+					aluno_id.setAttribute("id","aluno_id_add"+limite_aluno_add);
+					aluno_id.setAttribute("name","aluno_id_add"+limite_aluno_add);
+					node_td.innerHTML = "<div style='margin-top: 5px; height: 25px;' class='checkbox checbox-switch switch-success custom-controls-stacked'>"
+						+"<label for='nome_aluno_add"+limite_aluno_add+"' style='display: block; height: 25px;'>"
+							+"<input type='checkbox' id='nome_aluno_add"+limite_aluno_add+"' name='nome_aluno_add"+limite_aluno_add+"' value='1' /><span></span>"
+							+$("#nome_aluno_aux"+i).val()
+						+"</label>"
+					+"</div>";
+					node_td.setAttribute("title",$("#nome_aluno_aux"+i).val());
+					node_td.appendChild(aluno_id);
+					node_tr.appendChild(node_td);
+
+					node_td = document.createElement("TD");
+					node_td.setAttribute("class","text-center");
+					node_td.setAttribute("style","vertical-align: middle;");
+					var inp_sub_turma = document.createElement("INPUT");
+					inp_sub_turma.setAttribute("type","number");
+					inp_sub_turma.setAttribute("class","text-center");
+					inp_sub_turma.setAttribute("style","width: 60%;");
+					inp_sub_turma.setAttribute("maxlength","1");
+					inp_sub_turma.setAttribute("id","sub_turma"+limite_aluno_add);
+					inp_sub_turma.setAttribute("name","sub_turma"+limite_aluno_add);
+					inp_sub_turma.setAttribute("value","0");
+					node_td.appendChild(inp_sub_turma);
+					node_tr.appendChild(node_td);
+
+					node_td = document.createElement("TD");
+					node_td.setAttribute("class","text-center");
+					node_td.setAttribute("style","vertical-align: middle;");
+					node_td.innerHTML = "<span title='Detalhes' style='cursor: pointer;' class='glyphicon glyphicon-th text-danger'></span>";
+					node_tr.appendChild(node_td);				
+
+					document.getElementById("alunos_turma").appendChild(node_tr);
+
+					limite_aluno_add = parseInt(limite_aluno_add) + 1;
+					document.getElementById('nome_aluno'+i).checked = false;//LIMPA OS CHECK MARCADOS
+				}
+				else 
+					valido = 0;
+			}
+		}
+		$("#limite_aluno_add").val(limite_aluno_add);
+		if(valido == 0)
+			Main.modal("aviso","Alguns alunos selecionados não foram adicionados, pois já se encontram na lista.");
+	},
+	add_aluno_validar : function(aluno_id)
+	{
+		for(var i = 0; i <= $("#limite_aluno_add").val(); i++)
+			if($("#aluno_id_add"+i).val() == aluno_id)
+				return false;
+		return true;
 	}
 };

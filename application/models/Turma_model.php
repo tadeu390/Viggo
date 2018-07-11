@@ -70,6 +70,9 @@
 		*/
 		public function set_turma($data)
 		{
+			$modalidade_id = $data['Modalidade_id'];
+			unset($data['Modalidade_id']);
+			unset($data['Disc_curso_to_save']);
 			if(empty($data['Id']))
 				$this->db->insert('Turma',$data);
 			else
@@ -77,7 +80,7 @@
 				$this->db->where('Id', $data['Id']);
 				$this->db->update('Turma', $data);
 			}
-			return $this->get_turma_por_nome($data['Nome'], $data['Modalidade_id'])['Id'];
+			return $this->get_turma_por_nome($data['Nome'], $modalidade_id)['Id'];
 		}
 		/*!
 		*	RESPONSÁVEL POR RETORAR UM TURMA DE ACORDO COM O NOME E MODALIDADE.
