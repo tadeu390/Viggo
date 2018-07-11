@@ -24,7 +24,7 @@
 		{
 			$Ativos = "";
 			if($Ativo == TRUE)
-				$Ativos = " AND d.Ativo = 1 ";
+				$Ativos = " AND c.Ativo = 1 ";
 
 			if ($id === FALSE)//retorna todos se nao passar o parametro
 			{

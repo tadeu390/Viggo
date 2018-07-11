@@ -17,6 +17,11 @@
 			}
 			
 			$this->load->model("Turma_model");
+			$this->load->model("Curso_model");
+			$this->load->model("Disc_turma_model");
+
+			$this->load->model("Categoria_model");
+			$this->load->model("Modalidade_model");
 			
 			$this->set_menu();
 			$this->data['controller'] = strtolower(get_class($this));
@@ -75,9 +80,23 @@
 			if($this->Geral_model->get_permissao(UPDATE, get_class($this)) == TRUE)
 			{
 				$this->data['obj'] = $this->Turma_model->get_turma(FALSE, $id, FALSE, FALSE);
-				$this->data['lista_cursos'] = NULL;
-				$this->data['lista_modalidades'] = NULL;
-				$this->data['lista_disc_turma'] = array();
+				$this->data['lista_disc_turma_header'] = $this->Disc_turma_model->get_disc_turma_header($id);
+				$curso_id = $this->Disc_turma_model->get_curso_turma($id)['Curso_id'];
+				$this->data['lista_disc_turma_disciplina'] = $this->Disc_turma_model->get_disc_turma_disciplina($id,$curso_id);
+				$this->data['lista_disc_turma_aluno'] = $this->Disc_turma_model->get_disc_turma_aluno($id);
+				$this->data['lista_turmas'] = $this->Turma_model->get_turma(TRUE, FALSE, FALSE, FALSE);
+				$this->data['lista_cursos'] = $this->Curso_model->get_curso(TRUE, FALSE, FALSE, FALSE);
+				$this->data['lista_modalidades'] = $this->Modalidade_model->get_modalidade(FALSE);
+				$this->data['lista_categorias'] = $this->Categoria_model->get_categoria(FALSE);
+				$professor = array('grupo_id' => PROFESSOR);
+				$this->data['lista_professores'] = $this->Usuario_model->get_usuario(TRUE, FALSE, FALSE, $professor);
+
+				$aluno = array(
+					'data_registro_inicio' => date("Y-m-d", strtotime('-6 months')), 
+					'data_registro_fim' => date("Y-m-d")
+				);
+				$this->data['lista_alunos'] = $this->Disc_turma_model->get_disc_turma_filtro($aluno);
+				
 				$this->view("turma/create_edit", $this->data);
 			}
 			else
@@ -92,13 +111,56 @@
 			if($this->Geral_model->get_permissao(CREATE, get_class($this)) == TRUE)
 			{
 				$this->data['obj'] = $this->Turma_model->get_turma(FALSE, 0, FALSE, FALSE);
-				$this->data['lista_cursos'] = NULL;
-				$this->data['lista_modalidades'] = NULL;
-				$this->data['lista_disc_turma'] = NULL;
+				$this->data['lista_disc_turma_header'] = $this->Disc_turma_model->get_disc_turma_header(0);
+				$this->data['lista_cursos'] = $this->Curso_model->get_curso(TRUE, FALSE, FALSE, FALSE);
+				$this->data['lista_modalidades'] = $this->Modalidade_model->get_modalidade(FALSE);
+				$this->data['lista_categorias'] = $this->Categoria_model->get_categoria(FALSE);
+				$this->data['lista_turmas'] = $this->Turma_model->get_turma(TRUE, FALSE, FALSE, FALSE);
+				$this->data['lista_disc_turma_aluno'] = $this->Disc_turma_model->get_disc_turma_aluno(0);
+				
+				$aluno = array(
+					'data_registro_inicio' => date("Y-m-d", strtotime('-6 months')), 
+					'data_registro_fim' => date("Y-m-d")
+				);
+				$this->data['lista_alunos'] = $this->Disc_turma_model->get_disc_turma_filtro($aluno);
 				$this->view("turma/create_edit", $this->data);
 			}
 			else
 				$this->view("templates/permissao", $this->data);
+		}
+
+		public function disciplina_por_curso($turma_id, $curso_id)
+		{
+			$this->data['lista_disc_turma_disciplina'] = $this->Disc_turma_model->get_disc_turma_disciplina($turma_id, $curso_id);
+			$this->data['lista_categorias'] = $this->Categoria_model->get_categoria(FALSE);
+			$professor = array('grupo_id' => PROFESSOR);
+			$this->data['lista_professores'] = $this->Usuario_model->get_usuario(TRUE, FALSE, FALSE, $professor);
+			$resultado = $this->load->view("turma/_disciplinas",$this->data, TRUE);
+			$arr = array('response' => $resultado);
+				header('Content-Type: application/json');
+				echo json_encode($arr);
+		}
+		public function alunos_por_filtro($turma_id, $nome, $data_registro_inicio, $data_registro_fim)
+		{
+			$aluno = array(
+				'turma_id' => $turma_id,
+				'nome' => $nome,
+				'data_registro_inicio' => $data_registro_inicio, 
+				'data_registro_fim' => $data_registro_fim
+			);
+
+			$this->data['lista_alunos'] = $this->Disc_turma_model->get_disc_turma_filtro($aluno);
+			$resultado = $this->load->view("turma/_alunos",$this->data, TRUE);
+			$arr = array('response' => $resultado);
+				header('Content-Type: application/json');
+				echo json_encode($arr);
+		}
+		public function valida_disciplinas($Disc_curso_to_save)
+		{
+			for($i = 0; $i < count($Disc_curso_to_save); $i++)
+				if($Disc_curso_to_save[$i]['Value'] == 1)
+					return TRUE;
+			return FALSE;
 		}
 		/*!
 		*	RESPONSÁVEL POR VALIDAR OS DADOS NECESSÁRIOS DA TURMA.
@@ -111,8 +173,10 @@
 				return "Informe o nome da turma";
 			else if(mb_strlen($Turma['Nome']) > 20)
 				return "Máximo 20 caracteres";
-			else if($this->Turma_model->nome_valido($Turma['Nome'], $Turma['Id']) == 'invalido')
-				return "O nome informado para a turma já se encontra cadastrado no sistema.";
+			//else if($this->Turma_model->nome_valido($Turma['Nome'], $Turma['Id']) == 'invalido')
+				//return "O nome informado para a turma já se encontra cadastrado no sistema.";
+			else if($this->valida_disciplinas($Turma['Disc_curso_to_save']) == FALSE)
+				return "Selecione ao menos uma disciplina para a turma";
 			else
 				return 1;
 		}
@@ -123,7 +187,7 @@
 		*/
 		public function store_banco($dataToSave)
 		{
-			$this->Turma_model->set_turma($dataToSave);
+			return $this->Turma_model->set_turma($dataToSave);
 		}
 		/*!
 		*	RESPONSÁVEL POR CAPTAR OS DADOS DO FORMULÁRIO SUBMETIDO.
@@ -134,23 +198,39 @@
 			$dataToSave = array(
 				'Id' => $this->input->post('id'),
 				'Nome' => $this->input->post('nome'),
-				'Ordem' => $this->input->post('ordem'),
-				'Ativo' => $this->input->post('menu_ativo')
+				'Modalidade_id' => $this->input->post('modalidade_id'),
+				'Ativo' => $this->input->post('turma_ativa')
 			);
+			
+			$Disc_curso_to_save = array();
+			for($i = 0; $i < $this->input->post("limite_disciplina"); $i++)
+			{
+				$Disc_curso_to_save_item = array(
+					'Disc_curso_id' => $this->input->post("Disc_curso_id".$i),
+					'Value' => $this->input->post("nome_disciplina".$i),
+					'Professor_id' => $this->input->post("professor_id".$i),
+					'Categoria_id' => $this->input->post("categoria_id".$i)
+				);
+				array_push($Disc_curso_to_save, $Disc_curso_to_save_item);
+			}
+
+			print_r($Disc_curso_to_save);
+
+//			print_r($dataToSave);
 
 			if(empty($dataToSave['Ativo']))
 				$dataToSave['Ativo'] = 0;
-			
+
 			//bloquear acesso direto ao metodo store
 			 if(!empty($this->input->post()))
 			 {
 			 	if($this->Geral_model->get_permissao(CREATE, get_class($this)) == TRUE || $this->Geral_model->get_permissao(UPDATE, get_class($this)) == TRUE)
 				{
-					//$resultado = $this->valida_turma($dataToSave);
-
+					$dataToSave['Disc_curso_to_save'] = $Disc_curso_to_save;
+					$resultado = $this->valida_turma($dataToSave);
 				 	if($resultado == 1)
-				 	{ 
-				 		$this->store_banco($dataToSave);
+				 	{
+				 		$resultado = $this->store_banco($dataToSave);
 				 		$resultado = "sucesso";
 				 	}
 				}

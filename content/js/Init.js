@@ -43,6 +43,10 @@ $(document).ready(
 
     //LOGIN
 
+    //TURMAS
+
+    //TURMAS
+
     //REGRAS LETIVAS
     $('#modalidade_id').change(function() {
       if (this.value != '0') Main.show_error("modalidade_id", '', '');
@@ -204,6 +208,11 @@ $(document).ready(
     });
 
     //BTN CADASTROS
+
+    $("#form_cadastro_turma").submit(function(event) {
+      event.preventDefault();
+      alert(event.type);
+    });
 
     $("#form_cadastro_Regras").submit(function(event) {
       event.preventDefault();

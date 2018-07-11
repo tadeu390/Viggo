@@ -52,5 +52,52 @@
 				WHERE TRUE ".$Ativos." AND t.Id = ".$this->db->escape($Id)."");
 			return $query->row_array();
 		}
+		/*!
+		*	RESPONSÁVEL POR "APAGAR" UA TURMA DO BANCO DE DADOS.
+		*
+		*	$id -> Id da turma a ser "apagada".
+		*/
+		public function deletar($Id)
+		{
+			return $this->db->query("
+				UPDATE Turma SET Ativo = 0 
+				WHERE Id = ".$this->db->escape($Id)."");
+		}
+		/*!
+		*	RESPONSÁVEL POR CADASTRAR/ATUALIZAR UMA TURMA E EM SEGUIDA RETORNA A SUA ID.
+		*
+		*	$data -> Contém todos os dados da turma.
+		*/
+		public function set_turma($data)
+		{
+			$modalidade_id = $data['Modalidade_id'];
+			unset($data['Modalidade_id']);
+			unset($data['Disc_curso_to_save']);
+			if(empty($data['Id']))
+				$this->db->insert('Turma',$data);
+			else
+			{
+				$this->db->where('Id', $data['Id']);
+				$this->db->update('Turma', $data);
+			}
+			return $this->get_turma_por_nome($data['Nome'], $modalidade_id)['Id'];
+		}
+		/*!
+		*	RESPONSÁVEL POR RETORAR UM TURMA DE ACORDO COM O NOME E MODALIDADE.
+		*
+		*	$nome -> Nome da turma a ser cadastrada/editada.
+		*	$modalidade_id -> Modalidade ensino especificado para a turma.
+		*/
+		public function get_turma_por_nome($nome, $modalidade_id)
+		{
+			$query = $this->db->query("
+				SELECT t.Id FROM Turma t 
+				INNER JOIN Disc_turma dt ON t.Id = dt.Turma_Id 
+				INNER JOIN Periodo_letivo p ON dt.Periodo_letivo_id = p.Id 
+				INNER JOIN Modalidade m ON m.Id = p.Id and m.Id = ".$this->db->escape($modalidade_id)."
+				WHERE UPPER(t.Nome) = UPPER(".$this->db->escape($nome).") ");
+			
+			return $query->row_array();
+		}
 	}
 ?>
