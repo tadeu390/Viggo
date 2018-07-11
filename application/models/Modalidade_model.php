@@ -36,7 +36,7 @@
 					$pagination = "";
 				
 				$query = $this->db->query("
-					SELECT (SELECT count(*) FROM  Modalidade) AS Size, Id, Nome, Ativo 
+					SELECT (SELECT count(*) FROM  Modalidade) AS Size, Id, Nome AS Nome_modalidade, Ativo 
 						FROM Modalidade 
 					WHERE TRUE ".$Ativos."
 					ORDER BY Data_registro ASC ".$pagination."");
@@ -45,7 +45,7 @@
 			}
 
 			$query = $this->db->query("
-				SELECT Id, Nome, Ativo 
+				SELECT Id, Nome AS Nome_modalidade, Ativo 
 					FROM Modalidade 
 				WHERE Id = ".$this->db->escape($id)." ".$Ativos."");
 			
