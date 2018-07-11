@@ -38,7 +38,7 @@
 								$cor = "class='color-danger'";
 							echo "<tr>";
 								echo "<td $cor>".($i + 1)."</td>";
-								echo "<td $cor>".$lista_modalidades[$i]['Nome']."</td>";
+								echo "<td $cor>".$lista_modalidades[$i]['Nome_modalidade']."</td>";
 								echo "<td $cor>".(($lista_modalidades[$i]['Ativo'] == 1) ? 'Sim' : 'Não')."</td>";
 								echo "<td class='text-right'>";
 								if(permissao::get_permissao(UPDATE,$controller))
