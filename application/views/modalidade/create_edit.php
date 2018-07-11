@@ -1,4 +1,4 @@
-<br /><br />
+<br /><br /> 
 <div class='row padding20 text-white'>
 	<?php
     	echo"<div class='col-lg-8 offset-lg-2 padding0'>";
