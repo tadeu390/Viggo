@@ -183,5 +183,26 @@
 			else
 				redirect('ra/index');
 		}
+
+		public function matricula($inscricao_id)
+		{
+			
+			$Inscricao = $this->Ra_model->get_ra(false, $inscricao_id, false, false);
+
+			$dataRenovacaoToSave = array(
+				'Inscricao_id' => $inscricao_id, 
+				'Periodo_letivo_id' => $this->Modalidade_model->get_periodo_por_modalidade($Inscricao['Modalidade_id'])['Id']
+			);
+	 		$this->Renovacao_matricula_model->set_renovacao_matricula($dataRenovacaoToSave);
+
+
+
+
+
+			$resultado = $inscricao_id;
+			$arr = array('response' => $resultado);
+				header('Content-Type: application/json');
+				echo json_encode($arr);
+		}
 	}
 ?>

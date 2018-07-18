@@ -29,7 +29,7 @@
 							echo "<td>Aluno</td>";
 							echo "<td>Curso</td>";
 							echo "<td>Modalidade</td>";
-							echo "<td style='width: 10%;'></td>";
+							echo "<td style='width: 10%;' class='text-center'>Status</td>";
 							echo "<td class='text-right' style='width: 5%;'>Ações</td>";
 						echo "<tr>";
 					echo "</thead>";
@@ -46,13 +46,18 @@
 								echo "<td $cor style='vertical-align:middle'>".$lista_matriculas[$i]['Nome_usuario']."</td>";
 								echo "<td $cor style='vertical-align:middle'>".$lista_matriculas[$i]['Nome_curso']."</td>";
 								echo "<td $cor style='vertical-align:middle'>".$lista_matriculas[$i]['Nome_modalidade']."</td>";
-								echo "<td>";
-									echo"<input type='submit' class='btn btn-success btn-block text-white padding0' value='Matricular'>";
+								echo "<td class='text-center' id='bt".$lista_matriculas[$i]['Id']."'>";
+									if($lista_matriculas[$i]['Status'] == 'matricular')
+										echo"<button onclick='Main.matricula(\"".$lista_matriculas[$i]['Id']."\");' class='btn btn-success btn-block text-white'><span class='glyphicon glyphicon-plus-sign text-warning'></span> Matricular</button>";
+									else if ($lista_matriculas[$i]['Status'] == 'renovar')
+										echo"<button onclick='Main.matricula(\"".$lista_matriculas[$i]['Id']."\");' class='btn btn-info btn-block text-white '><span class='glyphicon glyphicon-warning-sign text-warning'></span> Renovar</button>";
+									else
+										echo "<span class='glyphicon glyphicon-ok'></span> Matriculado";
 								echo "</td>";
 								echo "<td class='text-right' style='vertical-align:middle'>";
-								if(permissao::get_permissao(UPDATE,$controller))
+								if(permissao::get_permissao(UPDATE, $controller))
 									echo "<a href='".$url."$controller/edit/".$lista_matriculas[$i]['Id']."' title='Editar' style='cursor: pointer;' class='glyphicon glyphicon-edit  text-danger'></a> | ";
-								if(permissao::get_permissao(DELETE,$controller))
+								if(permissao::get_permissao(DELETE, $controller))
 									echo "<span onclick='Main.confirm_delete(". $lista_matriculas[$i]['Id'] .");' id='sp_lead_trash' name='sp_lead_trash' title='Apagar' style='cursor: pointer;' class='glyphicon glyphicon-trash text-danger'></span>";
 								echo "</td>";
 							echo "</tr>";

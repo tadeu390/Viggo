@@ -94,7 +94,7 @@
 							$checked = "checked";
 
 						echo "<label for='matricular' style='color: #8a8d93;'>";
-						echo "<input type='checkbox' $checked id='matricular' name='matricular' value='1' /><span></span> Gerar matrícula";
+						echo "<input type='checkbox' $checked id='matricular' name='matricular' value='1' /><span></span> Confirmar matrícula";
 						echo "</label>";
 						?>
 					</div>

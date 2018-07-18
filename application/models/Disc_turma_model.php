@@ -117,6 +117,7 @@
 				$CI->load->model("Modalidade_model");
 				
 			$last_periodo_letivo_id = $CI->Modalidade_model->get_periodo_por_modalidade($modalidade_id)['Id'];
+			$perido_letivo_turma_antiga =  $this->get_disc_turma_header($turma_id)['Periodo_letivo_id'];
 			//Size_total -> Retorna a quantidade de totalde alunos da turma independente de estar renovado a matrícula ou não
 			//isso ajuda a quando for criar uma turma a partir de outra turma pode ser alertado pelo sistama caso haja algum aluno da turma selecionada no filtro
 			//que esteja sem renovação da matricula para  oeríodo corrente.
@@ -128,7 +129,7 @@
 						INNER JOIN Aluno a ON m.Aluno_id = a.Id 
 						INNER JOIN Usuario u ON a.Usuario_id = u.Id 
 						INNER JOIN Inscricao i ON i.Aluno_id = a.Id 
-						LEFT JOIN Renovacao_matricula r ON r.Inscricao_id = i.Id AND r.Periodo_letivo_id = ".$last_periodo_letivo_id."  
+						LEFT JOIN Renovacao_matricula r ON r.Inscricao_id = i.Id AND r.Periodo_letivo_id = ".$perido_letivo_turma_antiga."  
 		                WHERE dt.Turma_id = ".$turma_id." AND r.Id IS NOT NULL 
 		                GROUP BY 1) 
 				    AS X) AS Size_total  
@@ -138,8 +139,8 @@
 				INNER JOIN Usuario u ON a.Usuario_id = u.Id 
 				INNER JOIN Inscricao i ON i.Aluno_id = a.Id 
 				INNER JOIN Renovacao_matricula r ON r.Inscricao_id = i.Id AND r.Periodo_letivo_id = ".$last_periodo_letivo_id."
-				/*ABAIXO LEVANTA TODO MUNDO PRESENTE EM UMA TURMA DO ÚLTIMO PERIODO LETIVO 
-				EM UM DETERMINADO CURSO*/
+				#ABAIXO LEVANTA TODO MUNDO DA TURMA ANTIGA COM MATRICULA RENOVADA PRO PERÍODO LETIVO 
+				#CORRENTE E QUE JÁ SE ENCONTRAM EM UMA NOVA TURMA
 				LEFT JOIN (SELECT a.Id as Aluno_id 
 	                            FROM Aluno a 
 	                            INNER JOIN Matricula m ON a.Id = m.Aluno_id 
@@ -188,8 +189,8 @@
 						ON m.Id = p.Modalidade_id WHERE p.Id = ".$this->db->escape($periodo_letivo_id).") = ".$this->db->escape($modalidade_id)." 
 				INNER JOIN Renovacao_matricula rm ON rm.Inscricao_id = i.Id AND 
 				rm.Periodo_letivo_id = ".$this->db->escape($periodo_letivo_id)." 
-				/*ABAIXO LEVANTA TODO MUNDO PRESENTE EM UMA TURMA DO ÚLTIMO PERIODO LETIVO 
-				EM UM DETERMINADO CURSO*/
+				#ABAIXO LEVANTA TODO MUNDO COM MATRICULA RENOVADA PRO PERÍODO LETIVO 
+				#CORRENTE E QUE JÁ SE ENCONTRAM EM UMA NOVA TURMA
 				LEFT JOIN (SELECT a.Id as Aluno_id 
                             FROM Aluno a 
                             INNER JOIN Matricula m ON a.Id = m.Aluno_id 

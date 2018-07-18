@@ -178,7 +178,14 @@ a.text-info:hover
 
 .btn-info
 {
-	background-color: #336CD2;
+		background-color: #007bff;
+	border-color: #007bff;
+	
+}
+
+.btn-info:hover
+{
+background-color: #336CD2;
 	border-color: #336CD2;
 }
 

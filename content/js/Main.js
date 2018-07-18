@@ -1078,5 +1078,26 @@ var Main = {
 			parseInt($("#quantidade_alunos_aux").val()) == parseInt($("#quantidade_maxima_aux").val()))
 			return false;
 		return true;
+	},
+	matricula : function(inscricao_id)
+	{
+		$.ajax({
+			url: Main.base_url + $("#controller").val() + '/matricula/' + inscricao_id,
+			dataType:'json',
+			cache: false,
+			type: 'POST',
+			success: function (data) 
+			{
+				setTimeout(function(){
+					$("#modal_aguardar").modal('hide');
+				},500);
+				document.getElementById("bt"+inscricao_id).innerHTML = "<span class='glyphicon glyphicon-ok'></span> Matriculado";
+			}
+		}).fail(function(msg){
+		    setTimeout(function(){
+		    	$("#modal_confirm").modal('hide');
+		    	Main.modal("aviso", "Houve um erro ao processar sua requisição. Verifique sua conexão com a internet.");
+			},500);
+		});
 	}
 };
