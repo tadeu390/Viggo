@@ -33,7 +33,7 @@
 				
 				$query = $this->db->query("
 					SELECT (SELECT count(*) FROM  Inscricao) AS Size, i.Id, i.Aluno_id AS Aluno_id, 
-					i.Curso_id, i.Ativo, u.Nome AS Nome_usuario, c.Nome AS Nome_curso, 
+					i.Curso_id, i.Ativo, u.Nome AS Nome_aluno, c.Nome AS Nome_curso, 
 					u.Id AS Usuario_id, m.Nome as Nome_modalidade, m.Id as Modalidade_id, 
 					CASE #SE NAO HOUVER NENHUMA OCORRENCIA DE RENOVACAO DA INSCRICAO NA TABELA DE RENOVACAO, ENTAO CRIAR MATRICULA
 						WHEN (SELECT MAX(Id) FROM Renovacao_matricula WHERE Inscricao_id = i.Id) IS NULL THEN
@@ -41,7 +41,15 @@
 							#SE HOUVER UM PERÍODO LETIVO MAIS RECENTE QUE O ÚLTIMO NA TABELA DE RENOVAÇÃO MATRÍCULA PRA UMA DETERMINADA INSCRICAO, ENTÃO RENOVAR 
 						WHEN (SELECT MAX(Id) FROM Periodo_letivo WHERE Modalidade_id = m.Id AND Ativo = 1) > (SELECT MAX(Periodo_letivo_id) FROM Renovacao_matricula WHERE Inscricao_id = i.Id) THEN 
 							'renovar'
-					END AS Status 
+					END AS Status,
+					CASE 
+						WHEN (SELECT mm.Id FROM Matricula mm 
+								INNER JOIN Disc_turma dt ON mm.Disc_turma_id = dt.Id 
+								WHERE mm.Aluno_id = a.Id 
+								AND dt.Periodo_letivo_id = i.Periodo_letivo_id LIMIT 1) IS NULL THEN 
+							'editar'
+						ELSE 'bloqueado'
+					END AS Editar 
 					FROM Inscricao i 
 					INNER JOIN Aluno a ON a.Id = i.Aluno_id 
 					INNER JOIN Usuario u ON u.Id = a.Usuario_id 
@@ -56,7 +64,7 @@
 
 			$query = $this->db->query("
 				SELECT i.Id, i.Aluno_id AS Aluno_id, 
-				i.Curso_id, i.Ativo, u.Nome AS Nome_usuario, c.Nome AS Nome_curso, 
+				i.Curso_id, i.Ativo, u.Nome AS Nome_aluno, c.Nome AS Nome_curso, 
 				u.Id AS Usuario_id, m.Nome as Nome_modalidade, m.Id as Modalidade_id, rm.Id as Renovacao_matricula_id, i.Periodo_letivo_id   
 				FROM Inscricao i 
 				INNER JOIN Aluno a ON a.Id = i.Aluno_id 

@@ -1,5 +1,6 @@
 <?php $this->load->helper("permissao");?>
 <?php $this->load->helper("paginacao");?>
+<?php $this->load->helper("mstring");?>
 <br /><br />
 <div class='row padding20 text-white'>
 	<?php
@@ -29,7 +30,7 @@
 							echo "<td>Aluno</td>";
 							echo "<td>Curso</td>";
 							echo "<td>Modalidade</td>";
-							echo "<td style='width: 10%;' class='text-center'>Status</td>";
+							echo "<td style='width: 15%;' class='text-center'>Status</td>";
 							echo "<td class='text-right' style='width: 5%;'>Ações</td>";
 						echo "<tr>";
 					echo "</thead>";
@@ -43,7 +44,9 @@
 							echo "<tr>";
 								echo "<td $cor style='vertical-align:middle'>".($i + 1)."</td>";
 								echo "<td $cor style='vertical-align:middle'>".$lista_matriculas[$i]['Id']."</td>";
-								echo "<td $cor style='vertical-align:middle'>".$lista_matriculas[$i]['Nome_usuario']."</td>";
+								echo "<td $cor style='vertical-align:middle'><span title='".$lista_matriculas[$i]['Nome_aluno']."'>".
+								mstring::corta_string($lista_matriculas[$i]['Nome_aluno'], 25)
+								."</span></td>";
 								echo "<td $cor style='vertical-align:middle'>".$lista_matriculas[$i]['Nome_curso']."</td>";
 								echo "<td $cor style='vertical-align:middle'>".$lista_matriculas[$i]['Nome_modalidade']."</td>";
 								echo "<td class='text-center' id='bt".$lista_matriculas[$i]['Id']."'>";
@@ -55,7 +58,7 @@
 										echo "<span class='glyphicon glyphicon-ok'></span> Matriculado";
 								echo "</td>";
 								echo "<td class='text-right' style='vertical-align:middle'>";
-								if(permissao::get_permissao(UPDATE, $controller))
+								if(permissao::get_permissao(UPDATE, $controller) && $lista_matriculas[$i]['Editar'] == 'editar')
 									echo "<a href='".$url."$controller/edit/".$lista_matriculas[$i]['Id']."' title='Editar' style='cursor: pointer;' class='glyphicon glyphicon-edit  text-danger'></a> | ";
 								if(permissao::get_permissao(DELETE, $controller))
 									echo "<span onclick='Main.confirm_delete(". $lista_matriculas[$i]['Id'] .");' id='sp_lead_trash' name='sp_lead_trash' title='Apagar' style='cursor: pointer;' class='glyphicon glyphicon-trash text-danger'></span>";

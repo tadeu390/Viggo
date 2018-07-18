@@ -130,7 +130,7 @@
 						INNER JOIN Usuario u ON a.Usuario_id = u.Id 
 						INNER JOIN Inscricao i ON i.Aluno_id = a.Id 
 						LEFT JOIN Renovacao_matricula r ON r.Inscricao_id = i.Id AND r.Periodo_letivo_id = ".$perido_letivo_turma_antiga."  
-		                WHERE dt.Turma_id = ".$turma_id." AND r.Id IS NOT NULL 
+		                WHERE dt.Turma_id = ".$turma_id."  
 		                GROUP BY 1) 
 				    AS X) AS Size_total  
 				FROM Disc_turma dt 
