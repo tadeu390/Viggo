@@ -805,51 +805,54 @@ var Main = {
 	},
 	load_data_periodo_letivo : function(modalidade_id)
 	{
-		$.ajax({
-			url: Main.base_url+$("#controller").val()+'/periodo_letivo/'+modalidade_id,
-			dataType:'json',
-			cache: false,
-			type: 'POST',
-			success: function (data) 
-			{
-				if(data.response != "0")
+		if(modalidade_id != 0)
+		{
+			$.ajax({
+				url: Main.base_url+$("#controller").val()+'/periodo_letivo/'+modalidade_id,
+				dataType:'json',
+				cache: false,
+				type: 'POST',
+				success: function (data) 
 				{
-					var minimo = '-';
-					var maximo = '-';
-					if(data.response.Qtd_minima_aluno != 0) minimo = data.response.Qtd_minima_aluno;
-					if(data.response.Qtd_maxima_aluno != 0) maximo = data.response.Qtd_maxima_aluno;
+					if(data.response != "0")
+					{
+						var minimo = '-';
+						var maximo = '-';
+						if(data.response.Qtd_minima_aluno != 0) minimo = data.response.Qtd_minima_aluno;
+						if(data.response.Qtd_maxima_aluno != 0) maximo = data.response.Qtd_maxima_aluno;
 
-					$("#quantidade_minima").html("Mínimo "+minimo);
-					$("#quantidade_maxima").html("Máximo "+maximo);
-					$("#quantidade_minima_aux").val(minimo);
-					$("#quantidade_maxima_aux").val(maximo);
-					$("#nome_periodo_letivo").val(data.response.Periodo);
+						$("#quantidade_minima").html("Mínimo "+minimo);
+						$("#quantidade_maxima").html("Máximo "+maximo);
+						$("#quantidade_minima_aux").val(minimo);
+						$("#quantidade_maxima_aux").val(maximo);
+						$("#nome_periodo_letivo").val(data.response.Periodo);
+					}
+					else if(modalidade_id != 0)
+					{
+						Main.modal("aviso","Nenhum período letivo foi identificado para esta modalidade. Por favor, primeiro cadastre o período letivo.");
+						$("#quantidade_minima").html("Mínimo -");
+						$("#quantidade_maxima").html("Máximo -");
+						$("#quantidade_minima_aux").val('-');
+						$("#quantidade_maxima_aux").val('-');
+						$("#nome_periodo_letivo").val("Não encontrado.");
+					}
+					else{
+						$("#quantidade_minima").html("Mínimo -");
+						$("#quantidade_maxima").html("Máximo -");
+						$("#quantidade_minima_aux").val('-');
+						$("#quantidade_maxima_aux").val('-');
+						$("#nome_periodo_letivo").val("");
+					}
 				}
-				else if(modalidade_id != 0)
-				{
-					Main.modal("aviso","Nenhum período letivo foi identificado para esta modalidade. Por favor, primeiro cadastre o período letivo.");
-					$("#quantidade_minima").html("Mínimo -");
-					$("#quantidade_maxima").html("Máximo -");
-					$("#quantidade_minima_aux").val('-');
-					$("#quantidade_maxima_aux").val('-');
-					$("#nome_periodo_letivo").val("Não encontrado.");
-				}
-				else{
-					$("#quantidade_minima").html("Mínimo -");
-					$("#quantidade_maxima").html("Máximo -");
-					$("#quantidade_minima_aux").val('-');
-					$("#quantidade_maxima_aux").val('-');
-					$("#nome_periodo_letivo").val("");
-				}
-			}
-		}).fail(function(msg){
-		    setTimeout(function(){
-		    	$("#modal_confirm").modal('hide');
-		    	Main.modal("aviso", "Houve um erro ao processar sua requisição. Verifique sua conexão com a internet.");
-			},500);
-		});
-		Main.load_data_aluno("");
-		Main.load_data_turma_filtro();
+			}).fail(function(msg){
+			    setTimeout(function(){
+			    	$("#modal_confirm").modal('hide');
+			    	Main.modal("aviso", "Houve um erro ao processar sua requisição. Verifique sua conexão com a internet.");
+				},500);
+			});
+			Main.load_data_aluno("");
+			Main.load_data_turma_filtro();
+		}
 	},
 	habilita_curso : function(id)
 	{

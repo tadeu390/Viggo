@@ -73,7 +73,7 @@
 				<div class="col-lg-6">
 					<div class='form-group relative'>
 						<?php if(empty($obj['Id'])): ?>
-						<select  onchange="Main.load_data_disciplina();" name='curso_id' id='curso_id' class='form-control' style='padding-left: 0px;'>
+						<select disabled onchange="Main.load_data_disciplina();" name='curso_id' id='curso_id' class='form-control' style='padding-left: 0px;'>
 							<option value='0' style='background-color: #393836;'>Selecione o curso</option>
 							<?php
 							for ($i = 0; $i < count($lista_cursos); $i++)
