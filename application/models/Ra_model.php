@@ -45,7 +45,8 @@
 					CASE 
 						WHEN (SELECT mm.Id FROM Matricula mm 
 								INNER JOIN Disc_turma dt ON mm.Disc_turma_id = dt.Id 
-								WHERE mm.Aluno_id = a.Id 
+								INNER JOIN Inscricao ii ON mm.Inscricao_id = ii.Id 
+								WHERE ii.Aluno_id = a.Id 
 								AND dt.Periodo_letivo_id = i.Periodo_letivo_id LIMIT 1) IS NULL THEN 
 							'editar'
 						ELSE 'bloqueado'
