@@ -93,6 +93,7 @@
 								if ($lista_cursos[$i]['Id'] == $lista_disc_turma_header['Curso_id'])
 								{
 									echo"<input readonly id='curso' name='curso' value='".$lista_cursos[$i]['Nome_curso']."' type='text' class='input-material'>";
+									echo"<input id='curso_id' name='curso_id' value='".$lista_disc_turma_header['Curso_id']."' type='hidden' class='input-material'>";
 									echo"<label for='curso' class='label-material'>Curso</label>";
 								}
 							}

@@ -266,7 +266,7 @@
 				 			$periodo_letivo_id = $this->Disc_turma_model->get_disc_turma_header($turma_id)['Periodo_letivo_id'];
 				 		}
 
-				 		$this->Disc_turma_model->set_disc_turma($dataToSave, $turma_id, $periodo_letivo_id);
+				 		$this->Disc_turma_model->set_disc_turma($dataToSave, $turma_id, $periodo_letivo_id, $this->input->post('curso_id'));
 				 		$resultado = "sucesso";
 				 	}
 				}
@@ -376,10 +376,11 @@
 			$this->data['lista_alunos'] = $this->Disc_turma_model->get_alunos_inscritos_turma_antiga($turma_id, $curso_id, $modalidade_id);
 			$aviso = "";
 			
-			if((!empty($this->data['lista_alunos']) && count($this->data['lista_alunos']) < $this->data['lista_alunos'][0]['Size_total']) or empty($this->data['lista_alunos']))
+			if((!empty($this->data['lista_alunos']) && $this->data['lista_alunos'][0]['Size_total_turma_antiga_renovado'] < $this->data['lista_alunos'][0]['Size_total_turma_antiga']))
 				$aviso = "A turma selecionada contém alunos que não estão disponíveis para serem inclusos nesta turma, 
 						 pois as suas respectivas matrículas não estão renovadas para o período letivo corrente. Talvez deva verificar isso.";
-
+			else if(empty($this->data['lista_alunos']))
+				$aviso = "Todos os alunos desta turma já se encontram cadastrados em alguma turma do período letivo corrente.";
 			$resultado = $this->load->view("turma/_alunos", $this->data, TRUE);
 			$arr = array('response' => $resultado,
 						 'aviso' => $aviso);

@@ -66,7 +66,8 @@
 				SELECT u.Nome as Nome_aluno, a.Id as Aluno_id, m.Sub_turma  
 				FROM Disc_turma dt 
 				INNER JOIN Matricula m ON  m.Disc_turma_id = dt.Id 
-				INNER JOIN Aluno a ON m.Aluno_id = a.Id 
+				INNER JOIN Inscricao i ON i.Id = m.Inscricao_id 
+				INNER JOIN Aluno a ON i.Aluno_id = a.Id 
 				INNER JOIN Usuario u ON u.Id = a.Usuario_id 
                 WHERE dt.Turma_id = ".$this->db->escape($id)." 
                 GROUP by u.Nome");
@@ -125,32 +126,44 @@
 				SELECT a.Id, u.Nome as Nome_aluno, a.Id AS Aluno_id, 
 				(SELECT COUNT(*) FROM (
 					SELECT a.Id FROM Disc_turma dt 
-						INNER JOIN Matricula m ON dt.Id = m.Disc_turma_id 
-						INNER JOIN Aluno a ON m.Aluno_id = a.Id 
+						INNER JOIN Matricula m ON dt.Id = m.Disc_turma_id
+						INNER JOIN Inscricao i ON m.Inscricao_id = i.Id  
+						INNER JOIN Aluno a ON i.Aluno_id = a.Id 
 						INNER JOIN Usuario u ON a.Usuario_id = u.Id 
-						INNER JOIN Inscricao i ON i.Aluno_id = a.Id 
 						LEFT JOIN Renovacao_matricula r ON r.Inscricao_id = i.Id AND r.Periodo_letivo_id = ".$perido_letivo_turma_antiga."  
-		                WHERE dt.Turma_id = ".$turma_id." AND r.Id IS NOT NULL 
+		                WHERE dt.Turma_id = ".$turma_id."  
 		                GROUP BY 1) 
-				    AS X) AS Size_total  
+				    AS X) AS Size_total_turma_antiga,
+				    (SELECT COUNT(*) FROM (
+					SELECT a.Id FROM Disc_turma dt 
+						INNER JOIN Matricula m ON dt.Id = m.Disc_turma_id
+						INNER JOIN Inscricao i ON m.Inscricao_id = i.Id  
+						INNER JOIN Aluno a ON i.Aluno_id = a.Id 
+						INNER JOIN Usuario u ON a.Usuario_id = u.Id 
+						LEFT JOIN Renovacao_matricula r ON r.Inscricao_id = i.Id AND r.Periodo_letivo_id = ".$last_periodo_letivo_id." 
+		                WHERE dt.Turma_id = ".$turma_id." AND r.Id IS NOT NULL  
+		                GROUP BY 1) 
+				    AS X) AS Size_total_turma_antiga_renovado  
+
 				FROM Disc_turma dt 
 				INNER JOIN Matricula m ON dt.Id = m.Disc_turma_id 
-				INNER JOIN Aluno a ON m.Aluno_id = a.Id 
+				INNER JOIN Inscricao i ON i.Id = m.Inscricao_id 
+				INNER JOIN Aluno a ON i.Aluno_id = a.Id 
 				INNER JOIN Usuario u ON a.Usuario_id = u.Id 
-				INNER JOIN Inscricao i ON i.Aluno_id = a.Id 
 				INNER JOIN Renovacao_matricula r ON r.Inscricao_id = i.Id AND r.Periodo_letivo_id = ".$last_periodo_letivo_id."
 				#ABAIXO LEVANTA TODO MUNDO DA TURMA ANTIGA COM MATRICULA RENOVADA PRO PERÍODO LETIVO 
 				#CORRENTE E QUE JÁ SE ENCONTRAM EM UMA NOVA TURMA
 				LEFT JOIN (SELECT a.Id as Aluno_id 
 	                            FROM Aluno a 
-	                            INNER JOIN Matricula m ON a.Id = m.Aluno_id 
+	                            INNER JOIN Inscricao i ON i.Aluno_id = a.Id 
+	                            INNER JOIN Matricula m ON m.Inscricao_id = i.Id 
 	                            INNER JOIN Disc_turma dt ON m.Disc_turma_id = dt.Id 
 	                            INNER JOIN Disc_curso dc ON dt.Disc_curso_id = dc.Id 
 	                            WHERE dt.Periodo_letivo_id = ".$last_periodo_letivo_id." #ultimo periodo letivo
 	                            AND dc.Curso_id = ".$this->db->escape($curso_id)."
 	                            GROUP BY 1) adicionados ON adicionados.Aluno_id = a.Id 
 				WHERE dt.Turma_id = ".$this->db->escape($turma_id)." AND adicionados.Aluno_id IS NULL GROUP BY 1, 2");
-
+	
 			return $query->result_array();
 		}
 		/*!
@@ -193,7 +206,8 @@
 				#CORRENTE E QUE JÁ SE ENCONTRAM EM UMA NOVA TURMA
 				LEFT JOIN (SELECT a.Id as Aluno_id 
                             FROM Aluno a 
-                            INNER JOIN Matricula m ON a.Id = m.Aluno_id 
+                            INNER JOIN Inscricao i ON i.Aluno_id = a.Id 
+                            INNER JOIN Matricula m ON i.Id = m.Inscricao_id 
                             INNER JOIN Disc_turma dt ON m.Disc_turma_id = dt.Id 
                             INNER JOIN Disc_curso dc ON dt.Disc_curso_id = dc.Id 
                             WHERE dt.Periodo_letivo_id = ".$this->db->escape($periodo_letivo_id)." 
@@ -234,7 +248,7 @@
 			$turma_id -> Id da turma que contém os dados a serem cadastrados ou modificados.
 			$periodo_letivo_id -> Id do periodo letivo da turma.
 		*/
-		public function set_disc_turma($data, $turma_id, $periodo_letivo_id)
+		public function set_disc_turma($data, $turma_id, $periodo_letivo_id, $curso_id)
 		{
 			for($i = 0; $i < count($data['Disc_to_save']); $i++)
 			{
@@ -279,16 +293,26 @@
 					{
 						//verificar se o aluno já tem matricula na disciplina (disc_turma_id)
 						$query = $this->db->query("
-							SELECT Id FROM Matricula  
-							WHERE Aluno_id = ".$this->db->escape($data['Aluno_to_save'][$j]['Aluno_id'])." 
-							AND Disc_turma_id = ".$this->db->escape($r['Id'])."");
+							SELECT m.Id FROM Matricula m 
+							INNER JOIN Inscricao i ON i.Id = m.Inscricao_id 
+							WHERE i.Aluno_id = ".$this->db->escape($data['Aluno_to_save'][$j]['Aluno_id'])." 
+							AND m.Disc_turma_id = ".$this->db->escape($r['Id'])."");
 						$r2 = $query->row_array();
 
+						//pega a inscricao do aluno para o curso e período em questão
+						$query = $this->db->query("
+							SELECT i.Id FROM Inscricao i
+							INNER JOIN Renovacao_matricula rm ON i.Id = rm.Inscricao_id 
+							WHERE i.Curso_id = ".$this->db->escape($curso_id)." AND 
+							i.Aluno_id = ".$this->db->escape($data['Aluno_to_save'][$j]['Aluno_id'])." AND 
+							rm.Periodo_letivo_id = ".$periodo_letivo_id."");
+						
+						$inscricao_id = $query->row_array()['Id'];
 						//carrega os dados da matricula do aluno na disciplina (disc_turma_id)
 						$dataToSaveAluno = array(
 							'Sub_turma' => $data['Aluno_to_save'][$j]['Sub_turma'], 
 							'Numero' => 'xx',
-							'Aluno_id' => $data['Aluno_to_save'][$j]['Aluno_id'],
+							'Inscricao_id' => $inscricao_id,
 							'Disc_turma_id' => $r['Id']
 						);
 						//se nao houver matricula do aluno na turma em questao, 
@@ -297,7 +321,7 @@
 							$this->db->insert('Matricula',$dataToSaveAluno);
 						else
 						{	//se ja existir da um update.
-							$this->db->where('Aluno_id', $data['Aluno_to_save'][$j]['Aluno_id']);
+							$this->db->where('Inscricao_id', $inscricao_id);
 							$this->db->where('Disc_turma_id', $r['Id']);
 							$this->db->update('Matricula', $dataToSaveAluno);
 						}
@@ -330,13 +354,22 @@
 				//se nao encontrou na lista que veio do formulario entao remove.
 				if($flag == 0)
 				{
+				//pega a inscricao do aluno para o curso e período em questão
+					$query = $this->db->query("
+						SELECT i.Id FROM Inscricao i 
+						INNER JOIN Renovacao_matricula rm ON i.Id = rm.Inscricao_id 
+						WHERE i.Curso_id = ".$this->db->escape($curso_id)." AND 
+						i.Aluno_id = ".$alunos[$i]['Aluno_id']." AND 
+						rm.Periodo_letivo_id = ".$periodo_letivo_id."");
+					
+					$inscricao_id = $query->row_array()['Id'];
 					//remove pra todas as disciplinas o determinado aluno.
 					for ($k=0; $k < count($data['Disc_to_save']); $k++) { 
 						if($data['Disc_to_save'][$k]['Value'] > 0)//as que estao com zero foram removidas do banco e consequentemente removeu as matriculas ligadas a ela
 						{
 							$query = $this->db->query("
 							DELETE FROM Matricula 
-							WHERE Aluno_id = ".$this->db->escape($alunos[$i]['Aluno_id'])." AND 
+							WHERE Inscricao_id = '".$inscricao_id."' AND 
 							Disc_turma_id IN (SELECT Id FROM Disc_turma WHERE Turma_id = ".$turma_id.")");
 							//REMOVER A LIGACAO DO ALUNO COM TODAS AS DISCIPLINAS DO DISC_TURMA
 						}
