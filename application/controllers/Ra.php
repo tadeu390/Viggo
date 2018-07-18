@@ -117,7 +117,9 @@
 				return "Selecione um curso.";
 			else if($Matricula['Modalidade_id'] == 0)
 				return "Selecione uma modalidade.";
-			else if(!empty($this->Ra_model->get_inscricao_por_aluno($Matricula)))
+			else if(empty($this->Modalidade_model->get_periodo_por_modalidade($Matricula['Modalidade_id'])))
+				return "Não existe nenhum período letivo cadastrado para a modalidade selecionada.";
+			else if(!empty($this->Ra_model->get_inscricao_por_aluno($Matricula)) && $this->Ra_model->get_inscricao_por_aluno($Matricula)['Id'] != $Matricula['Id'])
 				return "O aluno selecionado ja se encontra inscrito para este curso.";
 			else
 				return 1;
@@ -141,12 +143,8 @@
 				'Id' => $this->input->post('id'),
 				'Aluno_id' => $this->Aluno_model->get_aluno($this->input->post('aluno_id'))['Id'],
 				'Curso_id' => $this->input->post('curso_id'),
-				'Modalidade_id' => $this->input->post('modalidade_id'),
-				'Ativo' => $this->input->post('matricular')
+				'Modalidade_id' => $this->input->post('modalidade_id')
 			);
-
-			if (empty($dataToSave['Ativo']))
-				unset($dataToSave['Ativo']);
 
 			//BLOQUEIA ACESSO DIRETO AO MÉTODO
 			 if(!empty($this->input->post()))
@@ -159,12 +157,19 @@
 				 	{
 				 		$resultado = $this->store_banco($dataToSave);
 
-				 		$dataRenovacaoToSave = array(
-							'Inscricao_id' => $this->Ra_model->get_inscricao_por_aluno($dataToSave)['Id'],
-							'Periodo_letivo_id' => $this->Modalidade_model->get_periodo_por_modalidade($dataToSave['Modalidade_id'])['Id']
-						);
-				 		$this->Renovacao_matricula_model->set_renovacao_matricula($dataRenovacaoToSave);
-				 		
+				 		if($this->input->post('matricular') == 1)//se marcar esta opção, cria a inscrição e já gera a matrícula para o período corrente
+				 		{
+					 		$dataRenovacaoToSave = array(
+								'Inscricao_id' => $this->Ra_model->get_inscricao_por_aluno($dataToSave)['Id'],
+								'Periodo_letivo_id' => $this->Modalidade_model->get_periodo_por_modalidade($dataToSave['Modalidade_id'])['Id']
+							);
+					 		$this->Renovacao_matricula_model->set_renovacao_matricula($dataRenovacaoToSave);
+				 		}
+				 		else
+				 		{
+				 			if(!empty($dataToSave['Id']))
+				 				$this->Ra_model->delete_matricula($dataToSave['Id']);
+				 		}
 				 		$resultado = "sucesso";
 				 	}
 				}

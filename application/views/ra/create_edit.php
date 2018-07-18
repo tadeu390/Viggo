@@ -86,15 +86,19 @@
 						</div>
 					</div>
 				</div>
-				
 				<div class='form-group'>
 					<div class='checkbox checbox-switch switch-success custom-controls-stacked'>
-						<label for='matricular' class='text-white'>
-							<input type='checkbox' $checked id='matricular' name='matricular' value='1' /><span></span> Matricular
-						</label>
+						<?php
+						$checked = "";
+						if (!empty($obj['Renovacao_matricula_id']))
+							$checked = "checked";
+
+						echo "<label for='matricular' style='color: #8a8d93;'>";
+						echo "<input type='checkbox' $checked id='matricular' name='matricular' value='1' /><span></span> Gerar matrícula";
+						echo "</label>";
+						?>
 					</div>
 				</div>
-				
 				<?php
 					if(empty($obj['Id']))
 						echo"<input type='submit' class='btn btn-danger btn-block' style='width: 200px;' value='Cadastrar'>";

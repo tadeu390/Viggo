@@ -180,10 +180,12 @@
 				FROM Usuario u 
 				INNER JOIN Aluno a ON u.Id = a.Usuario_id 
 				INNER JOIN Inscricao i ON a.Id = i.Aluno_id AND 
-					i.Curso_id = ".$this->db->escape($curso_id)." 
-					AND i.Modalidade_id = ".$this->db->escape($modalidade_id)."
+					i.Curso_id = ".$this->db->escape($curso_id)." AND 
+					(SELECT m.Id FROM Modalidade m 
+						INNER JOIN Periodo_letivo p 
+						ON m.Id = p.Modalidade_id WHERE p.Id = ".$this->db->escape($periodo_letivo_id).") = ".$this->db->escape($modalidade_id)." 
 				INNER JOIN Renovacao_matricula rm ON rm.Inscricao_id = i.Id AND 
-					rm.Periodo_letivo_id = ".$this->db->escape($periodo_letivo_id)."
+				rm.Periodo_letivo_id = ".$this->db->escape($periodo_letivo_id)." 
 				/*ABAIXO LEVANTA TODO MUNDO PRESENTE EM UMA TURMA DE UM DETERMINADO PERIODO 
 				EM UM DETERMINADO CURSO*/
 				LEFT JOIN (SELECT a.Id as Aluno_id 

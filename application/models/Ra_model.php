@@ -32,13 +32,15 @@
 					$pagination = "";
 				
 				$query = $this->db->query("
-					SELECT (SELECT count(*) FROM  Inscricao) AS Size, i.Id AS Id, i.Aluno_id AS Aluno_id, i.Curso_id AS Curso_id, i.Modalidade_id AS Modalidade_id, i.Ativo AS Ativo, u.Nome AS Nome_usuario, c.Nome AS Nome_curso, m.Nome AS Nome_modalidade, pl.Id AS Periodo_letivo_id 
+					SELECT (SELECT count(*) FROM  Inscricao) AS Size, i.Id, i.Aluno_id AS Aluno_id, 
+					i.Curso_id AS Curso_id, i.Ativo AS Ativo, u.Nome AS Nome_usuario, c.Nome AS Nome_curso, 
+					u.Id AS Usuario_id, m.Nome as Nome_modalidade, m.Id as Modalidade_id 
 					FROM Inscricao i 
 					INNER JOIN Aluno a ON a.Id = i.Aluno_id 
 					INNER JOIN Usuario u ON u.Id = a.Usuario_id 
 					INNER JOIN Curso c ON c.Id = i.Curso_id 
-					INNER JOIN Modalidade m ON m.Id = i.Modalidade_id 
-					INNER JOIN Periodo_letivo pl ON pl.Modalidade_id = m.Id 
+					INNER JOIN Periodo_letivo p ON p.Id = i.Periodo_letivo_id 
+					INNER JOIN Modalidade m ON m.Id = p.Modalidade_id 
 					WHERE TRUE ".$Ativos." 
 					ORDER BY i.Data_registro ASC ".$pagination."");
 				
@@ -46,13 +48,16 @@
 			}
 
 			$query = $this->db->query("
-				SELECT (SELECT count(*) FROM  Inscricao) AS Size, i.Id AS Id, i.Aluno_id AS Aluno_id, i.Curso_id AS Curso_id, i.Modalidade_id AS Modalidade_id, i.Ativo AS Ativo, u.Nome AS Nome_usuario, c.Nome AS Nome_curso, m.Nome AS Nome_modalidade, pl.Id AS Periodo_letivo_id, u.Id AS Usuario_id 
-				FROM Inscricao i
-				INNER JOIN Aluno a ON a.Id = i.Aluno_id
-				INNER JOIN Usuario u ON u.Id = a.Usuario_id
-				INNER JOIN Curso c ON c.Id = i.Curso_id
-				INNER JOIN Modalidade m ON m.Id = i.Modalidade_id
-				INNER JOIN Periodo_letivo pl ON pl.Modalidade_id = m.Id
+				SELECT i.Id, i.Aluno_id AS Aluno_id, 
+				i.Curso_id AS Curso_id, i.Ativo AS Ativo, u.Nome AS Nome_usuario, c.Nome AS Nome_curso, 
+				u.Id AS Usuario_id, m.Nome as Nome_modalidade, m.Id as Modalidade_id, rm.Id as Renovacao_matricula_id  
+				FROM Inscricao i 
+				INNER JOIN Aluno a ON a.Id = i.Aluno_id 
+				INNER JOIN Usuario u ON u.Id = a.Usuario_id 
+				INNER JOIN Curso c ON c.Id = i.Curso_id 
+				INNER JOIN Periodo_letivo p ON p.Id = i.Periodo_letivo_id 
+				INNER JOIN Modalidade m ON m.Id = p.Modalidade_id 
+				LEFT JOIN Renovacao_matricula rm ON rm.Inscricao_id = i.Id AND i.Periodo_letivo_id = rm.Periodo_letivo_id
 				WHERE i.Id = ".$this->db->escape($id)." ".$Ativos."");
 
 			return $query->row_array();
@@ -76,9 +81,19 @@
 		public function set_ra($data)
 		{
 			if(empty($data['Id']))
-				return $this->db->insert('Inscricao',$data);
-			else
 			{
+				$CI = get_instance();
+				$CI->load->model("Modalidade_model");
+				
+				$data['Periodo_letivo_id'] = $CI->Modalidade_model->get_periodo_por_modalidade($data['Modalidade_id'])['Id'];
+
+				unset($data['Modalidade_id']);
+
+				return $this->db->insert('Inscricao',$data);
+			}
+			else
+			{	
+				unset($data['Modalidade_id']);
 				$this->db->where('Id', $data['Id']);
 				return $this->db->update('Inscricao', $data);
 			}
@@ -90,13 +105,33 @@
 		*/
 		public function get_inscricao_por_aluno($Matricula)
 		{
+			$CI = get_instance();
+				$CI->load->model("Modalidade_model");
+				
+			$last_periodo_letivo_id = $CI->Modalidade_model->get_periodo_por_modalidade($Matricula['Modalidade_id'])['Id'];
+
 			$query = $this->db->query("
 				SELECT i.Id 
 				FROM Inscricao i 
-				WHERE i.Aluno_id = ".$this->db->escape($Matricula['Aluno_id'])." AND i.Curso_id = ".$this->db->escape($Matricula['Curso_id'])." AND 
-				i.Modalidade_id = ".$this->db->escape($Matricula['Modalidade_id'])."");
+				WHERE i.Aluno_id = ".$this->db->escape($Matricula['Aluno_id'])." AND 
+				i.Curso_id = ".$this->db->escape($Matricula['Curso_id'])." AND 
+				i.Periodo_letivo_id = ".$last_periodo_letivo_id."");
 			
 			return $query->row_array();
+		}
+		/*!
+			RESPONSÁVEL POR CANCELAR UMA MATRÍCULA DO ALUNO, ISSO SÓ PODERÁ SER EXECUTADO PELO USUÁRIO ENQUANTO 
+			O ALUNO CONTIDO NESTA INSCRIÇÃO NÃO ESTIVER EM ALGUMA TURMA. O TRATAMENTO PARA PODER EXECUTAR OU NÃO 
+			EXECUTAR ESTE MÉTODO SERÁ FEITO NA VIEW ONDE IRÁ DESABILITAR O BOTÃO DE EDITAR INSCRIÇÃO QUANDO O ALUNO 
+			JÁ ESTIVER EM ALGUMA TURMA.
+			
+			$inscricao_id -> Id da inscrição do aluno.
+		*/
+		public function delete_matricula($inscricao_id)
+		{
+			$query = $this->db->query("
+				DELETE FROM Renovacao_matricula 
+				WHERE Inscricao_id = ".$this->db->escape($inscricao_id)."");
 		}
 	}
 ?>
