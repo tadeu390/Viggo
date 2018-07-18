@@ -64,6 +64,14 @@
 						echo "<td>Reprovas</td>";
 						echo "<td>".$obj['Reprovas']."</td>";
 					echo "</tr>";
+					echo "<tr>";
+						echo "<td>Quantidade mímima de alunos</td>";
+						echo "<td>".$obj['Qtd_minima_aluno']."</td>";
+					echo "</tr>";
+					echo "<tr>";
+						echo "<td>Quantidade máxima de alunos</td>";
+						echo "<td>".$obj['Qtd_maxima_aluno']."</td>";
+					echo "</tr>";
 					echo"<tr>";
 						echo "<td>Ativo</td>";
 						echo "<td>".(($obj['Ativo'] == 1) ? 'Sim' : 'Não')."</td>";

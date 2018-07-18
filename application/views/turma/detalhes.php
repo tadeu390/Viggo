@@ -33,11 +33,15 @@
 					echo "</tr>";
 					echo"<tr>";
 						echo "<td>Curso</td>";
-						echo "<td>??NOME DO CURSO??</td>";
+						echo "<td>".$nome_do_curso."</td>";
 					echo "</tr>";
 					echo"<tr>";
 						echo "<td>Modalidade</td>";
-						echo "<td>??NOME DA MODALIDADE??</td>";
+						echo "<td>".$obj['Nome_modalidade']."</td>";
+					echo "</tr>";
+					echo"<tr>";
+						echo "<td>Período letivo</td>";
+						echo "<td>".$obj['Nome_periodo']."</td>";
 					echo "</tr>";
 				echo "</table>";
 			echo "</div>";
