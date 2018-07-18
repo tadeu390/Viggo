@@ -20,6 +20,8 @@ var Main = {
 			$('#quantidade_aula').mask('00'),
 			$('#reprovas').mask('00'),
 			$('#valor').mask('00'),
+			$('#qtd_minimo').mask('000'),
+			$('#qtd_maxima').mask('000'),
 			$('[data-toggle="tooltip"]').tooltip(),
 			$('#data1 input').datepicker({
 		    	language: "pt-BR",
@@ -75,6 +77,10 @@ var Main = {
 		if(to_region == "en")
 		{
 			return str.split('/')[2]+'-'+str.split('/')[1]+'-'+str.split('/')[0];
+		}
+		else if(to_region == "pt")
+		{
+			return str.split('-')[2]+'/'+str.split('-')[1]+'/'+str.split('-')[0];
 		}
 	},
 	get_cookie : function(cname) {
@@ -335,6 +341,73 @@ var Main = {
 		else
 			Main.create_edit();
 	},
+	validar_turma : function()
+	{
+		if($("#nome").val() == "")
+			Main.show_error("nome", 'Informe o nome da turma', 'is-invalid');
+		else if($("#modalidade_id").val() == "0")
+			Main.show_error("modalidade_id", 'Selecione uma modalidade para a turma.', '');
+		else if($("#curso_id").val() == "0")
+			Main.show_error("curso_id", 'Selecione um curso para a turma.', '');
+		else if(Main.valida_turma_disciplina(1) == false)
+			Main.show_error("disciplinas", 'Selecione pelo menos uma disciplina para a turma.', '');
+		else if(Main.valida_turma_disciplina(2) == false)
+			Main.show_error("disciplinas", 'Há disciplinas marcadas que não foram preenchidas.', '');
+		else if($("#quantidade_alunos_aux").val() == "0")
+			Main.modal("aviso", "Selecione pelo menos "+(($("#quantidade_minima_aux").val() == '-') ? '1' : $("#quantidade_minima_aux").val())+" aluno(s) para a turma.");
+		else if($("#quantidade_minima_aux").val() != "-" && 
+			parseInt($("#quantidade_alunos_aux").val()) < parseInt($("#quantidade_minima_aux").val()))
+			Main.modal("aviso", "A quantidade de alunos adicionados é inferior a quantidade mínima permitda.");
+		else if($("#quantidade_maxima_aux").val() != "-" && 
+			parseInt($("#quantidade_alunos_aux").val()) > parseInt($("#quantidade_maxima_aux").val()))
+			Main.modal("aviso", "A quantidade de alunos adicionados é superior a quantidade máxima permitda.");
+		else
+			Main.create_edit();
+	},
+	valida_turma_aluno : function()
+	{
+		/*for (var i = 0; i < $("#limite_aluno_add").val(); i ++) 
+		{
+			if($('input:checkbox[name^=nome_aluno_add'+i+']:checked').length > 0)
+		}*/
+	},
+	valida_turma_disciplina : function(type)//se for 1 valida se foi marcado pelo menos uma disciplina
+	{										//se for 2 valida se todas as disciplinas marcadas foram preenchidas
+		var flag_disciplina = 0;
+		var flag_disciplina_preenchida = 1;
+		for (var i = 0; i < $("#limite_disciplina").val(); i ++) 
+		{
+			if($('input:checkbox[name^=nome_disciplina'+i+']:checked').length > 0)
+			{
+				Main.show_error('disciplinas','','');
+				if($("#categoria_id"+i).val() == "0")
+				{
+					Main.show_error('categoria_id'+i,'Não selecionado','');
+					flag_disciplina_preenchida = 0;
+				}
+				else
+					Main.show_error('categoria_id'+i,'','');
+				if($("#professor_id"+i).val() == "0")
+				{
+					Main.show_error('professor_id'+i,'Não selecionado','');
+					flag_disciplina_preenchida = 0;
+				}
+				else
+					Main.show_error('professor_id'+i,'','');
+				flag_disciplina = 1;
+			}
+		}
+		if(type == 1)
+		{
+			if (flag_disciplina) return true;
+			return false;
+		}
+		else
+		{
+			if (flag_disciplina_preenchida) return true;
+			return false;
+		}
+	},
 	id_registro : "",
 	confirm_delete : function(id){
 		Main.id_registro = id;
@@ -507,6 +580,8 @@ var Main = {
 			Main.show_error("quantidade_aula", 'Informe a quantidade de aulas por dia.', 'is-invalid');
 		else if($("#reprovas").val() == "")
 			Main.show_error("reprovas", 'Informe quantas disciplinas o aluno poderá carregar.', 'is-invalid');
+		else if($("#qtd_minima").val() != "" && $("#qtd_maxima").val() != "" && parseInt($("#qtd_minima").val()) > parseInt($("#qtd_maxima").val()))
+			Main.show_error("qtd_maxima", 'A quantidade máxima deve ser superior ou igual a quantidade mínima.', 'is-invalid');
 		else 
 			Main.create_edit();
 	},
@@ -724,7 +799,64 @@ var Main = {
 		else
 			Main.create_edit();
 	},
-	load_data_disciplina : function()
+	load_data_periodo_letivo : function(modalidade_id)
+	{
+		$.ajax({
+			url: Main.base_url+$("#controller").val()+'/periodo_letivo/'+modalidade_id,
+			dataType:'json',
+			cache: false,
+			type: 'POST',
+			success: function (data) 
+			{
+				if(data.response != "0")
+				{
+					var minimo = '-';
+					var maximo = '-';
+					if(data.response.Qtd_minima_aluno != 0) minimo = data.response.Qtd_minima_aluno;
+					if(data.response.Qtd_maxima_aluno != 0) maximo = data.response.Qtd_maxima_aluno;
+
+					$("#quantidade_minima").html("Mínimo "+minimo);
+					$("#quantidade_maxima").html("Máximo "+maximo);
+					$("#quantidade_minima_aux").val(minimo);
+					$("#quantidade_maxima_aux").val(maximo);
+					$("#nome_periodo_letivo").val(data.response.Periodo);
+				}
+				else if(modalidade_id != 0)
+				{
+					Main.modal("aviso","Nenhum período letivo foi identificado para esta modalidade. Por favor, primeiro cadastre o período letivo.");
+					$("#quantidade_minima").html("Mínimo -");
+					$("#quantidade_maxima").html("Máximo -");
+					$("#quantidade_minima_aux").val('-');
+					$("#quantidade_maxima_aux").val('-');
+					$("#nome_periodo_letivo").val("Não encontrado.");
+				}
+				else{
+					$("#quantidade_minima").html("Mínimo -");
+					$("#quantidade_maxima").html("Máximo -");
+					$("#quantidade_minima_aux").val('-');
+					$("#quantidade_maxima_aux").val('-');
+					$("#nome_periodo_letivo").val("");
+				}
+			}
+		}).fail(function(msg){
+		    setTimeout(function(){
+		    	$("#modal_confirm").modal('hide');
+		    	Main.modal("aviso", "Houve um erro ao processar sua requisição. Verifique sua conexão com a internet.");
+			},500);
+		});
+		Main.load_data_aluno("");
+		Main.load_data_turma_filtro();
+	},
+	habilita_curso : function(id)
+	{
+		if(id != 0)
+			document.getElementById("curso_id").disabled = false;
+		else
+			document.getElementById("curso_id").disabled = true;
+		Main.load_data_periodo_letivo(id);
+
+	},
+	load_data_disciplina : function()//carrega as disciplinas de acordo com o curso selecionado para a turma.
 	{
 		if($("#curso_id").val() != 0)
 		{
@@ -742,121 +874,202 @@ var Main = {
 					document.getElementById("disciplinas").innerHTML = data.response;
 				}
 			}).fail(function(msg){
-				    setTimeout(function(){
-				    	$("#modal_confirm").modal('hide');
-				    	Main.modal("aviso", "Houve um erro ao processar sua requisição. Verifique sua conexão com a internet.");
+			    setTimeout(function(){
+			    	$("#modal_confirm").modal('hide');
+			    	Main.modal("aviso", "Houve um erro ao processar sua requisição. Verifique sua conexão com a internet.");
+				},500);
+			});
+		}
+		Main.load_data_aluno("");
+		Main.load_data_turma_filtro();
+	},
+	load_filtro_turma_aluno : function()//monta o filtro
+	{
+		var nome = (($("#nome_aluno").val() == "") ? 0 : $("#nome_aluno").val());
+		var data_renovacao_inicio = (($("#data_renovacao_inicio").val() == "") ? 0 : $("#data_renovacao_inicio").val());
+		var data_renovacao_fim = (($("#data_renovacao_fim").val() == "") ? 0 : $("#data_renovacao_fim").val());
+		
+		if(data_renovacao_inicio != 0)
+			data_renovacao_inicio = Main.convert_date(data_renovacao_inicio, "en");
+		if(data_renovacao_fim != 0)
+			data_renovacao_fim = Main.convert_date(data_renovacao_fim, "en");
+
+		Main.load_data_aluno(nome + "/" + data_renovacao_inicio + "/" + data_renovacao_fim);
+		document.getElementById("turma_id").value = 0;
+	},
+	load_data_aluno : function(filtro)//Carrega os alunos para a lista a esquerda quando editando e quando usando o filtro pressionando o botão Pesquisar
+	{
+		if($("#curso_id").val() != "0" && $("#modalidade_id").val() != "0")
+		{
+			Main.modal("aguardar", "Aguarde...");
+
+			$.ajax({
+				url: Main.base_url + $("#controller").val() + '/get_alunos_inscritos/' + '/' + $("#curso_id").val() + "/" + $("#modalidade_id").val() + '/' + (($("#id").val() == "") ? 0 : $("#id").val()) + '/' + filtro,
+				dataType:'json',
+				cache: false,
+				type: 'POST',
+				success: function (data) 
+				{
+					setTimeout(function(){
+						$("#modal_aguardar").modal('hide');
 					},500);
+					document.getElementById("alunos").innerHTML = data.response;;
+				}
+			}).fail(function(msg){
+			    setTimeout(function(){
+			    	$("#modal_confirm").modal('hide');
+			    	Main.modal("aviso", "Houve um erro ao processar sua requisição. Verifique sua conexão com a internet.");
+				},500);
 			});
 		}
 	},
-	load_data_aluno : function()
+	load_data_aluno_turma_antiga : function(turma_id)//Carrega os alunos para a lista a esquerda quando selecionando alguma turma de histórico
 	{
-		Main.modal("aguardar", "Aguarde...");
+		if(turma_id != "0")
+		{
+			document.getElementById("nome_aluno").value = "";
+			Main.modal("aguardar", "Aguarde...");
 
-		var turma_id = $("#turma_id").val();
-		var nome = (($("#nome_aluno").val() == "") ? 0 : $("#nome_aluno").val());
-		var data_registro_inicio = (($("#data_registro_inicio").val() == "") ? 0 : $("#data_registro_inicio").val());
-		var data_registro_fim = (($("#data_registro_fim").val() == "") ? 0 : $("#data_registro_fim").val());
-		
-		if(data_registro_inicio != 0)
-			data_registro_inicio = Main.convert_date(data_registro_inicio, "en");
-		if(data_registro_fim != 0)
-			data_registro_fim = Main.convert_date(data_registro_fim, "en");
-		
-		$.ajax({
-			url: Main.base_url+$("#controller").val()+'/alunos_por_filtro/'+'/'+turma_id+'/'+nome+'/'+data_registro_inicio+'/'+data_registro_fim,
-			dataType:'json',
-			cache: false,
-			type: 'POST',
-			success: function (data) 
-			{
-				setTimeout(function(){
-					$("#modal_aguardar").modal('hide');
-				},500); 
-				document.getElementById("alunos").innerHTML = data.response;
-			}
-		}).fail(function(msg){
-		    setTimeout(function(){
-		    	$("#modal_confirm").modal('hide');
-		    	Main.modal("aviso", "Houve um erro ao processar sua requisição. Verifique sua conexão com a internet.");
-			},500);
-		});
+			$.ajax({
+				url: Main.base_url + $("#controller").val() + '/get_alunos_inscritos_turma_antiga/' + turma_id,
+				dataType:'json',
+				cache: false,
+				type: 'POST',
+				success: function (data) 
+				{
+					setTimeout(function(){
+						$("#modal_aguardar").modal('hide');
+					},500);
+					document.getElementById("alunos").innerHTML = data.response;
+					
+					if(data.aviso != "")
+						Main.modal("aviso", data.aviso);
+				}
+			}).fail(function(msg){
+			    setTimeout(function(){
+			    	$("#modal_confirm").modal('hide');
+			    	Main.modal("aviso", "Houve um erro ao processar sua requisição. Verifique sua conexão com a internet.");
+				},500);
+			});
+		}
+	},
+	load_data_turma_filtro : function()//Carrega o filtro de turma
+	{
+		if($("#curso_id").val() != "0" && $("#modalidade_id").val() != "0")
+		{
+			Main.modal("aguardar", "Aguarde...");
+
+			$.ajax({
+				url: Main.base_url + $("#controller").val() + '/get_filtro_turma/' + '/' + $("#curso_id").val() + "/" + $("#modalidade_id").val(),
+				dataType:'json',
+				cache: false,
+				type: 'POST',
+				success: function (data) 
+				{
+					setTimeout(function(){
+						$("#modal_aguardar").modal('hide');
+					},500);
+					document.getElementById("turma_id").innerHTML = "<option value='0' class='background_dark'>Turmas</option>" + data.response;
+				}
+			}).fail(function(msg){
+			    setTimeout(function(){
+			    	$("#modal_confirm").modal('hide');
+			    	Main.modal("aviso", "Houve um erro ao processar sua requisição. Verifique sua conexão com a internet.");
+				},500);
+			});
+		}
 	},
 	remove_aluno : function ()//REMOVE OS ALUNOS ADICIONADOS E SELECIONADOS
 	{
 		for(var i = 0; i < $("#limite_aluno_add").val(); i++)
 		{
-			if($('input:checkbox[name^=nome_aluno_add'+i+']:checked').length > 0)
+			if($("#nome_aluno_add"+i).is(":checked") == true)
+			{
 				Main.remove_elemento("aluno_item_add"+i);
+				$("#quantidade_alunos").html("Alunos na turma "+(parseInt($("#quantidade_alunos_aux").val()) - 1));
+				$("#quantidade_alunos_aux").val(parseInt($("#quantidade_alunos_aux").val()) - 1);
+			}
 		}
 	},
 	add_aluno : function ()
 	{
-		var valido = 1;
-		var limite_aluno_add = $("#limite_aluno_add").val();
-		for(var i = 0; i < $("#limite_aluno").val(); i++)
+		if($("#modalidade_id").val() == "0")//DEPOIS DE TERMINAR A TELA TODA  TALVEZ ESSE IF NAO SEJA MAIS NECESSARIO, POIS A MODALIDADE TA ARRAMADA AO CURSO E O CURSO AOS ALUNOS QUE SERAO LISTADOS PRA SEREM COLOCADOS NA TURMA
+			Main.modal("aviso", "Primeiro selecione uma modalidade.");
+		else
 		{
-			if($('input:checkbox[name^=nome_aluno'+i+']:checked').length > 0)
+			var valido = 1;
+			var limite_aluno_add = $("#limite_aluno_add").val();
+			for(var i = 0; i < $("#limite_aluno").val(); i++)
 			{
-				if(Main.add_aluno_validar($("#aluno_id"+i).val()) == true)
+				if($("#nome_aluno"+i).is(":checked") == true)
 				{
-					var node_tr = document.createElement("TR");
-					node_tr.setAttribute("id","aluno_item_add"+limite_aluno_add);
-					
-					var node_td = document.createElement("TD");
-					var aluno_id = document.createElement("INPUT");
-					aluno_id.setAttribute("type","hidden");
-					aluno_id.setAttribute("value",$("#aluno_id"+i).val());
-					aluno_id.setAttribute("id","aluno_id_add"+limite_aluno_add);
-					aluno_id.setAttribute("name","aluno_id_add"+limite_aluno_add);
-					node_td.innerHTML = "<div style='margin-top: 5px; height: 25px;' class='checkbox checbox-switch switch-success custom-controls-stacked'>"
-						+"<label for='nome_aluno_add"+limite_aluno_add+"' style='display: block; height: 25px;'>"
-							+"<input type='checkbox' id='nome_aluno_add"+limite_aluno_add+"' name='nome_aluno_add"+limite_aluno_add+"' value='1' /><span></span>"
-							+$("#nome_aluno_aux"+i).val()
-						+"</label>"
-					+"</div>";
-					node_td.setAttribute("title",$("#nome_aluno_aux"+i).val());
-					node_td.appendChild(aluno_id);
-					node_tr.appendChild(node_td);
+					if(Main.add_aluno_validar($("#aluno_id"+i).val()) == true)
+					{
+						var node_tr = document.createElement("TR");
+						node_tr.setAttribute("id","aluno_item_add"+limite_aluno_add);
+						
+						var node_td = document.createElement("TD");
+						var aluno_id = document.createElement("INPUT");
+						aluno_id.setAttribute("type","hidden");
+						aluno_id.setAttribute("value",$("#aluno_id"+i).val());
+						aluno_id.setAttribute("id","aluno_id_add"+limite_aluno_add);
+						aluno_id.setAttribute("name","aluno_id_add"+limite_aluno_add);
+						node_td.innerHTML = "<div style='margin-top: 5px; height: 25px;' class='checkbox checbox-switch switch-success custom-controls-stacked'>"
+							+"<label for='nome_aluno_add"+limite_aluno_add+"' style='display: block; height: 25px;'>"
+								+"<input type='checkbox' id='nome_aluno_add"+limite_aluno_add+"' name='nome_aluno_add"+limite_aluno_add+"' value='1' /><span></span>"
+								+$("#nome_aluno_aux"+i).val()
+							+"</label>"
+						+"</div>";
+						node_td.setAttribute("title",$("#nome_aluno_aux"+i).val());
+						node_td.appendChild(aluno_id);
+						node_tr.appendChild(node_td);
 
-					node_td = document.createElement("TD");
-					node_td.setAttribute("class","text-center");
-					node_td.setAttribute("style","vertical-align: middle;");
-					var inp_sub_turma = document.createElement("INPUT");
-					inp_sub_turma.setAttribute("type","number");
-					inp_sub_turma.setAttribute("class","text-center");
-					inp_sub_turma.setAttribute("style","width: 60%;");
-					inp_sub_turma.setAttribute("maxlength","1");
-					inp_sub_turma.setAttribute("id","sub_turma"+limite_aluno_add);
-					inp_sub_turma.setAttribute("name","sub_turma"+limite_aluno_add);
-					inp_sub_turma.setAttribute("value","0");
-					node_td.appendChild(inp_sub_turma);
-					node_tr.appendChild(node_td);
+						node_td = document.createElement("TD");
+						node_td.setAttribute("class","text-center");
+						node_td.setAttribute("style","vertical-align: middle;");
+						var inp_sub_turma = document.createElement("INPUT");
+						inp_sub_turma.setAttribute("type","number");
+						inp_sub_turma.setAttribute("class","text-center");
+						inp_sub_turma.setAttribute("style","width: 60%;");
+						inp_sub_turma.setAttribute("maxlength","1");
+						inp_sub_turma.setAttribute("id","sub_turma_add"+limite_aluno_add);
+						inp_sub_turma.setAttribute("name","sub_turma_add"+limite_aluno_add);
+						inp_sub_turma.setAttribute("value","0");
+						node_td.appendChild(inp_sub_turma);
+						node_tr.appendChild(node_td);
 
-					node_td = document.createElement("TD");
-					node_td.setAttribute("class","text-center");
-					node_td.setAttribute("style","vertical-align: middle;");
-					node_td.innerHTML = "<span title='Detalhes' style='cursor: pointer;' class='glyphicon glyphicon-th text-danger'></span>";
-					node_tr.appendChild(node_td);				
+						node_td = document.createElement("TD");
+						node_td.setAttribute("class","text-center");
+						node_td.setAttribute("style","vertical-align: middle;");
+						node_td.innerHTML = "<span title='Detalhes' style='cursor: pointer;' class='glyphicon glyphicon-th text-danger'></span>";
+						node_tr.appendChild(node_td);				
 
-					document.getElementById("alunos_turma").appendChild(node_tr);
+						document.getElementById("alunos_turma").appendChild(node_tr);
 
-					limite_aluno_add = parseInt(limite_aluno_add) + 1;
-					document.getElementById('nome_aluno'+i).checked = false;//LIMPA OS CHECK MARCADOS
+						limite_aluno_add = parseInt(limite_aluno_add) + 1;
+						document.getElementById('nome_aluno'+i).checked = false;//LIMPA OS CHECK MARCADOS
+						
+						$("#quantidade_alunos").html("Alunos na turma "+(parseInt($("#quantidade_alunos_aux").val()) + 1));
+						$("#quantidade_alunos_aux").val(parseInt($("#quantidade_alunos_aux").val()) + 1);
+					}
+					else 
+						valido = 0;
 				}
-				else 
-					valido = 0;
 			}
+			$("#limite_aluno_add").val(limite_aluno_add);
+			if(valido == 0)
+				Main.modal("aviso","Alguns alunos selecionados não foram adicionados, pois já se encontram na lista ou o limite de alunos foi atingido.");
 		}
-		$("#limite_aluno_add").val(limite_aluno_add);
-		if(valido == 0)
-			Main.modal("aviso","Alguns alunos selecionados não foram adicionados, pois já se encontram na lista.");
 	},
 	add_aluno_validar : function(aluno_id)
 	{
-		for(var i = 0; i <= $("#limite_aluno_add").val(); i++)
-			if($("#aluno_id_add"+i).val() == aluno_id)
+		for(var i = 0; i < $("#limite_aluno_add").val(); i++)
+			if(parseInt($("#aluno_id_add"+i).val()) == parseInt(aluno_id))
 				return false;
+
+		if($("#quantidade_maxima_aux").val() != "-" && 
+			parseInt($("#quantidade_alunos_aux").val()) == parseInt($("#quantidade_maxima_aux").val()))
+			return false;
 		return true;
 	}
 };

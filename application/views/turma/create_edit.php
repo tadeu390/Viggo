@@ -32,33 +32,10 @@
 					</div>
 				</div>
 				<div class="col-lg-6">
-					
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-lg-6">
-					<div class='form-group'>
-						<div class='input-group-addon' style="color: #8a8d93;">Curso</div>
-						<select onchange="Main.load_data_disciplina();" name='curso_id' id='curso_id' class='form-control' style='padding-left: 0px;'>
-							<option value='0' style='background-color: #393836;'>Selecione</option>
-							<?php
-							for ($i = 0; $i < count($lista_cursos); $i++)
-							{
-								$selected = "";
-								if ($lista_cursos[$i]['Id'] == $lista_disc_turma_header['Curso_id'])
-									$selected = "selected";
-								echo "<option class='background_dark' $selected value='" . $lista_cursos[$i]['Id'] . "'>" . $lista_cursos[$i]['Nome_curso'] . "</option>";
-							}
-							?>
-						</select>
-						<div class='input-group mb-2 mb-sm-0 text-danger' id='error-curso_id'></div>
-					</div>
-				</div>
-				<div class="col-lg-6">
-					<div class='form-group'>
-						<div class='input-group-addon' style="color: #8a8d93;">Modalidade</div>
-						<select name='modalidade_id' id='modalidade_id' class='form-control' style='padding-left: 0px;'>
-							<option value='0' style='background-color: #393836;'>Selecione</option>
+					<div class='form-group relative'>
+						<?php if(empty($obj['Id'])): ?>
+						<select onchange="Main.habilita_curso(this.value);" name='modalidade_id' id='modalidade_id' class='form-control' style='padding-left: 0px;'>
+							<option value='0' style='background-color: #393836;'>Selecione a modalidade</option>
 							<?php
 							for ($i = 0; $i < count($lista_modalidades); $i++)
 							{
@@ -70,6 +47,57 @@
 							?>
 						</select>
 						<div class='input-group mb-2 mb-sm-0 text-danger' id='error-modalidade_id'></div>
+						<?php else: ?>
+							<?php
+							for ($i = 0; $i < count($lista_modalidades); $i++)
+							{
+								if ($lista_modalidades[$i]['Id'] == $lista_disc_turma_header['Modalidade_id'])
+								{
+									echo"<input readonly id='modalidade' name='modalidade' value='".$lista_modalidades[$i]['Nome_modalidade']."' type='text' class='input-material'>";
+									echo"<input id='modalidade_id' name='modalidade_id' value='".$lista_disc_turma_header['Modalidade_id']."' type='hidden' class='input-material'>";
+									echo"<label for='modalidade' class='label-material'>Modalidade</label>";
+								}
+							}
+							?>
+						<?php endif;?>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-lg-6">
+					<div class="form-group relative">
+						<input readonly="true" id="nome_periodo_letivo" name="nome_periodo_letivo" value='<?php echo (!empty($lista_disc_turma_header['Nome_periodo']) ? $lista_disc_turma_header['Nome_periodo']:''); ?>' type="text" class="input-material">
+						<label for="nome_periodo_letivo" class="label-material active">Período letivo</label>
+					</div>
+				</div>
+				<div class="col-lg-6">
+					<div class='form-group relative'>
+						<?php if(empty($obj['Id'])): ?>
+						<select  onchange="Main.load_data_disciplina();" name='curso_id' id='curso_id' class='form-control' style='padding-left: 0px;'>
+							<option value='0' style='background-color: #393836;'>Selecione o curso</option>
+							<?php
+							for ($i = 0; $i < count($lista_cursos); $i++)
+							{
+								$selected = "";
+								if ($lista_cursos[$i]['Id'] == $lista_disc_turma_header['Curso_id'])
+									$selected = "selected";
+								echo "<option class='background_dark' $selected value='" . $lista_cursos[$i]['Id'] . "'>" . $lista_cursos[$i]['Nome_curso'] . "</option>";
+							}
+							?>
+						</select>
+						<div class='input-group mb-2 mb-sm-0 text-danger' id='error-curso_id'></div>
+						<?php else: ?>
+							<?php
+							for ($i = 0; $i < count($lista_cursos); $i++)
+							{
+								if ($lista_cursos[$i]['Id'] == $lista_disc_turma_header['Curso_id'])
+								{
+									echo"<input readonly id='curso' name='curso' value='".$lista_cursos[$i]['Nome_curso']."' type='text' class='input-material'>";
+									echo"<label for='curso' class='label-material'>Curso</label>";
+								}
+							}
+							?>
+						<?php endif;?>
 					</div>
 				</div>
 			</div>
@@ -102,6 +130,7 @@
 						}
 					?>
 				</div>
+				<div class='input-group mb-2 mb-sm-0 text-danger' id='error-disciplinas'></div>
 			</fieldset>
 			<br />
 			
@@ -110,46 +139,50 @@
 					<fieldset>
 						<legend class='text-white'>&nbsp; Alunos</legend>
 						<div style="border-radius: 5px 5px 0px 0px; border: 1px solid white; border-bottom: 0px;">
-							<div class="row background_dark padding10" style="margin: auto;">
+							<br />
+							<div class="row background_dark padding10" style="border-radius: 0px; padding-top: 0px; margin: auto;">
 								<div class="col-lg-6">
-									<div class='form-group'>
-										<?php
-											echo"<select name='turma_id' id='turma_id' class='form-control padding0'>";
-											echo"<option value='0' class='background_dark'>Turmas</option>";
-											for($i = 0; $i < count($lista_turmas); $i++)
-												echo"<option $selected class='background_dark' value='". $lista_turmas[$i]['Id'] ."'>".$lista_turmas[$i]['Nome_turma']."</option>";
-											echo "</select>";
-										?>
+									<div class="form-group relative" id="data1">
+										<input id="data_renovacao_inicio" value='<?php echo date("d/m/Y", strtotime('-6 months')); ?>' name="data_renovacao_inicio" type="text" class="input-material">
+										<label for="data_renovacao_inicio" class="label-material active">Data de início da renovação</label>
 									</div>
 								</div>
+								<div class="col-lg-6">
+									<div class="form-group relative" id="data1">
+										<input id="data_renovacao_fim" value='<?php echo date("d/m/Y"); ?>' name="data_renovacao_fim" type="text" class="input-material">
+										<label for="data_renovacao_fim" class="label-material active">Data de fim da renovação</label>
+									</div>
+								</div>
+							</div>
+							<div class="row background_dark padding10" style="margin: auto;">
 								<div class="col-lg-6">
 									<div class="form-group relative">
 										<input id="nome_aluno" name="nome_aluno" type="text" class="input-material">
 										<label for="nome_aluno" class="label-material">Nome</label>
 									</div>
 								</div>
-							</div>
-							<div class="row background_dark padding10" style="border-radius: 0px; padding-top: 0px; margin: auto;">
 								<div class="col-lg-6">
-									<div class="form-group relative" id="data1">
-										<input id="data_registro_inicio" value='<?php echo date("d/m/Y", strtotime('-6 months')); ?>' name="data_registro_inicio" type="text" class="input-material">
-										<label for="data_registro_inicio" class="label-material active">Data de registro início</label>
-									</div>
-								</div>
-								<div class="col-lg-6">
-									<div class="form-group relative" id="data1">
-										<input id="data_registro_fim" value='<?php echo date("d/m/Y"); ?>' name="data_registro_fim" type="text" class="input-material">
-										<label for="data_registro_fim" class="label-material active">Data de registro fim</label>
-									</div>
-								</div>
-							</div>
-							<div class="row background_dark padding10" style="border-radius: 0px; padding-top: 0px; margin: auto;">
-								<div class="col-lg-6">
-								</div>
-								<div class="col-lg-6">
-									<button  onclick="Main.load_data_aluno();" type="button" class='btn btn-success btn-block'>
+									<button  onclick="Main.load_filtro_turma_aluno();" type="button" class='btn btn-success btn-block'>
 										<span class='glyphicon glyphicon-search'></span> Pesquisar
 									</button>
+								</div>
+							</div>
+							<hr class="background_white" style="margin-top: 0px">
+							<div class="row background_dark padding10" style="border-radius: 0px; padding-top: 0px; margin: auto;">
+								<div class="col-lg-5 padding10 text-center">
+									A partir de uma turma:
+								</div>
+								<div class="col-lg-7">
+									<div class='form-group'>
+										<?php
+											echo"<select onchange='Main.load_data_aluno_turma_antiga(this.value);' name='turma_id' id='turma_id' class='form-control padding0'>";
+											echo"<option value='0' class='background_dark'>Turmas</option>";
+												$data['lista_turmas'] = $lista_turmas;
+
+												$this->load->view("turma/_filtro_turma", $data);
+											echo "</select>";
+										?>
+									</div>
 								</div>
 							</div>
 							<div class="alunos" id="alunos" style="max-height: 460px; border-radius: 0px;">
@@ -169,6 +202,32 @@
 				<div class="col-lg-5">
 					<fieldset>
 						<legend class='text-white'>&nbsp; Alunos da turma</legend>
+						<?php
+							echo "<div class='border_radius background_white ' style='padding-top: 3px;'>";
+							echo "<input type='hidden' id='quantidade_alunos_aux' value='".count($lista_disc_turma_aluno)."'>";
+							echo "<input type='hidden' id='quantidade_minima_aux' value='".(($lista_disc_turma_header['Qtd_minima_aluno'] == 0) ? '-' : $lista_disc_turma_header['Qtd_minima_aluno'])."'>";
+							echo "<input type='hidden' id='quantidade_maxima_aux' value='".(($lista_disc_turma_header['Qtd_maxima_aluno'] == 0) ? '-' : $lista_disc_turma_header['Qtd_maxima_aluno'])."'>";
+								echo "<table class='table'>";
+										echo "<tr>";
+											echo "<td id='quantidade_alunos'>Alunos na turma ";
+												echo count($lista_disc_turma_aluno);
+											echo"</td>";
+											echo "<td id='quantidade_minima'>";
+												if(!empty($lista_disc_turma_header['Qtd_minima_aluno']))
+													echo"Mínimo ".$lista_disc_turma_header['Qtd_minima_aluno'];
+												else
+													echo"Mínimo -";
+											echo"</td>";
+											echo "<td id='quantidade_maxima'>";
+												if(!empty($lista_disc_turma_header['Qtd_maxima_aluno']))
+													echo"Máximo ".$lista_disc_turma_header['Qtd_maxima_aluno'];
+												else
+													echo "Máximo -";
+											echo"</td>";
+										echo "</tr>";
+								echo "</table>";
+							echo "</div>";
+						?>
 						<div class='alunos'>
 							<?php
 								echo "<table class='table table-striped table-sm table-hover'>";
@@ -199,7 +258,7 @@
 													echo"</td>";
 
 													echo "<td class='text-center' style='vertical-align: middle;'>";
-														echo "<input type='number' class='text-center' style='width: 60%;' maxlength='1' id='sub_turma$i' name='sub_turma$i' value='".$lista_disc_turma_aluno[$i]['Sub_turma']."'>";
+														echo "<input type='number' class='text-center' style='width: 60%;' maxlength='1' id='sub_turma_add$i' name='sub_turma_add$i' value='".$lista_disc_turma_aluno[$i]['Sub_turma']."'>";
 													echo "</td>";
 													echo "<td class='text-center' style='vertical-align: middle;'>";
 														echo "<span title='Detalhes' style='cursor: pointer;' class='glyphicon glyphicon-th text-danger'></span>";
@@ -236,11 +295,11 @@
 				</div>
 			</div>
 			<div class="row">
-				<div class="col-lg-2">
-					<input type='submit' class='btn btn-danger btn-block' style='width: 200px;' value='Avançar'>
+				<div class="col-lg-2 padding10">
+					<input type='submit' class='btn btn-danger btn-block' value='Avançar'>
 				</div>	
-				<div class="col-lg-2">
-					<input type='submit' class='btn btn-danger btn-block' style='width: 200px;' value='Finalizar'>
+				<div class="col-lg-2 padding10">
+					<input type='submit' class='btn btn-danger btn-block' value='Finalizar'>
 				</div>	
 			</div>
 		</form>

@@ -52,8 +52,9 @@
 			$query =  $this->db->query("
 				SELECT pl.Id, pl.Periodo, 
 				DATE_FORMAT(pl.Data_registro, '%d/%m/%Y') as Data_registro,
-				pl.Ativo, m.Nome as Nome_modalidade, pl.Limite_falta, pl.Dias_letivos, pl.Media, pl.Duracao_aula, pl.Hora_inicio_aula,
-				pl.Quantidade_aula, pl.Reprovas, pl.Modalidade_id, pl.Avaliar_faltas 
+				pl.Ativo, m.Nome as Nome_modalidade, pl.Limite_falta, pl.Dias_letivos, pl.Media, 
+				pl.Duracao_aula, pl.Hora_inicio_aula, pl.Quantidade_aula, pl.Reprovas, 
+				pl.Modalidade_id, pl.Avaliar_faltas, pl.Qtd_minima_aluno, pl.Qtd_maxima_aluno 
 					FROM Periodo_letivo pl 
 					INNER JOIN Modalidade m ON pl.Modalidade_id = m.Id 
 				WHERE TRUE ".$Ativos." AND pl.Id = ".$this->db->escape($id)."");
@@ -107,7 +108,7 @@
 
 			return $query->num_rows() == 0;
 		}
-		/*
+		/*!
 		*	RESPONSÁVEL POR VOLTAR UMA REGRA POR NOME E POR MODALIDADE.
 		*
 		*   $data -> Contém os dados da regra.

@@ -255,10 +255,20 @@ input[type="text"]:disabled {
 .alunos
 {
 	background-color: white;
-	height: 648px;
+	height: 643px;
 	border-radius: 5px 5px 0px 0px;
-	max-height: 648px;
+	max-height: 643px;
 	overflow-y: auto;
 	overflow-x: hidden;
 	color: black;
+}
+
+.background_white
+{
+	background-color: white  !important;
+}
+
+.border_radius
+{
+	border-radius: 5px !important;
 }

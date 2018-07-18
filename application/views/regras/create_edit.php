@@ -112,10 +112,22 @@
 					<label for="reprovas" class="label-material">Reprovas <span class='glyphicon glyphicon-question-sign text-danger pointer'  data-toggle="tooltip" title="Define o limite de disciplinas que o aluno poderá carregar."></span></label>
 					<div class='input-group mb-2 mb-sm-0 text-danger' id='error-reprovas'></div>
 				</div>
+
+				<div class="form-group relative">
+					<input id="qtd_minima" name="qtd_minima" value='<?php echo (!empty($obj['Qtd_minima_aluno']) ? $obj['Qtd_minima_aluno']:''); ?>' type="text" class="input-material">
+					<label for="qtd_minima" class="label-material">Mínimo de alunos <span class='glyphicon glyphicon-question-sign text-danger pointer'  data-toggle="tooltip" title="Especifica uma quantidade mínima de alunos para que se possa criar uma turma."></span></label>
+					<div class='input-group mb-2 mb-sm-0 text-danger' id='error-qtd_minima'></div>
+				</div>
+
+				<div class="form-group relative">
+					<input id="qtd_maxima" name="qtd_maxima" value='<?php echo (!empty($obj['Qtd_maxima_aluno']) ? $obj['Qtd_maxima_aluno']:''); ?>' type="text" class="input-material">
+					<label for="qtd_maxima" class="label-material">Máximo de alunos <span class='glyphicon glyphicon-question-sign text-danger pointer'  data-toggle="tooltip" title="Especifica uma quantidade máxima de alunos para que se possa criar uma turma."></span></label>
+					<div class='input-group mb-2 mb-sm-0 text-danger' id='error-qtd_maxima'></div>
+				</div>
 			</div>
 			<div class="col-lg-7">
 				<fieldset>
-					<legend>Intervalos <span class='glyphicon glyphicon-question-sign text-danger pointer'  data-toggle="tooltip" title="Define os intervalos que terão em cada dia da semana para o horário de aula da turma."></span></legend>
+					<legend>&nbsp;Intervalos <span class='glyphicon glyphicon-question-sign text-danger pointer'  data-toggle="tooltip" title="Define os intervalos que terão em cada dia da semana para o horário de aula da turma."></span></legend>
 					<div class="row">
 						<div class="col-lg-6">
 							<div class="form-group relative">
@@ -194,7 +206,7 @@
 					</div>
 				</fieldset>
 				<fieldset style="margin-top: 20px;">
-					<legend>Bimestres <span class='glyphicon glyphicon-question-sign text-danger pointer'  data-toggle="tooltip" title="Define a quantidade de bimestres, data em que começa e termina, valor."></span></legend>
+					<legend>&nbsp;Bimestres <span class='glyphicon glyphicon-question-sign text-danger pointer'  data-toggle="tooltip" title="Define a quantidade de bimestres, data em que começa e termina, valor."></span></legend>
 					<div class="row">
 						<div class="col-lg-6">
 							<div class="form-group relative">

@@ -18,14 +18,15 @@
 				echo "<table class='table table-striped table-hover text-white'>";
 					echo "<thead>";
 						echo"<tr>";
-							echo"<td class='text-right' colspan='4'>";
-							if(permissao::get_permissao(CREATE,$controller))
+							echo"<td class='text-right' colspan='5'>";
+							if(permissao::get_permissao(CREATE, $controller))
 								echo"<a class='btn btn-success' href='".$url."$controller/create/'><span class='glyphicon glyphicon-plus'></span> Nova turma</a>";
 							echo"</td>";
 						echo"</tr>";
 						echo "<tr>";
 							echo "<td>#</td>";
 							echo "<td>Nome</td>";
+							echo "<td>Período letivo</td>";
 							echo "<td>Ativo</td>";
 							echo "<td class='text-right'>Ações</td>";
 						echo "<tr>";
@@ -39,6 +40,7 @@
 							echo "<tr>";
 								echo "<td $cor>".($i + 1)."</td>";
 								echo "<td $cor>".$lista_turmas[$i]['Nome_turma']."</td>";
+								echo "<td $cor>".$lista_turmas[$i]['Pe_modi']."</td>";
 								echo "<td $cor>".(($lista_turmas[$i]['Ativo'] == 1) ? 'Sim' : 'Não')."</td>";
 								echo "<td class='text-right'>";
 								if(permissao::get_permissao(UPDATE,$controller))

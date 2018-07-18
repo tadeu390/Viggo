@@ -4,8 +4,8 @@
 			echo "<tr>";
 				echo "<td class='text-center'>#</td>";
 				echo "<td>Nome</td>";
-				echo "<td>Categoria</td>";
-				echo "<td>Professor</td>";
+				echo "<td style='width: 25%;'>Categoria</td>";
+				echo "<td style='width: 25%;'>Professor</td>";
 			echo "<tr>";
 		echo "</thead>";
 		echo "<tbody>";
@@ -39,6 +39,7 @@
 								echo "<option  $selected value='" . $lista_categorias[$j]['Id'] . "'>" . $lista_categorias[$j]['Nome_categoria'] . "</option>";
 							}
 						echo"</select>";
+						echo"<div class='input-group mb-2 mb-sm-0 text-danger' id='error-categoria_id$i'></div>";
 					echo"</td>";
 					echo"<td>";
 						echo"<select name='professor_id$i' id='professor_id$i' class='form-control' style='padding-left: 0px;'>";
@@ -51,6 +52,7 @@
 								echo "<option $selected value='" . $lista_professores[$k]['Id'] . "'>" . $lista_professores[$k]['Nome_usuario'] . "</option>";
 							}
 						echo"</select>";
+						echo"<div class='input-group mb-2 mb-sm-0 text-danger' id='error-professor_id$i'></div>";
 					echo"</td>";
 				echo "</tr>";
 				$limite_disciplina++;

@@ -36,10 +36,12 @@
 				
 				$query = $this->db->query("
 					SELECT (SELECT count(*) FROM Turma u WHERE TRUE ".$filtros.") AS Size, t.Id, 
-					t.Nome as Nome_turma, t.Ativo 
-					
+					t.Nome as Nome_turma, t.Ativo, dt.Periodo_letivo_id, CONCAT(p.Periodo, ' / ', m.Nome) as Pe_modi  
 					FROM Turma t 
-					WHERE TRUE ".$Ativos."".$filtros."
+					INNER JOIN Disc_turma dt ON t.Id = dt.Turma_Id 
+					INNER JOIN Periodo_letivo p ON dt.periodo_letivo_id = p.Id 
+					INNER JOIN Modalidade m ON p.Modalidade_id = m.Id  
+					WHERE TRUE ".$Ativos."".$filtros." GROUP BY t.Id, t.Nome
 					ORDER BY t.Id ASC ".$pagination."");
 
 				return $query->result_array();
@@ -47,8 +49,11 @@
 
 			$query =  $this->db->query("
 				SELECT t.Id, t.Nome as Nome_turma, t.Ativo,
-				DATE_FORMAT(t.Data_registro, '%d/%m/%Y') as Data_registro 
+				DATE_FORMAT(t.Data_registro, '%d/%m/%Y') as Data_registro, dt.Periodo_letivo_id, CONCAT(p.Periodo, ' / ', m.Nome) as Pe_modi  
 					FROM Turma t 
+					INNER JOIN Disc_turma dt ON t.Id = dt.Turma_Id 
+					INNER JOIN Periodo_letivo p ON dt.periodo_letivo_id = p.Id 
+					INNER JOIN Modalidade m ON p.Modalidade_id = m.Id  
 				WHERE TRUE ".$Ativos." AND t.Id = ".$this->db->escape($Id)."");
 			return $query->row_array();
 		}
@@ -71,8 +76,11 @@
 		public function set_turma($data)
 		{
 			$modalidade_id = $data['Modalidade_id'];
+			
 			unset($data['Modalidade_id']);
-			unset($data['Disc_curso_to_save']);
+			unset($data['Disc_to_save']);
+			unset($data['Aluno_to_save']);
+			
 			if(empty($data['Id']))
 				$this->db->insert('Turma',$data);
 			else
@@ -80,24 +88,70 @@
 				$this->db->where('Id', $data['Id']);
 				$this->db->update('Turma', $data);
 			}
-			return $this->get_turma_por_nome($data['Nome'], $modalidade_id)['Id'];
+			return $this->get_turma_por_nome($data['Nome'])['Id'];
 		}
 		/*!
-		*	RESPONSÁVEL POR RETORAR UM TURMA DE ACORDO COM O NOME E MODALIDADE.
+		*	RESPONSÁVEL POR RETORAR UM TURMA DE ACORDO COM O NOME.
 		*
 		*	$nome -> Nome da turma a ser cadastrada/editada.
 		*	$modalidade_id -> Modalidade ensino especificado para a turma.
 		*/
-		public function get_turma_por_nome($nome, $modalidade_id)
+		public function get_turma_por_nome($nome)
 		{
 			$query = $this->db->query("
-				SELECT t.Id FROM Turma t 
-				INNER JOIN Disc_turma dt ON t.Id = dt.Turma_Id 
-				INNER JOIN Periodo_letivo p ON dt.Periodo_letivo_id = p.Id 
-				INNER JOIN Modalidade m ON m.Id = p.Id and m.Id = ".$this->db->escape($modalidade_id)."
-				WHERE UPPER(t.Nome) = UPPER(".$this->db->escape($nome).") ");
+				SELECT Id FROM Turma 
+				WHERE UPPER(Nome) = UPPER(".$this->db->escape($nome).") ORDER BY Id DESC LIMIT 1");
 			
 			return $query->row_array();
 		}
+		/*!
+		*	RESPONSÁVEL POR VALIDAR O NOME DA TURMA, OU SEJA, VERIFICA SE O NOME JÁ ESTÁ EM USO PARA 
+		*	UMA DETERMINADA MODALIDADE EM UM DETERMINADO PERÍODO
+		*
+		*	$id -> Id da turma.
+		*	$nome -> Nome da turma.
+		*	$modalidade_id -> Modalidade selecionada para a turma.
+		*/
+		public function nome_valido($id, $nome, $periodo_letivo_id)
+		{
+			$query = $this->db->query("
+				SELECT t.Id 
+				FROM Turma t 
+				INNER JOIN Disc_turma dt ON t.Id = dt.Turma_Id 
+				WHERE UPPER(t.Nome) = UPPER(".$this->db->escape($nome).") AND
+			    DT.Periodo_letivo_id = ".$this->db->escape($periodo_letivo_id)."
+				GROUP BY 1");
+
+			$query = $query->row_array();
+
+			if(empty($query['Id']) || $query['Id'] == $id)
+				return "valido";
+			return "invalido";
+		}
+		/*!
+		*	RESPONSÁVEL POR RETORNAR UMA LISTA DE TURMAS DE UM DETERMINADO CURSO CUJO PERÍODO LETIVO SEJA
+		*	ANTERIOR AO PASSADO COMO PARÂMETRO. APENAS PARA MONTAR O COMBO BOX DE TURMA PARA USAR COMO FILTRO.
+		*
+		*	$curso_id -> Curso da turma.
+		*	$periodo_letivo_id -> Id do período letivo das turmas a serem buscadas.
+		*/
+		public function get_turma_cp($curso_id, $modalidade_id,$periodo_letivo_id)
+		{
+
+			$query = $this->db->query("
+				SELECT t.Id, t.Nome as Nome_turma, CONCAT(p.Periodo, ' - ', m.Nome) as Pe_modi  
+				FROM Turma t 
+				INNER JOIN Disc_turma dt ON t.Id = dt.Turma_Id 
+				INNER JOIN Disc_curso dc ON dc.Id = dt.Disc_curso_id 
+				INNER JOIN Periodo_letivo p ON dt.Periodo_letivo_id = p.Id 
+				INNER JOIN Modalidade m ON p.Modalidade_id = m.Id 
+				WHERE dc.Curso_id = ".$this->db->escape($curso_id)." AND 
+				dt.Periodo_letivo_id < ".$this->db->escape($periodo_letivo_id)." AND 
+				m.Id = ".$this->db->escape($modalidade_id)." 
+                GROUP BY 1,2");
+			return $query->result_array();
+		}
 	}
 ?>
+
+

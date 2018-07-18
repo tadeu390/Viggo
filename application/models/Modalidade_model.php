@@ -90,10 +90,24 @@
 				WHERE UPPER(Nome) = UPPER(".$this->db->escape($Nome).")");
 			$query = $query->row_array();
 			
-			if(!empty($query) && $this->get_modalidade(FALSE ,$Id, FALSE)['Nome'] != $query['Nome'])
+			if(!empty($query) && $this->get_modalidade(FALSE ,$Id, FALSE)['Nome_modalidade'] != $query['Nome'])
 				return "invalido";
 			
 			return "valido";
+		}
+		/*!
+		*	RESPONSÁVEL POR RETORNAR O ÚLTIMO PERÍODO LETIVO CADASTRADO PARA UMA DETERMINADA MODALIDADE.
+		*	
+		*	$modalidade_id -> Id da modalidade que se deseja obter o período letivo.
+		*/
+		public function get_periodo_por_modalidade($modalidade_id)
+		{
+			$query = $this->db->query("
+				SELECT * FROM Periodo_letivo 
+				WHERE Modalidade_id = ".$this->db->escape($modalidade_id)." AND Ativo = 1 
+				ORDER BY Id DESC LIMIT 1");
+			
+			return $query->row_array();
 		}
 	}
 ?>

@@ -105,7 +105,9 @@
 				'Duracao_aula' => $this->input->post('duracao_aula'),
 				'Hora_inicio_aula' => $this->input->post('hora_inicio_aula'),
 				'Quantidade_aula' => $this->input->post('quantidade_aula'),
-				'Reprovas' => $this->input->post('reprovas')
+				'Reprovas' => $this->input->post('reprovas'),
+				'Qtd_minima_aluno' => $this->input->post('qtd_minima'),
+				'Qtd_maxima_aluno' => $this->input->post('qtd_maxima')
 			);
 
 			if(empty($dataToSave['Avaliar_faltas']))
@@ -221,6 +223,9 @@
 				return "Informe a quantidade de aulas por dia.";
 			else if(empty($Regras['Reprovas']))
 				return "Informe quantas disciplinas o aluno poderá carregar.";
+			else if(!empty($Regras['Qtd_minima_aluno']) && !empty($Regras['Qtd_maxima_aluno'])
+					&& $Regras['Qtd_minima_aluno'] > $Regras['Qtd_maxima_aluno'])
+				return "A quantidade máxima deve ser superior ou igual a quantidade mínima.";
 			else if($this->Regras_model->valida_nome_periodo($Regras) == FALSE)
 				return "Já existe um período cadastrado com este nome para a modalidade em questão.";
 			else
