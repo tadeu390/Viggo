@@ -375,7 +375,7 @@
 
 			$this->data['lista_alunos'] = $this->Disc_turma_model->get_alunos_inscritos_turma_antiga($turma_id, $curso_id, $modalidade_id);
 			$aviso = "";
-			if(count($this->data['lista_alunos']) > 0 && count($this->data['lista_alunos']) < $this->data['lista_alunos'][0]['Size_total'])
+			if(empty($this->data['lista_alunos']) && count($this->data['lista_alunos']) < $this->data['lista_alunos'][0]['Size_total'])
 				$aviso = "A turma selecionada contém alunos que não estão disponíveis para serem inclusos nesta turma, 
 						 pois as suas respectivas matrículas não estão renovadas para o período letivo corrente. Talvez deva verificar isso.";
 
