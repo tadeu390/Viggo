@@ -305,7 +305,7 @@
 		public function periodo_letivo($modalidade_id)
 		{
 			$resultado = $this->Modalidade_model->get_periodo_por_modalidade($modalidade_id);
-			if(count($resultado) == 0)
+			if(empty($resultado))
 				$resultado = "0";
 			$arr = array('response' => $resultado);
 				header('Content-Type: application/json');

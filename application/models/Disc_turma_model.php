@@ -255,7 +255,7 @@
 					 );
 					
 					//se não encontrou a disciplina cadastrada para a turma entao insere.
-					if(count($r) == 0)
+					if(empty($r))
 						$this->db->insert('Disc_turma',$dataToSave);
 					else //se a disciplina para a turma já estiver cadastrada então apenas atualiza
 					{	//os dados como o professor e a categoria dela.
@@ -290,7 +290,7 @@
 						);
 						//se nao houver matricula do aluno na turma em questao, 
 						//entao insere pra esse aluno.
-						if(count($r2) == 0)
+						if(empty($r2))
 							$this->db->insert('Matricula',$dataToSaveAluno);
 						else
 						{	//se ja existir da um update.

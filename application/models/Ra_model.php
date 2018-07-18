@@ -119,19 +119,5 @@
 			
 			return $query->row_array();
 		}
-		/*!
-			RESPONSÁVEL POR CANCELAR UMA MATRÍCULA DO ALUNO, ISSO SÓ PODERÁ SER EXECUTADO PELO USUÁRIO ENQUANTO 
-			O ALUNO CONTIDO NESTA INSCRIÇÃO NÃO ESTIVER EM ALGUMA TURMA. O TRATAMENTO PARA PODER EXECUTAR OU NÃO 
-			EXECUTAR ESTE MÉTODO SERÁ FEITO NA VIEW ONDE IRÁ DESABILITAR O BOTÃO DE EDITAR INSCRIÇÃO QUANDO O ALUNO 
-			JÁ ESTIVER EM ALGUMA TURMA.
-			
-			$inscricao_id -> Id da inscrição do aluno.
-		*/
-		public function delete_matricula($inscricao_id)
-		{
-			$query = $this->db->query("
-				DELETE FROM Renovacao_matricula 
-				WHERE Inscricao_id = ".$this->db->escape($inscricao_id)."");
-		}
 	}
 ?>

@@ -25,7 +25,7 @@
 						echo"</tr>";
 						echo "<tr>";
 							echo "<td>#</td>";
-							echo "<td>Numero de matrícula</td>";
+							echo "<td>Matrícula</td>";
 							echo "<td>Aluno</td>";
 							echo "<td>Curso</td>";
 							echo "<td>Modalidade</td>";

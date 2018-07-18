@@ -168,7 +168,7 @@
 				 		else
 				 		{
 				 			if(!empty($dataToSave['Id']))
-				 				$this->Ra_model->delete_matricula($dataToSave['Id']);
+				 				$this->Renovacao_matricula_model->delete_matricula($dataToSave['Id']);
 				 		}
 				 		$resultado = "sucesso";
 				 	}

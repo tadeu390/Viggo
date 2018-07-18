@@ -9,44 +9,18 @@
 			$this->load->database();
 		}
 		/*!
-		*	RESPONSÁVEL POR RETORNAR UMA LISTA DE RENOVAÇÕES DE MATRICULAS OU UMA RENOVAÇÃO ESPECÍFICA.
-		*	
-		*	$Ativo -> Quando passado "TRUE" quer dizer pra retornar somente registro(s) ativos(s), se for passado FALSE retorna tudo.
-		*	$id -> Id de uma renovação específica.
-		*	$page-> Número da página de registros que se quer carregar.
+			RESPONSÁVEL POR CANCELAR UMA MATRÍCULA DO ALUNO, ISSO SÓ PODERÁ SER EXECUTADO PELO USUÁRIO ENQUANTO 
+			O ALUNO CONTIDO NESTA INSCRIÇÃO NÃO ESTIVER EM ALGUMA TURMA. O TRATAMENTO PARA PODER EXECUTAR OU NÃO 
+			EXECUTAR ESTE MÉTODO SERÁ FEITO NA VIEW ONDE IRÁ DESABILITAR O BOTÃO DE EDITAR INSCRIÇÃO QUANDO O ALUNO 
+			JÁ ESTIVER EM ALGUMA TURMA.
+			
+			$inscricao_id -> Id da inscrição do aluno.
 		*/
-		public function get_renovacao_matricula($Ativo = FALSE, $id = false)
+		public function delete_matricula($inscricao_id)
 		{
-			$Ativos = "";
-			if($Ativo == true)
-				$Ativos = " AND Ativo = 1 ";
-
-			if($id === false)
-			{	
-				$query = $this->db->query("
-					SELECT rm.ID AS Id, rm.Inscricao_id AS Inscricao_id, rm.Periodo_letivo_id AS Periodo_letivo_id 
-					FROM Renovacao_matricula rm");
-				
-				return $query->result_array();
-			}
-
 			$query = $this->db->query("
-				SELECT rm.ID AS Id, rm.Inscricao_id AS Inscricao_id, rm.Periodo_letivo_id AS Periodo_letivo_id 
-					FROM Renovacao_matricula rm
-				WHERE rm.Id = ".$this->db->escape($id)." ".$Ativos."");
-
-			return $query->row_array();
-		}
-		/*!
-		*	RESPONSÁVEL POR "APAGAR" UMA RENOVAÇÃO DE MATRÍCULA DO BANCO DE DADOS.
-		*
-		*	$id -> Id da renovação a ser "apagada".
-		*/
-		public function deletar($id)
-		{
-			return $this->db->query("
-				UPDATE Inscricao SET Ativo = 0 
-				WHERE Id = ".$this->db->escape($id)."");
+				DELETE FROM Renovacao_matricula 
+				WHERE Inscricao_id = ".$this->db->escape($inscricao_id)."");
 		}
 		/*!
 		*	RESPONSÁVEL POR CADASTRAR/ATUALIZAR UMA RENOVAÇÃO DE MATRÍCULA NO BANCO DE DADOS.
