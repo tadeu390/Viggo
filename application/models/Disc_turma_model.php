@@ -121,7 +121,7 @@
 			//isso ajuda a quando for criar uma turma a partir de outra turma pode ser alertado pelo sistama caso haja algum aluno da turma selecionada no filtro
 			//que esteja sem renovação da matricula para  oeríodo corrente.
 			$query = $this->db->query("
-				SELECT a.Id, u.Nome as Nome_aluno, adicionados.Aluno_id, 
+				SELECT a.Id, u.Nome as Nome_aluno, a.Id AS Aluno_id, 
 				(SELECT COUNT(*) FROM (
 					SELECT a.Id FROM Disc_turma dt 
 						INNER JOIN Matricula m ON dt.Id = m.Disc_turma_id 
@@ -129,7 +129,7 @@
 						INNER JOIN Usuario u ON a.Usuario_id = u.Id 
 						INNER JOIN Inscricao i ON i.Aluno_id = a.Id 
 						LEFT JOIN Renovacao_matricula r ON r.Inscricao_id = i.Id AND r.Periodo_letivo_id = ".$last_periodo_letivo_id."  
-		                WHERE dt.Turma_id = ".$turma_id." 
+		                WHERE dt.Turma_id = ".$turma_id." AND r.Id IS NOT NULL 
 		                GROUP BY 1) 
 				    AS X) AS Size_total  
 				FROM Disc_turma dt 
@@ -138,6 +138,8 @@
 				INNER JOIN Usuario u ON a.Usuario_id = u.Id 
 				INNER JOIN Inscricao i ON i.Aluno_id = a.Id 
 				INNER JOIN Renovacao_matricula r ON r.Inscricao_id = i.Id AND r.Periodo_letivo_id = ".$last_periodo_letivo_id."
+				/*ABAIXO LEVANTA TODO MUNDO PRESENTE EM UMA TURMA DO ÚLTIMO PERIODO LETIVO 
+				EM UM DETERMINADO CURSO*/
 				LEFT JOIN (SELECT a.Id as Aluno_id 
 	                            FROM Aluno a 
 	                            INNER JOIN Matricula m ON a.Id = m.Aluno_id 
@@ -186,7 +188,7 @@
 						ON m.Id = p.Modalidade_id WHERE p.Id = ".$this->db->escape($periodo_letivo_id).") = ".$this->db->escape($modalidade_id)." 
 				INNER JOIN Renovacao_matricula rm ON rm.Inscricao_id = i.Id AND 
 				rm.Periodo_letivo_id = ".$this->db->escape($periodo_letivo_id)." 
-				/*ABAIXO LEVANTA TODO MUNDO PRESENTE EM UMA TURMA DE UM DETERMINADO PERIODO 
+				/*ABAIXO LEVANTA TODO MUNDO PRESENTE EM UMA TURMA DO ÚLTIMO PERIODO LETIVO 
 				EM UM DETERMINADO CURSO*/
 				LEFT JOIN (SELECT a.Id as Aluno_id 
                             FROM Aluno a 
@@ -255,7 +257,7 @@
 					 );
 					
 					//se não encontrou a disciplina cadastrada para a turma entao insere.
-					if(count($r) == 0)
+					if(empty($r))
 						$this->db->insert('Disc_turma',$dataToSave);
 					else //se a disciplina para a turma já estiver cadastrada então apenas atualiza
 					{	//os dados como o professor e a categoria dela.
@@ -290,7 +292,7 @@
 						);
 						//se nao houver matricula do aluno na turma em questao, 
 						//entao insere pra esse aluno.
-						if(count($r2) == 0)
+						if(empty($r2))
 							$this->db->insert('Matricula',$dataToSaveAluno);
 						else
 						{	//se ja existir da um update.

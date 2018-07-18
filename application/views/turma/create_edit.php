@@ -188,6 +188,7 @@
 							<div class="alunos" id="alunos" style="max-height: 460px; border-radius: 0px;">
 								<?php
 									$data['lista_alunos'] = $lista_alunos;
+									
 
 									$this->load->view("turma/_alunos", $data);
 
