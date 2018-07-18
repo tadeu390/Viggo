@@ -715,6 +715,67 @@ var Main = {
 				return true;
 		}
 	},
+	add_inscricao : function()
+	{
+		if(Main.inscricao_validar() == true)
+		{
+			var max_value_inscricao  =  $("#max_value_inscricao").val();
+
+			var a = new Array();
+			a.push($("#curso_id :selected").text());
+			a.push($("#modalidade_id :selected").text());
+			var d = new Date();
+			var d_dia = d.getDate();
+			var d_mes = d.getMonth()+1;
+			var d_ano = d.getFullYear();
+			var str_d = d_dia + "/" + d_mes + "/" + d_ano;
+			a.push(str_d);
+			a.push("");
+
+			var ids = new Array();
+			ids.push($("curso_id").val());
+			ids.push($("modalidade_id").val());
+			ids.push("");
+			ids.push("");
+
+			var aux = new Array();
+			aux.push("inscricao_curso_id");
+			aux.push("inscricao_modalidade_id");
+			aux.push("data_inscricao");
+			aux.push("");
+
+			var node_tr = document.createElement("TR");
+			node_tr.setAttribute("id","inscricao"+max_value_inscricao);
+			
+			for(var i = 0; i < 4; i++)
+			{
+				var node_td = document.createElement("TD");
+				
+				var input_text = document.createElement("INPUT");
+				input_text.setAttribute("type", "hidden");
+
+				if(i < 4)
+					input_text.setAttribute("value", a[i]);
+				input_text.setAttribute("id",aux[i]+max_value_inscricao);
+				input_text.setAttribute("name",aux[i]+max_value_inscricao);
+				
+				var textnode = document.createTextNode(a[i]); 
+				node_td.appendChild(input_text);
+				node_td.appendChild(textnode);
+				
+				if(i == 3)
+					node_td.innerHTML = "<span class='glyphicon glyphicon-remove pointer' title='Remover' onclick='Main.remove_elemento(\"inscricao"+max_value_inscricao+"\");'></span>";
+				
+				node_tr.appendChild(node_td);
+				document.getElementById("inscricoes").appendChild(node_tr);
+			}
+			$("#max_value_inscricao").val(parseInt(max_value_inscricao) + 1);
+		}
+	},
+	inscricao_validar : function()
+	{
+		return true;
+	},
 	modalidade_validar : function()
 	{
 		if($("#nome").val() == "")

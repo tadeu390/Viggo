@@ -20,7 +20,7 @@
 		public function get_intervalo($Periodo_letivo_id = FALSE)
 		{
 			$query = $this->db->query("
-				SELECT i.Id, i.Dia, i.Hora_inicio, i.Hora_fim, Periodo_letivo_id,  
+				SELECT i.Id, i.Dia, i.Hora_inicio, i.Hora_fim, Periodo_letivo_id, 
 				DATE_FORMAT(i.Data_registro, '%d/%m/%Y') as Data_registro, i.Ativo   
 				FROM Intervalo i
 				WHERE i.Periodo_letivo_id = ".$this->db->escape($Periodo_letivo_id)."");

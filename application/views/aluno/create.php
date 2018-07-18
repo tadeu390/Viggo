@@ -51,16 +51,9 @@
 		<?php
 			$this->load->view("usuario/_create_edit",$obj);
 			echo"<br />";
-			echo "<h3 class=''>Dados de matrícula do aluno</h3>";
-			echo"<div class='form-group relative'>";
-				echo"<input id='matricula' name='matricula' value='".(!empty($obj_aluno['Matricula']) ? $obj_aluno['Matricula']:'')."' type='text' class='input-material'>";
-					echo"<label for='matricula' class='label-material'>Matricula</label>";
-				echo"<div class='input-group mb-2 mb-sm-0 text-danger' id='error-matricula'></div>";
-			echo"</div>";
+		?>
 
-			?>
 			<div class='form-group'>
-				<br />
 				<div class="row">
 					<div class="col-lg-4">
 						<div class='checkbox checbox-switch switch-success custom-controls-stacked'>
@@ -93,7 +86,7 @@
 					</div>
 				</div>
 			</div>
-			<?php
+		<?php
 			if(empty($obj['Id']))
 				echo"<input type='submit' class='btn btn-danger btn-block' style='width: 200px;' value='Cadastrar'>";
 			else
