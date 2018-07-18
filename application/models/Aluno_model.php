@@ -17,7 +17,7 @@
 		public function get_aluno($Id)
 		{
 			$query =  $this->db->query("
-				SELECT a.Id, a.Matricula 
+				SELECT a.Id 
 					FROM Aluno a 
 	
 				WHERE a.Usuario_id = ".$this->db->escape($Id)."");
@@ -31,30 +31,14 @@
 		public function set_aluno($data)
 		{
 			if(empty($this->get_aluno($data['Usuario_id'])))
+			{
 				$this->db->insert('Aluno',$data);
+			}
 			else
 			{
 				$this->db->where('Usuario_id', $data['Usuario_id']);
 				$this->db->update('Aluno', $data);
 			}
-		}
-		/*!
-		*	RESPONSÁVEL POR VERIFICAR SE UMA DETERMINADA MATRICULA JÁ EXISTE NO BANCO DE DADOS.
-		*
-		*	$Matricula -> Matricula a ser validada.
-		*	$Id -> Id do aluno.
-		*/
-		public function matricula_valida($Matricula, $Id)
-		{
-			$query = $this->db->query("
-				SELECT Matricula FROM Aluno 
-				WHERE Matricula = ".$this->db->escape($Matricula)."");
-			$query = $query->row_array();
-			
-			if(!empty($query) && $this->get_aluno($Id)['Matricula'] != $query['Matricula'])
-				return "invalido";
-			
-			return "valido";
 		}
 	}
 ?>

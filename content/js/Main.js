@@ -790,6 +790,10 @@ var Main = {
 				return true;
 		}
 	},
+	inscricao_validar : function()
+	{
+		return true;
+	},
 	modalidade_validar : function()
 	{
 		if($("#nome").val() == "")

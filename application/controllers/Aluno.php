@@ -3,7 +3,6 @@
 	/*!
 	*	ESTA CLASSE TEM POR FUNÇÃO CONTROLAR AS INFORMAÇÕES DE ALUNOS.
 	*/
-	define("ALUNO", 2);
 	class Aluno extends Usuario 
 	{
 		/*
@@ -17,6 +16,9 @@
 			$this->set_menu();
 			$this->data['controller'] = get_class($this);
 			$this->load->model('Aluno_model');
+			$this->load->model('Curso_model');
+			$this->load->model('Modalidade_model');
+			$this->load->model('Regras_model');
 			$this->data['menu_selectd'] = $this->Geral_model->get_identificador_menu("usuario");
 		}
 		/*!
@@ -72,17 +74,10 @@
 		/*!
 		*	RESPONSÁVEL POR VALIDAR OS DADOS NECESSÁRIOS DO ALUNO.
 		*
-		*	$Usuario -> Contém todos os dados do aluno a ser validado.
+		*	$Aluno -> Contém todos os dados do aluno a ser validado.
 		*/
 		public function valida_aluno($Aluno)
 		{
-			if(empty($Aluno['Matricula']) && $Aluno['Usuario_id'] == NULL)
-				return "Informe a matricula";
-			else if(!is_numeric($Aluno['Matricula']))
-				return "A matrícula deve ser um número inteiro";
-			else if($this->Aluno_model->matricula_valida($Aluno['Matricula'], $Aluno['Usuario_id']) == 'invalido')
-				return "O número de matrícula informado já está em uso para outro aluno.";
-			else
 				return 1;
 		}
 		/*!
@@ -108,8 +103,7 @@
 				'Data_nascimento' => $this->input->post('data_nascimento'),
 				'Sexo' => $this->input->post('sexo'),
 				'Grupo_id' => $this->input->post('grupo_id'),
-				'Grupo_id' => $this->input->post('grupo_id'),
-				'Email_notifica_nova_conta' => $this->input->post('email_notifica_nova_conta')
+				'Email_notifica_nova_conta' => $this->input->post('email_notifica_nova_conta'),
 			);
 
 			$dataToSave['Data_nascimento'] = $this->convert_date($dataToSave['Data_nascimento'], "en");
@@ -119,7 +113,7 @@
 
 			if(empty($dataToSave['Ativo']))
 				$dataToSave['Ativo'] = 0;
-			
+
 			//BLOQUEIA ACESSO DIRETO AO MÉTODO
 			 if(!empty($this->input->post()))
 			 {
@@ -131,7 +125,6 @@
 				 	{
 				 		$dataToSaveAluno = array(
 							'Usuario_id' => $this->input->post('id'),
-							'Matricula' => $this->input->post('matricula')
 						);
 						$resultado = $this->valida_aluno($dataToSaveAluno);
 						if($resultado == 1)
@@ -140,7 +133,8 @@
 
 							$dataToSaveAluno['Usuario_id'] = $resultado;//QUANDO ESTIVER CRIANDO ISSO É NECESSARIO, POIS O POST DO ID VIRÁ VAZIO
 
-							$resultado = $this->store_banco($dataToSaveAluno);	
+							$resultado = $this->store_banco($dataToSaveAluno);
+
 							$resultado = "sucesso";
 						}
 				 	}
@@ -172,6 +166,19 @@
 			}
 			else
 				$this->view("templates/permissao", $this->data);
+		}
+		/*!
+		*	RESPONSÁVEL POR GERAR UM JSON DO NOME DE UM PERÍODO LETIVO.
+		*	
+		*	$modalidade_id -> Id da modalidade que se deseja obter o nome do período letivo.
+		*/
+		public function get_periodo_por_modalidade($modalidade_id)
+		{
+			$resultado = $this->Modalidade_model->get_periodo_por_modalidade($modalidade_id)['Nome_periodo'];
+
+			$arr = array('response' => $resultado);
+				header('Content-Type: application/json');
+				echo json_encode($arr);
 		}
 	}
 ?>

@@ -118,7 +118,9 @@
 		public function set_usuario($data)
 		{
 			if(empty($data['Id']))
+			{
 				$this->db->insert('Usuario',$data);
+			}
 			else
 			{
 				$this->db->where('Id', $data['Id']);

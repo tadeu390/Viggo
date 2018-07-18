@@ -176,6 +176,18 @@ a.text-info:hover
 	border-color: #C12054;
 }
 
+.btn-info
+{
+	background-color: #336CD2;
+	border-color: #336CD2;
+}
+
+.btn-warning
+{
+	background-color: #EDC127;
+	border-color: #EDC127;
+}
+
 .btn-outline-danger 
 {
   color:#DD3068;

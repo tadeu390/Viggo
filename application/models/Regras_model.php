@@ -50,7 +50,7 @@
 			}
 
 			$query =  $this->db->query("
-				SELECT pl.Id, pl.Periodo, 
+				SELECT pl.Id, 
 				DATE_FORMAT(pl.Data_registro, '%d/%m/%Y') as Data_registro,
 				pl.Ativo, m.Nome as Nome_modalidade, pl.Limite_falta, pl.Dias_letivos, pl.Media, 
 				pl.Duracao_aula, pl.Hora_inicio_aula, pl.Quantidade_aula, pl.Reprovas, 
