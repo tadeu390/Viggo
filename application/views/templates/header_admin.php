@@ -11,6 +11,7 @@
 		<?= link_tag('content/css/default.css') ?>
 		<?= link_tag('content/css/bootstrap-datepicker.min.css') ?>
 		<?= link_tag('content/css/bootstrap-datepicker3.min.css') ?>
+		<?= link_tag('content/css/chosen.css') ?>
 		<style>
 			.form-control, .form-control:focus, .form-control:hover {
 			border: none;

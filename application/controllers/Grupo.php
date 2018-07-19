@@ -27,17 +27,23 @@
 		*
 		*	$page -> Número da página atual de registros.
 		*/
-		public function index($page = FALSE)
+		public function index($page = FALSE, $field = FALSE, $order = FALSE)
 		{
 			if($page === false)
 				$page = 1;
-			
+			$ordenacao = array(
+				"order" => $this->order_default($order),
+				"field" => $this->field_default($field)
+			);
 			$this->set_page_cookie($page);
 			
 			$this->data['title'] = 'Grupos';
 			if($this->Geral_model->get_permissao(READ, get_class($this)) == TRUE)
 			{
-				$this->data['lista_grupos'] = $this->Grupo_model->get_grupo(FALSE, FALSE, $page);
+				$this->data['paginacao']['order'] =$this->inverte_ordem($ordenacao['order']);
+				$this->data['paginacao']['field'] = $ordenacao['field'];
+
+				$this->data['lista_grupos'] = $this->Grupo_model->get_grupo(FALSE, FALSE, $page, $ordenacao);
 				$this->data['paginacao']['size'] = $this->data['lista_grupos'][0]['Size'];
 				$this->data['paginacao']['pg_atual'] = $page;
 				$this->view("grupo/index", $this->data);

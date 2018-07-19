@@ -4,6 +4,7 @@ var Main = {
 	load_mask : function(){
 		$(document).ready(function(){
 			$('[data-toggle="popover"]').popover(),
+			$(".chosen-select").chosen({no_results_text: "Não encontrado"}); 
 			$('#telefone').mask('(00) 0000-00009'),
 			$('#cep').mask('00000-000'),
 			$('#cpf').mask('000.000.000-00'),
@@ -82,6 +83,15 @@ var Main = {
 		{
 			return str.split('-')[2]+'/'+str.split('-')[1]+'/'+str.split('-')[0];
 		}
+	},
+	corta_string : function (string, tam)
+	{
+		var str = string.substr(0, tam);
+		
+		if(string.length > tam)
+			str = str + "...";
+		
+		return str;
 	},
 	get_cookie : function(cname) {
 		var name = cname + "=";
@@ -409,12 +419,14 @@ var Main = {
 		}
 	},
 	id_registro : "",
-	confirm_delete : function(id){
+	confirm_delete : function(id)
+	{
 		Main.id_registro = id;
 					
 		Main.modal("confirm", "Deseja realmente excluir o registro selecionado?");
 	},
-	delete_registro : function(){
+	delete_registro : function()
+	{
 		$.ajax({
 			url: Main.base_url+$("#controller").val()+'/deletar/'+Main.id_registro,
 			dataType:'json',
@@ -431,8 +443,8 @@ var Main = {
 				},500);
 			});
 	},
-	senha_primeiro_acesso_validar : function() {
-		
+	senha_primeiro_acesso_validar : function() 
+	{
 		Main.method = "altera_senha_primeiro_acesso";
 
 		var codigo_ativacao = $("#codigo_ativacao").val();
@@ -516,8 +528,8 @@ var Main = {
 			Main.show_error("nome", 'Máximo 200 caracteres', 'is-invalid');
 		else if($("#apelido").val() == "")
 			Main.show_error("apelido", 'Informe o apelido da disciplina', 'is-invalid');
-		else if($("#apelido").val().length > 10)
-			Main.show_error("apelido", 'Máximo 10 caracteres', 'is-invalid');
+		else if($("#apelido").val().length > 40)
+			Main.show_error("apelido", 'Máximo 40 caracteres', 'is-invalid');
 		else
 			Main.create_edit();
 	},
@@ -1024,7 +1036,7 @@ var Main = {
 						node_td.innerHTML = "<div style='margin-top: 5px; height: 25px;' class='checkbox checbox-switch switch-success custom-controls-stacked'>"
 							+"<label for='nome_aluno_add"+limite_aluno_add+"' style='display: block; height: 25px;'>"
 								+"<input type='checkbox' id='nome_aluno_add"+limite_aluno_add+"' name='nome_aluno_add"+limite_aluno_add+"' value='1' /><span></span>"
-								+$("#nome_aluno_aux"+i).val()
+								+Main.corta_string($("#nome_aluno_aux"+i).val(), 25)
 							+"</label>"
 						+"</div>";
 						node_td.setAttribute("title",$("#nome_aluno_aux"+i).val());

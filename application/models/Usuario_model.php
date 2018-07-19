@@ -16,7 +16,7 @@
 		*	$page-> Número da página de registros que se quer carregar.
 		*	$filter -> Contém todos os filtros utilizados pelo usuário para a fazer a busca no banco de dados.
 		*/
-		public function get_usuario($Ativo, $Id = FALSE, $page = FALSE, $filter = FALSE)
+		public function get_usuario($Ativo, $Id = FALSE, $page = FALSE, $filter = FALSE, $ordenacao = FALSE)
 		{
 			$Ativos = "";
 			if($Ativo == true)
@@ -25,6 +25,11 @@
 			if ($Id === FALSE)
 			{
 				$filtros = $this->filtros($filter);
+				
+				$order = "";
+				
+				if($ordenacao != FALSE)
+					$order = "ORDER BY u.".$ordenacao['field']." ".$ordenacao['order'];
 				
 				$limit = $page * ITENS_POR_PAGINA;
 				$inicio = $limit - ITENS_POR_PAGINA;
@@ -45,8 +50,8 @@
 					FROM Usuario u 
 					LEFT JOIN Grupo g ON u.Grupo_id = g.Id 
 					WHERE TRUE ".$Ativos."".$filtros."
-					ORDER BY u.Id ASC ".$pagination."");
-
+					".$order." ".$pagination."");
+				
 				return $query->result_array();
 			}
 

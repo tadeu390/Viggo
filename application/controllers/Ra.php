@@ -52,7 +52,8 @@
 		{
 			if($this->Geral_model->get_permissao(DELETE, get_class($this)) == TRUE)
 			{
-				$this->Ra_model->deletar($id);
+				if($this->Ra_model->get_ra(FALSE, $id, FALSE)['Editar_apagar'] != 'bloqueado')
+					$this->Ra_model->deletar($id);
 				$resultado = "sucesso";
 				$arr = array('response' => $resultado);
 				header('Content-Type: application/json');
@@ -69,13 +70,16 @@
 		*/
 		public function edit($id = FALSE)
 		{
-			$this->data['title'] = 'Editar matricula';
+			$this->data['title'] = 'Editar inscrição';
 			if($this->Geral_model->get_permissao(UPDATE, get_class($this)) == TRUE)
 			{
 				$this->data['obj'] = $this->Ra_model->get_ra(FALSE, $id, FALSE);
+				if($this->data['obj']['Editar_apagar'] == 'bloqueado')
+					redirect("ra/index");
 				$filter = array();
 				$filter['grupo_id'] = ALUNO;
-				$this->data['lista_alunos'] = $this->Usuario_model->get_usuario(FALSE, FALSE, FALSE, $filter);
+				$ordenacao = array('order' => 'ASC', 'field' => 'Nome');
+				$this->data['lista_alunos'] = $this->Usuario_model->get_usuario(FALSE, FALSE, FALSE, $filter, $ordenacao);
 				$this->data['lista_cursos'] = $this->Curso_model->get_curso(FALSE, FALSE, FALSE);
 				$this->data['lista_modalidades'] = $this->Modalidade_model->get_modalidade(FALSE, FALSE, FALSE);
 
@@ -89,7 +93,7 @@
 		*/
 		public function create()
 		{
-			$this->data['title'] = 'Nova Inscrição';
+			$this->data['title'] = 'Nova inscrição';
 			if($this->Geral_model->get_permissao(CREATE, get_class($this)) == TRUE)
 			{
 				$this->data['obj'] = $this->Ra_model->get_ra(FALSE, 0, FALSE);
@@ -98,7 +102,8 @@
 
 				$filter = array();
 				$filter['grupo_id'] = ALUNO;
-				$this->data['lista_alunos'] = $this->Usuario_model->get_usuario(FALSE, FALSE, FALSE, $filter);
+				$ordenacao = array('order' => 'ASC', 'field' => 'Nome');
+				$this->data['lista_alunos'] = $this->Usuario_model->get_usuario(FALSE, FALSE, FALSE, $filter, $ordenacao);
 				$this->view("ra/create_edit", $this->data);
 			}
 			else
@@ -183,10 +188,14 @@
 			else
 				redirect('ra/index');
 		}
-
+		/*!
+		*	RESPONSÁVEL POR REALIZAR A MATRICULA OU A RENOVAÇÃO DA MESMA PARA CADA INSCRIÇÃO DE CADA ALUNO.
+		*
+		*	$inscricao_id -> Id da inscrição, identificar um aluno que está renovando a matrícula para o próximo 
+		*	período letivo
+		*/
 		public function matricula($inscricao_id)
 		{
-			
 			$Inscricao = $this->Ra_model->get_ra(false, $inscricao_id, false, false);
 
 			$dataRenovacaoToSave = array(
@@ -194,10 +203,6 @@
 				'Periodo_letivo_id' => $this->Modalidade_model->get_periodo_por_modalidade($Inscricao['Modalidade_id'])['Id']
 			);
 	 		$this->Renovacao_matricula_model->set_renovacao_matricula($dataRenovacaoToSave);
-
-
-
-
 
 			$resultado = $inscricao_id;
 			$arr = array('response' => $resultado);

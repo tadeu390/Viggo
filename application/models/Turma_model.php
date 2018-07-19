@@ -16,7 +16,7 @@
 		*	$page-> Número da página de registros que se quer carregar.
 		*	$filter -> Contém todos os filtros utilizados pelo usuário para a fazer a busca no banco de dados.
 		*/
-		public function get_turma($Ativo, $Id = FALSE, $page = FALSE, $filter = FALSE)
+		public function get_turma($Ativo, $Id = FALSE, $page = FALSE, $filter = FALSE, $ordenacao = FALSE)
 		{
 			$Ativos = "";
 			if($Ativo == TRUE)
@@ -25,7 +25,11 @@
 			if ($Id === FALSE)
 			{
 				$filtros = "";//$this->filtros($filter);
+				$order = "";
 				
+				if($ordenacao != FALSE)
+					$order = "ORDER BY ".$ordenacao['field']." ".$ordenacao['order'];
+
 				$limit = $page * ITENS_POR_PAGINA;
 				$inicio = $limit - ITENS_POR_PAGINA;
 				$step = ITENS_POR_PAGINA;
@@ -36,13 +40,13 @@
 				
 				$query = $this->db->query("
 					SELECT (SELECT count(*) FROM Turma u WHERE TRUE ".$filtros.") AS Size, t.Id, 
-					t.Nome as Nome_turma, t.Ativo, dt.Periodo_letivo_id, CONCAT(p.Periodo, ' / ', m.Nome) as Pe_modi  
+					t.Nome as Nome_turma, t.Ativo as Ativo_turma, dt.Periodo_letivo_id, p.Periodo, m.Nome as Nome_modalidade 
 					FROM Turma t 
 					INNER JOIN Disc_turma dt ON t.Id = dt.Turma_Id 
 					INNER JOIN Periodo_letivo p ON dt.periodo_letivo_id = p.Id 
-					INNER JOIN Modalidade m ON p.Modalidade_id = m.Id  
-					WHERE TRUE ".$Ativos."".$filtros." GROUP BY t.Id, t.Nome
-					ORDER BY t.Id ASC ".$pagination."");
+					INNER JOIN Modalidade m ON p.Modalidade_id = m.Id 
+					WHERE TRUE ".$Ativos."".$filtros." GROUP BY t.Id, t.Nome 
+					".$order." ".$pagination."");
 
 				return $query->result_array();
 			}

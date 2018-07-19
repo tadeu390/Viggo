@@ -180,5 +180,49 @@
 			else
 				return 0;
 		}
+				/*!
+		*	RESPONSÁVEL POR RETORNAR A ORDEM DEFAULT CASO NÃO SEJA ESPECIFICADA ALGUMA PARA 
+		*	ORDENAR OS REGISTROS DA INDEX.
+		*
+		*	$order -> Tipo de ordenação.
+		*/
+		public function order_default($order)
+		{
+			if($order == FALSE)
+				return "DESC";
+			return $order;
+		}
+		/*!
+		*	RESPONSÁVEL POR RETORNAR O CAMPO DEFAULT CASO NÃO SEJA ESPECIFICADO ALGUM PARA 
+		*	ORDENAR OS REGISTROS DA INDEX.
+		*	
+		*	$field-> Campo utilizado para ordenar.
+		*	$field_default -> Campo de ordenação padrão, quando não especificado o campo de ordenacao
+		*	o sistema ordena por padrão usando o campo Id, caso o mesmo não exista, pode ser especificado 
+		*	o campo de ordenacao padrao($field_default)
+		*/
+		public function field_default($field, $field_default = FALSE)
+		{
+			if($field == FALSE)
+			{
+				if($field_default != FALSE)
+					return $field_default;
+				return "Id";
+			}
+			return $field;
+		}
+		/*!
+		*	RESPONSÁVEL POR TROCAR A ORDEM A SER USADA. É USADO TODA VEZ QUE SE CLICA 
+		*	NUMA COLUNA DE UMA DETERMINADA TABELA.
+		*	
+		*	$order -> Ordem corrente ASC ou DESC.
+		*/
+		public function inverte_ordem($order)
+		{
+			if($order == "ASC")
+				return "DESC";
+			else
+				return "ASC";
+		}
 	}
 ?>

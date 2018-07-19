@@ -30,10 +30,15 @@
 		*
 		*	$page -> Número da página atual de registros.
 		*/
-		public function index($page = FALSE)
+		public function index($page = FALSE, $field = FALSE, $order = FALSE)
 		{
 			if($page === FALSE)//QUANDO A PÁGINA NÃO É ESPECIFICADA, POR DEFAULT CARREGA A PRIMEIRA PÁGINA
 				$page = 1;
+
+			$ordenacao = array(
+				"order" => $this->order_default($order),
+				"field" => $this->field_default($field)
+			);
 
 			$this->set_page_cookie($page);
 			
@@ -43,10 +48,13 @@
 
 			if($this->Geral_model->get_permissao(READ, get_class($this)) == TRUE)
 			{
-				$this->data['usuarios'] = $this->Usuario_model->get_usuario(FALSE, FALSE, $page, $this->input->get());
+				$this->data['usuarios'] = $this->Usuario_model->get_usuario(FALSE, FALSE, $page, $this->input->get(), $ordenacao);
 				$this->data['paginacao']['size'] = (!empty($this->data['usuarios']) ? $this->data['usuarios'][0]['Size'] : 0);
 				$this->data['paginacao']['pg_atual'] = $page;
 				//--FILTROS--//
+				$this->data['paginacao']['order'] =$this->inverte_ordem($ordenacao['order']);
+				$this->data['paginacao']['field'] = $ordenacao['field'];
+				
 				$this->data['filtros']['grupos'] = $this->Grupo_model->get_grupo(FALSE, FALSE, FALSE);
 				$this->data['filtros']['outros'] = $this->input->get();
 				//--FILTROS--//

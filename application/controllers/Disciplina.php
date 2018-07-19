@@ -108,8 +108,8 @@
 				return "Máximo 200 caracteres";
 			else if(empty($Disciplina['Apelido']))
 				return "Informe o apelido da disciplina";
-			else if(mb_strlen($Disciplina['Apelido']) > 10)
-				return "Máximo 10 caracteres";
+			else if(mb_strlen($Disciplina['Apelido']) > 40)
+				return "Máximo 40 caracteres";
 			else if($this->Disciplina_model->nome_valido($Disciplina['Nome'], $Disciplina['Id']) == 'invalido')
 				return "O nome informado para a disciplina já se encontra cadastrado no sistema.";
 			else

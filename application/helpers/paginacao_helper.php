@@ -3,6 +3,8 @@
 	{
 		public static function get_paginacao($paginacao,$controller)
 		{
+			$paginacao['filter'] = "/".$paginacao['field']."/".(($paginacao['order'] == 'ASC') ? 'DESC' : 'ASC').(isset($paginacao['filter']) ? $paginacao['filter'] : '');
+			
 			$qtd_paginas = $paginacao['size'] / $paginacao['itens_por_pagina'];
 			//echo $paginacao['size'];
 			$method = "index";

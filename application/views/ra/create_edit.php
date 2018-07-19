@@ -25,17 +25,17 @@
 				
 				<div class="row">
 					<div class="col-lg-6">
-						<div class='form-group'>
+						<div class='form-group text-dark'>
 							<div class='input-group-addon' style="color: #8a8d93;">Aluno</div>
-							<select name='aluno_id' id='aluno_id' class='form-control' style='padding-left: 0px;'>
-								<option value='0' style='background-color: #393836;'>Selecione</option>
+							<select name='aluno_id' id='aluno_id' class='form-control chosen-select ' style='padding-left: 0px;'>
+								<option value='0'>Selecione</option>
 								<?php
 								for ($i = 0; $i < count($lista_alunos); $i++)
 								{
 									$selected = "";
 									if ($lista_alunos[$i]['Id'] == $obj['Usuario_id'])
 										$selected = "selected";
-									echo "<option class='background_dark' $selected value='" . $lista_alunos[$i]['Id'] . "'>" . $lista_alunos[$i]['Nome_usuario'] . "</option>";
+									echo "<option $selected value='" . $lista_alunos[$i]['Id'] . "'>" . $lista_alunos[$i]['Nome_usuario'] . "</option>";
 								}
 								?>
 							</select>

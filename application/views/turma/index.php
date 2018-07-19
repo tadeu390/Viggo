@@ -18,16 +18,41 @@
 				echo "<table class='table table-striped table-hover text-white'>";
 					echo "<thead>";
 						echo"<tr>";
-							echo"<td class='text-right' colspan='5'>";
+							echo"<td class='text-right' colspan='6'>";
 							if(permissao::get_permissao(CREATE, $controller))
 								echo"<a class='btn btn-success' href='".$url."$controller/create/'><span class='glyphicon glyphicon-plus'></span> Nova turma</a>";
 							echo"</td>";
 						echo"</tr>";
 						echo "<tr>";
 							echo "<td>#</td>";
-							echo "<td>Nome</td>";
-							echo "<td>Período letivo</td>";
-							echo "<td>Ativo</td>";
+							echo "<td>";
+								echo"<a href='".$url."$controller/index/".$paginacao['pg_atual']."/Nome_turma/".$paginacao['order']."'>Nome</a>";
+								if($paginacao['order'] == 'DESC' && $paginacao['field'] == 'Nome_turma')
+									echo "&nbsp;<div class='fa fa-chevron-down'></div>";
+								else if($paginacao['order'] == 'ASC' && $paginacao['field'] == 'Nome_turma')
+									echo "&nbsp;<div class='fa fa-chevron-up'></div>";
+							echo"</td>";
+							echo "<td>";
+								echo"<a href='".$url."$controller/index/".$paginacao['pg_atual']."/Nome_modalidade/".$paginacao['order']."'>Modalidade</a>";
+								if($paginacao['order'] == 'DESC' && $paginacao['field'] == 'Nome_modalidade')
+									echo "&nbsp;<div class='fa fa-chevron-down'></div>";
+								else if($paginacao['order'] == 'ASC' && $paginacao['field'] == 'Nome_modalidade')
+									echo "&nbsp;<div class='fa fa-chevron-up'></div>";
+							echo "</td>";
+							echo "<td>";
+								echo"<a href='".$url."$controller/index/".$paginacao['pg_atual']."/Periodo/".$paginacao['order']."'>Período letivo</a>";
+								if($paginacao['order'] == 'DESC' && $paginacao['field'] == 'Periodo')
+									echo "&nbsp;<div class='fa fa-chevron-down'></div>";
+								else if($paginacao['order'] == 'ASC' && $paginacao['field'] == 'Periodo')
+									echo "&nbsp;<div class='fa fa-chevron-up'></div>";
+							echo "</td>";
+							echo "<td>";
+								echo"<a href='".$url."$controller/index/".$paginacao['pg_atual']."/Ativo_turma/".$paginacao['order']."'>Ativo</a>";
+								if($paginacao['order'] == 'DESC' && $paginacao['field'] == 'Ativo_turma')
+									echo "&nbsp;<div class='fa fa-chevron-down'></div>";
+								else if($paginacao['order'] == 'ASC' && $paginacao['field'] == 'Ativo_turma')
+									echo "&nbsp;<div class='fa fa-chevron-up'></div>";
+							echo "</td>";
 							echo "<td class='text-right'>Ações</td>";
 						echo "<tr>";
 					echo "</thead>";
@@ -35,13 +60,14 @@
 						for($i = 0; $i < count($lista_turmas); $i++)
 						{
 							$cor = "";
-							if($lista_turmas[$i]['Ativo'] == 0)
+							if($lista_turmas[$i]['Ativo_turma'] == 0)
 								$cor = "class='color-danger'";
 							echo "<tr>";
 								echo "<td $cor>".($i + 1)."</td>";
 								echo "<td $cor>".$lista_turmas[$i]['Nome_turma']."</td>";
-								echo "<td $cor>".$lista_turmas[$i]['Pe_modi']."</td>";
-								echo "<td $cor>".(($lista_turmas[$i]['Ativo'] == 1) ? 'Sim' : 'Não')."</td>";
+								echo "<td $cor>".$lista_turmas[$i]['Nome_modalidade']."</td>";
+								echo "<td $cor>".$lista_turmas[$i]['Periodo']."</td>";
+								echo "<td $cor>".(($lista_turmas[$i]['Ativo_turma'] == 1) ? 'Sim' : 'Não')."</td>";
 								echo "<td class='text-right'>";
 								if(permissao::get_permissao(UPDATE,$controller))
 									echo "<a href='".$url."$controller/edit/".$lista_turmas[$i]['Id']."' title='Editar' style='cursor: pointer;' class='glyphicon glyphicon-edit  text-danger'></a> | ";
