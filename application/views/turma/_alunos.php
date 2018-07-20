@@ -18,7 +18,7 @@
 					echo"<div style='margin-top: 5px; height: 25px;' class='checkbox checbox-switch switch-success custom-controls-stacked'>";
 						echo "<label for='nome_aluno$i' style='display: block; height: 25px;'>";
 							echo "<input type='checkbox' id='nome_aluno$i' name='nome_aluno$i' value='1' /><span></span>";
-							echo mstring::corta_string($lista_alunos[$i]['Nome_aluno'], 20);
+							echo mstring::corta_string($lista_alunos[$i]['Nome_aluno'], 40);
 						echo "</label>";
 					echo"</div>";
 					echo "<input type='hidden' value='".$lista_alunos[$i]['Aluno_id']."' id='aluno_id$i' name='aluno_id$i'>";

@@ -13,7 +13,7 @@
 		echo "</div>";
 		 
 		$atr = array("id" => "form_filtros", "name" => "form_filtros","class" => "col-lg-10 offset-lg-1 padding20 background_dark", "method" => "get"); 
-		echo form_open("$controller/index", $atr);
+		echo form_open("$controller/index/?".$paginacao['field']."/".(($paginacao['order'] == 'ASC') ? 'DESC' : 'ASC'), $atr);
 
 		$this->load->view("usuario/_filtro", $filtros);
 				
@@ -41,8 +41,20 @@
 						echo"</tr>";
 						echo "<tr>";
 							echo "<td>#</td>";
-							echo "<td>Nome</td>";
-							echo "<td>Ativo</td>";
+							echo "<td>";
+								echo"<a href='".$url."$controller/index/".$paginacao['pg_atual']."/Nome/".$paginacao['order']."".$paginacao['filter']."'>Nome</a>";
+								if($paginacao['order'] == 'DESC' && $paginacao['field'] == 'Nome')
+									echo "&nbsp;<div class='fa fa-chevron-down'></div>";
+								else if($paginacao['order'] == 'ASC' && $paginacao['field'] == 'Nome')
+									echo "&nbsp;<div class='fa fa-chevron-up'></div>";
+							echo"</td>";
+							echo "<td>";
+								echo "<a href='".$url."$controller/index/".$paginacao['pg_atual']."/Ativo/".$paginacao['order']."".$paginacao['filter']."'>Ativo</a>";
+								if($paginacao['order'] == 'DESC' && $paginacao['field'] == 'Ativo')
+									echo "&nbsp;<div class='fa fa-chevron-down'></div>";
+								else if($paginacao['order'] == 'ASC' && $paginacao['field'] == 'Ativo')
+									echo "&nbsp;<div class='fa fa-chevron-up'></div>";
+							echo "</td>";
 							//echo "<td>E-mail</td>";
 							//echo "<td>Grupo</td>";
 							echo "<td class='text-right'>Ações</td>";

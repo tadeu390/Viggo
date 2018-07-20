@@ -49,7 +49,7 @@
 						echo "<td>".$obj['Media']."</td>";
 					echo "</tr>";
 					echo "<tr>";
-						echo "<td>Duaração da aula</td>";
+						echo "<td>Duração da aula</td>";
 						echo "<td>".$obj['Duracao_aula']."</td>";
 					echo "</tr>";
 					echo "<tr>";
@@ -65,7 +65,7 @@
 						echo "<td>".$obj['Reprovas']."</td>";
 					echo "</tr>";
 					echo "<tr>";
-						echo "<td>Quantidade mímima de alunos</td>";
+						echo "<td>Quantidade mínima de alunos</td>";
 						echo "<td>".$obj['Qtd_minima_aluno']."</td>";
 					echo "</tr>";
 					echo "<tr>";

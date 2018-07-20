@@ -27,7 +27,7 @@
 		*
 		*	$page -> Página atual.
 		*/
-		public function index($page = FALSE)
+		public function index($page = FALSE, $field = FALSE, $order = FALSE)
 		{
 			redirect("usuario/index");
 		}

@@ -16,7 +16,7 @@
 		*	todos os registros de acordo com o primeiro argumento.
 		*	$page -> Número da página que determina o intervalo de registros a serem buscados no banco, se for passado como FALSE retorna tudo sem paginar.
 		*/
-		public function get_grupo($Ativo = FALSE, $id = FALSE, $page = FALSE)
+		public function get_grupo($Ativo = FALSE, $id = FALSE, $page = FALSE, $ordenacao = FALSE)
 		{
 			$Ativos = "";
 			if($Ativo == true)
@@ -28,14 +28,19 @@
 				$inicio = $limit - ITENS_POR_PAGINA;
 				$step = ITENS_POR_PAGINA;
 				
+				$order = "";
+				
+				if($ordenacao != FALSE)
+					$order = "ORDER BY ".$ordenacao['field']." ".$ordenacao['order'];
+
 				$pagination = " LIMIT ".$inicio.",".$step;
 				if($page === false)
 					$pagination = "";
 				
 				$query = $this->db->query("
 					SELECT (SELECT count(*) FROM  Grupo) AS Size, Id, Nome AS Nome_grupo, Ativo 
-						FROM Grupo WHERE TRUE ".$Ativos."
-					ORDER BY Data_registro ASC ".$pagination."");
+						FROM Grupo WHERE TRUE ".$Ativos." 
+					".$order." ".$pagination."");
 
 				return $query->result_array();
 			}

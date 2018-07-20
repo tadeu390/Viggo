@@ -32,19 +32,26 @@
 		*
 		*	$page -> Número da página atual de registros.
 		*/
-		public function index($page = FALSE)
+		public function index($page = FALSE, $field = FALSE, $order = FALSE)
 		{
 			if($page === FALSE)
 				$page = 1;
 			
+			$ordenacao = array(
+				"order" => $this->order_default($order),
+				"field" => $this->field_default($field)
+			);
+
 			$this->set_page_cookie($page);
 			
 			$this->data['title'] = 'Turmas';
 			if($this->Geral_model->get_permissao(READ, get_class($this)) == TRUE)
 			{
-				$this->data['lista_turmas'] = $this->Turma_model->get_turma(FALSE, FALSE, $page, FALSE);
+				$this->data['lista_turmas'] = $this->Turma_model->get_turma(FALSE, FALSE, $page, FALSE, $ordenacao);
 				$this->data['paginacao']['size'] = (!empty($this->data['lista_turmas']) ? $this->data['lista_turmas'][0]['Size'] : 0);
 				$this->data['paginacao']['pg_atual'] = $page;
+				$this->data['paginacao']['order'] =$this->inverte_ordem($ordenacao['order']);
+				$this->data['paginacao']['field'] = $ordenacao['field'];
 				$this->view("turma/index", $this->data);
 			}
 			else
@@ -89,12 +96,8 @@
 				$this->data['lista_modalidades'] = $this->Modalidade_model->get_modalidade(FALSE);
 				$this->data['lista_categorias'] = $this->Categoria_model->get_categoria(FALSE);
 				$professor = array('grupo_id' => PROFESSOR);
-				$this->data['lista_professores'] = $this->Usuario_model->get_usuario(TRUE, FALSE, FALSE, $professor);
-
-				/*$aluno = array(
-					'data_registro_inicio' => date("Y-m-d", strtotime('-6 months')), 
-					'data_registro_fim' => date("Y-m-d")
-				);*/
+				$ordenacao = array('order' => 'ASC', 'field' => 'Nome');
+				$this->data['lista_professores'] = $this->Usuario_model->get_usuario(TRUE, FALSE, FALSE, $professor, $ordenacao);
 				$this->data['lista_alunos'] = $this->Disc_turma_model->get_alunos_inscritos($this->data['lista_disc_turma_header']['Curso_id'], $this->data['lista_disc_turma_header']['Modalidade_id'], $this->data['lista_disc_turma_header']['Periodo_letivo_id'], FALSE); //$this->Disc_turma_model->get_disc_turma_filtro($aluno);
 				
 				$this->view("turma/create_edit", $this->data);
@@ -115,39 +118,13 @@
 				$this->data['lista_cursos'] = $this->Curso_model->get_curso(TRUE, FALSE, FALSE, FALSE);
 				$this->data['lista_modalidades'] = $this->Modalidade_model->get_modalidade(FALSE);
 				$this->data['lista_categorias'] = $this->Categoria_model->get_categoria(FALSE);
-				$this->data['lista_turmas'] = array();//$this->Turma_model->get_turma(TRUE, FALSE, FALSE, FALSE);
+				$this->data['lista_turmas'] = array();
 				$this->data['lista_disc_turma_aluno'] = $this->Disc_turma_model->get_disc_turma_aluno(0);
-				
-				/*$aluno = array(
-					'data_registro_inicio' => date("Y-m-d", strtotime('-6 months')), 
-					'data_registro_fim' => date("Y-m-d")
-				);*/
-				//$this->data['lista_alunos'] = $this->Disc_turma_model->get_disc_turma_filtro($aluno);
-				//depois chamar abaixo o metodo que carrega a lista de alunos pra inserir na turma
-				//aqui vai ser preciso chamar pra que possa ser feito o copiar para
 				$this->data['lista_alunos'] = array();
 				$this->view("turma/create_edit", $this->data);
 			}
 			else
 				$this->view("templates/permissao", $this->data);
-		}
-		/*!
-		*	RESPONSÁVEL POR RECEBER DA MODEL UMA LISTA COM AS DISCIPLINAS CADASTRADAS OU NÃO PARA A TURMA EM
-		*	QUESTÃO, DE ACORDO COM O CURSO.
-		*
-		*	$turma_id -> Id da turma pra identificar as disciplinas relacionadas com ela.
-		*	$curso_id -> Id co curso para identificar somente as disciplinas ligadas ao curso em questão.
-		*/
-		public function disciplina_por_curso($turma_id, $curso_id)
-		{
-			$this->data['lista_disc_turma_disciplina'] = $this->Disc_turma_model->get_disc_turma_disciplina($turma_id, $curso_id);
-			$this->data['lista_categorias'] = $this->Categoria_model->get_categoria(FALSE);
-			$professor = array('grupo_id' => PROFESSOR);
-			$this->data['lista_professores'] = $this->Usuario_model->get_usuario(TRUE, FALSE, FALSE, $professor);
-			$resultado = $this->load->view("turma/_disciplinas",$this->data, TRUE);
-			$arr = array('response' => $resultado);
-				header('Content-Type: application/json');
-				echo json_encode($arr);
 		}
 		/*!
 		*	RESPONSÁVEL POR VALIDAR A QUANTIDADE DE DISCIPLINAS, NÃO SE CRIA TURMAS SEM DISCIPLINAS.
@@ -302,6 +279,28 @@
 				$this->view("templates/permissao", $this->data);
 		}
 		/*!
+		*	RESPONSÁVEL POR RECEBER DA MODEL UMA LISTA COM AS DISCIPLINAS CADASTRADAS OU NÃO PARA A TURMA EM
+		*	QUESTÃO, DE ACORDO COM O CURSO.
+		*
+		*	$turma_id -> Id da turma pra identificar as disciplinas relacionadas com ela.
+		*	$curso_id -> Id co curso para identificar somente as disciplinas ligadas ao curso em questão.
+		*/
+		public function disciplina_por_curso($turma_id, $curso_id)
+		{
+			if($this->Geral_model->get_permissao(READ, get_class($this)) == TRUE)
+			{
+				$this->data['lista_disc_turma_disciplina'] = $this->Disc_turma_model->get_disc_turma_disciplina($turma_id, $curso_id);
+				$this->data['lista_categorias'] = $this->Categoria_model->get_categoria(FALSE);
+				$professor = array('grupo_id' => PROFESSOR);
+				$ordenacao = array('order' => 'ASC', 'field' => 'Nome');
+				$this->data['lista_professores'] = $this->Usuario_model->get_usuario(TRUE, FALSE, FALSE, $professor, $ordenacao);
+				$resultado = $this->load->view("turma/_disciplinas",$this->data, TRUE);
+				$arr = array('response' => $resultado);
+					header('Content-Type: application/json');
+					echo json_encode($arr);
+			}
+		}
+		/*!
 		*	RESPONSÁVEL POR RETORNAR UM PERIODO LETIVO NO FORMATO JSON. USADO PARA
 		*	CARREGAR AS INFORMAÇÕES DO PERIODO LETIVO NA TELA DE TURMA.
 		*	
@@ -309,12 +308,15 @@
 		*/
 		public function periodo_letivo($modalidade_id)
 		{
-			$resultado = $this->Modalidade_model->get_periodo_por_modalidade($modalidade_id);
-			if(empty($resultado))
-				$resultado = "0";
-			$arr = array('response' => $resultado);
-				header('Content-Type: application/json');
-				echo json_encode($arr);
+			if($this->Geral_model->get_permissao(READ, get_class($this)) == TRUE)
+			{
+				$resultado = $this->Modalidade_model->get_periodo_por_modalidade($modalidade_id);
+				if(empty($resultado))
+					$resultado = "0";
+				$arr = array('response' => $resultado);
+					header('Content-Type: application/json');
+					echo json_encode($arr);
+			}
 		}
 		/*!
 		*	RESPONSÁVEL POR RETORNAR UM JSON QUE CONTÉM TODOS OS ALUNOS QUE PODEM SER CANDIDATOS
@@ -329,27 +331,30 @@
 		*/
 		public function get_alunos_inscritos($curso_id, $modalidade_id, $turma_id, $nome = false, $data_renovacao_inicio = false, $data_renovacao_fim = false)
 		{
-			//SE ESTIVER EDITANDO ENTAO PEGA O PERÍODO LETIVO DA TURMA.
-			if($turma_id != 0)
-				$periodo_letivo_id = $this->Turma_model->get_turma(FALSE, $turma_id, FALSE, FALSE)['Periodo_letivo_id'];
-			else // SE ESTIVER CRIANDO ENTÃO DEIXAR O MODEL PEGAR O ÚLTIMO PERÍODO LETIVO PARA A MODALIDADE EM QUESTÃO.
-				$periodo_letivo_id = FALSE;
+			if($this->Geral_model->get_permissao(READ, get_class($this)) == TRUE)
+			{
+				//SE ESTIVER EDITANDO ENTAO PEGA O PERÍODO LETIVO DA TURMA.
+				if($turma_id != 0)
+					$periodo_letivo_id = $this->Turma_model->get_turma(FALSE, $turma_id, FALSE, FALSE)['Periodo_letivo_id'];
+				else // SE ESTIVER CRIANDO ENTÃO DEIXAR O MODEL PEGAR O ÚLTIMO PERÍODO LETIVO PARA A MODALIDADE EM QUESTÃO.
+					$periodo_letivo_id = FALSE;
 
-			$alunos = array(
-				'nome' => $nome,
-				'data_renovacao_inicio' => $data_renovacao_inicio, 
-				'data_renovacao_fim' => $data_renovacao_fim
-			);
+				$alunos = array(
+					'nome' => $nome,
+					'data_renovacao_inicio' => $data_renovacao_inicio, 
+					'data_renovacao_fim' => $data_renovacao_fim
+				);
 
-			$this->data['lista_alunos'] = $this->Disc_turma_model->get_alunos_inscritos($curso_id, $modalidade_id, $periodo_letivo_id, $alunos);
-			
-			if(count($this->data['lista_alunos']) == 0)
-				$resultado = "<div class='text-center'>Nenhum aluno encontrado ou todos os alunos já se encontram em uma turma de acordo com a modalidade e curso especificados acima.</div>";
-			else
-				$resultado = $this->load->view("turma/_alunos", $this->data, TRUE);
-			$arr = array('response' => $resultado);
-				header('Content-Type: application/json');
-				echo json_encode($arr);
+				$this->data['lista_alunos'] = $this->Disc_turma_model->get_alunos_inscritos($curso_id, $modalidade_id, $periodo_letivo_id, $alunos);
+				
+				if(count($this->data['lista_alunos']) == 0)
+					$resultado = "<div class='text-center'>Nenhum aluno encontrado ou todos os alunos já se encontram em uma turma de acordo com a modalidade e curso especificados acima.</div>";
+				else
+					$resultado = $this->load->view("turma/_alunos", $this->data, TRUE);
+				$arr = array('response' => $resultado);
+					header('Content-Type: application/json');
+					echo json_encode($arr);
+			}
 		}
 		/*!
 		*	RESPONSÁVEL POR RECEBER DA MODEL AS OPÇÕES DE TURMA JÁ CADASTRADAS NO SISTEMA ANTERIORMENTE,
@@ -361,12 +366,15 @@
 		*/
 		public function get_filtro_turma($curso_id, $modalidade_id)
 		{
-			$this->data['lista_turmas'] = $this->Turma_model->get_turma_cp($curso_id, $modalidade_id, $this->Modalidade_model->get_periodo_por_modalidade($modalidade_id)['Id']);
-			
-			$resultado = $this->load->view("turma/_filtro_turma", $this->data, TRUE);
-			$arr = array('response' => $resultado);
-				header('Content-Type: application/json');
-				echo json_encode($arr);
+			if($this->Geral_model->get_permissao(READ, get_class($this)) == TRUE)
+			{
+				$this->data['lista_turmas'] = $this->Turma_model->get_turma_cp($curso_id, $modalidade_id, $this->Modalidade_model->get_periodo_por_modalidade($modalidade_id)['Id']);
+				
+				$resultado = $this->load->view("turma/_filtro_turma", $this->data, TRUE);
+				$arr = array('response' => $resultado);
+					header('Content-Type: application/json');
+					echo json_encode($arr);
+			}
 		}
 		/*!
 		*	RESPONSÁVEL POR RECEBER DA MODEL TODOS OS ALUNOS DE UMA DETERMINADA TURMA.
@@ -375,22 +383,25 @@
 		*/
 		public function get_alunos_inscritos_turma_antiga($turma_id)
 		{
-			$curso_id = $this->Disc_turma_model->get_curso_turma($turma_id)['Curso_id'];
-			$modalidade_id = $this->Disc_turma_model->get_modalidade_turma($turma_id)['Modalidade_id'];
+			if($this->Geral_model->get_permissao(READ, get_class($this)) == TRUE)
+			{
+				$curso_id = $this->Disc_turma_model->get_curso_turma($turma_id)['Curso_id'];
+				$modalidade_id = $this->Disc_turma_model->get_modalidade_turma($turma_id)['Modalidade_id'];
 
-			$this->data['lista_alunos'] = $this->Disc_turma_model->get_alunos_inscritos_turma_antiga($turma_id, $curso_id, $modalidade_id);
-			$aviso = "";
-			
-			if((!empty($this->data['lista_alunos']) && $this->data['lista_alunos'][0]['Size_total_turma_antiga_renovado'] < $this->data['lista_alunos'][0]['Size_total_turma_antiga']))
-				$aviso = "A turma selecionada contém alunos que não estão disponíveis para serem inclusos nesta turma, 
-						 pois as suas respectivas matrículas não estão renovadas para o período letivo corrente. Talvez deva verificar isso.";
-			else if(empty($this->data['lista_alunos']))
-				$aviso = "Todos os alunos desta turma já se encontram cadastrados em alguma turma do período letivo corrente.";
-			$resultado = $this->load->view("turma/_alunos", $this->data, TRUE);
-			$arr = array('response' => $resultado,
-						 'aviso' => $aviso);
-				header('Content-Type: application/json');
-				echo json_encode($arr);
+				$this->data['lista_alunos'] = $this->Disc_turma_model->get_alunos_inscritos_turma_antiga($turma_id, $curso_id, $modalidade_id);
+				$aviso = "";
+				
+				if((!empty($this->data['lista_alunos']) && $this->data['lista_alunos'][0]['Size_total_turma_antiga_renovado'] < $this->data['lista_alunos'][0]['Size_total_turma_antiga']))
+					$aviso = "A turma selecionada contém alunos que não estão disponíveis para serem inclusos nesta turma, 
+							 pois as suas respectivas matrículas não estão renovadas para o período letivo corrente. Talvez deva verificar isso.";
+				else if(empty($this->data['lista_alunos']))
+					$aviso = "Todos os alunos desta turma já se encontram cadastrados em alguma turma do período letivo corrente.";
+				$resultado = $this->load->view("turma/_alunos", $this->data, TRUE);
+				$arr = array('response' => $resultado,
+							 'aviso' => $aviso);
+					header('Content-Type: application/json');
+					echo json_encode($arr);
+			}
 		}
 	}
 ?>
