@@ -192,22 +192,25 @@
 		*	RESPONSÁVEL POR REALIZAR A MATRICULA OU A RENOVAÇÃO DA MESMA PARA CADA INSCRIÇÃO DE CADA ALUNO.
 		*
 		*	$inscricao_id -> Id da inscrição, identificar um aluno que está renovando a matrícula para o próximo 
-		*	período letivo
+		*	período letivo.
 		*/
 		public function matricula($inscricao_id)
 		{
-			$Inscricao = $this->Ra_model->get_ra(false, $inscricao_id, false, false);
+			if($this->Geral_model->get_permissao(CREATE, get_class($this)) == TRUE || $this->Geral_model->get_permissao(UPDATE, get_class($this)) == TRUE)
+			{
+				$Inscricao = $this->Ra_model->get_ra(false, $inscricao_id, false, false);
 
-			$dataRenovacaoToSave = array(
-				'Inscricao_id' => $inscricao_id, 
-				'Periodo_letivo_id' => $this->Modalidade_model->get_periodo_por_modalidade($Inscricao['Modalidade_id'])['Id']
-			);
-	 		$this->Renovacao_matricula_model->set_renovacao_matricula($dataRenovacaoToSave);
+				$dataRenovacaoToSave = array(
+					'Inscricao_id' => $inscricao_id, 
+					'Periodo_letivo_id' => $this->Modalidade_model->get_periodo_por_modalidade($Inscricao['Modalidade_id'])['Id']
+				);
+		 		$this->Renovacao_matricula_model->set_renovacao_matricula($dataRenovacaoToSave);
 
-			$resultado = $inscricao_id;
-			$arr = array('response' => $resultado);
-				header('Content-Type: application/json');
-				echo json_encode($arr);
+				$resultado = $inscricao_id;
+				$arr = array('response' => $resultado);
+					header('Content-Type: application/json');
+					echo json_encode($arr);
+			}
 		}
 	}
 ?>

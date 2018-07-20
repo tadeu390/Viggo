@@ -310,8 +310,7 @@
 						$inscricao_id = $query->row_array()['Id'];
 						//carrega os dados da matricula do aluno na disciplina (disc_turma_id)
 						$dataToSaveAluno = array(
-							'Sub_turma' => $data['Aluno_to_save'][$j]['Sub_turma'], 
-							'Numero' => 'xx',
+							'Sub_turma' => $data['Aluno_to_save'][$j]['Sub_turma'],
 							'Inscricao_id' => $inscricao_id,
 							'Disc_turma_id' => $r['Id']
 						);
