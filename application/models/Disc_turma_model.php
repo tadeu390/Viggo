@@ -21,10 +21,12 @@
 		public function get_disc_turma_header($id)
 		{
 			$query = $this->db->query("
-				SELECT t.Id, dc.Curso_id, p.Modalidade_id, t.Nome as Nome_turma, p.Qtd_minima_aluno, p.Qtd_maxima_aluno, p.Periodo as Nome_periodo, dt.Periodo_letivo_id   
+				SELECT t.Id, dc.Curso_id, p.Modalidade_id, t.Nome as Nome_turma, p.Qtd_minima_aluno, p.Qtd_maxima_aluno, p.Periodo as Nome_periodo, dt.Periodo_letivo_id, 
+				c.Nome AS Nome_curso, md.Nome AS Nome_modalidade 
 				FROM Turma t 
 				INNER JOIN Disc_turma dt ON t.Id = dt.Turma_id 
 				INNER JOIN Disc_curso dc ON dc.Id = dt.Disc_curso_id 
+				INNER JOIN Curso c ON c.Id = dc.Curso_id 
  				INNER JOIN Periodo_letivo p ON p.Id = dt.Periodo_letivo_id 
                 INNER JOIN Modalidade md ON md.Id = p.Modalidade_id 
                 WHERE  t.Id = ".$this->db->escape($id)."  
@@ -44,12 +46,13 @@
 				$curso_id = 0;
 
 			$query = $this->db->query("
-				SELECT d.Id AS Disciplina_id, dt.Categoria_id, 
+				SELECT d.Id AS Disciplina_id, dt.Categoria_id, cat.Nome AS Nome_categoria, 
 				dt.Professor_id, d.Nome as Nome_disciplina, dt.Turma_id, dc.Id as Disc_curso_id 
 				FROM Disciplina d 
 				INNER JOIN Disc_curso dc ON dc.Disciplina_id = d.Id 
                 LEFT JOIN Disc_turma dt ON dc.Id = dt.Disc_curso_id 
                 	AND dt.Turma_id = ".$this->db->escape($id)." 
+                LEFT JOIN Categoria cat ON cat.Id = dt.Categoria_id 
                 WHERE dc.Curso_id = ".$curso_id." 
                 GROUP BY d.Id, dt.Categoria_id, dt.Professor_id, d.Nome");
 
@@ -71,6 +74,23 @@
 				INNER JOIN Usuario u ON u.Id = a.Usuario_id 
                 WHERE dt.Turma_id = ".$this->db->escape($id)." 
                 GROUP by u.Nome");
+
+			return $query->result_array();
+		}
+		/*!
+		*	RESPONSÁVEL POR RETORNAR UMA LISTA DE PROFESSORES CADASTRADOS PARA UMA TURMA EM UMA DISCIPLINA.
+		*
+		*	$id -> Id da turma.
+		*/
+		public function get_disc_turma_professor($id)
+		{
+			$query = $this->db->query("
+				SELECT u.Nome as Nome_professor, u.Id as Professor_id, d.Id AS Disciplina_id 
+				FROM Disc_turma dt 
+				INNER JOIN Usuario u ON u.Id = dt.Professor_id 
+				INNER JOIN Disc_curso dc ON dc.Id = dt.Disc_curso_id 
+				INNER JOIN Disciplina d ON d.Id = dc.Disciplina_id 
+                WHERE u.Grupo_id = 4 AND dt.Turma_id = ".$this->db->escape($id)."");
 
 			return $query->result_array();
 		}

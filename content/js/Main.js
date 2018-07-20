@@ -521,6 +521,17 @@ var Main = {
 		else
 			Main.create_edit();
 	},
+	ra_validar : function()
+	{
+		if($("#aluno_id").val() == "0")
+			Main.show_error("aluno_id", 'Selecione um aluno.', '');
+		else if($("#curso_id").val() == "0")
+			Main.show_error("curso_id", 'Selecione umcurso.', '');
+		else if($("#modalidade_id").val() == "0")
+			Main.show_error("modalidade_id", 'Selecione uma modalidade.', '');
+		else
+			Main.create_edit();
+	},
 	curso_validar : function()
 	{
 		if($("#nome").val() == "")
@@ -789,10 +800,6 @@ var Main = {
 			else
 				return true;
 		}
-	},
-	inscricao_validar : function()
-	{
-		return true;
 	},
 	modalidade_validar : function()
 	{

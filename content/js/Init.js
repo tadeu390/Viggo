@@ -211,10 +211,10 @@ $(document).ready(
 
     //BTN CADASTROS
 
-    /*$("#form_cadastro_turma").submit(function(event) {
+    $("#form_cadastro_turma").submit(function(event) {
       event.preventDefault();
       Main.validar_turma();
-    });    */
+    });
 
     $("#form_cadastro_Regras").submit(function(event) {
       event.preventDefault();
@@ -229,6 +229,11 @@ $(document).ready(
     $("#form_cadastro_disciplina").submit(function(event) {
       event.preventDefault();
       Main.disciplina_validar();
+    });
+
+    $("#form_cadastro_Ra").submit(function(event) {
+      event.preventDefault();
+      Main.ra_validar();
     });
 
     $("#form_cadastro_configuracoes_email").submit(function(event) {

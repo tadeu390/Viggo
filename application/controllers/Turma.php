@@ -291,6 +291,11 @@
 			{
 				$this->data['title'] = 'Detalhes da turma';
 				$this->data['obj'] = $this->Turma_model->get_turma(FALSE, $id, FALSE, FALSE);
+				$this->data['lista_disc_turma_header'] = $this->Disc_turma_model->get_disc_turma_header($id);
+				$curso_id = $this->Disc_turma_model->get_curso_turma($id)['Curso_id'];
+				$this->data['lista_disc_turma_disciplina'] = $this->Disc_turma_model->get_disc_turma_disciplina($id,$curso_id);
+				$this->data['lista_disc_turma_aluno'] = $this->Disc_turma_model->get_disc_turma_aluno($id);
+				$this->data['lista_disc_turma_professor'] = $this->Disc_turma_model->get_disc_turma_professor($id);
 				$this->view("turma/detalhes", $this->data);
 			}
 			else
