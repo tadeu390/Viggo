@@ -538,7 +538,7 @@ var Main = {
 		if($("#aluno_id").val() == "0")
 			Main.show_error("aluno_id", 'Selecione um aluno.', '');
 		else if($("#curso_id").val() == "0")
-			Main.show_error("curso_id", 'Selecione umcurso.', '');
+			Main.show_error("curso_id", 'Selecione um curso.', '');
 		else if($("#modalidade_id").val() == "0")
 			Main.show_error("modalidade_id", 'Selecione uma modalidade.', '');
 		else
@@ -1118,5 +1118,78 @@ var Main = {
 		    	Main.modal("aviso", "Houve um erro ao processar sua requisição. Verifique sua conexão com a internet.");
 			},500);
 		});
+	},
+	add_disciplina : function()
+	{
+		var valido = 1;
+		var limite_disciplina_add = $("#limite_disciplina_add").val();
+		for(var i = 0; i < $("#limite_disciplina").val(); i++)
+		{
+			if($("#nome_disciplina"+i).is(":checked") == true)
+			{
+				if(Main.add_disciplina_validar($("#disciplina_id"+i).val()) == true)
+				{
+					var node_tr = document.createElement("TR");
+					node_tr.setAttribute("id","disciplina_item_add"+limite_disciplina_add);
+					
+					var node_td = document.createElement("TD");
+					var disciplina_id = document.createElement("INPUT");
+					disciplina_id.setAttribute("type","hidden");
+					disciplina_id.setAttribute("value",$("#disciplina_id"+i).val());
+					disciplina_id.setAttribute("id","disciplina_id_add"+limite_disciplina_add);
+					disciplina_id.setAttribute("name","disciplina_id_add"+limite_disciplina_add);
+					node_td.innerHTML = "<div style='margin-top: 5px; height: 25px;' class='checkbox checbox-switch switch-success custom-controls-stacked'>"
+						+"<label for='nome_disciplina_add"+limite_disciplina_add+"' style='display: block; height: 25px;'>"
+							+"<input type='checkbox' id='nome_disciplina_add"+limite_disciplina_add+"' name='nome_disciplina_add"+limite_disciplina_add+"' value='1' /><span></span>"
+							+Main.corta_string($("#nome_disciplina_aux"+i).val(), 25)
+						+"</label>"
+					+"</div>";
+					node_td.setAttribute("title",$("#nome_disciplina_aux"+i).val());
+					node_td.appendChild(disciplina_id);
+					node_tr.appendChild(node_td);
+
+					node_td = document.createElement("TD");
+					node_td.setAttribute("class","text-center");
+					node_td.setAttribute("style","vertical-align: middle;");
+					var inp_periodo = document.createElement("INPUT");
+					inp_periodo.setAttribute("type","number");
+					inp_periodo.setAttribute("class","text-center");
+					inp_periodo.setAttribute("style","width: 60%;");
+					inp_periodo.setAttribute("maxlength","1");
+					inp_periodo.setAttribute("id","periodo_add"+limite_disciplina_add);
+					inp_periodo.setAttribute("name","periodo_add"+limite_disciplina_add);
+					inp_periodo.setAttribute("value", $("#periodo_base").val());
+					node_td.appendChild(inp_periodo);
+					node_tr.appendChild(node_td);			
+
+					document.getElementById("disciplinas_grade").appendChild(node_tr);
+
+					limite_disciplina_add = parseInt(limite_disciplina_add) + 1;
+					document.getElementById('nome_disciplina'+i).checked = false;//LIMPA OS CHECK MARCADOS
+					
+				}
+				else 
+					valido = 0;
+			}
+		}
+		$("#limite_disciplina_add").val(limite_disciplina_add);
+		if(valido == 0)
+			Main.modal("aviso","Algumas disciplinas selecionadas não foram adicionados, pois já se encontram na lista.");
+	},
+	remove_disciplina : function ()//REMOVE AS DISCIPLINAS ADICIONADAS E SELECIONADAS
+	{
+		for(var i = 0; i < $("#limite_disciplina_add").val(); i++)
+		{
+			if($("#nome_disciplina_add"+i).is(":checked") == true)
+				Main.remove_elemento("disciplina_item_add"+i);
+		}
+	},
+	add_disciplina_validar : function(disciplina_id)
+	{
+		for(var i = 0; i < $("#limite_disciplina_add").val(); i++)
+			if(parseInt($("#disciplina_id_add"+i).val()) == parseInt(disciplina_id) && parseInt($("#periodo_add"+i).val()) == parseInt($("#periodo_base").val()))
+				return false;
+
+		return true;
 	}
 };
