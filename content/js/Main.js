@@ -13,7 +13,7 @@ var Main = {
 			$('#porta').mask('0000'),
 			$('#matricula').mask('0000000000'),
 			$('#data_nascimento').mask('00/00/0000'),
-			$('#periodo').mask('0000/000'),
+			$('#periodo').mask('0000/0000'),
 			$('#limite_falta').mask('000'),
 			$('#dias_letivos').mask('000'),
 			$('#media').mask('000'),
@@ -359,6 +359,10 @@ var Main = {
 			Main.show_error("modalidade_id", 'Selecione uma modalidade para a turma.', '');
 		else if($("#curso_id").val() == "0")
 			Main.show_error("curso_id", 'Selecione um curso para a turma.', '');
+		else if($("#grade_id").val() == "0")
+			Main.show_error("grade_id", 'Selecione uma grade para a turma.', '');
+		else if($("#periodo_grade_id").val() == "0")
+			Main.show_error("periodo_grade_id", 'Selecione um período da grade para a turma.', '');
 		else if(Main.valida_turma_disciplina(1) == false)
 			Main.show_error("disciplinas", 'Selecione pelo menos uma disciplina para a turma.', '');
 		else if(Main.valida_turma_disciplina(2) == false)
@@ -871,6 +875,7 @@ var Main = {
 			});
 			Main.load_data_aluno("");
 			Main.load_data_turma_filtro();
+			Main.load_grade();
 		}
 	},
 	habilita_curso : function(id)
@@ -882,13 +887,41 @@ var Main = {
 		Main.load_data_periodo_letivo(id);
 
 	},
-	load_data_disciplina : function()//carrega as disciplinas de acordo com o curso selecionado para a turma.
+	load_periodo_grade : function(grade_id) 
 	{
-		if($("#curso_id").val() != 0)
+		if($("#grade_id").val() != 0)
 		{
 			Main.modal("aguardar", "Aguarde...");
 			$.ajax({
-				url: Main.base_url+$("#controller").val()+'/disciplina_por_curso/'+(($("#id").val() == "") ? 0 : $("#id").val())+'/'+$("#curso_id").val(),
+				url: Main.base_url+$("#controller").val()+'/periodo_grade/'+$("#grade_id").val(),
+				dataType:'json',
+				cache: false,
+				type: 'POST',
+				success: function (data) 
+				{
+					setTimeout(function(){
+						$("#modal_aguardar").modal('hide');
+					},500);
+					document.getElementById("periodo_grade").innerHTML = data.response;
+					document.getElementById("turma_id").innerHTML = "<option value='0' class='background_dark'>Turmas</option>";
+					if(data.aviso != "")
+						Main.modal("aviso", data.aviso);
+				}
+			}).fail(function(msg){
+			    setTimeout(function(){
+			    	$("#modal_confirm").modal('hide');
+			    	Main.modal("aviso", "Houve um erro ao processar sua requisição. Verifique sua conexão com a internet.");
+				},500);
+			});
+		}
+	},
+	load_grade_disciplina : function()//carrega a grade
+	{
+		if($("#periodo_grade_id").val() != 0)
+		{
+			Main.modal("aguardar", "Aguarde...");
+			$.ajax({
+				url: Main.base_url+$("#controller").val()+'/grade_disciplina/'+$("#grade_id").val()+'/'+$("#periodo_grade_id").val() + '/' + (($("#id").val() == "") ? 0 : $("#id").val()),
 				dataType:'json',
 				cache: false,
 				type: 'POST',
@@ -930,7 +963,7 @@ var Main = {
 			Main.modal("aguardar", "Aguarde...");
 
 			$.ajax({
-				url: Main.base_url + $("#controller").val() + '/get_alunos_inscritos/' + '/' + $("#curso_id").val() + "/" + $("#modalidade_id").val() + '/' + (($("#id").val() == "") ? 0 : $("#id").val()) + '/' + filtro,
+				url: Main.base_url + $("#controller").val() + '/' + pesquisa + '/' + $("#curso_id").val() + "/" + $("#modalidade_id").val() + '/' + (($("#id").val() == "") ? 0 : $("#id").val()) + '/' + $("#grade_id").val() + '/' + filtro,
 				dataType:'json',
 				cache: false,
 				type: 'POST',

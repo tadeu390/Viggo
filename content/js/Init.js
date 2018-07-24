@@ -47,6 +47,7 @@ $(document).ready(
     $('#curso_id').blur(function() {
       if (this.value != '0') Main.show_error("curso_id", '', '');
     });
+
     //TURMAS
 
     //REGRAS LETIVAS
@@ -227,10 +228,10 @@ $(document).ready(
       Main.validar_regras();
     });
 
-    $("#form_cadastro_grade").submit(function(event) {
+    /*$("#form_cadastro_grade").submit(function(event) {
       event.preventDefault();
       Main.validar_grade();
-    });
+    });*/
 
     $("#form_cadastro_curso").submit(function(event) {
       event.preventDefault();

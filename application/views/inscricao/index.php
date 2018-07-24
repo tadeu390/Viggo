@@ -96,7 +96,7 @@
 								if(permissao::get_permissao(UPDATE, $controller) && $lista_matriculas[$i]['Editar_apagar'] == 'editar_apagar')
 									echo "<a href='".$url."$controller/edit/".$lista_matriculas[$i]['Id']."' title='Editar' style='cursor: pointer;' class='glyphicon glyphicon-edit  text-danger'></a> | ";
 								if(permissao::get_permissao(DELETE, $controller) && $lista_matriculas[$i]['Editar_apagar'] == 'editar_apagar')
-									echo "<span onclick='Main.confirm_delete(\"". $lista_matriculas[$i]['Id'] ."\");' id='sp_lead_trash' name='sp_lead_trash' title='Apagar' style='cursor: pointer;' class='glyphicon glyphicon-trash text-danger'></span>";
+									echo "<span onclick='Main.confirm_delete(\"". $lista_matriculas[$i]['Id'] ."\");' id='sp_lead_trash' name='sp_lead_trash' title='Cancelar matrícula/inscrição' style='cursor: pointer;' class='glyphicon glyphicon-trash text-danger'></span>";
 								echo "</td>";
 							echo "</tr>";
 						}

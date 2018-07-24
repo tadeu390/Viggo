@@ -138,7 +138,7 @@
 		/*!
 		*	RESPONSÁVEL POR RETORNAR A MODALIDADE DE UMA DETERMINADA TURMA.
 		*
-		*	$turma_id -> Id da turma que se deseja saber a molidade.
+		*	$turma_id -> Id da turma que se deseja saber a modalidade.
 		*/
 		public function get_modalidade_turma($turma_id)
 		{
@@ -147,6 +147,7 @@
 				FROM Turma t 
 				INNER JOIN Disc_turma dt ON t.Id = dt.Turma_id 
 				INNER JOIN Periodo_letivo p ON p.Id = dt.Periodo_letivo_id 
+				WHERE t.Id = ".$this->db->escape($turma_id)." 
 				GROUP BY 1");
 
 			return $query->row_array();
@@ -252,7 +253,7 @@
 		*	$modalidade_id -> id da modalidade.
 		*	$filtros -> Contém todos os filtros.
 		*/
-		public function get_alunos_inscritos($curso_id, $modalidade_id, $periodo_letivo_id = FALSE, $filtros = FALSE)
+		public function get_alunos_inscritos($curso_id, $modalidade_id, $grade_id, $periodo_letivo_id = FALSE, $filtros = FALSE)
 		{
 			//SE ESTIVER EDITANDO ($periodo_letivo_id != FALSE) então considera o periodo letivo da turma
 			//Se estiver criando considera o último período letivo da modalidade.
@@ -266,7 +267,7 @@
 
 			$f = $this->filtros($filtros);
 			$query = $this->db->query("
-				SELECT A.Id as Aluno_id, u.Nome as Nome_aluno
+				SELECT A.Id as Aluno_id, u.Nome as Nome_aluno 
 				FROM Usuario u 
 				INNER JOIN Aluno a ON u.Id = a.Usuario_id 
 				INNER JOIN Inscricao i ON a.Id = i.Aluno_id AND 
@@ -276,6 +277,12 @@
 						#ON m.Id = p.Modalidade_id WHERE p.Id = ".$this->db->escape($periodo_letivo_id).") = ".$this->db->escape($modalidade_id)." 
 				INNER JOIN Renovacao_matricula rm ON rm.Inscricao_id = i.Id AND 
 				rm.Periodo_letivo_id = ".$this->db->escape($periodo_letivo_id)." 
+				
+				INNER JOIN Matricula m ON m.Inscricao_id = i.Id 
+				INNER JOIN Disc_turma dt ON m.Disc_turma_id = dt.Id 
+				INNER JOIN Disc_grade dg ON dg.Id = dt.Disc_Grade_id 
+				INNER JOIN Grade g ON g.Id = dg.Grade_id 
+
 				#ABAIXO LEVANTA TODO MUNDO COM MATRICULA RENOVADA PRO PERÍODO LETIVO 
 				#CORRENTE E QUE JÁ SE ENCONTRAM EM UMA NOVA TURMA
 				LEFT JOIN (SELECT a.Id as Aluno_id 
@@ -289,7 +296,9 @@
                             AND g.Curso_id = ".$this->db->escape($curso_id)."
                             GROUP BY 1) adicionados ON adicionados.Aluno_id = a.Id 
                 
-                WHERE adicionados.Aluno_id IS NULL AND u.Ativo = 1 ".$f."");
+                WHERE adicionados.Aluno_id IS NULL AND u.Ativo = 1 AND 
+                g.Id = ".$this->db->escape($grade_id)."".$f." 
+                GROUP BY 1,2");
 
 			return $query->result_array();
 		}

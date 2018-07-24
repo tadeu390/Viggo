@@ -1,3 +1,4 @@
+<?php $this->load->helper("mstring");?>
 <?php
 	echo "<table class='table table-striped table-sm table-hover'>";
 		echo "<thead>";
@@ -17,12 +18,12 @@
 					echo "<td>";
 						echo"<div class='form-group'>";
 							echo"<div style='margin-top: 10px; height: 25px;' class='checkbox checbox-switch switch-success custom-controls-stacked'>";
-								echo "<label for='nome_disciplina$i' style='display: block; height: 25px;'>";
-								$checked = "";
-								//if ($lista_disc_turma_disciplina[$i]['Turma_id'] != NULL)
-									$checked = "checked";
-
-								echo "<input readonly type='checkbox' $checked id='nome_disciplina$i' name='nome_disciplina$i' value='1' /><span></span> ".$lista_disc_turma_disciplina[$i]['Nome_disciplina'];
+								echo "<label for='nome_disciplina$i' style='display: block; height: 25px;' title='".$lista_disc_turma_disciplina[$i]['Nome_disciplina']."'>";
+									$checked = "";
+									//if ($lista_disc_turma_disciplina[$i]['Turma_id'] != NULL)
+										$checked = "checked";
+									echo "<input readonly type='checkbox' $checked id='nome_disciplina$i' name='nome_disciplina$i' value='1' /><span></span> ";
+									echo mstring::corta_string($lista_disc_turma_disciplina[$i]['Nome_disciplina'], 45);
 								echo "</label>";
 							echo"</div>";
 							echo "<input type='hidden' id='disc_grade_id$i' name='disc_grade_id$i' value='".$lista_disc_turma_disciplina[$i]['Disc_Grade_id']."' />";

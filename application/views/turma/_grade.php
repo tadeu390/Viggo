@@ -12,6 +12,7 @@
 		}
 	?>
 	</select>
+	<div class='input-group mb-2 mb-sm-0 text-danger' id='error-grade_id'></div>
 
 	<?php else: ?>
 

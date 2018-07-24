@@ -90,19 +90,38 @@
 				$this->data['obj'] = $this->Turma_model->get_turma(FALSE, $id, FALSE, FALSE);
 				$this->data['lista_disc_turma_header'] = $this->Disc_turma_model->get_disc_turma_header($id);
 				$curso_id = $this->Disc_turma_model->get_curso_turma($id)['Curso_id'];
-				$this->data['lista_disc_turma_disciplina'] = $this->Disc_turma_model->get_grade_disciplina($this->Disc_turma_model->get_grade_id_turma($id)['Grade_id'],$this->Disc_turma_model->get_periodo_turma($id)['Periodo'], $id);
+				
+				$this->data['lista_disc_turma_disciplina'] = $this->Disc_turma_model->get_grade_disciplina(
+					$this->Disc_turma_model->get_grade_id_turma($id)['Grade_id'], 
+					$this->Disc_turma_model->get_periodo_turma($id)['Periodo'], $id);
+
 				$this->data['lista_disc_turma_aluno'] = $this->Disc_turma_model->get_disc_turma_aluno($id);
-				$this->data['lista_turmas'] = $this->Turma_model->get_turma_cp($this->data['lista_disc_turma_header']['Curso_id'], $this->data['lista_disc_turma_header']['Modalidade_id'], $this->data['lista_disc_turma_header']['Periodo_letivo_id'],$this->Disc_turma_model->get_grade_id_turma($id)['Grade_id']);
+				
+				$this->data['lista_turmas'] = $this->Turma_model->get_turma_cp(
+					$this->data['lista_disc_turma_header']['Curso_id'], 
+					$this->data['lista_disc_turma_header']['Modalidade_id'], 
+					$this->data['lista_disc_turma_header']['Periodo_letivo_id'], 
+					$this->Disc_turma_model->get_grade_id_turma($id)['Grade_id']);
+
 				$this->data['lista_cursos'] = $this->Curso_model->get_curso(TRUE, FALSE, FALSE, FALSE);
 				$this->data['lista_modalidades'] = $this->Modalidade_model->get_modalidade(FALSE);
 				$this->data['lista_categorias'] = $this->Categoria_model->get_categoria(FALSE);
-				$this->data['lista_grades'] = $this->Grade_model->get_grade_por_mc($this->data['lista_disc_turma_header']['Modalidade_id'], $this->data['lista_disc_turma_header']['Curso_id']);
+				
+				$this->data['lista_grades'] = $this->Grade_model->get_grade_por_mc(
+					$this->data['lista_disc_turma_header']['Modalidade_id'], 
+					$this->data['lista_disc_turma_header']['Curso_id']);
+
 				$this->data['lista_periodo_grade'] = $this->Grade_model->get_periodo_grade($this->Disc_turma_model->get_grade_id_turma($id)['Grade_id']);
+
 				$professor = array('grupo_id' => PROFESSOR);
 				$ordenacao = array('order' => 'ASC', 'field' => 'Nome');
 				$this->data['lista_professores'] = $this->Usuario_model->get_usuario(TRUE, FALSE, FALSE, $professor, $ordenacao);
-				$this->data['lista_alunos'] = $this->Disc_turma_model->get_alunos_inscritos($this->data['lista_disc_turma_header']['Curso_id'], $this->data['lista_disc_turma_header']['Modalidade_id'], $this->data['lista_disc_turma_header']['Periodo_letivo_id'], FALSE); //$this->Disc_turma_model->get_disc_turma_filtro($aluno);
-				
+					
+					$this->data['lista_alunos'] = $this->Disc_turma_model->get_alunos_inscritos(
+					$this->data['lista_disc_turma_header']['Curso_id'],
+					$this->data['lista_disc_turma_header']['Modalidade_id'], 
+					$this->data['lista_disc_turma_header']['Grade_id'],
+					$this->data['lista_disc_turma_header']['Periodo_letivo_id']);
 				$this->view("turma/create_edit", $this->data);
 			}
 			else
@@ -379,7 +398,7 @@
 		*	$data_renovacao_inicio -> Todos os alunos que renovaram a matricula a partir dessa data.
 		*	$data_renoovacao_fim -> Todos os alunos que renovaram a matricula até esta data.
 		*/
-		public function get_alunos_inscritos($curso_id, $modalidade_id, $turma_id, $nome = false, $data_renovacao_inicio = false, $data_renovacao_fim = false)
+		public function get_alunos_inscritos($curso_id, $modalidade_id, $turma_id, $grade_id, $nome = false, $data_renovacao_inicio = false, $data_renovacao_fim = false)
 		{
 			if($this->Geral_model->get_permissao(READ, get_class($this)) == TRUE)
 			{
@@ -395,7 +414,7 @@
 					'data_renovacao_fim' => $data_renovacao_fim
 				);
 
-				$this->data['lista_alunos'] = $this->Disc_turma_model->get_alunos_inscritos($curso_id, $modalidade_id, $periodo_letivo_id, $alunos);
+				$this->data['lista_alunos'] = $this->Disc_turma_model->get_alunos_inscritos($curso_id, $modalidade_id, $grade_id, $periodo_letivo_id, $alunos);
 				
 				if(count($this->data['lista_alunos']) == 0)
 					$resultado = "<div class='text-center'>Nenhum aluno encontrado ou todos os alunos já se encontram em uma turma de acordo com a modalidade e curso especificados acima.</div>";
@@ -469,8 +488,9 @@
 			if($this->Geral_model->get_permissao(READ, get_class($this)) == TRUE)
 			{
 				$curso_id = $this->Disc_turma_model->get_curso_turma($turma_id)['Curso_id'];
-				$modalidade_id = $this->Disc_turma_model->get_modalidade_turma($turma_id)['Modalidade_id'];
 
+				$modalidade_id = $this->Disc_turma_model->get_modalidade_turma($turma_id)['Modalidade_id'];
+		
 				$this->data['lista_alunos'] = $this->Disc_turma_model->get_alunos_inscritos_turma_antiga($turma_id, $curso_id, $modalidade_id);
 				$aviso = "";
 				
