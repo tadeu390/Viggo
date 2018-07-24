@@ -73,7 +73,7 @@
 				<div class="col-lg-6">
 					<div class='form-group relative'>
 						<?php if(empty($obj['Id'])): ?>
-						<select disabled onchange="Main.load_data_disciplina();" name='curso_id' id='curso_id' class='form-control' style='padding-left: 0px;'>
+						<select disabled onchange="Main.load_grade();" name='curso_id' id='curso_id' class='form-control' style='padding-left: 0px;'>
 							<option value='0' style='background-color: #393836;'>Selecione o curso</option>
 							<?php
 							for ($i = 0; $i < count($lista_cursos); $i++)
@@ -102,9 +102,27 @@
 					</div>
 				</div>
 			</div>
+			<div class="row">
+				<div class="col-lg-6" id='grade'>
+					<?php
+						$data['lista_grades'] = $lista_grades;
 
+						$data['lista_disc_turma_header']['Grade_id'] = $lista_disc_turma_header['Grade_id'];
+						$this->load->view("turma/_grade", $data);
+					?>
+				</div>
+				<div class="col-lg-6" id='periodo_grade'>
+					<?php
+						$data['lista_periodo_grade'] = $lista_periodo_grade;
+						$data['lista_disc_turma_header']['Periodo'] = $lista_disc_turma_header['Periodo'];;
+
+						$this->load->view("turma/_periodo_grade", $data);
+					?>
+				</div>
+			</div>
+			<br />
 			<fieldset>
-				<legend class='text-white'>&nbsp;Disciplinas</legend>
+				<legend class='text-white'>&nbsp;Grade disciplinar</legend>
 				<div class='disciplinas' id='disciplinas'>
 					<?php
 						if (!empty($obj['Id']))
@@ -134,59 +152,73 @@
 				<div class='input-group mb-2 mb-sm-0 text-danger' id='error-disciplinas'></div>
 			</fieldset>
 			<br />
-			
+			<div class="row" style="margin: auto; border: 1px solid white;">
+				<div class="col-lg-7 padding10" style="border-right: 1px solid white;">
+					<div class="text-center">Filtro geral</div>
+					<div class="row">
+						<div class="col-lg-6 padding20">
+							<div class="form-group relative" id="data1">
+								<input id="data_renovacao_inicio" value='<?php echo date("d/m/Y", strtotime('-6 months')); ?>' name="data_renovacao_inicio" type="text" class="input-material">
+								<label for="data_renovacao_inicio" class="label-material active">Data de início da renovação</label>
+							</div>
+						</div>
+						<div class="col-lg-6 padding20">
+							<div class="form-group relative" id="data1">
+								<input id="data_renovacao_fim" value='<?php echo date("d/m/Y"); ?>' name="data_renovacao_fim" type="text" class="input-material">
+								<label for="data_renovacao_fim" class="label-material active">Data de fim da renovação</label>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-lg-6">
+							<div class="form-group relative">
+								<input id="nome_aluno" name="nome_aluno" type="text" class="input-material">
+								<label for="nome_aluno" class="label-material">Nome</label>
+							</div>
+						</div>
+						<div class="col-lg-6">
+							<div class='form-group' style="margin-top: 15px">
+								<div class='checkbox checbox-switch switch-success custom-controls-stacked'>
+									<label for='aluno_novo' style='color: #8a8d93;'>
+									<input type='checkbox' id='aluno_novo' name='aluno_novo' value='1' /><span></span> Apenas alunos novos
+									</label>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="row padding10">
+						<button  onclick="Main.load_filtro_turma_aluno();" type="button" class='btn btn-success btn-block'>
+							<span class='glyphicon glyphicon-search'></span> Pesquisar
+						</button>
+					</div>
+				</div>
+				<div class="col-lg-5" >
+					<div class="col-lg-12 padding10 text-center" >
+						Filtrar a partir de uma turma:
+					</div>
+					<div class="col-lg-12 padding10" >
+						<br />
+						<br />
+						<div class='form-group'>
+							<?php
+								echo"<select onchange='Main.load_data_aluno_turma_antiga(this.value);' name='turma_id' id='turma_id' class='form-control padding0'>";
+								echo"<option value='0' class='background_dark'>Turmas</option>";
+									$data['lista_turmas'] = $lista_turmas;
+
+									$this->load->view("turma/_filtro_turma", $data);
+								echo "</select>";
+							?>
+						</div>
+					</div>
+				</div>
+			</div>
+			<br />
 			<div class="row">
 				<div class="col-lg-7">
 					<fieldset>
 						<legend class='text-white'>&nbsp; Alunos</legend>
 						<div style="border-radius: 5px 5px 0px 0px; border: 1px solid white; border-bottom: 0px;">
-							<br />
-							<div class="row background_dark padding10" style="border-radius: 0px; padding-top: 0px; margin: auto;">
-								<div class="col-lg-6">
-									<div class="form-group relative" id="data1">
-										<input id="data_renovacao_inicio" value='<?php echo date("d/m/Y", strtotime('-6 months')); ?>' name="data_renovacao_inicio" type="text" class="input-material">
-										<label for="data_renovacao_inicio" class="label-material active">Data de início da renovação</label>
-									</div>
-								</div>
-								<div class="col-lg-6">
-									<div class="form-group relative" id="data1">
-										<input id="data_renovacao_fim" value='<?php echo date("d/m/Y"); ?>' name="data_renovacao_fim" type="text" class="input-material">
-										<label for="data_renovacao_fim" class="label-material active">Data de fim da renovação</label>
-									</div>
-								</div>
-							</div>
-							<div class="row background_dark padding10" style="margin: auto;">
-								<div class="col-lg-6">
-									<div class="form-group relative">
-										<input id="nome_aluno" name="nome_aluno" type="text" class="input-material">
-										<label for="nome_aluno" class="label-material">Nome</label>
-									</div>
-								</div>
-								<div class="col-lg-6">
-									<button  onclick="Main.load_filtro_turma_aluno();" type="button" class='btn btn-success btn-block'>
-										<span class='glyphicon glyphicon-search'></span> Pesquisar
-									</button>
-								</div>
-							</div>
-							<hr class="background_white" style="margin-top: 0px">
-							<div class="row background_dark padding10" style="border-radius: 0px; padding-top: 0px; margin: auto;">
-								<div class="col-lg-5 padding10 text-center">
-									A partir de uma turma:
-								</div>
-								<div class="col-lg-7">
-									<div class='form-group'>
-										<?php
-											echo"<select onchange='Main.load_data_aluno_turma_antiga(this.value);' name='turma_id' id='turma_id' class='form-control padding0'>";
-											echo"<option value='0' class='background_dark'>Turmas</option>";
-												$data['lista_turmas'] = $lista_turmas;
-
-												$this->load->view("turma/_filtro_turma", $data);
-											echo "</select>";
-										?>
-									</div>
-								</div>
-							</div>
-							<div class="alunos" id="alunos" style="max-height: 460px; border-radius: 0px;">
+							<div class="alunos" id="alunos" style="max-height: 462px; height: 462px;">
 								<?php
 									$data['lista_alunos'] = $lista_alunos;
 									
@@ -296,14 +328,12 @@
 					?>
 				</div>
 			</div>
-			<div class="row">
-				<div class="col-lg-2 padding10">
-					<input type='submit' class='btn btn-danger btn-block' value='Avançar'>
-				</div>	
-				<div class="col-lg-2 padding10">
-					<input type='submit' class='btn btn-danger btn-block' value='Finalizar'>
-				</div>	
-			</div>
+			<?php
+			if (empty($obj['Id']))
+				echo "<input type='submit' class='btn btn-danger btn-block' style='width: 200px;' value='Cadastrar'>";
+			else
+				echo "<input type='submit' class='btn btn-danger btn-block' style='width: 200px;' value='Atualizar'>";
+			?>
 		</form>
 	</div>
 </div>

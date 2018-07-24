@@ -1,7 +1,8 @@
 <br /><br />
+<?php $this->load->helper("mstring");?>
 <div class='row padding20 text-white'>
 	<?php
-    	echo"<div class='col-lg-8 offset-lg-2 padding0'>";
+    	echo"<div class='col-lg-10 offset-lg-1 padding0'>";
 			echo"<nav aria-label='breadcrumb'>";
   				echo"<ol class='breadcrumb'>";
     				echo"<li class='breadcrumb-item'><a href='".$url."ra'>Inscrição</a></li>";
@@ -10,7 +11,7 @@
 			echo"</nav>";
 		echo "</div>";
     ?>
-	<div class='col-lg-8 offset-lg-2 padding background_dark'>
+	<div class='col-lg-10 offset-lg-1 padding background_dark'>
 		<div>
 			<a href='javascript:window.history.go(-1)' title='Voltar'>
 				<span class='glyphicon glyphicon-arrow-left text-white' style='font-size: 25px;'></span>
@@ -35,7 +36,9 @@
 									$selected = "";
 									if ($lista_alunos[$i]['Id'] == $obj['Usuario_id'])
 										$selected = "selected";
-									echo "<option $selected value='" . $lista_alunos[$i]['Id'] . "'>" . $lista_alunos[$i]['Nome_usuario'] . "</option>";
+									echo "<option title='".$lista_alunos[$i]['Nome_ra']."' $selected value='" . $lista_alunos[$i]['Id'] . "'>";
+										echo mstring::corta_string($lista_alunos[$i]['Nome_ra'], 45);
+									echo "</option>";
 								}
 								?>
 							</select>

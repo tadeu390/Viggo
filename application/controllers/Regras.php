@@ -24,15 +24,23 @@
 		*
 		*	$page -> Número da página atual de registros.
 		*/
-		public function index($page = FALSE)
+		public function index($page = FALSE, $field = FALSE, $order = FALSE)
 		{
 			if($page === FALSE)
 				$page = 1;
 			
+			$ordenacao = array(
+				"order" => $this->order_default($order),
+				"field" => $this->field_default($field)
+			);
+
 			$this->data['title'] = 'Regras letivas';
 			if($this->Geral_model->get_permissao(READ, get_class($this)) == TRUE)
 			{
-				$this->data['lista_regras'] = $this->Regras_model->get_regras(FALSE, FALSE, $page, FALSE);
+				$this->data['paginacao']['order'] =$this->inverte_ordem($ordenacao['order']);
+				$this->data['paginacao']['field'] = $ordenacao['field'];
+
+				$this->data['lista_regras'] = $this->Regras_model->get_regras(FALSE, FALSE, $page, FALSE, $ordenacao);
 				$this->data['paginacao']['size'] = (!empty($this->data['lista_regras'][0]['Size']) ? $this->data['lista_regras'][0]['Size'] : 0);
 				$this->data['paginacao']['pg_atual'] = $page;
 				$this->view("regras/index", $this->data);

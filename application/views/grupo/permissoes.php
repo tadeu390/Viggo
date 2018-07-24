@@ -13,13 +13,43 @@
 	<?php
 		echo "<div class='col-lg-10 offset-lg-1 background_dark padding20'>";
 			echo "<div class='form-group'>";
-				echo"<div>";
+				echo"<div class='row'>";
+				echo"<div class='col-lg-6'>";
 					echo"<a href='javascript:window.history.go(-1)' title='Voltar'>";
 						echo"<span class='glyphicon glyphicon-arrow-left text-white' style='font-size: 25px;'></span>";
 					echo"</a>";
 				echo"</div>";
-				echo "<br />";
-				echo "<br />";
+				echo"<div class='col-lg-6'>";
+					echo"<table class='table table-sm table-bordered text-white' style='width: 100%;'>";
+						echo"<tr>";
+							echo"<td colspan='2'class='text-center'>";
+								echo"Legenda";
+							echo"</td>";
+						echo"</tr>";
+						echo"<tr>";
+							echo"<td class='text-center'>";
+								echo"<span class='btn padding0' style='cursor: default; background-color: #EDC127;;'>";
+								echo"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+								echo"</span>";
+							echo"</td>";
+							echo"<td style='vertical-align: middle;'>";
+								echo"Nem todos os usuários possuem permissão.";
+							echo"</td>";
+						echo"</tr>";
+						echo"<tr>";
+							echo"<td class='text-center'>";
+								echo"<span class='btn padding0' style='cursor: default; background-color: #336CD2;'>";
+								echo"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+								echo"</span>";
+							echo"</td>";
+							echo"<td style='vertical-align: middle;'>";
+								echo"Todos os usuários possuem permissão.";
+							echo"</td>";
+						echo"</tr>";
+					echo"</table>";
+				echo"</div>";
+				echo"</div>";
+				
 				$atr = array("id" => "form_cadastro_".$controller."_permissoes", "name" => "form_cadastro"); 
 				echo form_open("$controller/store_permissoes", $atr);
 					
@@ -31,6 +61,43 @@
 						echo "<table class='table table-striped table-hover text-white'>";
 							echo"<thead>";
 								echo "<tr>";
+									echo "<td>";
+										echo"<div title='Habilitar/desabilitar todas as permissões para todos módulos' class='checkbox checbox-switch switch-success custom-controls-stacked'>";
+											echo"<label for='hab_all'>";
+												echo"<input type='checkbox' id='hab_all' name='hab_all'><span></span>";
+											echo"</label>";
+										echo"</div>";
+									echo "</td>";
+									echo "<td>";
+										echo"<div onclick='Main.habilita_permissoes(\"hab_all_criar\");' title='Habilitar/desabilitar permissão de Criar para todos módulos' class='checkbox checbox-switch switch-success custom-controls-stacked'>";
+											echo"<label for='hab_all_criar'>";
+												echo"<input type='checkbox' id='hab_all_criar' name='hab_all_criar'><span></span>";
+											echo"</label>";
+										echo"</div>";
+									echo "</td>";
+									echo "<td>";
+										echo"<div title='Habilitar/desabilitar permissão de Leitura para todos módulos' class='checkbox checbox-switch switch-success custom-controls-stacked'>";
+											echo"<label for='hab_all_ler'>";
+												echo"<input type='checkbox' id='hab_all_ler' name='hab_all_ler'><span></span>";
+											echo"</label>";
+										echo"</div>";
+									echo "</td>";
+									echo "<td>";
+										echo"<div title='Habilitar/desabilitar permissão de Atualizar para todos módulos' class='checkbox checbox-switch switch-success custom-controls-stacked'>";
+											echo"<label for='hab_all_atualizar'>";
+												echo"<input type='checkbox' id='hab_all_atualizar' name='hab_all_atualizar'><span></span>";
+											echo"</label>";
+										echo"</div>";
+									echo "</td>";
+									echo "<td>";
+										echo"<div title='Habilitar/desabilitar permissão de Remover para todos módulos' class='checkbox checbox-switch switch-success custom-controls-stacked'>";
+											echo"<label for='hab_all_remover'>";
+												echo"<input type='checkbox' id='hab_all_remover' name='hab_all_remover'><span></span>";
+											echo"</label>";
+										echo"</div>";
+									echo "</td>";
+								echo "</tr>";
+								echo "<tr>";
 									echo "<td>Módulo</td>";
 									echo "<td>Criar</td>";
 									echo "<td>Ler</td>";
@@ -41,6 +108,7 @@
 							echo"<tbody>";
 								if($lista_grupo_acesso[0]['Qtd_user'] > 0)
 								{
+									$limite = 0;
 									for($i = 0; $i < count($lista_grupo_acesso); $i++)
 									{
 										echo"<tr>";
@@ -118,6 +186,7 @@
 												echo"</div>";
 											echo"</td>";
 										echo"</tr>";
+										$limite = $limite + 1;
 									}
 								}
 								else
@@ -130,6 +199,7 @@
 								}
 							echo"</tbody>";
 						echo "</table>";
+						echo"<input type='hidden' id='qtd' value='$limite'>";
 					echo "</div>";
 
 					if($lista_grupo_acesso[0]['Qtd_user'] > 0)

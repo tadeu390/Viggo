@@ -135,21 +135,24 @@
 		/*!
 		*	RESPONSÁVEL POR RETORNAR UMA LISTA DE TURMAS DE UM DETERMINADO CURSO CUJO PERÍODO LETIVO SEJA
 		*	ANTERIOR AO PASSADO COMO PARÂMETRO. APENAS PARA MONTAR O COMBO BOX DE TURMA PARA USAR COMO FILTRO.
+		*	(TURMAS ANTIGAS)
 		*
 		*	$curso_id -> Curso da turma.
 		*	$periodo_letivo_id -> Id do período letivo das turmas a serem buscadas.
+		*	$grade -> Id da grade selecionada no formulário de cadastro de turma.
 		*/
-		public function get_turma_cp($curso_id, $modalidade_id,$periodo_letivo_id)
+		public function get_turma_cp($curso_id, $modalidade_id,$periodo_letivo_id, $grade_id)//COLOCAR PERIODO
 		{
-
 			$query = $this->db->query("
 				SELECT t.Id, t.Nome as Nome_turma, CONCAT(p.Periodo, ' - ', m.Nome) as Pe_modi  
 				FROM Turma t 
 				INNER JOIN Disc_turma dt ON t.Id = dt.Turma_Id 
-				INNER JOIN Disc_curso dc ON dc.Id = dt.Disc_curso_id 
+				INNER JOIN Disc_grade dg ON dt.Disc_grade_id = dg.Id 
+				INNER JOIN Grade g ON g.Id = dg.Grade_id 
 				INNER JOIN Periodo_letivo p ON dt.Periodo_letivo_id = p.Id 
 				INNER JOIN Modalidade m ON p.Modalidade_id = m.Id 
-				WHERE dc.Curso_id = ".$this->db->escape($curso_id)." AND 
+				WHERE g.Curso_id = ".$this->db->escape($curso_id)." AND 
+				g.Id = ".$this->db->escape($grade_id)." AND 
 				dt.Periodo_letivo_id < ".$this->db->escape($periodo_letivo_id)." AND 
 				m.Id = ".$this->db->escape($modalidade_id)." 
                 GROUP BY 1,2");

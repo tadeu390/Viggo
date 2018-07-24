@@ -11,7 +11,7 @@ var Main = {
 			$('#codigo_ativacao').mask('999999'),
 			$('#itens_por_pagina').mask('000'),
 			$('#porta').mask('0000'),
-			$('#matricula').mask('0000000000'),
+			$('#ra').mask('00000000'),
 			$('#data_nascimento').mask('00/00/0000'),
 			$('#periodo').mask('0000/000'),
 			$('#limite_falta').mask('000'),
@@ -302,9 +302,9 @@ var Main = {
 	},
 	aluno_validar : function()
 	{
-		if($("#matricula").val() == "")
-			Main.show_error("matricula", 'Informe a matricula', 'is-invalid');	
-		else
+		/*if($("#ra").val() == "")
+			Main.show_error("ra", 'Informe o RA do aluno', 'is-invalid');	
+		else*/
 			return true;
 	}
 	,
@@ -875,13 +875,67 @@ var Main = {
 		Main.load_data_periodo_letivo(id);
 
 	},
-	load_data_disciplina : function()//carrega as disciplinas de acordo com o curso selecionado para a turma.
+	load_grade : function ()
 	{
 		if($("#curso_id").val() != 0)
 		{
 			Main.modal("aguardar", "Aguarde...");
 			$.ajax({
-				url: Main.base_url+$("#controller").val()+'/disciplina_por_curso/'+(($("#id").val() == "") ? 0 : $("#id").val())+'/'+$("#curso_id").val(),
+				url: Main.base_url+$("#controller").val()+'/grade/'+$("#modalidade_id").val() + '/' + $("#curso_id").val(),
+				dataType:'json',
+				cache: false,
+				type: 'POST',
+				success: function (data) 
+				{
+					setTimeout(function(){
+						$("#modal_aguardar").modal('hide');
+					},500);
+					document.getElementById("grade").innerHTML = data.response;
+					if(data.aviso != "")
+						Main.modal("aviso", data.aviso);
+				}
+			}).fail(function(msg){
+			    setTimeout(function(){
+			    	$("#modal_confirm").modal('hide');
+			    	Main.modal("aviso", "Houve um erro ao processar sua requisição. Verifique sua conexão com a internet.");
+				},500);
+			});
+		}
+	},
+	load_periodo_grade : function(grade_id) 
+	{
+		if($("#grade_id").val() != 0)
+		{
+			Main.modal("aguardar", "Aguarde...");
+			$.ajax({
+				url: Main.base_url+$("#controller").val()+'/periodo_grade/'+$("#grade_id").val(),
+				dataType:'json',
+				cache: false,
+				type: 'POST',
+				success: function (data) 
+				{
+					setTimeout(function(){
+						$("#modal_aguardar").modal('hide');
+					},500);
+					document.getElementById("periodo_grade").innerHTML = data.response;
+					if(data.aviso != "")
+						Main.modal("aviso", data.aviso);
+				}
+			}).fail(function(msg){
+			    setTimeout(function(){
+			    	$("#modal_confirm").modal('hide');
+			    	Main.modal("aviso", "Houve um erro ao processar sua requisição. Verifique sua conexão com a internet.");
+				},500);
+			});
+		}
+	},
+	load_grade_disciplina : function()//carrega a grade
+	{
+		if($("#periodo_grade_id").val() != 0)
+		{
+			Main.modal("aguardar", "Aguarde...");
+			$.ajax({
+				url: Main.base_url+$("#controller").val()+'/grade_disciplina/'+$("#grade_id").val()+'/'+$("#periodo_grade_id").val() + '/' + (($("#id").val() == "") ? 0 : $("#id").val()),
 				dataType:'json',
 				cache: false,
 				type: 'POST',
@@ -920,10 +974,14 @@ var Main = {
 	{
 		if($("#curso_id").val() != "0" && $("#modalidade_id").val() != "0")
 		{
+			var pesquisa = "get_alunos_inscritos";
+			if($("#aluno_novo").is(":checked") == true)
+				var pesquisa = "get_alunos_inscritos_novos";
+
 			Main.modal("aguardar", "Aguarde...");
 
 			$.ajax({
-				url: Main.base_url + $("#controller").val() + '/get_alunos_inscritos/' + '/' + $("#curso_id").val() + "/" + $("#modalidade_id").val() + '/' + (($("#id").val() == "") ? 0 : $("#id").val()) + '/' + filtro,
+				url: Main.base_url + $("#controller").val() + '/' + pesquisa + '/' + $("#curso_id").val() + "/" + $("#modalidade_id").val() + '/' + (($("#id").val() == "") ? 0 : $("#id").val()) + '/' + filtro,
 				dataType:'json',
 				cache: false,
 				type: 'POST',
@@ -979,7 +1037,7 @@ var Main = {
 			Main.modal("aguardar", "Aguarde...");
 
 			$.ajax({
-				url: Main.base_url + $("#controller").val() + '/get_filtro_turma/' + '/' + $("#curso_id").val() + "/" + $("#modalidade_id").val(),
+				url: Main.base_url + $("#controller").val() + '/get_filtro_turma/' + '/' + $("#curso_id").val() + "/" + $("#modalidade_id").val() + '/' + $("#grade_id").val(),
 				dataType:'json',
 				cache: false,
 				type: 'POST',
@@ -1093,6 +1151,7 @@ var Main = {
 	},
 	matricula : function(inscricao_id)
 	{
+		document.getElementById("bt"+inscricao_id).disabled = true;
 		$.ajax({
 			url: Main.base_url + $("#controller").val() + '/matricula/' + inscricao_id,
 			dataType:'json',
@@ -1103,7 +1162,7 @@ var Main = {
 				setTimeout(function(){
 					$("#modal_aguardar").modal('hide');
 				},500);
-				document.getElementById("bt"+inscricao_id).innerHTML = "<span class='glyphicon glyphicon-ok'></span> Matriculado";
+				document.getElementById("tdbt"+inscricao_id).innerHTML = "<span class='glyphicon glyphicon-ok'></span> Matriculado";
 			}
 		}).fail(function(msg){
 		    setTimeout(function(){

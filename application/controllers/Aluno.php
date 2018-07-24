@@ -78,7 +78,7 @@
 		*/
 		public function valida_aluno($Aluno)
 		{
-				return 1;
+			return 1;
 		}
 		/*!
 		*	RESPONSÁVEL POR ENVIAR AO MODEL OS DADOS DO ALUNO.
@@ -124,7 +124,7 @@
 				 	if($resultado == 1)
 				 	{
 				 		$dataToSaveAluno = array(
-							'Usuario_id' => $this->input->post('id'),
+							'Usuario_id' => $this->input->post('id')
 						);
 						$resultado = $this->valida_aluno($dataToSaveAluno);
 						if($resultado == 1)

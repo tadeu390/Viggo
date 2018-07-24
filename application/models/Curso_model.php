@@ -40,8 +40,8 @@
 					SELECT (SELECT count(*) FROM  Curso WHERE TRUE ".$Ativos.") AS Size, 
 					c.Id, c.Nome as Nome_curso, 
 					DATE_FORMAT(c.Data_registro, '%d/%m/%Y') as Data_registro, 
-						(SELECT COUNT(*) FROM Disc_curso dc 
-							WHERE dc.Curso_id = c.Id) as Qtd_disciplina, c.Ativo   
+						(SELECT COUNT(*) FROM Grade g 
+							WHERE g.Curso_id = c.Id) as Qtd_disciplina, c.Ativo   
 					FROM Curso c 
 					WHERE TRUE ".$Ativos." ORDER BY c.Id ". $pagination ."");
 

@@ -19,13 +19,13 @@
 							echo"<div style='margin-top: 10px; height: 25px;' class='checkbox checbox-switch switch-success custom-controls-stacked'>";
 								echo "<label for='nome_disciplina$i' style='display: block; height: 25px;'>";
 								$checked = "";
-								if ($lista_disc_turma_disciplina[$i]['Turma_id'] != NULL)
+								//if ($lista_disc_turma_disciplina[$i]['Turma_id'] != NULL)
 									$checked = "checked";
 
-								echo "<input type='checkbox' $checked id='nome_disciplina$i' name='nome_disciplina$i' value='1' /><span></span> ".$lista_disc_turma_disciplina[$i]['Nome_disciplina'];
+								echo "<input readonly type='checkbox' $checked id='nome_disciplina$i' name='nome_disciplina$i' value='1' /><span></span> ".$lista_disc_turma_disciplina[$i]['Nome_disciplina'];
 								echo "</label>";
 							echo"</div>";
-							echo "<input type='hidden' id='Disc_curso_id$i' name='Disc_curso_id$i' value='".$lista_disc_turma_disciplina[$i]['Disc_curso_id']."' />";
+							echo "<input type='hidden' id='disc_grade_id$i' name='disc_grade_id$i' value='".$lista_disc_turma_disciplina[$i]['Disc_Grade_id']."' />";
 						echo"</div>";
 					echo"</td>";
 					echo"<td>";

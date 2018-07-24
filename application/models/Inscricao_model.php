@@ -2,7 +2,7 @@
 	/*!
 	*	ESTA MODEL TRATA DAS OPERAÇÕES NA BASE DE DADOS REFERENTE AS MATRICULAS DO SISTEMA.
 	*/
-	class Ra_model extends CI_Model 
+	class Inscricao_model extends CI_Model 
 	{
 		public function __construct()
 		{
@@ -15,7 +15,7 @@
 		*	$id -> Id de uma matricula específica.
 		*	$page-> Número da página de registros que se quer carregar.
 		*/
-		public function get_ra($Ativo = FALSE, $id = false, $page = false, $filter = false)
+		public function get_inscricao($Ativo = FALSE, $id = false, $page = false, $filter = false, $ordenacao = false)
 		{
 			$Ativos = "";
 			if($Ativo == true)
@@ -23,6 +23,11 @@
 
 			if($id === false)
 			{
+				$order = "";
+				
+				if($ordenacao != FALSE)
+					$order = "ORDER BY ".$ordenacao['field']." ".$ordenacao['order'];
+
 				$limit = $page * ITENS_POR_PAGINA;
 				$inicio = $limit - ITENS_POR_PAGINA;
 				$step = ITENS_POR_PAGINA;
@@ -33,6 +38,7 @@
 				
 				$query = $this->db->query("
 					SELECT (SELECT count(*) FROM  Inscricao) AS Size, i.Id, i.Aluno_id AS Aluno_id, 
+					DATE_FORMAT(i.Data_registro, '%d/%m/%Y') as Data_registro, 
 					i.Curso_id, i.Ativo, u.Nome AS Nome_aluno, c.Nome AS Nome_curso, 
 					u.Id AS Usuario_id, m.Nome as Nome_modalidade, m.Id as Modalidade_id, 
 					CASE #SE NAO HOUVER NENHUMA OCORRENCIA DE RENOVACAO DA INSCRICAO NA TABELA DE RENOVACAO, ENTAO CRIAR MATRICULA
@@ -58,7 +64,7 @@
 					INNER JOIN Periodo_letivo p ON p.Id = i.Periodo_letivo_id 
 					INNER JOIN Modalidade m ON m.Id = p.Modalidade_id 
 					WHERE TRUE ".$Ativos." 
-					ORDER BY i.Data_registro ASC ".$pagination."");
+					".$order." ".$pagination."");
 
 				return $query->result_array();
 			}
@@ -110,7 +116,7 @@
 		*
 		*	$data -> Contém os dados da matricula.
 		*/
-		public function set_ra($data)
+		public function set_inscricao($data)
 		{
 			if(empty($data['Id']))
 			{

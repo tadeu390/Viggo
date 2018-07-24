@@ -14,13 +14,23 @@
 		*
 		*	$id -> Id de usuário do aluno.
 		*/
-		public function get_aluno($Id)
+		public function get_aluno($id = FALSE)
 		{
+			if($id === FALSE)
+			{
+				$query =  $this->db->query("
+					SELECT a.Id, u.Nome as Nome_aluno, CONCAT(a.Id,' - ', u.Nome) as Nome_ra 
+						FROM Aluno a 
+						INNER JOIN Usuario u ON a.Usuario_id = u.Id 
+					WHERE u.Ativo = 1 ORDER BY u.Nome ASC");
+				return $query->result_array();
+			}
+
 			$query =  $this->db->query("
 				SELECT a.Id 
 					FROM Aluno a 
 	
-				WHERE a.Usuario_id = ".$this->db->escape($Id)."");
+				WHERE a.Usuario_id = ".$this->db->escape($id)."");
 			return $query->row_array();
 		}
 		/*!

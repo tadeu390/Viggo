@@ -19,6 +19,7 @@
 			$this->load->model("Turma_model");
 			$this->load->model("Curso_model");
 			$this->load->model("Disc_turma_model");
+			$this->load->model("Grade_model");
 
 			$this->load->model("Categoria_model");
 			$this->load->model("Modalidade_model");
@@ -89,12 +90,14 @@
 				$this->data['obj'] = $this->Turma_model->get_turma(FALSE, $id, FALSE, FALSE);
 				$this->data['lista_disc_turma_header'] = $this->Disc_turma_model->get_disc_turma_header($id);
 				$curso_id = $this->Disc_turma_model->get_curso_turma($id)['Curso_id'];
-				$this->data['lista_disc_turma_disciplina'] = $this->Disc_turma_model->get_disc_turma_disciplina($id,$curso_id);
+				$this->data['lista_disc_turma_disciplina'] = $this->Disc_turma_model->get_grade_disciplina($this->Disc_turma_model->get_grade_id_turma($id)['Grade_id'],$this->Disc_turma_model->get_periodo_turma($id)['Periodo'], $id);
 				$this->data['lista_disc_turma_aluno'] = $this->Disc_turma_model->get_disc_turma_aluno($id);
-				$this->data['lista_turmas'] = $this->Turma_model->get_turma_cp($this->data['lista_disc_turma_header']['Curso_id'], $this->data['lista_disc_turma_header']['Modalidade_id'], $this->data['lista_disc_turma_header']['Periodo_letivo_id']);
+				$this->data['lista_turmas'] = $this->Turma_model->get_turma_cp($this->data['lista_disc_turma_header']['Curso_id'], $this->data['lista_disc_turma_header']['Modalidade_id'], $this->data['lista_disc_turma_header']['Periodo_letivo_id'],$this->Disc_turma_model->get_grade_id_turma($id)['Grade_id']);
 				$this->data['lista_cursos'] = $this->Curso_model->get_curso(TRUE, FALSE, FALSE, FALSE);
 				$this->data['lista_modalidades'] = $this->Modalidade_model->get_modalidade(FALSE);
 				$this->data['lista_categorias'] = $this->Categoria_model->get_categoria(FALSE);
+				$this->data['lista_grades'] = $this->Grade_model->get_grade_por_mc($this->data['lista_disc_turma_header']['Modalidade_id'], $this->data['lista_disc_turma_header']['Curso_id']);
+				$this->data['lista_periodo_grade'] = $this->Grade_model->get_periodo_grade($this->Disc_turma_model->get_grade_id_turma($id)['Grade_id']);
 				$professor = array('grupo_id' => PROFESSOR);
 				$ordenacao = array('order' => 'ASC', 'field' => 'Nome');
 				$this->data['lista_professores'] = $this->Usuario_model->get_usuario(TRUE, FALSE, FALSE, $professor, $ordenacao);
@@ -119,6 +122,8 @@
 				$this->data['lista_modalidades'] = $this->Modalidade_model->get_modalidade(FALSE);
 				$this->data['lista_categorias'] = $this->Categoria_model->get_categoria(FALSE);
 				$this->data['lista_turmas'] = array();
+				$this->data['lista_grades'] = array();
+				$this->data['lista_periodo_grade'] = array();
 				$this->data['lista_disc_turma_aluno'] = $this->Disc_turma_model->get_disc_turma_aluno(0);
 				$this->data['lista_alunos'] = array();
 				$this->view("turma/create_edit", $this->data);
@@ -193,7 +198,7 @@
 			for($i = 0; $i < $this->input->post("limite_disciplina"); $i++)
 			{
 				$Disc_to_save_item = array(
-					'Disc_curso_id' => $this->input->post("Disc_curso_id".$i),
+					'Disc_grade_id' => $this->input->post("disc_grade_id".$i),
 					'Value' => $this->input->post("nome_disciplina".$i),
 					'Professor_id' => $this->input->post("professor_id".$i),
 					'Categoria_id' => $this->input->post("categoria_id".$i)
@@ -274,28 +279,6 @@
 				$this->view("templates/permissao", $this->data);
 		}
 		/*!
-		*	RESPONSÁVEL POR RECEBER DA MODEL UMA LISTA COM AS DISCIPLINAS CADASTRADAS OU NÃO PARA A TURMA EM
-		*	QUESTÃO, DE ACORDO COM O CURSO.
-		*
-		*	$turma_id -> Id da turma pra identificar as disciplinas relacionadas com ela.
-		*	$curso_id -> Id co curso para identificar somente as disciplinas ligadas ao curso em questão.
-		*/
-		public function disciplina_por_curso($turma_id, $curso_id)
-		{
-			if($this->Geral_model->get_permissao(READ, get_class($this)) == TRUE)
-			{
-				$this->data['lista_disc_turma_disciplina'] = $this->Disc_turma_model->get_disc_turma_disciplina($turma_id, $curso_id);
-				$this->data['lista_categorias'] = $this->Categoria_model->get_categoria(FALSE);
-				$professor = array('grupo_id' => PROFESSOR);
-				$ordenacao = array('order' => 'ASC', 'field' => 'Nome');
-				$this->data['lista_professores'] = $this->Usuario_model->get_usuario(TRUE, FALSE, FALSE, $professor, $ordenacao);
-				$resultado = $this->load->view("turma/_disciplinas",$this->data, TRUE);
-				$arr = array('response' => $resultado);
-					header('Content-Type: application/json');
-					echo json_encode($arr);
-			}
-		}
-		/*!
 		*	RESPONSÁVEL POR RETORNAR UM PERIODO LETIVO NO FORMATO JSON. USADO PARA
 		*	CARREGAR AS INFORMAÇÕES DO PERIODO LETIVO NA TELA DE TURMA.
 		*	
@@ -314,6 +297,73 @@
 			}
 		}
 		/*!
+		*	RESPONSÁVEL POR RECEBER DA MODEL A ÚLTIMA GRADE ATIVA DE UM CURSO EM UMA DETERMINADA MODALIDADE.
+		*
+		*	$modalidade_id -> Id da modalidade de ensino.
+		*	$curso_id -> Id do curso.
+		*/
+		public function grade($modalidade_id, $curso_id)
+		{
+			if($this->Geral_model->get_permissao(READ, get_class($this)) == TRUE)
+			{
+				$aviso = "";
+				$this->data['lista_grades']	= $this->Grade_model->get_grade_por_mc($modalidade_id, $curso_id);
+				$this->data['lista_disc_turma_header']['Grade_id'] = 0;
+				if(empty($this->data['lista_grades']))
+					$aviso = "Nenhuma grade cadastrada para este curso nesta modalidade foi encontrada";
+				
+				$resultado = $this->load->view("turma/_grade", $this->data, TRUE);
+				$arr = array('response' => $resultado,
+							 'aviso' => $aviso);
+					header('Content-Type: application/json');
+					echo json_encode($arr);			
+			}
+		}
+		/*!
+		*	RESPONSÁVEL POR CARREGAR RECEBER DA MODEL TODOS OS PERÍODOS QUE UMA GRADE TIVER.
+		*
+		*	$grade_id -> Id da grade que se deseja carregar os períodos.
+		*/
+		public function periodo_grade($grade_id)
+		{
+			if($this->Geral_model->get_permissao(READ, get_class($this)) == TRUE)
+			{
+				$aviso = "";
+				$this->data['lista_periodo_grade']	= $this->Grade_model->get_periodo_grade($grade_id);
+				$this->data['lista_disc_turma_header']['Periodo'] = 0;
+				
+				$resultado = $this->load->view("turma/_periodo_grade", $this->data, TRUE);
+				$arr = array('response' => $resultado,
+							 'aviso' => $aviso);
+					header('Content-Type: application/json');
+					echo json_encode($arr);			
+			}
+		}
+		/*!
+		*	RESPONSÁVEL POR RECEBER DA MODEL UMA GRADE CADASTRADA OU NÃO PARA A TURMA EM
+		*	QUESTÃO, DE ACORDO COM O CURSO.
+		*
+		*	$grade_id -> Id da grade..
+		*	$periodo -> Periodo da grade (as disciplinas são agrupadas conforme o período).
+		*	$turma_id -> Id da turma. Para identificar se a turma está cadastrada com a grade e periodo em questão,
+		*	isso permite carrega-la com a categoria professor já selecionado pra cada disciplina.
+		*/
+		public function grade_disciplina($grade_id, $periodo, $turma_id)
+		{
+			if($this->Geral_model->get_permissao(READ, get_class($this)) == TRUE)
+			{
+				$this->data['lista_disc_turma_disciplina'] = $this->Disc_turma_model->get_grade_disciplina($grade_id, $periodo, $turma_id);
+				$this->data['lista_categorias'] = $this->Categoria_model->get_categoria(FALSE);
+				$professor = array('grupo_id' => PROFESSOR);
+				$ordenacao = array('order' => 'ASC', 'field' => 'Nome');
+				$this->data['lista_professores'] = $this->Usuario_model->get_usuario(TRUE, FALSE, FALSE, $professor, $ordenacao);
+				$resultado = $this->load->view("turma/_disciplinas",$this->data, TRUE);
+				$arr = array('response' => $resultado);
+					header('Content-Type: application/json');
+					echo json_encode($arr);
+			}
+		}
+		/*!
 		*	RESPONSÁVEL POR RETORNAR UM JSON QUE CONTÉM TODOS OS ALUNOS QUE PODEM SER CANDIDATOS
 		*	A ESTAREM NA TURMA A SER CRIADA/EDITADA.
 		*
@@ -321,8 +371,8 @@
 		*	$curso_id -> id do curso, para saber todos os inscritos no curso selecionado.
 		*	$modalidade_id -> id da modalidade.
 		*	$nome -> Nome inserido no campo de filtro.
-		*	$data_renovacao_inicio -> Início do intervalo de data em que a matricula foi renovada.
-		*	$data_renovacao_fim -> Fim do intervalo de data em que a matricula foi renovada.
+		*	$data_renovacao_inicio -> Todos os alunos que renovaram a matricula a partir dessa data.
+		*	$data_renoovacao_fim -> Todos os alunos que renovaram a matricula até esta data.
 		*/
 		public function get_alunos_inscritos($curso_id, $modalidade_id, $turma_id, $nome = false, $data_renovacao_inicio = false, $data_renovacao_fim = false)
 		{
@@ -352,18 +402,51 @@
 			}
 		}
 		/*!
+			RESPONSÁVEL POR RECEBER DA MODEL UMA LISTA DE ALUNOS CUJA A INSCRIÇÃO AINDA NÃO ESTEJA LIGADA 
+			EM NENHUM PERIODO ANTERIOR.
+
+			$curso_id -> Id do curso selecionado, carrega apenas alunos inscritos no curso em questão.
+			$modalidade_id -> Id da modalidade, carrega apenas alunos inscritos na modalidade em questão.
+			$turma_id -> Id da turma que está sendo editada ou criada(turma sendo criada o id é zero).
+			$nome -> Filtro por nome de aluno.
+			$data_renovacao_inicio -> Todos os alunos que renovaram a matricula a partir dessa data.
+			$data_renoovacao_fim -> Todos os alunos que renovaram a matricula até esta data.
+		*/
+		public function get_alunos_inscritos_novos($curso_id, $modalidade_id, $turma_id, $nome = false, $data_renovacao_inicio = false, $data_renovacao_fim = false)
+		{
+			if($this->Geral_model->get_permissao(READ, get_class($this)) == TRUE)
+			{
+				$alunos = array(
+					'nome' => $nome,
+					'data_renovacao_inicio' => $data_renovacao_inicio, 
+					'data_renovacao_fim' => $data_renovacao_fim
+				);
+
+				$this->data['lista_alunos'] = $this->Disc_turma_model->get_alunos_inscritos_novos($curso_id, $modalidade_id, $alunos);
+				
+				if(count($this->data['lista_alunos']) == 0)
+					$resultado = "<div class='text-center'>Nenhum aluno encontrado ou todos os alunos já se encontram em uma turma de acordo com a modalidade e curso especificados acima.</div>";
+				else
+					$resultado = $this->load->view("turma/_alunos", $this->data, TRUE);
+				$arr = array('response' => $resultado);
+					header('Content-Type: application/json');
+					echo json_encode($arr);
+			}
+		}
+		/*!
 		*	RESPONSÁVEL POR RECEBER DA MODEL AS OPÇÕES DE TURMA JÁ CADASTRADAS NO SISTEMA ANTERIORMENTE,
 		*	COM ESSE FILTRO É POSSÍVEL CARREGAR TODOS OS ALUNOS DE UMA TURMA ANTIGA PRA SE COLOCAR NUMA TURMA NOVA.
 		*	ISSO RETORNA UM JSON.
 		*
 		*	$curso_id -> Curso selecionado para a turma.
 		*	$modalidade -> Modalidade selecionada para a turma a ser criada.
+		*	$grade_id -> Id da grade selecionada no formulário de cadastro de turma.
 		*/
-		public function get_filtro_turma($curso_id, $modalidade_id)
+		public function get_filtro_turma($curso_id, $modalidade_id, $grade_id)
 		{
 			if($this->Geral_model->get_permissao(READ, get_class($this)) == TRUE)
 			{
-				$this->data['lista_turmas'] = $this->Turma_model->get_turma_cp($curso_id, $modalidade_id, $this->Modalidade_model->get_periodo_por_modalidade($modalidade_id)['Id']);
+				$this->data['lista_turmas'] = $this->Turma_model->get_turma_cp($curso_id, $modalidade_id, $this->Modalidade_model->get_periodo_por_modalidade($modalidade_id)['Id'], $grade_id);
 				
 				$resultado = $this->load->view("turma/_filtro_turma", $this->data, TRUE);
 				$arr = array('response' => $resultado);

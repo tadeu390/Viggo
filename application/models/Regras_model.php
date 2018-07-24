@@ -20,7 +20,7 @@
 		*	$page -> Pagina atual.
 		*	$filter -> Quando há filtros, esta recebe os parâmetros utilizados para filtrar.
 		*/
-		public function get_regras($Ativo, $id = FALSE, $page = FALSE, $filter = FALSE)
+		public function get_regras($Ativo, $id = FALSE, $page = FALSE, $filter = FALSE, $ordenacao = FALSE)
 		{
 			$Ativos = "";
 			if($Ativo == TRUE)
@@ -32,6 +32,11 @@
 				$inicio = $limit - ITENS_POR_PAGINA;
 				$step = ITENS_POR_PAGINA;	
 				
+				$order = "";
+				
+				if($ordenacao != FALSE)
+					$order = "ORDER BY ".$ordenacao['field']." ".$ordenacao['order'];
+
 				$pagination = " LIMIT ".$inicio.",".$step;
 				if($page === FALSE)
 					$pagination = "";
@@ -44,7 +49,7 @@
 					pl.Quantidade_aula, pl.Reprovas, pl.Qtd_minima_aluno, Qtd_maxima_aluno 
 					FROM Periodo_letivo pl 
 					INNER JOIN Modalidade m ON pl.Modalidade_id = m.Id 
-					WHERE TRUE ".$Ativos." ORDER BY pl.Id ". $pagination ."");
+					WHERE TRUE ".$Ativos." ".$order." ". $pagination ."");
 
 				return $query->result_array();
 			}

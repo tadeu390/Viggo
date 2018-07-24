@@ -1,19 +1,20 @@
 <?php
 	require_once("Geral.php");//INCLUI A CLASSE GENÉRICA.
 	/*!
-	*	ESTA CLASSE TEM POR FUNÇÃO CONTROLAR TUDO REFERENTE AS MATRICULAS DO SISTEMA.
+	*	ESTA CLASSE TEM POR FUNÇÃO CONTROLAR TUDO REFERENTE AS MATRICULAS DOS ALUNOS.
 	*/
-	class Ra extends Geral 
+	class Inscricao extends Geral 
 	{
 		public function __construct()
 		{
 			parent::__construct();
 			if($this->Account_model->session_is_valid()['status'] != "ok")
 				redirect('account/login');
-			$this->load->model('Ra_model');
+			$this->load->model('Inscricao_model');
 			$this->load->model('Curso_model');
 			$this->load->model('Modalidade_model');
 			$this->load->model('Usuario_model');
+			$this->load->model('Aluno_model');
 			$this->load->model('Aluno_model');
 			$this->load->model('Renovacao_matricula_model');
 			$this->set_menu();
@@ -24,21 +25,32 @@
 		*	RESPONSÁVEL POR RECEBER DA MODEL TODAS AS MATRICULAS CADASTRADAS E ENVIA-LAS A VIEW.
 		*
 		*	$page -> Número da página atual de registros.
+		*	$field -> Campo de ordenação.
+		*	$order -> Tipo de ordenação (ASC ou DESC).
 		*/
-		public function index($page = FALSE)
+		public function index($page = FALSE, $field = FALSE, $order = FALSE)
 		{
 			if($page === FALSE)
 				$page = 1;
+
+			$ordenacao = array(
+				"order" => $this->order_default($order),
+				"field" => $this->field_default($field)
+			);
 			
 			$this->set_page_cookie($page);
 			
 			$this->data['title'] = 'Matrículas';
 			if($this->Geral_model->get_permissao(READ, get_class($this)) == TRUE)
 			{
-				$this->data['lista_matriculas'] = $this->Ra_model->get_ra(FALSE, FALSE, $page, FALSE);
+				$this->data['lista_matriculas'] = $this->Inscricao_model->get_inscricao(FALSE, FALSE, $page, FALSE, $ordenacao);
 				$this->data['paginacao']['size'] = (!empty($this->data['lista_matriculas']) ? $this->data['lista_matriculas'][0]['Size'] : 0);
 				$this->data['paginacao']['pg_atual'] = $page;
-				$this->view("ra/index", $this->data);
+
+				$this->data['paginacao']['order'] =$this->inverte_ordem($ordenacao['order']);
+				$this->data['paginacao']['field'] = $ordenacao['field'];
+
+				$this->view("inscricao/index", $this->data);
 			}
 			else
 				$this->view("templates/permissao", $this->data);
@@ -52,8 +64,8 @@
 		{
 			if($this->Geral_model->get_permissao(DELETE, get_class($this)) == TRUE)
 			{
-				if($this->Ra_model->get_ra(FALSE, $id, FALSE)['Editar_apagar'] != 'bloqueado')
-					$this->Ra_model->deletar($id);
+				if($this->Inscricao_model->get_inscricao(FALSE, $id, FALSE)['Editar_apagar'] != 'bloqueado')
+					$this->Inscricao_model->deletar($id);
 				$resultado = "sucesso";
 				$arr = array('response' => $resultado);
 				header('Content-Type: application/json');
@@ -73,17 +85,14 @@
 			$this->data['title'] = 'Editar inscrição';
 			if($this->Geral_model->get_permissao(UPDATE, get_class($this)) == TRUE)
 			{
-				$this->data['obj'] = $this->Ra_model->get_ra(FALSE, $id, FALSE);
+				$this->data['obj'] = $this->Inscricao_model->get_inscricao(FALSE, $id, FALSE);
 				if($this->data['obj']['Editar_apagar'] == 'bloqueado')
-					redirect("ra/index");
-				$filter = array();
-				$filter['grupo_id'] = ALUNO;
-				$ordenacao = array('order' => 'ASC', 'field' => 'Nome');
-				$this->data['lista_alunos'] = $this->Usuario_model->get_usuario(FALSE, FALSE, FALSE, $filter, $ordenacao);
+					redirect("inscricao/index");
+				$this->data['lista_alunos'] = $this->Aluno_model->get_aluno(FALSE);
 				$this->data['lista_cursos'] = $this->Curso_model->get_curso(FALSE, FALSE, FALSE);
 				$this->data['lista_modalidades'] = $this->Modalidade_model->get_modalidade(FALSE, FALSE, FALSE);
 
-				$this->view("ra/create_edit", $this->data);
+				$this->view("inscricao/create_edit", $this->data);
 			}
 			else
 				$this->view("templates/permissao", $this->data);
@@ -96,15 +105,12 @@
 			$this->data['title'] = 'Nova inscrição';
 			if($this->Geral_model->get_permissao(CREATE, get_class($this)) == TRUE)
 			{
-				$this->data['obj'] = $this->Ra_model->get_ra(FALSE, 0, FALSE);
+				$this->data['obj'] = $this->Inscricao_model->get_inscricao(FALSE, 0, FALSE);
 				$this->data['lista_cursos'] = $this->Curso_model->get_curso(FALSE, FALSE, FALSE);
 				$this->data['lista_modalidades'] = $this->Modalidade_model->get_modalidade(FALSE, FALSE, FALSE);
 
-				$filter = array();
-				$filter['grupo_id'] = ALUNO;
-				$ordenacao = array('order' => 'ASC', 'field' => 'Nome');
-				$this->data['lista_alunos'] = $this->Usuario_model->get_usuario(FALSE, FALSE, FALSE, $filter, $ordenacao);
-				$this->view("ra/create_edit", $this->data);
+				$this->data['lista_alunos'] = $this->Aluno_model->get_aluno(FALSE);
+				$this->view("inscricao/create_edit", $this->data);
 			}
 			else
 				$this->view("templates/permissao", $this->data);
@@ -114,9 +120,9 @@
 		*
 		*	$Matricula -> Contém todos os dados da matricula a ser validada.
 		*/
-		public function valida_ra($Matricula)
+		public function valida_inscricao($Matricula)
 		{
-			if($Matricula['Aluno_id'] == 0)
+			if($Matricula['Aluno_id'] == '0')
 				return "Selecione um aluno.";
 			else if($Matricula['Curso_id'] == 0)
 				return "Selecione um curso.";
@@ -124,7 +130,7 @@
 				return "Selecione uma modalidade.";
 			else if(empty($this->Modalidade_model->get_periodo_por_modalidade($Matricula['Modalidade_id'])))
 				return "Não existe nenhum período letivo cadastrado para a modalidade selecionada.";
-			else if(!empty($this->Ra_model->get_inscricao_por_aluno($Matricula)) && $this->Ra_model->get_inscricao_por_aluno($Matricula)['Id'] != $Matricula['Id'])
+			else if(!empty($this->Inscricao_model->get_inscricao_por_aluno($Matricula)) && $this->Inscricao_model->get_inscricao_por_aluno($Matricula)['Id'] != $Matricula['Id'])
 				return "O aluno selecionado ja se encontra inscrito para este curso.";
 			else
 				return 1;
@@ -136,7 +142,7 @@
 		*/
 		public function store_banco($dataToSave)
 		{
-			$this->Ra_model->set_ra($dataToSave);
+			$this->Inscricao_model->set_inscricao($dataToSave);
 		}
 		/*!
 		*	RESPONSÁVEL POR CAPTAR OS DADOS DO FORMULÁRIO SUBMETIDO.
@@ -146,7 +152,7 @@
 			$resultado = "sucesso";
 			$dataToSave = array(
 				'Id' => $this->input->post('id'),
-				'Aluno_id' => $this->Aluno_model->get_aluno($this->input->post('aluno_id'))['Id'],
+				'Aluno_id' => $this->input->post('aluno_id'),
 				'Curso_id' => $this->input->post('curso_id'),
 				'Modalidade_id' => $this->input->post('modalidade_id')
 			);
@@ -156,7 +162,7 @@
 			 {
 			 	if($this->Geral_model->get_permissao(CREATE, get_class($this)) == TRUE || $this->Geral_model->get_permissao(UPDATE, get_class($this)) == TRUE)
 				{
-				 	$resultado = $this->valida_ra($dataToSave);
+				 	$resultado = $this->valida_inscricao($dataToSave);
 
 				 	if($resultado == 1)
 				 	{
@@ -165,7 +171,7 @@
 				 		if($this->input->post('matricular') == 1)//se marcar esta opção, cria a inscrição e já gera a matrícula para o período corrente
 				 		{
 					 		$dataRenovacaoToSave = array(
-								'Inscricao_id' => $this->Ra_model->get_inscricao_por_aluno($dataToSave)['Id'],
+								'Inscricao_id' => $this->Inscricao_model->get_inscricao_por_aluno($dataToSave)['Id'],
 								'Periodo_letivo_id' => $this->Modalidade_model->get_periodo_por_modalidade($dataToSave['Modalidade_id'])['Id']
 							);
 					 		$this->Renovacao_matricula_model->set_renovacao_matricula($dataRenovacaoToSave);
@@ -186,7 +192,7 @@
 				echo json_encode($arr);
 			}
 			else
-				redirect('ra/index');
+				redirect('inscricao/index');
 		}
 		/*!
 		*	RESPONSÁVEL POR REALIZAR A MATRICULA OU A RENOVAÇÃO DA MESMA PARA CADA INSCRIÇÃO DE CADA ALUNO.
@@ -198,15 +204,14 @@
 		{
 			if($this->Geral_model->get_permissao(CREATE, get_class($this)) == TRUE || $this->Geral_model->get_permissao(UPDATE, get_class($this)) == TRUE)
 			{
-				$Inscricao = $this->Ra_model->get_ra(false, $inscricao_id, false, false);
+				$Inscricao = $this->Inscricao_model->get_inscricao(false, $inscricao_id, false, false);
 
 				$dataRenovacaoToSave = array(
 					'Inscricao_id' => $inscricao_id, 
 					'Periodo_letivo_id' => $this->Modalidade_model->get_periodo_por_modalidade($Inscricao['Modalidade_id'])['Id']
 				);
-		 		$this->Renovacao_matricula_model->set_renovacao_matricula($dataRenovacaoToSave);
-
-				$resultado = $inscricao_id;
+		 		$resultado = $this->Renovacao_matricula_model->set_renovacao_matricula($dataRenovacaoToSave);
+		 		
 				$arr = array('response' => $resultado);
 					header('Content-Type: application/json');
 					echo json_encode($arr);
