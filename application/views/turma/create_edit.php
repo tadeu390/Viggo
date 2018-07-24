@@ -5,7 +5,7 @@
     	echo"<div class='col-lg-12 padding0'>";
 			echo"<nav aria-label='breadcrumb'>";
   				echo"<ol class='breadcrumb'>";
-    				echo"<li class='breadcrumb-item'><a href='".$url."turma'>Turmas</a></li>";
+    				echo"<li class='breadcrumb-item'><a href='".$url.$controller."'>Turmas</a></li>";
     				echo "<li class='breadcrumb-item active' aria-current='page'>".((isset($obj['Id'])) ? 'Editar turma' : 'Nova turma')."</li>";
     			echo "</ol>";
 			echo"</nav>";

@@ -4,7 +4,7 @@
     	echo"<div class='col-lg-10 offset-lg-1 padding0'>";
 			echo"<nav aria-label='breadcrumb'>";
   				echo"<ol class='breadcrumb'>";
-    				echo"<li class='breadcrumb-item'><a href='".$url."grupo'>Grupos</a></li>";
+    				echo"<li class='breadcrumb-item'><a href='".$url.$controller."'>Grupos</a></li>";
     				echo "<li class='breadcrumb-item active' aria-current='page'>Permissões dos usuários do grupo ".$grupo."</li>";
     			echo "</ol>";
 			echo"</nav>";

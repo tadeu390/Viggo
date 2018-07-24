@@ -5,7 +5,7 @@
     	echo"<div class='col-lg-10 offset-lg-1 padding0'>";
 			echo"<nav aria-label='breadcrumb'>";
   				echo"<ol class='breadcrumb'>";
-    				echo"<li class='breadcrumb-item'><a href='".$url."ra'>Inscrição</a></li>";
+    				echo"<li class='breadcrumb-item'><a href='".$url.$controller."'>Inscrição</a></li>";
     				echo "<li class='breadcrumb-item active' aria-current='page'>".((isset($obj['Id'])) ? 'Editar inscrição' : 'Nova inscrição')."</li>";
     			echo "</ol>";
 			echo"</nav>";
@@ -34,7 +34,7 @@
 								for ($i = 0; $i < count($lista_alunos); $i++)
 								{
 									$selected = "";
-									if ($lista_alunos[$i]['Id'] == $obj['Usuario_id'])
+									if ($lista_alunos[$i]['Usuario_id'] == $obj['Usuario_id'])
 										$selected = "selected";
 									echo "<option title='".$lista_alunos[$i]['Nome_ra']."' $selected value='" . $lista_alunos[$i]['Id'] . "'>";
 										echo mstring::corta_string($lista_alunos[$i]['Nome_ra'], 45);

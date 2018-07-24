@@ -4,7 +4,7 @@
     	echo"<div class='col-lg-10 offset-lg-1 padding0'>";
 			echo"<nav aria-label='breadcrumb'>";
   				echo"<ol class='breadcrumb'>";
-    				echo"<li class='breadcrumb-item'><a href='".$url."regras'>Regras letivas</a></li>";
+    				echo"<li class='breadcrumb-item'><a href='".$url.$controller."'>Regras letivas</a></li>";
     				echo "<li class='breadcrumb-item active' aria-current='page'>".((isset($obj['Id'])) ? 'Editar regra' : 'Nova regra')."</li>";
     			echo "</ol>";
 			echo"</nav>";

@@ -24,7 +24,7 @@
 							echo "Registro acadêmico (RA)";
 						echo "</td>";
 						echo "<td class='text-left'>";
-							echo $obj['Id'];
+							echo $obj_aluno['Id'];
 						echo "</td>";
 					echo "</tr>";
 				echo "</table>";

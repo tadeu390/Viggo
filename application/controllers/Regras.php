@@ -16,7 +16,7 @@
 			$this->load->model('Intervalo_model');
 			$this->load->model('Bimestre_model');
 			$this->set_menu();
-			$this->data['controller'] = get_class($this);
+			$this->data['controller'] = strtolower(get_class($this));
 			$this->data['menu_selectd'] = $this->Geral_model->get_identificador_menu(strtolower(get_class($this)));
 		}
 		/*!

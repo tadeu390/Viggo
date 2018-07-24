@@ -4,7 +4,7 @@
     	echo"<div class='col-lg-8 offset-lg-2 padding0'>";
 			echo"<nav aria-label='breadcrumb'>";
   				echo"<ol class='breadcrumb'>";
-    				echo"<li class='breadcrumb-item'><a href='".$url."modulo'>Módulos</a></li>";
+    				echo"<li class='breadcrumb-item'><a href='".$url.$controller."'>Módulos</a></li>";
     				echo "<li class='breadcrumb-item active' aria-current='page'>".((isset($obj['Id'])) ? 'Editar módulo' : 'Novo módulo')."</li>";
     			echo "</ol>";
 			echo"</nav>";

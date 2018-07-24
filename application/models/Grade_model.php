@@ -1,14 +1,9 @@
 <?php
-	/*!
-	*	ESTA MODAL TRATA DAS OPERAÇÕES NO BANCO DE DADOS REFERENTE AS INFORMAÇÕES DAS GRADES
-	*	DISCIPLINARES DOS CURSOS.
+	/*	
+		ESTA MODEL TRATA DAS OPERAÇÕES NA BASE DE DADOS REFERENTE AS GRADES DO SISTEMA.
 	*/
 	class Grade_model extends CI_Model 
 	{
-		/*
-			CONECTA AO BANCO DE DADOS DEIXANDO A CONEX�O ACESS�VEL PARA OS METODOS
-			QUE NECESSITAREM REALIZAR CONSULTAS.
-		*/
 		public function __construct()
 		{
 			$this->load->database();
@@ -21,37 +16,41 @@
 		*	$page -> Pagina atual.
 		*	$filter -> Quando há filtros, esta recebe os parâmetros utilizados para filtrar.
 		*/
-		public function get_grade($Ativo, $id = FALSE, $page = FALSE, $filter = FALSE)
+		public function get_grade($Ativo, $id = FALSE, $page = FALSE, $filter = FALSE, $ordenacao = FALSE)
 		{
 			$Ativos = "";
 			if($Ativo == TRUE)
 				$Ativos = " AND g.Ativo = 1 ";
 
-			if ($Id === FALSE)//retorna todos se nao passar o parametro
+			if ($id === FALSE)//retorna todos se nao passar o parametro
 			{
-				$limit = $page * ITENS_POR_PAGINA;
-				$inicio = $limit - ITENS_POR_PAGINA;
-				$step = ITENS_POR_PAGINA;	
+				$order = "";
 				
-				$pagination = " LIMIT ".$inicio.",".$step;
-				if($page === FALSE)
-					$pagination = "";
-					
+				if($ordenacao != FALSE)
+					$order = "ORDER BY ".$ordenacao['field']." ".$ordenacao['order'];
+
 				$query = $this->db->query("
-					SELECT (SELECT count(*) FROM Turma u WHERE TRUE ".$Ativos.") AS Size,  
-					g.Nome AS Nome_grade, g.Curso_id, g.Modalidade_id 
+					SELECT (SELECT count(*) FROM  Grade WHERE TRUE ".$Ativos.") AS Size, 
+					g.Ativo, g.Id, g.Nome AS Nome_grade, DATE_FORMAT(g.Data_registro, '%d/%m/%Y') as Data_registro, 
+					dg.Periodo AS Periodo, c.Nome AS Nome_curso, m.Nome AS Nome_modalidade, pl.Periodo AS Nome_periodo_letivo 
 					FROM Grade g 
-					WHERE TRUE ".$Ativos." 
-					ORDER BY g.Id". $pagination ."");
+					INNER JOIN Disc_grade dg ON g.Id = dg.Grade_id 
+                    LEFT JOIN Curso c ON c.Id = g.Curso_id 
+                    LEFT JOIN Modalidade m ON m.Id = g.Modalidade_id 
+                    LEFT JOIN Periodo_letivo pl ON m.Id = pl. Modalidade_id 
+					WHERE TRUE ".$Ativos." GROUP BY g.Id 
+                    ".$order."");
 
 				return $query->result_array();
 			}
-			$query = $this->db->query("
-				SELECT (SELECT count(*) FROM Turma u WHERE TRUE ".$Ativos.") AS Size,  
-				g.Nome AS Nome_grade, g.Curso_id, g.Modalidade_id 
+
+			$query =  $this->db->query("
+				SELECT g.Id, g.Nome as Nome_grade, DATE_FORMAT(g.Data_registro, '%d/%m/%Y') as Data_registro, 
+				c.Nome AS Nome_curso, m.Nome AS Nome_modalidade, c.Id AS Curso_id, m.Id AS Modalidade_id, g.Ativo  
 				FROM Grade g 
-				WHERE TRUE ".$Ativos." AND ".$this->db->escape($id)." 
-				ORDER BY g.Id");
+				INNER JOIN Curso c ON c.Id = G.Curso_id 
+				INNER JOIN Modalidade m ON m.Id = g.Modalidade_id 
+				WHERE TRUE ".$Ativos." AND g.Id = ".$this->db->escape($id)."");
 
 			return $query->row_array();
 		}
@@ -84,6 +83,66 @@
 				WHERE dg.Grade_id = ".$this->db->escape($grade_id)." GROUP BY 1");
 
 			return $query->result_array();
+		}
+		/*!
+		*	RESPONSÁVEL POR "APAGAR" UMA GRADE DO BANCO DE DADOS.
+		*
+		*	$id -> Id da grade a ser "apagada".
+		*/
+		public function deletar($id)
+		{
+			return $this->db->query("
+				UPDATE Grade SET Ativo = 0 
+				WHERE Id = ".$this->db->escape($id)."");
+		}
+		/*!
+		*	RESPONSÁVEL POR CADASTRAR/ATUALIZAR UMA GRADE NO BANCO DE DADOS.
+		*
+		*	$data -> Contém os dados da grade.
+		*/
+		public function set_grade($data)
+		{
+			$Disc_grade = $data['Disc_grade_to_save'];
+			unset($data['Disc_grade_to_save']);
+
+			if(empty($data['Id']))
+			{
+				$this->db->insert('Grade',$data);
+				$query = $this->db->query("
+					SELECT Id FROM Grade 
+						WHERE Nome = ".$this->db->escape($data['Nome'])."");
+
+				$query = $query->row_array();
+
+				for($i = 0; $i < count($Disc_grade); $i++)
+				{
+					$dataToSave = array(
+						'Disciplina_id' => $Disc_grade[$i]['Disciplina_id'],
+						'Periodo' => $Disc_grade[$i]['Periodo'],
+						'Grade_id' => $query['Id']
+					);
+					$this->db->insert('Disc_grade',$dataToSave);
+				}
+			}
+			else
+			{
+				$this->db->where('Grade_id', $data['Id']);
+				$this->db->delete('Disc_grade');
+
+				for($i = 0; $i < count($Disc_grade); $i++)
+				{
+					$dataToSave = array(
+						'Disciplina_id' => $Disc_grade[$i]['Disciplina_id'],
+						'Periodo' => $Disc_grade[$i]['Periodo'],
+						'Grade_id' => $data['Id']
+					);
+					$this->db->insert('Disc_grade',$dataToSave);
+				}
+
+				$this->db->where('Id', $data['Id']);
+				$this->db->update('Grade', $data);
+			}
+			return "sucesso";
 		}
 	}
 ?>

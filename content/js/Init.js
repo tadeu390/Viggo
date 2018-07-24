@@ -211,14 +211,25 @@ $(document).ready(
 
     //BTN CADASTROS
 
+
+    $("#form_cadastro_inscricao").submit(function(event) {
+      event.preventDefault();
+      Main.inscricao_validar();
+    });
+
     $("#form_cadastro_turma").submit(function(event) {
       event.preventDefault();
       Main.validar_turma();
     });
 
-    $("#form_cadastro_Regras").submit(function(event) {
+    $("#form_cadastro_regras").submit(function(event) {
       event.preventDefault();
       Main.validar_regras();
+    });
+
+    $("#form_cadastro_grade").submit(function(event) {
+      event.preventDefault();
+      Main.validar_grade();
     });
 
     $("#form_cadastro_curso").submit(function(event) {
@@ -262,7 +273,7 @@ $(document).ready(
         Main.create_edit();
     });
 
-    $("#form_cadastro_Aluno").submit(function(event) {
+    $("#form_cadastro_aluno").submit(function(event) {
       event.preventDefault();
       if(Main.usuario_validar() == true && Main.aluno_validar() == true)
         Main.create_edit();

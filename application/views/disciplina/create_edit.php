@@ -4,7 +4,7 @@
     	echo"<div class='col-lg-8 offset-lg-2 padding0'>";
 			echo"<nav aria-label='breadcrumb'>";
   				echo"<ol class='breadcrumb'>";
-    				echo"<li class='breadcrumb-item'><a href='".$url."disciplina'>Disciplinas</a></li>";
+    				echo"<li class='breadcrumb-item'><a href='".$url.$controller."'>Disciplinas</a></li>";
     				echo "<li class='breadcrumb-item active' aria-current='page'>".((isset($obj['Id'])) ? 'Editar disciplina' : 'Nova disciplina')."</li>";
     			echo "</ol>";
 			echo"</nav>";

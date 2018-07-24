@@ -52,10 +52,14 @@
 			}
 
 			$query =  $this->db->query("
-				SELECT t.Id, t.Nome as Nome_turma, t.Ativo,
+				SELECT t.Id, t.Nome as Nome_turma, t.Ativo,  
+				c.Id AS Curso_id, 
 				DATE_FORMAT(t.Data_registro, '%d/%m/%Y') as Data_registro, dt.Periodo_letivo_id, CONCAT(p.Periodo, ' / ', m.Nome) as Pe_modi  
 					FROM Turma t 
 					INNER JOIN Disc_turma dt ON t.Id = dt.Turma_Id 
+					INNER JOIN Disc_grade dg ON dg.Id = dt.Disc_grade_id 
+					INNER JOIN Grade g ON dg.Grade_id = g.Id 
+					INNER JOIN Curso c ON c.Id = g.Curso_id 
 					INNER JOIN Periodo_letivo p ON dt.periodo_letivo_id = p.Id 
 					INNER JOIN Modalidade m ON p.Modalidade_id = m.Id  
 				WHERE TRUE ".$Ativos." AND t.Id = ".$this->db->escape($Id)."");

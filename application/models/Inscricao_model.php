@@ -108,7 +108,7 @@
 		public function deletar($id)
 		{
 			return $this->db->query("
-				UPDATE Inscricao SET Ativo = 0 
+				DELETE FROM Inscricao  
 				WHERE Id = ".$this->db->escape($id)."");
 		}
 		/*!

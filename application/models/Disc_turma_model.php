@@ -74,6 +74,23 @@
 			return $query->result_array();
 		}
 		/*!
+		*	RESPONSÁVEL POR RETORNAR UMA LISTA DE PROFESSORES CADASTRADOS PARA UMA TURMA EM UMA DISCIPLINA.
+		*
+		*	$id -> Id da turma.
+		*/
+		public function get_disc_turma_professor($id)
+		{
+			$query = $this->db->query("
+				SELECT u.Nome as Nome_professor, u.Id as Professor_id, d.Id AS Disciplina_id 
+				FROM Disc_turma dt 
+				INNER JOIN Usuario u ON u.Id = dt.Professor_id 
+				INNER JOIN Disc_Grade dg ON dg.Id = dt.Disc_grade_id 
+				INNER JOIN Disciplina d ON d.Id = dc.Disciplina_id 
+                WHERE u.Grupo_id = 4 AND dt.Turma_id = ".$this->db->escape($id)."");
+
+			return $query->result_array();
+		}
+		/*!
 		*	RESPONSÁVEL POR RETORNAR O CURSO DE UMA TURMA.
 		*
 		*	$turma_id -> Id da turma que se deseja saber o curso.
