@@ -118,15 +118,12 @@
 		*/
 		public function set_inscricao($data)
 		{
+			$CI = get_instance();
+			$CI->load->model("Modalidade_model");
+			$data['Periodo_letivo_id'] = $CI->Modalidade_model->get_periodo_por_modalidade($data['Modalidade_id'])['Id'];
 			if(empty($data['Id']))
 			{
-				$CI = get_instance();
-				$CI->load->model("Modalidade_model");
-				
-				$data['Periodo_letivo_id'] = $CI->Modalidade_model->get_periodo_por_modalidade($data['Modalidade_id'])['Id'];
-
 				unset($data['Modalidade_id']);
-
 				return $this->db->insert('Inscricao',$data);
 			}
 			else
@@ -148,7 +145,7 @@
 			if(empty($Matricula['Id']))	
 				$last_periodo_letivo_id = $CI->Modalidade_model->get_periodo_por_modalidade($Matricula['Modalidade_id'])['Id'];
 			else //se estiver editando uma inscrição considera o período letivo dela e não o último.
-				$last_periodo_letivo_id = $this->get_ra(FALSE, $Matricula['Id'], false, false)['Periodo_letivo_id'];
+				$last_periodo_letivo_id = $this->get_inscricao(FALSE, $Matricula['Id'], false, false)['Periodo_letivo_id'];
 
 			$query = $this->db->query("
 				SELECT i.Id 
