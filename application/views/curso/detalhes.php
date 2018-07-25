@@ -32,10 +32,6 @@
 						echo "<td>Data de registro</td>";
 						echo "<td>".$obj['Data_registro']."</td>";
 					echo "</tr>";
-					echo "<tr>";
-						echo "<td>Quantidade de disciplinas</td>";
-						echo "<td>".$obj['Qtd_disciplina']."</td>";
-					echo "</tr>";
 				echo "</table>";
 			echo "</div>";
 		echo "</div>";

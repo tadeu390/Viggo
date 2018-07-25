@@ -26,33 +26,6 @@
 				<div class='input-group mb-2 mb-sm-0 text-danger' id='error-nome'></div>
 			</div>
 			<div class='form-group'>
-				<div class="card text-dark bg-dark mb-3">  
-				  <h3 class="card-header text-white background_dark" style="border: 1px solid #8a8d93;">Disciplinas</h3>
-					<div class="card-body background_dark" style="border: 1px solid #8a8d93; border-radius: 0px; border-top: none;">
-						<ul class="list-group">
-						<?php
-							for($i = 0; $i < count($Disciplinas); $i ++)
-							{
-								$checked = "";
-								for($j = 0; $j < count($Disciplinas_curso); $j++)
-									if($Disciplinas_curso[$j]['Id'] == $Disciplinas[$i]['Id'])
-										$checked = "checked";
-								
-								echo"<li class='list-group-item background_dark text-white'>";
-									echo"<div class='checkbox checbox-switch switch-success custom-controls-stacked'>";
-										echo"<label for='".$Disciplinas[$i]['Id']."'>";
-											echo "<input $checked  id='". $Disciplinas[$i]['Id'] ."' value='". $Disciplinas[$i]['Id'] ."' type='checkbox' name='disciplinas[]' /><span></span>".$Disciplinas[$i]["Nome_disciplina"];
-										echo"</label>";
-									echo"</div>";
-								echo"</li>";
-							}
-						?>
-						</ul>
-						<div class='input-group mb-2 mb-sm-0 text-danger' id='error-discip'></div>
-					</div>
-				</div>
-			</div>
-			<div class='form-group'>
 				<div class='checkbox checbox-switch switch-success custom-controls-stacked'>
 					<?php
 						$checked = "";

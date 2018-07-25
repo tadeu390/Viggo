@@ -278,10 +278,10 @@
 				INNER JOIN Renovacao_matricula rm ON rm.Inscricao_id = i.Id AND 
 				rm.Periodo_letivo_id = ".$this->db->escape($periodo_letivo_id)." 
 				
-				INNER JOIN Matricula m ON m.Inscricao_id = i.Id 
-				INNER JOIN Disc_turma dt ON m.Disc_turma_id = dt.Id 
-				INNER JOIN Disc_grade dg ON dg.Id = dt.Disc_Grade_id 
-				INNER JOIN Grade g ON g.Id = dg.Grade_id 
+				LEFT JOIN Matricula m ON m.Inscricao_id = i.Id 
+				LEFT JOIN Disc_turma dt ON m.Disc_turma_id = dt.Id 
+				LEFT JOIN Disc_grade dg ON dg.Id = dt.Disc_Grade_id 
+				LEFT JOIN Grade g ON g.Id = dg.Grade_id 
 
 				#ABAIXO LEVANTA TODO MUNDO COM MATRICULA RENOVADA PRO PERÍODO LETIVO 
 				#CORRENTE E QUE JÁ SE ENCONTRAM EM UMA NOVA TURMA
@@ -297,7 +297,7 @@
                             GROUP BY 1) adicionados ON adicionados.Aluno_id = a.Id 
                 
                 WHERE adicionados.Aluno_id IS NULL AND u.Ativo = 1 AND 
-                g.Id = ".$this->db->escape($grade_id)."".$f." 
+                (g.Id = ".$this->db->escape($grade_id)." OR g.Id IS NULL)".$f." 
                 GROUP BY 1,2");
 
 			return $query->result_array();

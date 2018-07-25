@@ -20,7 +20,7 @@
 		*	$page -> Pagina atual.
 		*	$filter -> Quando há filtros, esta recebe os parâmetros utilizados para filtrar.
 		*/
-		public function get_curso($Ativo, $id = FALSE, $page = FALSE, $filter = FALSE)
+		public function get_curso($Ativo, $id = FALSE, $page = FALSE, $filter = FALSE, $ordenacao = FALSE)
 		{
 			$Ativos = "";
 			if($Ativo == TRUE)
@@ -32,6 +32,11 @@
 				$inicio = $limit - ITENS_POR_PAGINA;
 				$step = ITENS_POR_PAGINA;	
 				
+				$order = "";
+				
+				if($ordenacao != FALSE)
+					$order = "ORDER BY ".$ordenacao['field']." ".$ordenacao['order'];
+
 				$pagination = " LIMIT ".$inicio.",".$step;
 				if($page === FALSE)
 					$pagination = "";
@@ -39,103 +44,34 @@
 				$query = $this->db->query("
 					SELECT (SELECT count(*) FROM  Curso WHERE TRUE ".$Ativos.") AS Size, 
 					c.Id, c.Nome as Nome_curso, 
-					DATE_FORMAT(c.Data_registro, '%d/%m/%Y') as Data_registro, 
-						(SELECT COUNT(*) FROM Grade g 
-							WHERE g.Curso_id = c.Id) as Qtd_disciplina, c.Ativo   
+					DATE_FORMAT(c.Data_registro, '%d/%m/%Y') as Data_registro, c.Ativo 
 					FROM Curso c 
-					WHERE TRUE ".$Ativos." ORDER BY c.Id ". $pagination ."");
+					WHERE TRUE ".$Ativos." ".$order." ". $pagination ."");
 
 				return $query->result_array();
 			}
 
 			$query =  $this->db->query("
 				SELECT c.Id, c.Nome as Nome_curso, 
-				DATE_FORMAT(c.Data_registro, '%d/%m/%Y') as Data_registro, 
-				(SELECT COUNT(*) FROM Grade g 
-							WHERE g.Curso_id = c.Id) as Qtd_disciplina,
-				c.Ativo  
+				DATE_FORMAT(c.Data_registro, '%d/%m/%Y') as Data_registro, c.Ativo 
 					FROM Curso c 
 				WHERE TRUE ".$Ativos." AND c.Id = ".$this->db->escape($id)."");
 
 			return $query->row_array();
 		}
 		/*!
-		*	RESPONSÁVEL POR CADASTRAR/ATUALIZAR AS INFORMAÇÕES DE UM CURSO NO BANCO DE DADOS  E 
-		*	TAMBÉM AS DISCIPLINAS SELECIONADAS PARA O MESMO.
+		*	RESPONSÁVEL POR CADASTRAR/ATUALIZAR AS INFORMAÇÕES DE UM CURSO NO BANCO DE DADOS.
 		*
 		*	$data-> Contém os dados do curso a ser cadastrado/atualizado.
 		*/
 		public function set_curso($data)
 		{
 			if(empty($data['Id']))
-			{
-				$dataToSave = array(
-					'Nome' => $data['Nome'],
-					'Ativo' => $data['Ativo']
-				);
-				
-				$this->db->insert('Curso',$dataToSave);
-				$query = $this->db->query("
-					SELECT Id FROM Curso 
-						WHERE Nome = ".$this->db->escape($dataToSave['Nome'])."");
-
-				$query = $query->row_array();
-
-				for($i = 0; $i < count($data['Disciplinas_id']); $i++)
-				{
-					$dataToSave = array(
-						'Disciplina_id' => $data['Disciplinas_id'][$i],
-						'Curso_id' => $query['Id']
-					);
-					$this->db->insert('Disc_curso',$dataToSave);
-				}
-			}
+				$this->db->insert('Curso',$data);
 			else
 			{
-				$query = $this->db->query("
-					SELECT Disciplina_id FROM Disc_curso
-						WHERE Curso_id = ".$this->db->escape($data['Id'])."");
-
-				$query = $query->result_array();
-				
-				//DELETA OS QUE FORAM REMOVIDOS NA TELA PELO USUARIO.
-				for($i = 0; $i < count($query); $i++)
-				{
-					$flag = 0;
-					for($j = 0; $j < count($data['Disciplinas_id']); $j++)
-					{
-						if($query[$i]['Disciplina_id'] == $data['Disciplinas_id'][$j])
-							$flag = 1;
-					}
-					if($flag == 0)
-						$this->db->query("
-							DELETE FROM Disc_curso 
-								WHERE Disciplina_id = ".$this->db->escape($query[$i]['Disciplina_id'])." 
-								AND Curso_id = ".$this->db->escape($data['Id'])."");
-				}
-
-				for($i = 0; $i < count($data['Disciplinas_id']); $i++)
-				{
-					$flag = 0;
-					for($j = 0; $j < count($query); $j++)
-					{
-						if($data['Disciplinas_id'][$i] == $query[$j]['Disciplina_id'])
-							$flag = 1;
-					}
-					if($flag == 0)
-						$this->db->query("
-							INSERT INTO Disc_curso(Disciplina_id, Curso_id)
-								VALUES(".$this->db->escape($data['Disciplinas_id'][$i]).",".$this->db->escape($data['Id']).")");
-				}
-
-				$dataToSave = array(
-					'Id' => $data['Id'],
-					'Nome' => $data['Nome'],
-					'Ativo' => $data['Ativo']
-				);
-
 				$this->db->where('Id', $data['Id']);
-				$this->db->update('Curso', $dataToSave);
+				$this->db->update('Curso', $data);
 			}
 			return "sucesso";
 		}

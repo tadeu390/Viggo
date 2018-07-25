@@ -25,8 +25,20 @@
 						echo"</tr>";
 						echo "<tr>";
 							echo "<td>#</td>";
-							echo "<td>Nome</td>";
-							echo "<td>Ativo</td>";
+							echo "<td>";
+								echo"<a href='".$url."$controller/index/".$paginacao['pg_atual']."/Nome_curso/".$paginacao['order']."'>Nome</a>";
+								if($paginacao['order'] == 'DESC' && $paginacao['field'] == 'Nome_curso')
+									echo "&nbsp;<div class='fa fa-chevron-down'></div>";
+								else if($paginacao['order'] == 'ASC' && $paginacao['field'] == 'Nome_curso')
+									echo "&nbsp;<div class='fa fa-chevron-up'></div>";
+							echo"</td>";
+							echo "<td>";
+								echo"<a href='".$url."$controller/index/".$paginacao['pg_atual']."/Ativo/".$paginacao['order']."'>Ativo</a>";
+								if($paginacao['order'] == 'DESC' && $paginacao['field'] == 'Ativo')
+									echo "&nbsp;<div class='fa fa-chevron-down'></div>";
+								else if($paginacao['order'] == 'ASC' && $paginacao['field'] == 'Ativo')
+									echo "&nbsp;<div class='fa fa-chevron-up'></div>";
+							echo"</td>";
 							echo "<td class='text-right'>Ações</td>";
 						echo "</tr>";
 					echo "</thead>";

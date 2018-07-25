@@ -24,7 +24,7 @@
 				SELECT d.Id AS Disciplina_id, d.Nome AS Nome_disciplina, d.Apelido AS Apelido_disciplina, dg.Periodo AS Periodo 
 				FROM Disciplina d 
 				INNER JOIN Disc_grade dg ON dg.Disciplina_id = d.Id 
-                	AND dg.Grade_id = ".$this->db->escape($id)."");
+                	AND dg.Grade_id = ".$this->db->escape($id)." ORDER BY Periodo");
 
 			return $query->result_array();
 		}

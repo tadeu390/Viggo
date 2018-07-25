@@ -553,8 +553,6 @@ var Main = {
 			Main.show_error("nome","Informe o nome do curso","is-invalid");
 		else if($("#nome").val().length > 100)
 			Main.show_error("nome", 'Máximo 100 caracteres', 'is-invalid');
-		else if($('input:checkbox[name^=disciplinas]:checked').length == 0)
-			Main.show_error("discip","Selecione ao menos uma disciplina","");
 		else
 			Main.create_edit();
 	},
@@ -983,13 +981,12 @@ var Main = {
 		document.getElementById("turma_id").value = 0;
 	},
 	load_data_aluno : function(filtro)//Carrega os alunos para a lista a esquerda quando editando e quando usando o filtro pressionando o botão Pesquisar
-	{
+	{ 
 		if($("#curso_id").val() != "0" && $("#modalidade_id").val() != "0")
 		{
 			var pesquisa = "get_alunos_inscritos";
 			if($("#aluno_novo").is(":checked") == true)
 				var pesquisa = "get_alunos_inscritos_novos";
-
 			Main.modal("aguardar", "Aguarde...");
 
 			$.ajax({

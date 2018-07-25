@@ -32,6 +32,8 @@
 		{
 			if($page === FALSE)
 				$page = 1;
+
+			$this->set_page_cookie($page);
 			
 			$this->data['title'] = 'Disciplinas';
 			if($this->Geral_model->get_permissao(READ, get_class($this)) == TRUE)

@@ -19,7 +19,6 @@
 			}
 
 			$this->load->model('Curso_model');
-			$this->load->model('Disciplina_model');
 			$this->set_menu();
 			$this->data['controller'] = strtolower(get_class($this));
 			$this->data['menu_selectd'] = $this->Geral_model->get_identificador_menu(strtolower(get_class($this)));
@@ -29,15 +28,25 @@
 		*
 		*	$page -> Número da página atual de registros.
 		*/
-		public function index($page = FALSE)
+		public function index($page = FALSE, $field = FALSE, $order = FALSE)
 		{
 			if($page === FALSE)
 				$page = 1;
+
+			$this->set_page_cookie($page);
+
+			$ordenacao = array(
+				"order" => $this->order_default($order),
+				"field" => $this->field_default($field)
+			);
 			
 			$this->data['title'] = 'Cursos';
 			if($this->Geral_model->get_permissao(READ, get_class($this)) == TRUE)
 			{
-				$this->data['lista_cursos'] = $this->Curso_model->get_curso(FALSE, FALSE, $page, FALSE);
+				$this->data['paginacao']['order'] =$this->inverte_ordem($ordenacao['order']);
+				$this->data['paginacao']['field'] = $ordenacao['field'];
+
+				$this->data['lista_cursos'] = $this->Curso_model->get_curso(FALSE, FALSE, $page, FALSE, $ordenacao);
 				$this->data['paginacao']['size'] = (!empty($this->data['lista_cursos'][0]['Size']) ? $this->data['lista_cursos'][0]['Size'] : 0);
 				$this->data['paginacao']['pg_atual'] = $page;
 				$this->view("curso/index", $this->data);
@@ -74,9 +83,7 @@
 			$this->data['title'] = 'Editar curso';
 			if($this->Geral_model->get_permissao(UPDATE, get_class($this)) == TRUE)
 			{
-				$this->data['Disciplinas'] = $this->Disciplina_model->get_disciplina(FALSE, FALSE, FALSE, FALSE);
 				$this->data['obj'] = $this->Curso_model->get_curso(FALSE, $id, FALSE, FALSE);
-				$this->data['Disciplinas_curso'] = $this->Disciplina_model->get_disciplina_por_curso($this->data['obj']['Id']);
 				$this->view("curso/create_edit", $this->data);
 			}
 			else
@@ -90,9 +97,7 @@
 			$this->data['title'] = 'Novo Curso';
 			if($this->Geral_model->get_permissao(CREATE, get_class($this)) == TRUE)
 			{
-				$this->data['Disciplinas'] = $this->Disciplina_model->get_disciplina(FALSE, FALSE, FALSE, FALSE);
 				$this->data['obj'] = $this->Curso_model->get_curso(FALSE, 0, FALSE, FALSE);
-				$this->data['Disciplinas_curso'] = $this->Disciplina_model->get_disciplina_por_curso($this->data['obj']['Id']);
 			}
 			$this->view("curso/create_edit", $this->data);
 		}
@@ -107,8 +112,6 @@
 				return "Informe o nome do curso";
 			else if(mb_strlen($Curso['Nome']) > 100)
 				return "Máximo 100 caracteres";
-			else if($Curso['Disciplinas_id'] == NULL)
-				return "Selecione ao menos uma disciplina";
 			else if($this->Curso_model->nome_valido($Curso['Nome'], $Curso['Id']) == 'invalido')
 				return "O nome informado para o curso já se encontra cadastrado no sistema.";
 			else
@@ -132,8 +135,7 @@
 			$dataToSave = array(
 				'Id' => $this->input->post('id'),
 				'Ativo' => $this->input->post('curso_ativo'),
-				'Nome' => $this->input->post('nome'),
-				'Disciplinas_id' => $this->input->post('disciplinas')
+				'Nome' => $this->input->post('nome')
 			);
 
 			if(empty($dataToSave['Ativo']))

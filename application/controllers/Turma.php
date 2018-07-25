@@ -436,7 +436,7 @@
 			$data_renovacao_inicio -> Todos os alunos que renovaram a matricula a partir dessa data.
 			$data_renoovacao_fim -> Todos os alunos que renovaram a matricula até esta data.
 		*/
-		public function get_alunos_inscritos_novos($curso_id, $modalidade_id, $turma_id, $nome = false, $data_renovacao_inicio = false, $data_renovacao_fim = false)
+		public function get_alunos_inscritos_novos($curso_id, $modalidade_id, $turma_id, $grade_id, $nome = false, $data_renovacao_inicio = false, $data_renovacao_fim = false)
 		{
 			if($this->Geral_model->get_permissao(READ, get_class($this)) == TRUE)
 			{
