@@ -23,7 +23,7 @@
 				SELECT i.Id, i.Dia, i.Hora_inicio, i.Hora_fim, Periodo_letivo_id, 
 				DATE_FORMAT(i.Data_registro, '%d/%m/%Y') as Data_registro, i.Ativo   
 				FROM Intervalo i
-				WHERE i.Periodo_letivo_id = ".$this->db->escape($Periodo_letivo_id)."");
+				WHERE i.Periodo_letivo_id = ".$this->db->escape($Periodo_letivo_id)." ORDER BY Dia");
 
 			return $query->result_array();
 		}
@@ -79,6 +79,31 @@
 		{
 			return $this->db->query("
 				DELETE FROM Intervalo WHERE Id = ".$this->db->escape($id)."");
+		}
+		/*!
+		*	RESPONSÁVEL POR RETORNAR A QUANTIDADE DE INTERVALOS EXISTENTES EM CADA 
+		*	DIA.
+		*
+		*	$periodo_letivo_id -> Id do período letivo que se deseja obter os intervalos.
+		*/
+		public function get_qtd_intervalo_dia($periodo_letivo_id)
+		{
+			$query = $this->db->query("
+				SELECT 
+				SUM(CASE WHEN x.Dia = 1 THEN x.Qtd ELSE 0 END) as Segunda, 
+				SUM(CASE WHEN x.Dia = 2 THEN x.Qtd ELSE 0 END) as Terca,
+				SUM(CASE WHEN x.Dia = 3 THEN x.Qtd ELSE 0 END) as Quarta, 
+				SUM(CASE WHEN x.Dia = 4 THEN x.Qtd ELSE 0 END) as Quinta,
+				SUM(CASE WHEN x.Dia = 5 THEN x.Qtd ELSE 0 END) as Sexta,
+				SUM(CASE WHEN x.Dia = 6 THEN x.Qtd ELSE 0 END) as Sabado,
+				SUM(CASE WHEN x.Dia = 7 THEN x.Qtd ELSE 0 END) as Domingo
+				FROM 
+				(SELECT COUNT(*) AS Qtd, Dia FROM intervalo i 
+					WHERE i.Periodo_letivo_id = ".$this->db->escape($periodo_letivo_id)." 
+					GROUP BY Dia 
+					ORDER BY i.Dia ) AS x ");
+
+			return $query->row_array();
 		}
 	}
 ?>

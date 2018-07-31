@@ -69,7 +69,7 @@
 	if(!empty($obj['Id']))
 	{
 		echo"<fieldset>";
-			echo"<legend class='text-white'>Alterar senha</legend>";
+			echo"<legend class='text-white'>&nbsp;Alterar senha</legend>";
 			
 			echo"<div class='form-group relative'>";
 				echo"<input id='nova_senha' name='nova_senha' value='' type='password' class='input-material'>";

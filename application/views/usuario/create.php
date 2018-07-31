@@ -54,10 +54,10 @@
 		<?php
 			$this->load->view("usuario/_create_edit",$obj);
 		?>
-		<div class='form-group'>
-			<br />
-			<div class="row">
-				<div class="col-lg-4">
+		<br />
+		<div class="row">
+			<div class="col-lg-4">
+				<div class='form-group'>
 					<div class='checkbox checbox-switch switch-success custom-controls-stacked'>
 						<?php
 							$checked = "";
@@ -70,8 +70,9 @@
 						?>
 					</div>
 				</div>
-				<div class="col-lg-8 ">
-					
+			</div>
+			<div class="col-lg-8 ">
+				<div class='form-group'>
 					<?php
 						if($obj['Email_notifica_nova_conta'] == 0)
 						{
@@ -84,7 +85,6 @@
 						else
 							echo "<span class='glyphicon glyphicon-ok-sign'></span> O E-mail de notificação já foi enviado para este usuário.";
 					?>
-					
 				</div>
 			</div>
 		</div>

@@ -211,7 +211,11 @@ $(document).ready(
     });
 
     //BTN CADASTROS
-
+    
+    $("#form_cadastro_horario").submit(function(event) {
+      event.preventDefault();
+      Main.inscricao_validar();
+    });
 
     $("#form_cadastro_inscricao").submit(function(event) {
       event.preventDefault();

@@ -60,12 +60,16 @@
 		*	$modalidade_id -> Id da modalidade selecionada para a turma no formulário,
 		*	$curso_id -> Id do curso selecionado para a turma no formulários.
 		*/
-		public function get_grade_por_mc($modalidade_id, $curso_id)
+		public function get_grade_por_mc($Ativo = FALSE, $modalidade_id, $curso_id)
 		{
+			$Ativos = "";
+			if($Ativo == TRUE)
+				$Ativos = " AND Ativo = 1 ";
+
 			$query = $this->db->query("
 				SELECT Id, Nome as Nome_grade FROM Grade 
 				WHERE Modalidade_id = ".$this->db->escape($modalidade_id)." AND 
-				Curso_id = ".$this->db->escape($curso_id)." AND Ativo = 1 ORDER BY Id DESC");
+				Curso_id = ".$this->db->escape($curso_id)." ".$Ativos." ORDER BY Id DESC");
 
 			return $query->result_array();
 		}
@@ -102,8 +106,9 @@
 		*/
 		public function set_grade($data)
 		{
-			$Disc_grade = $data['Disc_grade_to_save'];
+			$lista_disc_grade = $data['Disc_grade_to_save'];
 			unset($data['Disc_grade_to_save']);
+			$grade_id = 0;
 
 			if(empty($data['Id']))
 			{
@@ -112,37 +117,72 @@
 					SELECT Id FROM Grade 
 						WHERE Nome = ".$this->db->escape($data['Nome'])."");
 
-				$query = $query->row_array();
-
-				for($i = 0; $i < count($Disc_grade); $i++)
-				{
-					$dataToSave = array(
-						'Disciplina_id' => $Disc_grade[$i]['Disciplina_id'],
-						'Periodo' => $Disc_grade[$i]['Periodo'],
-						'Grade_id' => $query['Id']
-					);
-					$this->db->insert('Disc_grade',$dataToSave);
-				}
+				$grade_id = $query->row_array()['Id'];
 			}
 			else
 			{
-				$this->db->where('Grade_id', $data['Id']);
-				$this->db->delete('Disc_grade');
-
-				for($i = 0; $i < count($Disc_grade); $i++)
-				{
-					$dataToSave = array(
-						'Disciplina_id' => $Disc_grade[$i]['Disciplina_id'],
-						'Periodo' => $Disc_grade[$i]['Periodo'],
-						'Grade_id' => $data['Id']
-					);
-					$this->db->insert('Disc_grade',$dataToSave);
-				}
-
-				$this->db->where('Id', $data['Id']);
+				$this->db->where('Id',$data['Id']);
 				$this->db->update('Grade', $data);
+				$grade_id = $data['Id'];
 			}
+
+			$this->set_disc_grade($grade_id, $lista_disc_grade);
+
 			return "sucesso";
+		}
+		/*!
+		*	RESPONSÁVEL POR CADASTRAR OU APAGAR AS DISCIPLINAS DE UMA GRADE.
+		*
+		*	$grade_id -> Id da grade que se está cadastrando e/ou apagando.
+		*	$lista_disc_grade -> Lista de disciplinas da grade submetidas do formulário.
+		*/
+		public function set_disc_grade($grade_id, $lista_disc_grade)
+		{
+			for($i = 0; $i < COUNT($lista_disc_grade); $i++)
+			{
+				//montar o array de cada disciplina da grade
+				$Disc_grade = array(
+					'Grade_id' => $grade_id,
+					'Disciplina_id' => $lista_disc_grade[$i]['Disciplina_id'],
+					'Periodo' => $lista_disc_grade[$i]['Periodo']
+				);
+
+				//verificar se a disciplina já encontra-se cadastrada para a grade.
+				$v = $this->db->query("
+					SELECT Id FROM Disc_grade 
+					WHERE Grade_id = ".$Disc_grade['Grade_id']." AND Disciplina_id = ".$Disc_grade['Disciplina_id']." AND Periodo = ".$Disc_grade['Periodo']."");
+
+				if(empty($v->row_array()))
+					$this->db->insert('Disc_grade', $Disc_grade);
+			}
+
+			//apagar os que foram removidos no formulário
+
+			//primeiro busca todas as disciplinas da grade em questão
+			$Disc_grade_banco = $this->db->query("
+				SELECT * FROM Disc_grade 
+				WHERE grade_id = ".$grade_id."");
+			
+			$Disc_grade_banco = $Disc_grade_banco->result_array();
+
+			for($i = 0; $i < COUNT($Disc_grade_banco); $i++)
+			{
+				$flag = 0;
+				for($j = 0; $j < COUNT($lista_disc_grade); $j++)
+				{
+					if($Disc_grade_banco[$i]['Disciplina_id'] == $lista_disc_grade[$j]['Disciplina_id'] && 
+					   $Disc_grade_banco[$i]['Periodo'] == $lista_disc_grade[$j]['Periodo'])
+						$flag = 1;
+				}
+				
+				//se nao achaou, entao remove do banco
+				if($flag == 0)
+				{
+					echo $grade_id;
+					$this->db->where('Id', $Disc_grade_banco[$i]['Id']);
+					$this->db->delete('Disc_grade');
+				}
+			}
 		}
 	}
 ?>

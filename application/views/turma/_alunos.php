@@ -26,7 +26,10 @@
 				echo"</td>";
 
 				echo "<td style='vertical-align: middle;' class='text-center'>";
-					echo "<span title='Detalhes' style='cursor: pointer;' class='glyphicon glyphicon-th text-danger'></span>";
+					echo "<a title='Detalhes' target='n_guia' href='".$url."aluno/detalhes/".$lista_alunos[$i]['Usuario_id']."'>";
+						echo "<span class='glyphicon glyphicon-arrow-right text-warning'></span> ";
+						echo "<input type='hidden' value='".$lista_alunos[$i]['Usuario_id']."' id='usuario_id$i'>";
+					echo "</a>";
 				echo "</td>";
 
 			echo "</tr>";

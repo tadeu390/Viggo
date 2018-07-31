@@ -22,7 +22,7 @@
 		public function get_modalidade($Ativo = FALSE, $id = false, $page = false)
 		{
 			$Ativos = "";
-			if($Ativo == true)
+			if($Ativo == TRUE)
 				$Ativos = " AND Ativo = 1 ";
 
 			if($id === false)

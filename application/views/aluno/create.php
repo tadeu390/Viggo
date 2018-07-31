@@ -52,40 +52,50 @@
 			$this->load->view("usuario/_create_edit",$obj);
 			echo"<br />";
 		?>
-
-			<div class='form-group'>
-				<div class="row">
-					<div class="col-lg-4">
-						<div class='checkbox checbox-switch switch-success custom-controls-stacked'>
-							<?php
-								$checked = "";
-								if($obj['Ativo'] == 1)
-									$checked = "checked";
-								
-								echo"<label for='conta_ativa' class=''>";
-									echo "<input type='checkbox' $checked id='conta_ativa' name='conta_ativa' value='1' /><span></span> Conta ativa";
-								echo"</label>";
-							?>
-						</div>
-					</div>
-					<div class="col-lg-8 ">
-						
+		<div class="row">
+			<div class="col-lg-4">
+				<div class='form-group'>
+					<div class='checkbox checbox-switch switch-success custom-controls-stacked'>
 						<?php
-							if($obj['Email_notifica_nova_conta'] == 0)
-							{
-								echo"<div class='checkbox checbox-switch switch-success custom-controls-stacked'>";
-									echo"<label for='email_notifica_nova_conta' class=''>";
-										echo "<input type='checkbox' id='email_notifica_nova_conta' name='email_notifica_nova_conta' value='1' /><span></span> Enviar e-mail de notificação";
-									echo"</label>";
-								echo "</div>";
-							}
-							else
-								echo "<span class='glyphicon glyphicon-ok-sign'></span> O E-mail de notificação já foi enviado para este usuário.";
+							$checked = "";
+							if($obj['Ativo'] == 1)
+								$checked = "checked";
+							
+							echo"<label for='conta_ativa' class=''>";
+								echo "<input type='checkbox' $checked id='conta_ativa' name='conta_ativa' value='1' /><span></span> Conta ativa";
+							echo"</label>";
 						?>
-						
 					</div>
 				</div>
 			</div>
+			<div class="col-lg-8 ">
+				<div class='form-group'>
+					<?php
+						if($obj['Email_notifica_nova_conta'] == 0)
+						{
+							echo"<div class='checkbox checbox-switch switch-success custom-controls-stacked'>";
+								echo"<label for='email_notifica_nova_conta' class=''>";
+									echo "<input type='checkbox' id='email_notifica_nova_conta' name='email_notifica_nova_conta' value='1' /><span></span> Enviar e-mail de notificação";
+								echo"</label>";
+							echo "</div>";
+						}
+						else
+							echo "<span class='glyphicon glyphicon-ok-sign'></span> O E-mail de notificação já foi enviado para este usuário.";
+					?>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-lg-12">
+				<div class='form-group'>
+					<div class='checkbox checbox-switch switch-success custom-controls-stacked'>
+						<label for='inscricao_aluno'>
+							<input type='checkbox' id='inscricao_aluno' checked name='inscricao_aluno' value='1' /><span></span> Salvar e ir para a inscrição do aluno.
+						</label>
+					</div>
+				</div>
+			</div>
+		</div>
 		<?php
 			if(empty($obj['Id']))
 				echo"<input type='submit' class='btn btn-danger btn-block' style='width: 200px;' value='Cadastrar'>";

@@ -34,7 +34,7 @@
 								for ($i = 0; $i < count($lista_alunos); $i++)
 								{
 									$selected = "";
-									if ($lista_alunos[$i]['Usuario_id'] == $obj['Usuario_id'])
+									if ($lista_alunos[$i]['Usuario_id'] == $obj['Usuario_id'] || $lista_alunos[$i]['Usuario_id'] == $this->input->cookie('inscricao_aluno'))
 										$selected = "selected";
 									echo "<option title='".$lista_alunos[$i]['Nome_ra']."' $selected value='" . $lista_alunos[$i]['Id'] . "'>";
 										echo mstring::corta_string($lista_alunos[$i]['Nome_ra'], 45);

@@ -31,6 +31,44 @@
 						echo "<table class='table table-striped table-hover text-white'>";
 							echo"<thead>";
 								echo "<tr>";
+								echo "<td>";
+									echo"<div title='Habilitar/desabilitar todas as permissões para todos módulos' class='checkbox checbox-switch switch-success custom-controls-stacked'>";
+										echo"<label for='hab_all'>";
+											echo"<input onclick='Main.habilita_permissoes(\"all\");' type='checkbox' id='hab_all' name='hab_all'><span></span>";
+										echo"</label>";
+									echo"</div>";
+								echo "</td>";
+								echo "<td>";
+									echo"<div  title='Habilitar/desabilitar permissão de Criar para todos módulos' class='checkbox checbox-switch switch-success custom-controls-stacked'>";
+										echo"<label for='hab_all_criar'>";
+											echo"<input onclick='Main.habilita_permissoes(\"criar\");' type='checkbox' id='hab_all_criar' name='hab_all_criar'><span></span>";
+										echo"</label>";
+									echo"</div>";
+								echo "</td>";
+								echo "<td>";
+									echo"<div title='Habilitar/desabilitar permissão de Leitura para todos módulos' class='checkbox checbox-switch switch-success custom-controls-stacked'>";
+										echo"<label for='hab_all_ler'>";
+											echo"<input onclick='Main.habilita_permissoes(\"ler\");' type='checkbox' id='hab_all_ler' name='hab_all_ler'><span></span>";
+										echo"</label>";
+									echo"</div>";
+								echo "</td>";
+								echo "<td>";
+									echo"<div title='Habilitar/desabilitar permissão de Atualizar para todos módulos' class='checkbox checbox-switch switch-success custom-controls-stacked'>";
+										echo"<label for='hab_all_atualizar'>";
+											echo"<input onclick='Main.habilita_permissoes(\"atualizar\");' type='checkbox' id='hab_all_atualizar' name='hab_all_atualizar'><span></span>";
+										echo"</label>";
+									echo"</div>";
+								echo "</td>";
+								echo "<td>";
+									echo"<div title='Habilitar/desabilitar permissão de Remover para todos módulos' class='checkbox checbox-switch switch-success custom-controls-stacked'>";
+										echo"<label for='hab_all_remover'>";
+											echo"<input onclick='Main.habilita_permissoes(\"remover\");' type='checkbox' id='hab_all_remover' name='hab_all_remover'><span></span>";
+										echo"</label>";
+									echo"</div>";
+								echo "</td>";
+							echo "</tr>";
+							echo "<tr>";
+								echo "<tr>";
 									echo "<td>Módulo</td>";
 									echo "<td>Criar</td>";
 									echo "<td>Ler</td>";
@@ -39,6 +77,7 @@
 								echo "</tr>";
 							echo"</thead>";
 							echo"<tbody>";
+								$limite = 0;
 								for($i = 0; $i < count($lista_usuario_acesso); $i++)
 								{
 									echo"<tr>";
@@ -88,9 +127,11 @@
 											echo"</div>";
 										echo"</td>";
 									echo"</tr>";
+									$limite = $limite + 1;
 								}
 							echo"</tbody>";
 						echo "</table>";
+						echo"<input type='hidden' id='qtd' value='$limite'>";
 					echo "</div>";
 					echo"<input type='submit' class='btn btn-danger btn-block' style='width: 200px;' value='Salvar alterações'>";
 				echo "</form>";

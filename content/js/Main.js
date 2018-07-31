@@ -616,7 +616,7 @@ var Main = {
 			var max_value_intervalo  =  $("#max_value_intervalo").val();
 
 			var a = new Array();
-			a.push(Main.weekday($("#dia").val()));
+			a.push($("#dia").val());
 			a.push($("#hora_inicio").val()+":00");
 			a.push($("#hora_fim").val()+":00");
 			a.push("");
@@ -643,7 +643,11 @@ var Main = {
 				input_text.setAttribute("id",aux[i]+max_value_intervalo);
 				input_text.setAttribute("name",aux[i]+max_value_intervalo);
 				
-				var textnode = document.createTextNode(a[i]); 
+				if (i == 0)
+					var x = Main.weekday(a[i]);
+				else
+					x = a[i];
+				var textnode = document.createTextNode(x); 
 				node_td.appendChild(input_text);
 				node_td.appendChild(textnode);
 				
@@ -673,7 +677,7 @@ var Main = {
 			var max_value_intervalo  =  $("#max_value_intervalo").val();
 
 			var a = new Array();
-			a.push(Main.weekday($("#dia").val()));
+			a.push($("#dia").val());
 			a.push($("#hora_inicio").val()+":00");
 			a.push($("#hora_fim").val()+":00");
 			a.push("");
@@ -684,7 +688,6 @@ var Main = {
 				if($("#dia"+i).val() == a[0] && $("#hora_inicio"+i).val() == a[1] &&
 					$("#hora_fim"+i).val() == a[2])
 					flag = 1;
-				console.log("form"+Main.weekday($("#dia"+i).val()) +" a0: "+a[0]);
 			}
 
 			var flag2 = 0;
@@ -873,6 +876,34 @@ var Main = {
 			Main.load_data_aluno("");
 			Main.load_data_turma_filtro();
 			Main.load_grade();
+			Main.load_data_cursos();
+		}
+	},
+	load_data_cursos : function ()
+	{
+		if($("#modalidade_id").val() != 0)
+		{
+			Main.modal("aguardar", "Aguarde...");
+			$.ajax({
+				url: Main.base_url+$("#controller").val()+'/cursos/'+$("#modalidade_id").val() + '/' + $("#curso_id").val(),
+				dataType:'json',
+				cache: false,
+				type: 'POST',
+				success: function (data) 
+				{
+					setTimeout(function(){
+						$("#modal_aguardar").modal('hide');
+					},500);
+					document.getElementById("curso").innerHTML = data.response;
+					if(data.aviso != "")
+						Main.modal("aviso", data.aviso);
+				}
+			}).fail(function(msg){
+			    setTimeout(function(){
+			    	$("#modal_confirm").modal('hide');
+			    	Main.modal("aviso", "Houve um erro ao processar sua requisição. Verifique sua conexão com a internet.");
+				},500);
+			});
 		}
 	},
 	habilita_curso : function(id)
@@ -999,6 +1030,7 @@ var Main = {
 					setTimeout(function(){
 						$("#modal_aguardar").modal('hide');
 					},500);
+					$("#qtd_alunos_encontrados_busca").html("Alunos encontrados "+data.quantidade);
 					document.getElementById("alunos").innerHTML = data.response;;
 				}
 			}).fail(function(msg){
@@ -1026,6 +1058,7 @@ var Main = {
 					setTimeout(function(){
 						$("#modal_aguardar").modal('hide');
 					},500);
+					$("#qtd_alunos_encontrados_busca").html("Alunos encontrados "+data.quantidade);
 					document.getElementById("alunos").innerHTML = data.response;
 					
 					if(data.aviso != "")
@@ -1063,6 +1096,16 @@ var Main = {
 			    	Main.modal("aviso", "Houve um erro ao processar sua requisição. Verifique sua conexão com a internet.");
 				},500);
 			});
+		}
+	},
+	add_aluno_marcado : function(lista, checkbox)
+	{
+		for(var i = 0; i < $("#"+lista).val(); i++)
+		{
+			if(lista == "limite_aluno")
+				document.getElementById("nome_aluno"+i).checked = document.getElementById(checkbox).checked;
+			else 
+				document.getElementById("nome_aluno_add"+i).checked = document.getElementById(checkbox).checked;
 		}
 	},
 	remove_aluno : function ()//REMOVE OS ALUNOS ADICIONADOS E SELECIONADOS
@@ -1127,7 +1170,9 @@ var Main = {
 						node_td = document.createElement("TD");
 						node_td.setAttribute("class","text-center");
 						node_td.setAttribute("style","vertical-align: middle;");
-						node_td.innerHTML = "<span title='Detalhes' style='cursor: pointer;' class='glyphicon glyphicon-th text-danger'></span>";
+						node_td.innerHTML = "<a title='Detalhes' target='n_guia' href='"+Main.base_url+"aluno/detalhes/"+$("#usuario_id"+i).val()+"'>"+
+											"<span class='glyphicon glyphicon-arrow-right text-warning'></span> "+
+											"</a>";
 						node_tr.appendChild(node_td);				
 
 						document.getElementById("alunos_turma").appendChild(node_tr);
@@ -1252,5 +1297,49 @@ var Main = {
 				return false;
 
 		return true;
+	},
+	habilita_permissoes : function(permissao)
+	{
+		if(permissao == "all")
+		{
+			for(var i = 0; i < $("#qtd").val(); i++)
+			{
+				document.getElementById("criar"+i).checked = document.getElementById("hab_all").checked;
+				if(document.getElementById("cr"+i) != undefined)
+				{
+					document.getElementById("cr"+i).className = "checkbox checbox-switch switch-success";
+					document.getElementById("flagcr"+i).value = "success";
+				}
+				
+				document.getElementById("ler"+i).checked = document.getElementById("hab_all").checked;
+				if(document.getElementById("le"+i) != undefined){
+					document.getElementById("le"+i).className = "checkbox checbox-switch switch-success";
+					document.getElementById("flagle"+i).value = "success";
+				}
+				
+				document.getElementById("atualizar"+i).checked = document.getElementById("hab_all").checked;
+				if(document.getElementById("at"+i) != undefined){
+					document.getElementById("at"+i).className = "checkbox checbox-switch switch-success";
+					document.getElementById("flagat"+i).value = "success";
+				}
+				
+				document.getElementById("remover"+i).checked = document.getElementById("hab_all").checked;
+				if(document.getElementById("re"+i) != undefined){
+					document.getElementById("re"+i).className = "checkbox checbox-switch switch-success";
+					document.getElementById("flagre"+i).value = "success";
+				}
+			}
+		}
+		else
+		{
+			for(var i = 0; i < $("#qtd").val(); i++)
+			{
+				document.getElementById(permissao+i).checked = document.getElementById("hab_all_"+permissao).checked;
+				if(document.getElementById(permissao.substr(0, 2)+i) != undefined){
+					document.getElementById(permissao.substr(0, 2)+i).className = "checkbox checbox-switch switch-success";
+					document.getElementById("flag"+permissao.substr(0, 2)+i).value = "success";
+				}
+			}
+		}
 	}
 };

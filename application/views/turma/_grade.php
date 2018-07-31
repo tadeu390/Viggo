@@ -1,5 +1,5 @@
 <div class='form-group relative'>
-	<?php if(empty($obj['Id'])): ?> 
+	<?php if(empty($lista_disc_turma_header['Id'])): ?> 
 	<select onchange="Main.load_periodo_grade();" name='grade_id' id='grade_id' class='form-control' style='padding-left: 0px;'>
 		<option value='0' style='background-color: #393836;'>Selecione a grade</option>
 		<?php

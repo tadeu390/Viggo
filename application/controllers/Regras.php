@@ -61,7 +61,7 @@
 			if($this->Geral_model->get_permissao(CREATE, get_class($this)) == TRUE)
 			{
 				$this->data['obj'] = $this->Regras_model->get_regras(FALSE, $id, FALSE, FALSE);
-				$this->data['modalidades'] = $this->Modalidade_model->get_modalidade(FALSE);
+				$this->data['modalidades'] = $this->Modalidade_model->get_modalidade(TRUE, FALSE, FALSE);
 				$this->data['intervalos'] = $this->Intervalo_model->get_intervalo(FALSE);
 				$this->data['bimestres'] = $this->Bimestre_model->get_bimestre(FALSE);
 				if($id > 0)//QUANDO CLICA EM COPIAR PARA
@@ -138,6 +138,7 @@
 					array_push($dataIntervaloToSave, $dataIntervaloLinhaToSave);
 				}
 			}
+			
 			$dataToSave['intervalos'] = $dataIntervaloToSave;
 			$dataBimestreToSave = array();
 			for($i = 0; $i < $this->input->post('max_value_bimestre'); $i++)

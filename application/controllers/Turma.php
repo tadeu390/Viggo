@@ -35,6 +35,10 @@
 		*/
 		public function index($page = FALSE, $field = FALSE, $order = FALSE)
 		{
+			//redireciona para o horário da turma, toda vez que uma turma é criada ou alterada caso o usuário queira.
+			if(!empty($this->input->cookie('horario')))
+				redirect("horario/create/".$this->input->cookie('horario'));
+
 			if($page === FALSE)
 				$page = 1;
 			
@@ -87,7 +91,7 @@
 			$this->data['title'] = 'Editar turma';
 			if($this->Geral_model->get_permissao(UPDATE, get_class($this)) == TRUE)
 			{
-				$this->data['obj'] = $this->Turma_model->get_turma(FALSE, $id, FALSE, FALSE);
+				//$this->data['obj'] = $this->Turma_model->get_turma(FALSE, $id, FALSE, FALSE);
 				$this->data['lista_disc_turma_header'] = $this->Disc_turma_model->get_disc_turma_header($id);
 				$curso_id = $this->Disc_turma_model->get_curso_turma($id)['Curso_id'];
 				
@@ -103,11 +107,11 @@
 					$this->data['lista_disc_turma_header']['Periodo_letivo_id'], 
 					$this->Disc_turma_model->get_grade_id_turma($id)['Grade_id']);
 
-				$this->data['lista_cursos'] = $this->Curso_model->get_curso(TRUE, FALSE, FALSE, FALSE);
-				$this->data['lista_modalidades'] = $this->Modalidade_model->get_modalidade(FALSE);
+				$this->data['lista_cursos'] = $this->Curso_model->get_curso(FALSE, FALSE, FALSE, FALSE);
+				$this->data['lista_modalidades'] = $this->Modalidade_model->get_modalidade(TRUE, FALSE, FALSE);
 				$this->data['lista_categorias'] = $this->Categoria_model->get_categoria(FALSE);
 				
-				$this->data['lista_grades'] = $this->Grade_model->get_grade_por_mc(
+				$this->data['lista_grades'] = $this->Grade_model->get_grade_por_mc(FALSE, 
 					$this->data['lista_disc_turma_header']['Modalidade_id'], 
 					$this->data['lista_disc_turma_header']['Curso_id']);
 
@@ -135,10 +139,10 @@
 			$this->data['title'] = 'Nova turma';
 			if($this->Geral_model->get_permissao(CREATE, get_class($this)) == TRUE)
 			{
-				$this->data['obj'] = $this->Turma_model->get_turma(FALSE, 0, FALSE, FALSE);
+				//$this->data['obj'] = $this->Turma_model->get_turma(FALSE, 0, FALSE, FALSE);
 				$this->data['lista_disc_turma_header'] = $this->Disc_turma_model->get_disc_turma_header(0);
-				$this->data['lista_cursos'] = $this->Curso_model->get_curso(TRUE, FALSE, FALSE, FALSE);
-				$this->data['lista_modalidades'] = $this->Modalidade_model->get_modalidade(FALSE);
+				$this->data['lista_cursos'] = array();
+				$this->data['lista_modalidades'] = $this->Modalidade_model->get_modalidade(TRUE, FALSE, FALSE);
 				$this->data['lista_categorias'] = $this->Categoria_model->get_categoria(FALSE);
 				$this->data['lista_turmas'] = array();
 				$this->data['lista_grades'] = array();
@@ -177,7 +181,7 @@
 				return "O nome informado para a turma já se encontra cadastrado no sistema.";
 			else if($Turma['Modalidade_id'] == 0)
 				return "Selecione uma modalidade de ensino.";
-			else if(count($this->Modalidade_model->get_periodo_por_modalidade($Turma['Modalidade_id'])) == 0)
+			else if(count($this->Modalidade_model->get_periodo_por_modalidade($Turma['Modalidade_id'])) == 0 && empty($Turma['Id']))
 				return "Nenhum período letivo foi identificado para esta modalidade. Por favor, primeiro cadastre o período letivo.";
 			else if($this->valida_disciplinas($Turma['Disc_to_save']) == FALSE)
 				return "Selecione ao menos uma disciplina para a turma";
@@ -269,6 +273,9 @@
 
 				 		$this->Disc_turma_model->set_disc_turma($dataToSave, $turma_id, $periodo_letivo_id, $this->input->post('curso_id'));
 				 		$resultado = "sucesso";
+
+				 		if($this->input->post('horario') != NULL)
+				 			$this->set_horario_cookie($turma_id);
 				 	}
 				}
 				else
@@ -280,6 +287,21 @@
 			 }
 			 else
 				redirect('turma/index');
+		}
+		/*!
+		*	RESPONSÁVEL POR CRIAR UM COOKIE QUANDO O USUÁRIO DESEJA IR PARA A TELA DE ALTERAR HORÁRIO DA TURMA.
+		*
+		*	*$turma_id -> Id da turma usado para redirecionar pra a tela de horário da mesma.
+		*/
+		public function set_horario_cookie($turma_id)
+		{
+			$cookie = array(
+		            'name'   => 'horario',
+		            'value'  => $turma_id,
+		            'expire' => 100000000,
+		            'secure' => FALSE
+	            );
+		  	$this->input->set_cookie($cookie);
 		}
 		/*!
 		*	RESPONSÁVEL POR RECEBER DA MODEL TODOS OS ATRIBUTOS DE UMA TURMA E OS ENVIA-LOS A VIEW.
@@ -321,7 +343,27 @@
 			}
 		}
 		/*!
-		*	RESPONSÁVEL POR RECEBER DA MODEL A ÚLTIMA GRADE ATIVA DE UM CURSO EM UMA DETERMINADA MODALIDADE.
+		*	RESPONSÁVEL POR RECEBER DA MODEL TODOS OS CURSOS CADASTRADO NO SISTEMA.
+		*/
+		public function cursos()
+		{
+			if($this->Geral_model->get_permissao(READ, get_class($this)) == TRUE)
+			{
+				$aviso = "";
+				$this->data['lista_cursos'] = $this->Curso_model->get_curso(TRUE, FALSE, FALSE, FALSE);
+				$this->data['lista_disc_turma_header']['Curso_id'] = 0;
+				if(empty($this->data['lista_cursos']))
+					$aviso = "Nenhum curso cadastrado foi encontrado";
+				
+				$resultado = $this->load->view("turma/_cursos", $this->data, TRUE);
+				$arr = array('response' => $resultado,
+							 'aviso' => $aviso);
+					header('Content-Type: application/json');
+					echo json_encode($arr);			
+			}
+		}
+		/*!
+		*	RESPONSÁVEL POR RECEBER DA MODEL UMA LISTA DE GRADES CADASTRADAS PARA O CURSO E MODALIDADE EM QUESTÃO..
 		*
 		*	$modalidade_id -> Id da modalidade de ensino.
 		*	$curso_id -> Id do curso.
@@ -331,10 +373,10 @@
 			if($this->Geral_model->get_permissao(READ, get_class($this)) == TRUE)
 			{
 				$aviso = "";
-				$this->data['lista_grades']	= $this->Grade_model->get_grade_por_mc($modalidade_id, $curso_id);
+				$this->data['lista_grades']	= $this->Grade_model->get_grade_por_mc(TRUE, $modalidade_id, $curso_id);
 				$this->data['lista_disc_turma_header']['Grade_id'] = 0;
 				if(empty($this->data['lista_grades']))
-					$aviso = "Nenhuma grade cadastrada para este curso nesta modalidade foi encontrada";
+					$aviso = "Nenhuma grade cadastrada para este curso nesta modalidade foi encontrada.";
 				
 				$resultado = $this->load->view("turma/_grade", $this->data, TRUE);
 				$arr = array('response' => $resultado,
@@ -344,7 +386,7 @@
 			}
 		}
 		/*!
-		*	RESPONSÁVEL POR CARREGAR RECEBER DA MODEL TODOS OS PERÍODOS QUE UMA GRADE TIVER.
+		*	RESPONSÁVEL POR RECEBER DA MODEL TODOS OS PERÍODOS QUE UMA GRADE TIVER.
 		*
 		*	$grade_id -> Id da grade que se deseja carregar os períodos.
 		*/
@@ -420,7 +462,9 @@
 					$resultado = "<div class='text-center'>Nenhum aluno encontrado ou todos os alunos já se encontram em uma turma de acordo com a modalidade e curso especificados acima.</div>";
 				else
 					$resultado = $this->load->view("turma/_alunos", $this->data, TRUE);
-				$arr = array('response' => $resultado);
+				$arr = array('response' => $resultado,
+							 'quantidade' => COUNT($this->data['lista_alunos'])
+							);
 					header('Content-Type: application/json');
 					echo json_encode($arr);
 			}
@@ -452,7 +496,9 @@
 					$resultado = "<div class='text-center'>Nenhum aluno encontrado ou todos os alunos já se encontram em uma turma de acordo com a modalidade e curso especificados acima.</div>";
 				else
 					$resultado = $this->load->view("turma/_alunos", $this->data, TRUE);
-				$arr = array('response' => $resultado);
+				$arr = array('response' => $resultado,
+							 'quantidade' => COUNT($this->data['lista_alunos'])
+						);
 					header('Content-Type: application/json');
 					echo json_encode($arr);
 			}
@@ -501,7 +547,9 @@
 					$aviso = "Todos os alunos desta turma já se encontram cadastrados em alguma turma do período letivo corrente.";
 				$resultado = $this->load->view("turma/_alunos", $this->data, TRUE);
 				$arr = array('response' => $resultado,
-							 'aviso' => $aviso);
+							 'aviso' => $aviso,
+							 'quantidade' => COUNT($this->data['lista_alunos'])
+						);
 					header('Content-Type: application/json');
 					echo json_encode($arr);
 			}

@@ -33,6 +33,8 @@
 			if($page === FALSE)
 				$page = 1;
 
+			delete_cookie ('inscricao_aluno');//deleta o id do aluno que veio da tela de criar aluno.
+			
 			$ordenacao = array(
 				"order" => $this->order_default($order),
 				"field" => $this->field_default($field)
@@ -102,12 +104,14 @@
 		*/
 		public function create()
 		{
+			//delete_cookie ('inscricao_aluno');
+
 			$this->data['title'] = 'Nova inscrição';
 			if($this->Geral_model->get_permissao(CREATE, get_class($this)) == TRUE)
 			{
 				$this->data['obj'] = $this->Inscricao_model->get_inscricao(FALSE, 0, FALSE);
-				$this->data['lista_cursos'] = $this->Curso_model->get_curso(FALSE, FALSE, FALSE);
-				$this->data['lista_modalidades'] = $this->Modalidade_model->get_modalidade(FALSE, FALSE, FALSE);
+				$this->data['lista_cursos'] = $this->Curso_model->get_curso(TRUE, FALSE, FALSE);
+				$this->data['lista_modalidades'] = $this->Modalidade_model->get_modalidade(TRUE, FALSE, FALSE);
 
 				$this->data['lista_alunos'] = $this->Aluno_model->get_aluno(FALSE);
 				$this->view("inscricao/create_edit", $this->data);
@@ -166,6 +170,7 @@
 
 				 	if($resultado == 1)
 				 	{
+				 		delete_cookie ('inscricao_aluno');//deleta o id do aluno que veio da tela de criar aluno.
 				 		$resultado = $this->store_banco($dataToSave);
 
 				 		if($this->input->post('matricular') == 1)//se marcar esta opção, cria a inscrição e já gera a matrícula para o período corrente

@@ -29,6 +29,10 @@
 		*/
 		public function index($page = FALSE, $field = FALSE, $order = FALSE)
 		{
+			//redireciona para a inscrição do aluno, toda vez que um aluno é criado ou alterado caso o usuário queira.
+			if(!empty($this->input->cookie('inscricao_aluno')))
+				redirect("inscricao/create/");
+
 			redirect("usuario/index");
 		}
 		/*!
@@ -39,6 +43,7 @@
 		*/
 		public function create($id = NULL, $type = NULL)
 		{
+			delete_cookie ('inscricao_aluno');//usado na tela de inscricao
 			if($this->Geral_model->get_permissao(CREATE, get_parent_class($this)) == TRUE)
 			{
 				$this->data['obj'] = $this->Usuario_model->get_usuario(FALSE, 0, FALSE);
@@ -59,6 +64,7 @@
 		*/
 		public function edit($id = FALSE, $type = NULL)
 		{
+			delete_cookie ('inscricao_aluno');//usado na tela de inscricao
 			if($this->Geral_model->get_permissao(UPDATE, get_parent_class($this)) == TRUE)
 			{
 				$this->data['obj'] = $this->Usuario_model->get_usuario(FALSE, $id, FALSE);
@@ -136,6 +142,9 @@
 							$resultado = $this->store_banco($dataToSaveAluno);
 
 							$resultado = "sucesso";
+
+							if($this->input->post('inscricao_aluno') != NULL)
+								$this->set_aluno_cookie($this->input->post('id'));
 						}
 				 	}
 				}
@@ -148,6 +157,21 @@
 			}
 			else
 				redirect('usuario/index');
+		}
+		/*!
+		*	RESPONSÁVEL POR CRIAR UM COOKIE QUANDO O USUÁRIO DESEJA IR PARA A TELA DE INSCRIÇÃO DO ALUNO.
+		*
+		*	$usuario_id -> Id de usuário do aluno usado para redirecionar para tela de inscrição.
+		*/
+		public function set_aluno_cookie($usuario_id)
+		{
+			$cookie = array(
+		            'name'   => 'inscricao_aluno',
+		            'value'  => $usuario_id,
+		            'expire' => 100000000,
+		            'secure' => FALSE
+	            );
+		  	$this->input->set_cookie($cookie);
 		}
 		/*!
 		*	RESPONSÁVEL POR RECEBER DA MODEL TODOS OS ATRIBUTOS DE UM ALUNO E OS ENVIA-LOS A VIEW.

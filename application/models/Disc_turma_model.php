@@ -20,9 +20,16 @@
 		*/
 		public function get_disc_turma_header($id)
 		{
-			$query = $this->db->query("
-				SELECT t.Id, g.Curso_id, p.Modalidade_id, t.Nome as Nome_turma, p.Qtd_minima_aluno, p.Qtd_maxima_aluno, 
-				p.Periodo as Nome_periodo, dt.Periodo_letivo_id, g.Id as Grade_id, dg.Periodo  
+			$query = $this->db->query(" 
+				SELECT 
+				(SELECT COUNT(*) FROM 
+					(SELECT m.Sub_turma 
+					FROM Turma t 
+					INNER JOIN Disc_turma dt ON t.Id = dt.Turma_id 
+					INNER JOIN Matricula m ON dt.Id = m.Disc_turma_id 
+					WHERE t.Id = ".$this->db->escape($id)." GROUP BY 1) AS x) AS Qtd_sub_turma,
+				t.Id, g.Curso_id, p.Modalidade_id, t.Nome as Nome_turma, p.Qtd_minima_aluno, p.Qtd_maxima_aluno, 
+				p.Periodo as Nome_periodo, dt.Periodo_letivo_id, g.Id as Grade_id, dg.Periodo, t.Ativo   
 				FROM Turma t 
 				INNER JOIN Disc_turma dt ON t.Id = dt.Turma_id 
 				INNER JOIN Disc_grade dg ON dg.Id = dt.Disc_grade_id 
@@ -39,6 +46,8 @@
 		*
 		*	$id -> Id da grade para que se possa obter as disciplinas da grade já cadastradas para ela caso exista.
 		*	$periodo -> Periodo a que se refere as disciplinas da grade.
+		* 	$turma_id -> Id da turma para pegar a grade cadastrada pra turma em questão, isso é necessário, pois uma mesma 
+		*	grade pode ser cadastrada pra duas turmas ou mais.
 		*/
 		public function get_grade_disciplina($id, $periodo, $turma_id)
 		{
@@ -46,30 +55,32 @@
 				SELECT d.Id AS Disciplina_id, dg.Periodo, dt.Categoria_id, 
 				dt.Professor_id, 
                 d.Nome as Nome_disciplina, dt.Turma_id,
-                dg.Id As Disc_Grade_id 
+                CONCAT(d.Nome, ' - ', u.Nome) AS Disc_prof, 
+                dg.Id As Disc_Grade_id, dt.Id AS Disc_turma_id  
 				FROM Disciplina d 
 				INNER JOIN Disc_grade dg ON dg.Disciplina_id = d.Id 
                 LEFT JOIN Disc_turma dt ON dg.Id = dt.Disc_grade_id  AND dt.Turma_id = ".$this->db->escape($turma_id)."
-                WHERE dg.Grade_id = ".$this->db->escape($id)." AND dg.Periodo = ".$this->db->escape($periodo)."");
+                LEFT JOIN Usuario u ON dt.Professor_id = u.Id AND u.Grupo_id = ".PROFESSOR."
+                WHERE dg.Grade_id = ".$this->db->escape($id)." AND dg.Periodo = ".$this->db->escape($periodo)." ORDER BY d.Nome");
 
 			return $query->result_array();
 		}
 		/*!
-		*	RESPONSÁVEL POR RETORNAR UMA LISTA DE ALUNOS CADASTRADAS PARA UMA TURMA.
+		*	RESPONSÁVEL POR RETORNAR UMA LISTA DE ALUNOS CADASTRADOS PARA UMA TURMA.
 		*
 		*	$id -> Id da turma.
 		*/
 		public function get_disc_turma_aluno($id)
 		{
 			$query = $this->db->query("
-				SELECT u.Nome as Nome_aluno, a.Id as Aluno_id, m.Sub_turma  
+				SELECT u.Nome as Nome_aluno, a.Id as Aluno_id, m.Sub_turma, a.Usuario_id  
 				FROM Disc_turma dt 
 				INNER JOIN Matricula m ON  m.Disc_turma_id = dt.Id 
 				INNER JOIN Inscricao i ON i.Id = m.Inscricao_id 
 				INNER JOIN Aluno a ON i.Aluno_id = a.Id 
 				INNER JOIN Usuario u ON u.Id = a.Usuario_id 
                 WHERE dt.Turma_id = ".$this->db->escape($id)." 
-                GROUP by u.Nome");
+                GROUP by 1,2,3,4 ORDER BY m.Sub_turma");
 
 			return $query->result_array();
 		}
@@ -167,7 +178,7 @@
 				
 			$last_periodo_letivo_id = $CI->Modalidade_model->get_periodo_por_modalidade($modalidade_id)['Id'];
 			$perido_letivo_turma_antiga =  $this->get_disc_turma_header($turma_id)['Periodo_letivo_id'];
-			//Size_total -> Retorna a quantidade de totalde alunos da turma independente de estar renovado a matrícula ou não
+			//Size_total -> Retorna a quantidade de total de alunos da turma independente de estar renovado a matrícula ou não
 			//isso ajuda a quando for criar uma turma a partir de outra turma pode ser alertado pelo sistama caso haja algum aluno da turma selecionada no filtro
 			//que esteja sem renovação da matricula para  oeríodo corrente.
 			$query = $this->db->query("
@@ -215,9 +226,13 @@
 	
 			return $query->result_array();
 		}
-		/*
-			RESPONSÁVEL POR RETORNAR UMA LISTA DE ALUNOS CUJA INSCRIÇÃO NÃO EXSITE RELACIONAMENTO ALGUM COM 
-			A TABELA DE MATRICULA (MATRICULA NAS DISCIPLINAS).
+		/*!
+		*	RESPONSÁVEL POR RETORNAR UMA LISTA DE ALUNOS CUJA INSCRIÇÃO NÃO EXSITE RELACIONAMENTO ALGUM COM 
+		*	A TABELA DE MATRICULA (MATRICULA NAS DISCIPLINAS).
+		*
+		*	$curso_id -> Curso de pretensão do aluno. Somenete alunos no curso em questão.
+		*	$modalidade_id -> Modalidade em que o aluno está inscrito. Somente alunos nesta modalidade.
+		*	$filtros -> Contém os filtros dos formulário.
 		*/
 		public function get_alunos_inscritos_novos($curso_id, $modalidade_id, $filtros = FALSE)
 		{
@@ -229,7 +244,7 @@
 			$f = $this->filtros($filtros);
 
 			$query = $this->db->query("
-				SELECT A.Id as Aluno_id, u.Nome as Nome_aluno
+				SELECT A.Id as Aluno_id, u.Nome as Nome_aluno, a.Usuario_id 
 				FROM Usuario u 
 				INNER JOIN Aluno a ON u.Id = a.Usuario_id 
 				INNER JOIN Inscricao i ON a.Id = i.Aluno_id  
@@ -240,7 +255,6 @@
 
 			return $query->result_array();
 		}
-
 		/*!
 		*	RESPONSÁVEL POR RETORNAR UMA LISTA DE ALUNOS PARA SE CRIAR UMA TURMA,
 		*	A LISTA É COMPOSTA POR ALUNOS INSCRITOS EM UM DETERMINADO CURSO CUJA MATRICULA
@@ -267,7 +281,7 @@
 
 			$f = $this->filtros($filtros);
 			$query = $this->db->query("
-				SELECT A.Id as Aluno_id, u.Nome as Nome_aluno 
+				SELECT a.Id as Aluno_id, u.Nome as Nome_aluno, a.Usuario_id  
 				FROM Usuario u 
 				INNER JOIN Aluno a ON u.Id = a.Usuario_id 
 				INNER JOIN Inscricao i ON a.Id = i.Aluno_id AND 
@@ -324,13 +338,14 @@
 			return $filtros;
 		}
 		/*!
-			RESPONSÁVEL POR CRIAR OU ATUALIZAR OS DADOS DE UMA TURMA PARA CADA ALUNO, CADA DISCIPLINA
-			CONTIDA.
-
-			$data -> Contém os dados a serem cadastrados como as disciplinas marcadas e seus respectivos
-			professores e categorias e os alunos adicionados.
-			$turma_id -> Id da turma que contém os dados a serem cadastrados ou modificados.
-			$periodo_letivo_id -> Id do periodo letivo da turma.
+		*	RESPONSÁVEL POR CRIAR OU ATUALIZAR OS DADOS DE UMA TURMA PARA CADA ALUNO, CADA DISCIPLINA
+		*	CONTIDA.
+		*
+		*	$data -> Contém os dados a serem cadastrados como as disciplinas marcadas e seus respectivos
+		*	professores e categorias e os alunos adicionados.
+		*	$turma_id -> Id da turma que contém os dados a serem cadastrados ou modificados.
+		*	$periodo_letivo_id -> Id do periodo letivo da turma.
+		*	$curso_id -> Curso da turma a ser cadastrada/editada.
 		*/
 		public function set_disc_turma($data, $turma_id, $periodo_letivo_id, $curso_id)
 		{

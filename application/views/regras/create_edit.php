@@ -1,3 +1,4 @@
+<?php $this->load->helper("mdate");?>
 <br /><br />
 <div class='row padding20 text-white'>
     <?php
@@ -184,7 +185,7 @@
 										echo "<tr id='intervalo".$max_value_intervalo."'>";
 											echo "<td>";
 												echo "<input type='hidden' id='dia".$max_value_intervalo."' name='dia".$max_value_intervalo."' value='".$intervalos[$i]['Dia']."'>";
-												echo $intervalos[$i]['Dia'];
+												echo mdate::weekday($intervalos[$i]['Dia']);
 											echo "</td>";
 											echo "<td>";
 												echo "<input type='hidden' id='hora_inicio".$max_value_intervalo."' name='hora_inicio".$max_value_intervalo."' value='".$intervalos[$i]['Hora_inicio']."'>";

@@ -75,8 +75,8 @@
 								echo "<td $cor style='vertical-align:middle'>".($i + 1)."</td>";
 								echo "<td $cor style='vertical-align:middle'>";
 									echo "<span style='font-size: 1em;' title='".$lista_matriculas[$i]['Nome_aluno']."'>";
-										echo "<a target='n_guia' href='aluno/detalhes/".$lista_matriculas[$i]['Usuario_id']."'>";
-											echo "<span class='glyphicon glyphicon-arrow-right'></span> ";
+										echo "<a target='n_guia' href='".$url."aluno/detalhes/".$lista_matriculas[$i]['Usuario_id']."'>";
+											echo "<span class='glyphicon glyphicon-arrow-right text-warning'></span> ";
 											echo mstring::corta_string($lista_matriculas[$i]['Nome_aluno'], 25);
 										echo "</a>";
 									echo "</span>";
