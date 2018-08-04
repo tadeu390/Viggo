@@ -1,8 +1,9 @@
 <?php
+	require_once("Geral_model.php");//INCLUI A CLASSE GENÉRICA.
 	/*!
 	*	ESTA MODAL TRATA DAS OPERAÇÕES NO BANCO DE DADOS REFERENTE AS INFORMAÇÕES DE USUÁRIOS .
 	*/
-	class Usuario_model extends CI_Model 
+	class Usuario_model extends Geral_model 
 	{
 		public function __construct()
 		{
@@ -50,7 +51,7 @@
 					FROM Usuario u 
 					LEFT JOIN Grupo g ON u.Grupo_id = g.Id 
 					WHERE TRUE ".$Ativos."".$filtros."
-					".$order." ".$pagination."");
+					".str_replace("'", "", $this->db->escape($order))." ".$pagination."");
 				
 				return $query->result_array();
 			}

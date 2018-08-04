@@ -1,8 +1,9 @@
 <?php
+	require_once("Geral_model.php");//INCLUI A CLASSE GENÉRICA.
 	/*!
 	*	ESTA MODEL TRATA DAS OPERAÇÕES NA BASE DE DADOS REFERENTE AOS HORÁRIOS DAS TURMAS.
 	*/
-	class Horario_model extends CI_Model 
+	class Horario_model extends Geral_model 
 	{
 		public function __construct()
 		{

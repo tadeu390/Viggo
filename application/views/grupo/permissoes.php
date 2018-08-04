@@ -5,7 +5,7 @@
 			echo"<nav aria-label='breadcrumb'>";
   				echo"<ol class='breadcrumb'>";
     				echo"<li class='breadcrumb-item'><a href='".$url.$controller."'>Grupos</a></li>";
-    				echo "<li class='breadcrumb-item active' aria-current='page'>Permissões dos usuários do grupo ".$grupo."</li>";
+    				echo "<li class='breadcrumb-item active' aria-current='page'>Permissões dos usuários no grupo ".$grupo."</li>";
     			echo "</ol>";
 			echo"</nav>";
 		echo "</div>";
@@ -124,9 +124,9 @@
 								echo "</tr>";
 							echo"</thead>";
 							echo"<tbody>";
+								$limite = 0;
 								if($lista_grupo_acesso[0]['Qtd_user'] > 0)
 								{
-									$limite = 0;
 									for($i = 0; $i < count($lista_grupo_acesso); $i++)
 									{
 										echo"<tr>";

@@ -1,8 +1,9 @@
 <?php
+	require_once("Geral_model.php");//INCLUI A CLASSE GENÉRICA.
 	/*!
 	*	ESTA MODEL TRATA DAS OPERAÇÕES NO BANCO DE DADOS REFERENTE AS PERMISSÕES DE USUÁRIO OU DE GRUPO DE USUÁRIOS.
 	*/
-	class Acesso_model extends CI_Model 
+	class Acesso_model extends Geral_model 
 	{
 		public function __construct()
 		{

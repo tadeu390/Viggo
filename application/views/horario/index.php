@@ -6,7 +6,7 @@
     	echo"<div class='col-lg-10 offset-lg-1 padding0'>";
 			echo"<nav aria-label='breadcrumb'>";
   				echo"<ol class='breadcrumb'>";
-    				echo "<li class='breadcrumb-item active' aria-current='page'>Horários das turmas</li>";
+    				echo "<li class='breadcrumb-item active' aria-current='page'>Horários</li>";
     			echo "</ol>";
 			echo"</nav>";
 		echo "</div>";
@@ -20,7 +20,7 @@
 						echo "<tr>";
 							echo "<td>#</td>";
 							echo "<td>";
-								echo"<a href='".$url."$controller/index/".$paginacao['pg_atual']."/Nome_turma/".$paginacao['order']."'>Nome</a>";
+								echo"<a href='".$url."$controller/index/".$paginacao['pg_atual']."/Nome_turma/".$paginacao['order']."'>Turma</a>";
 								if($paginacao['order'] == 'DESC' && $paginacao['field'] == 'Nome_turma')
 									echo "&nbsp;<div class='fa fa-chevron-down'></div>";
 								else if($paginacao['order'] == 'ASC' && $paginacao['field'] == 'Nome_turma')

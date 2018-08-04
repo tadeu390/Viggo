@@ -1,13 +1,10 @@
 <?php
+	require_once("Geral_model.php");//INCLUI A CLASSE GENÉRICA.
 	/*!
 	*	ESTA MODEL TRATA DAS OPERAÇÕES NO BANCO DE DADOS REFERENTE AS INFORMAÇÕES DAS CATEGORIAS DE DISCIPLINAS.
 	*/
-	class Categoria_model extends CI_Model 
+	class Categoria_model extends Geral_model 
 	{
-		/*
-			CONECTA AO BANCO DE DADOS DEIXANDO A CONEXÃO ACESSÍVEL PARA OS MÉTODOS
-			QUE NECESSITAREM REALIZAR CONSULTAS.
-		*/
 		public function __construct()
 		{
 			$this->load->database();

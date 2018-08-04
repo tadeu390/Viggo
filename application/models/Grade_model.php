@@ -1,8 +1,9 @@
 <?php
+	require_once("Geral_model.php");//INCLUI A CLASSE GENÉRICA.
 	/*	
 		ESTA MODEL TRATA DAS OPERAÇÕES NA BASE DE DADOS REFERENTE AS GRADES DO SISTEMA.
 	*/
-	class Grade_model extends CI_Model 
+	class Grade_model extends Geral_model 
 	{
 		public function __construct()
 		{
@@ -39,7 +40,7 @@
                     LEFT JOIN Modalidade m ON m.Id = g.Modalidade_id 
                     LEFT JOIN Periodo_letivo pl ON m.Id = pl. Modalidade_id 
 					WHERE TRUE ".$Ativos." GROUP BY g.Id 
-                    ".$order."");
+                    ".str_replace("'", "", $this->db->escape($order))."");
 
 				return $query->result_array();
 			}
@@ -48,7 +49,7 @@
 				SELECT g.Id, g.Nome as Nome_grade, DATE_FORMAT(g.Data_registro, '%d/%m/%Y') as Data_registro, 
 				c.Nome AS Nome_curso, m.Nome AS Nome_modalidade, c.Id AS Curso_id, m.Id AS Modalidade_id, g.Ativo  
 				FROM Grade g 
-				INNER JOIN Curso c ON c.Id = G.Curso_id 
+				INNER JOIN Curso c ON c.Id = g.Curso_id 
 				INNER JOIN Modalidade m ON m.Id = g.Modalidade_id 
 				WHERE TRUE ".$Ativos." AND g.Id = ".$this->db->escape($id)."");
 

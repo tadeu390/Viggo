@@ -1,8 +1,9 @@
 <?php
+	require_once("Geral_model.php");//INCLUI A CLASSE GENÉRICA.
 	/*!
 	*	ESTA MODEL TRATA DAS OPERAÇÕES NO BANCO DE DADOS REFERENTE AS PERMISSÕES PADRÕES POR CADA GRUPO EM CADA MÓDULO DO SISTEMA.
 	*/
-	class Acesso_padrao_model extends CI_Model 
+	class Acesso_padrao_model extends Geral_model 
 	{
 		public function __construct()
 		{
@@ -25,7 +26,7 @@
 				FROM(
 				    SELECT m.Id AS Modulo_id, m.Nome as Nome_modulo
 				    from Modulo m 
-				    GROUP BY m.Nome ORDER BY m.Id
+				    GROUP BY m.Id, m.Nome ORDER BY m.Id
 				) as x");
 
 			return $query->result_array();

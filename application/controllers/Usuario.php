@@ -268,7 +268,6 @@
 				$this->Senha_model->set_senha($data);
 				$this->permissoes_default($Usuario_id, $dataToSave['Grupo_id']);
 			}
-
 			if($dataToSave['Email_notifica_nova_conta'] == 1 && empty($Usuario))
 			{
 				$dataToSave['Nome_usuario'] = $dataToSave['Nome'];
@@ -276,7 +275,6 @@
 			}
 			else if($dataToSave['Email_notifica_nova_conta'] == 1 && $Usuario['Email_notifica_nova_conta'] == 0)
 				$this->envia_email_nova_conta($Usuario);
-
 			return $Usuario_id;
 		}
 		/*!
@@ -337,14 +335,10 @@
 		{
 			$this->email->from($this->Configuracoes_email_model->get_configuracoes_email()['Email'], 'CEP - Centro de Educação Profissional "Tancredo Neves"');
 			$this->email->to($Usuario['Email']);
-			//$this->email->cc('another@another-example.com');
-			//$this->email->bcc('them@their-example.com');
 			$Usuario['url'] = base_url();
-
 			$mensagem = $this->load->view("templates/email_nova_conta", $Usuario, TRUE);
 			$this->email->subject('Bem vindo ao CEP');
 			$this->email->message($mensagem);
-
 			$this->email->send();
 		}
 		/*!

@@ -113,8 +113,14 @@
 												{
 													$atr = array("id" => "form_filtros", "name" => "form_filtros", "method" => "get", "style" => "margin-bottom: 0em;"); 
 													echo form_open("usuario/index", $atr);
-														echo"<input id='nome_pesquisa_rapida' value='".((!empty($filtros['outros']['nome'])) ? $filtros['outros']['nome'] : '').((!empty($filtros['outros']['nome_pesquisa_rapida'])) ? $filtros['outros']['nome_pesquisa_rapida'] : '')."' placeholder='Pesquisar aluno' name='nome_pesquisa_rapida' type='text' class='form-control relative'  style='top:1px; background-color: white;'>";
+														echo"<input id='nome_pesquisa_rapida' value='".((!empty($filtros['outros']['nome'])) ? $filtros['outros']['nome'] : '').((!empty($filtros['outros']['nome_pesquisa_rapida'])) ? $filtros['outros']['nome_pesquisa_rapida'] : '')."' placeholder='Pesquisar usuários' name='nome_pesquisa_rapida' type='text' class='form-control relative'  style='top:1px; background-color: white;'>";
 													echo"</form>";
+												}
+												if($this->input->cookie('grupo_id') == PROFESSOR || $this->session->grupo_id == PROFESSOR)
+												{
+													echo "<span class='text-white'>";
+														echo $Nome_periodo;
+													echo "</span>";
 												}
 											?>
 										</div>
@@ -142,7 +148,7 @@
 											    		echo"</a>";
 											    	echo"</li>";	
 									    		}
-										    	if($this->input->cookie('grupo_id') == 1 || $this->session->grupo_id == 1)
+										    	if($this->input->cookie('grupo_id') == ADMIN || $this->session->grupo_id == ADMIN)
 										    	{
 											    	echo "<li>";
 											    		echo "<a class='btn-block' href='".$url."configuracoes/geral'>";
@@ -150,9 +156,17 @@
 											    		echo "</a>";
 											    	echo "</li>";
 											    }
+											    if($this->input->cookie('grupo_id') == PROFESSOR || $this->session->grupo_id == PROFESSOR)
+										    	{
+											    	echo "<li>";
+											    		echo "<a class='btn-block' href='".$url."academico/delete_periodo_letivo'>";
+											    			echo "<span class='glyphicon glyphicon-tag'></span>&nbsp; Alterar período letivo";
+											    		echo "</a>";
+											    	echo "</li>";
+											    }
 										    	?>
 										    	<li>
-										    		<a class="btn-block" href="#" id="bt_logout">
+										    		<a class="btn-block" href="<?php echo $url; ?>account/logout" id="bt_logout">
 										    			<span class="glyphicon glyphicon-log-out"></span>&nbsp; &nbsp; Sair
 										    		</a>
 										    	</li>

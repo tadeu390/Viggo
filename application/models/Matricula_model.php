@@ -1,14 +1,11 @@
 <?php
+	require_once("Geral_model.php");//INCLUI A CLASSE GENÉRICA.
 	/*!
 	*	ESTA MODEL TRATA DAS OPERAÇÕES NO BANCO DE DADOS REFERENTE AS MATRÍCULAS DE CADA ALUNO
 	*	EM CADA DISCIPLINA.
 	*/
-	class Matricula_model extends CI_Model 
+	class Matricula_model extends Geral_model 
 	{
-		/*
-			CONECTA AO BANCO DE DADOS DEIXANDO A CONEXÃO ACESSÍVEL PARA OS MÉTODOS
-			QUE NECESSITAREM REALIZAR CONSULTAS.
-		*/
 		public function __construct()
 		{
 			$this->load->database();

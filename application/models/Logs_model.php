@@ -1,10 +1,10 @@
 <?php
+	require_once("Geral_model.php");//INCLUI A CLASSE GENÉRICA.
 	/*!
 	*	ESTA MODEL TRATA DAS OPERAÇÕES REFERENTE AOS ACESSOS REALIZADOS POR CADA USUÁRIO.
 	*/
-	class Logs_model extends CI_Model 
+	class Logs_model extends Geral_model 
 	{
-		/*CAREGA O DRIVE DO BANCO DE DADOS*/
 		public function __construct()
 		{
 			$this->load->database();

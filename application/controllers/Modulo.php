@@ -25,17 +25,25 @@
 		*
 		*	$page -> Número da página atual de registros.
 		*/
-		public function index($page = false)
+		public function index($page = FALSE, $field = FALSE, $order = FALSE)
 		{
 			if($page === false)
 				$page = 1;
-			
+
+			$ordenacao = array(
+				"order" => $this->order_default($order),
+				"field" => $this->field_default($field)
+			);
+
 			$this->set_page_cookie($page);
 			
 			$this->data['title'] = 'Módulos';
 			if($this->Geral_model->get_permissao(READ, get_class($this)) == true)
 			{
-				$this->data['lista_modulos'] = $this->Modulo_model->get_modulo(FALSE, FALSE, $page);
+				$this->data['paginacao']['order'] =$this->inverte_ordem($ordenacao['order']);
+				$this->data['paginacao']['field'] = $ordenacao['field'];
+
+				$this->data['lista_modulos'] = $this->Modulo_model->get_modulo(FALSE, FALSE, $page, $ordenacao);
 				
 				$this->data['paginacao']['size'] = $this->data['lista_modulos'][0]['Size'];
 				$this->data['paginacao']['pg_atual'] = $page;
@@ -118,7 +126,7 @@
 				return "Máximo 50 caracteres";
 			else if(empty($Modulo['Url']))
 				return "Informe a url de módulo";
-			else if(mb_strlen($Modulo['Url']) > 20)
+			else if(mb_strlen($Modulo['Url']) > 100)
 				return "Máximo 20 caracteres";
 			else if(empty($Modulo['Ordem']))
 				return "Informe o número da ordem";

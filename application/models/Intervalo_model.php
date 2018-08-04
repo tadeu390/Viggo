@@ -1,13 +1,10 @@
 <?php
+	require_once("Geral_model.php");//INCLUI A CLASSE GENÉRICA.
 	/*!
 	*	ESTA MODEL TRATA DAS OPERAÇÕES NO BANCO DE DADOS REFERENTE AS INFORMAÇÕES DOS INTERVALOS DOS HORÁRIOS.
 	*/
-	class Intervalo_model extends CI_Model 
+	class Intervalo_model extends Geral_model 
 	{
-		/*
-			CONECTA AO BANCO DE DADOS DEIXANDO A CONEXÃO ACESSÍVEL PARA OS MÉTODOS
-			QUE NECESSITAREM REALIZAR CONSULTAS.
-		*/
 		public function __construct()
 		{
 			$this->load->database();
@@ -98,7 +95,7 @@
 				SUM(CASE WHEN x.Dia = 6 THEN x.Qtd ELSE 0 END) as Sabado,
 				SUM(CASE WHEN x.Dia = 7 THEN x.Qtd ELSE 0 END) as Domingo
 				FROM 
-				(SELECT COUNT(*) AS Qtd, Dia FROM intervalo i 
+				(SELECT COUNT(*) AS Qtd, Dia FROM Intervalo i 
 					WHERE i.Periodo_letivo_id = ".$this->db->escape($periodo_letivo_id)." 
 					GROUP BY Dia 
 					ORDER BY i.Dia ) AS x ");

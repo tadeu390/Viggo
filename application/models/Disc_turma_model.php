@@ -1,14 +1,11 @@
 <?php
+	require_once("Geral_model.php");//INCLUI A CLASSE GENÉRICA.
 	/*!
 	*	ESTA MODEL TRATA DAS OPERAÇÕES NO BANCO DE DADOS REFERENTE AS INFORMAÇÕES 
 	*	DOS ALUNOS, DISCIPLINAS E PROFESSORES DA TURMA.
 	*/
-	class Disc_turma_model extends CI_Model 
+	class Disc_turma_model extends Geral_model 
 	{
-		/*
-			CONECTA AO BANCO DE DADOS DEIXANDO A CONEXÃO ACESSÍVEL PARA OS MÉTODOS
-			QUE NECESSITAREM REALIZAR CONSULTAS.
-		*/
 		public function __construct()
 		{
 			$this->load->database();
@@ -29,14 +26,14 @@
 					INNER JOIN Matricula m ON dt.Id = m.Disc_turma_id 
 					WHERE t.Id = ".$this->db->escape($id)." GROUP BY 1) AS x) AS Qtd_sub_turma,
 				t.Id, g.Curso_id, p.Modalidade_id, t.Nome as Nome_turma, p.Qtd_minima_aluno, p.Qtd_maxima_aluno, 
-				p.Periodo as Nome_periodo, dt.Periodo_letivo_id, g.Id as Grade_id, dg.Periodo, t.Ativo   
+				p.Periodo as Nome_periodo, dt.Periodo_letivo_id, g.Id as Grade_id, dg.Periodo, t.Ativo, dt.Id AS Disc_turma_id    
 				FROM Turma t 
 				INNER JOIN Disc_turma dt ON t.Id = dt.Turma_id 
 				INNER JOIN Disc_grade dg ON dg.Id = dt.Disc_grade_id 
 				INNER JOIN Grade g ON g.Id = dg.Grade_id 
  				INNER JOIN Periodo_letivo p ON p.Id = dt.Periodo_letivo_id 
                 INNER JOIN Modalidade md ON md.Id = p.Modalidade_id 
-                WHERE  t.Id = ".$this->db->escape($id)."  
+                WHERE  t.Id = ".$this->db->escape($id)." 
                 GROUP BY t.Id, g.Curso_id, p.Modalidade_id, t.Nome");
 
 			return $query->row_array();
@@ -95,7 +92,7 @@
 				SELECT u.Nome as Nome_professor, u.Id as Professor_id, d.Id AS Disciplina_id 
 				FROM Disc_turma dt 
 				INNER JOIN Usuario u ON u.Id = dt.Professor_id 
-				INNER JOIN Disc_Grade dg ON dg.Id = dt.Disc_grade_id 
+				INNER JOIN Disc_grade dg ON dg.Id = dt.Disc_grade_id 
 				INNER JOIN Disciplina d ON d.Id = dc.Disciplina_id 
                 WHERE u.Grupo_id = 4 AND dt.Turma_id = ".$this->db->escape($id)."");
 
@@ -110,7 +107,7 @@
 		{
 			$query = $this->db->query("
 				SELECT g.Curso_id FROM Grade g 
-				INNER JOIN Disc_Grade dg ON g.Id = dg.Grade_id 
+				INNER JOIN Disc_grade dg ON g.Id = dg.Grade_id 
 				INNER JOIN Disc_turma dt ON dg.Id = dt.Disc_grade_id 
 				WHERE dt.Turma_id = ".$this->db->escape($turma_id)." LIMIT 1");
 
@@ -125,7 +122,7 @@
 		{
 			$query = $this->db->query("
 				SELECT dg.Periodo FROM Grade g 
-				INNER JOIN Disc_Grade dg ON g.Id = dg.Grade_id 
+				INNER JOIN Disc_grade dg ON g.Id = dg.Grade_id 
 				INNER JOIN Disc_turma dt ON dg.Id = dt.Disc_grade_id 
 				WHERE dt.Turma_id = ".$this->db->escape($turma_id)." LIMIT 1");
 
@@ -140,7 +137,7 @@
 		{
 			$query = $this->db->query("
 				SELECT g.Id AS Grade_id FROM Grade g 
-				INNER JOIN Disc_Grade dg ON g.Id = dg.Grade_id 
+				INNER JOIN Disc_grade dg ON g.Id = dg.Grade_id 
 				INNER JOIN Disc_turma dt ON dg.Id = dt.Disc_grade_id 
 				WHERE dt.Turma_id = ".$this->db->escape($turma_id)." LIMIT 1");
 
@@ -182,7 +179,7 @@
 			//isso ajuda a quando for criar uma turma a partir de outra turma pode ser alertado pelo sistama caso haja algum aluno da turma selecionada no filtro
 			//que esteja sem renovação da matricula para  oeríodo corrente.
 			$query = $this->db->query("
-				SELECT a.Id, u.Nome as Nome_aluno, a.Id AS Aluno_id, 
+				SELECT u.Nome as Nome_aluno, a.Id AS Aluno_id, u.Id AS Usuario_id, 
 				(SELECT COUNT(*) FROM (
 					SELECT a.Id FROM Disc_turma dt 
 						INNER JOIN Matricula m ON dt.Id = m.Disc_turma_id
@@ -244,13 +241,13 @@
 			$f = $this->filtros($filtros);
 
 			$query = $this->db->query("
-				SELECT A.Id as Aluno_id, u.Nome as Nome_aluno, a.Usuario_id 
+				SELECT a.Id as Aluno_id, u.Nome as Nome_aluno, a.Usuario_id 
 				FROM Usuario u 
 				INNER JOIN Aluno a ON u.Id = a.Usuario_id 
 				INNER JOIN Inscricao i ON a.Id = i.Aluno_id  
 				INNER JOIN Renovacao_matricula rm ON i.Id = rm.Inscricao_id 
                 	AND rm.Periodo_letivo_id = ".$this->db->escape($periodo_letivo_id)." 
-                LEFT JOIN matricula m ON m.Inscricao_id = i.Id 
+                LEFT JOIN Matricula m ON m.Inscricao_id = i.Id 
                 WHERE m.Inscricao_id IS NULL AND i.Curso_id = ".$this->db->escape($curso_id)." ".$f."");
 
 			return $query->result_array();
@@ -304,7 +301,7 @@
                             INNER JOIN Inscricao i ON i.Aluno_id = a.Id 
                             INNER JOIN Matricula m ON i.Id = m.Inscricao_id 
                             INNER JOIN Disc_turma dt ON m.Disc_turma_id = dt.Id 
-                            INNER JOIN Disc_Grade dg ON dg.Id = dt.Disc_grade_id 
+                            INNER JOIN Disc_grade dg ON dg.Id = dt.Disc_grade_id 
                             INNER JOIN Grade g ON dg.Grade_id = g.Id 
                             WHERE dt.Periodo_letivo_id = ".$this->db->escape($periodo_letivo_id)." 
                             AND g.Curso_id = ".$this->db->escape($curso_id)."

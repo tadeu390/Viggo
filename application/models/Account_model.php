@@ -1,9 +1,10 @@
 <?php
+	require_once("Geral_model.php");//INCLUI A CLASSE GENÉRICA.
 	/*!
 	*	ESTA MODEL TRATA DAS OPERAÇÕES NA BASE DE DADOS REFERENTE AOS ACESSOS DOS USUÁRIOS.
 	*/
-	class Account_model extends CI_Model {
-
+	class Account_model extends Geral_model 
+	{
 		public function __construct()
 		{
 			$this->load->database();
@@ -12,9 +13,8 @@
 		*	RESPONSÁVEL POR VALIDAR SE O USUÁRIO E A SENHA É UMA CONTA VÁLIDA PARA PERMITIR ACESSO AO SISTEMA.
 		*	
 		*	$email -> E-mail de usuário.
-		*	$senha -> Senha de acesso do usuário.
 		*/
-		public function valida_login($email, $senha) 
+		public function valida_login($email)
 		{
 			$query = $this->db->query("
 				SELECT u.Id, u.Grupo_id, u.Status, u.Contador_tentativa, 

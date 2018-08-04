@@ -3,7 +3,7 @@
 	/*!
 	*	ESTA CLASSE TEM POR FUNÇÃO CONTROLAR TUDO REFERENTE AOS CURSOS.
 	*/
-	class Curso extends Geral 
+	class Professor extends Geral 
 	{
 		/*
 			No construtor carregamos as bibliotecas necessarias e tambem nossa model.
@@ -18,13 +18,16 @@
 				redirect('account/login/'.$url_redirect);
 			}
 
-			$this->load->model('Curso_model');
+			$this->load->model('Professor_model');
+			$this->load->model('Regras_model');
+
+			$this->data['Nome_periodo'] = $this->Regras_model->get_regras(FALSE, $this->input->cookie('periodo_letivo_id'), FALSE, FALSE, FALSE)['Nome_periodo'];
 			$this->set_menu();
 			$this->data['controller'] = strtolower(get_class($this));
 			$this->data['menu_selectd'] = $this->Geral_model->get_identificador_menu(strtolower(get_class($this)));
 		}
 		/*!
-		*	RESPONSÁVEL POR RECEBER DA MODEL TODOS OS CURSOS CADASTRADOS E ENVIA-LOS A VIEW.
+		*	RESPONSÁVEL POR RECEBER DA MODEL TODAS AS DISCIPLINAS DE UM DETERMINADO PROFESSOR E ENVIA-LOS A VIEW.
 		*
 		*	$page -> Número da página atual de registros.
 		*/
@@ -37,19 +40,19 @@
 
 			$ordenacao = array(
 				"order" => $this->order_default($order),
-				"field" => $this->field_default($field)
+				"field" => $this->field_default($field, 'Disc_turma_id')
 			);
 			
-			$this->data['title'] = 'Cursos';
+			$this->data['title'] = 'Formação de notas';
 			if($this->Geral_model->get_permissao(READ, get_class($this)) == TRUE)
 			{
 				$this->data['paginacao']['order'] =$this->inverte_ordem($ordenacao['order']);
 				$this->data['paginacao']['field'] = $ordenacao['field'];
 
-				$this->data['lista_cursos'] = $this->Curso_model->get_curso(FALSE, FALSE, $page, FALSE, $ordenacao);
-				$this->data['paginacao']['size'] = (!empty($this->data['lista_cursos'][0]['Size']) ? $this->data['lista_cursos'][0]['Size'] : 0);
+				$this->data['lista_disciplinas'] = $this->Professor_model->get_disciplinas(false, false, false, false, $ordenacao);
+				$this->data['paginacao']['size'] = 0;
 				$this->data['paginacao']['pg_atual'] = $page;
-				$this->view("curso/index", $this->data);
+				$this->view("professor/index", $this->data);
 			}
 			else
 				$this->view("templates/permissao", $this->data);
@@ -80,11 +83,10 @@
 		*/
 		public function edit($id = null)
 		{
-			$this->data['title'] = 'Editar curso';
+			$this->data['title'] = 'Editar Formação de nota';
 			if($this->Geral_model->get_permissao(UPDATE, get_class($this)) == TRUE)
 			{
-				$this->data['obj'] = $this->Curso_model->get_curso(FALSE, $id, FALSE, FALSE);
-				$this->view("curso/create_edit", $this->data);
+
 			}
 			else
 				$this->view("templates/permissao", $this->data);
@@ -94,30 +96,21 @@
 		*/
 		public function create()
 		{
-			$this->data['title'] = 'Novo Curso';
+			$this->data['title'] = 'Nova formação de nota';
 			if($this->Geral_model->get_permissao(CREATE, get_class($this)) == TRUE)
 			{
-				$this->data['obj'] = $this->Curso_model->get_curso(FALSE, 0, FALSE, FALSE);
-				$this->view("curso/create_edit", $this->data);
+				
 			}
-			else
-				$this->view("templates/permissao", $this->data);	
+			$this->view("curso/create_edit", $this->data);
 		}
 		/*!
 		*	RESPONSÁVEL POR VALIDAR OS DADOS NECESSÁRIOS DO CURSO.
 		*
 		*	$Curso -> Contém todos os dados do curso a ser validado.
 		*/
-		public function valida_curso($Curso)
+		public function valida_formacao_nota($Formacao_nota)
 		{
-			if(empty($Curso['Nome']))
-				return "Informe o nome do curso";
-			else if(mb_strlen($Curso['Nome']) > 100)
-				return "Máximo 100 caracteres";
-			else if($this->Curso_model->nome_valido($Curso['Nome'], $Curso['Id']) == 'invalido')
-				return "O nome informado para o curso já se encontra cadastrado no sistema.";
-			else
-				return 1;
+			return 1;
 		}
 		/*!
 		*	RESPONSÁVEL POR ENVIAR AO MODEL OS DADOS DO CURSO.
@@ -148,7 +141,7 @@
 			{
 				if($this->Geral_model->get_permissao(CREATE, get_class($this)) == TRUE || $this->Geral_model->get_permissao(UPDATE, get_class($this)) == TRUE)
 				{
-					$resultado = $this->valida_curso($dataToSave);
+					$resultado = $this->valida_formacao_nota($dataToSave);
 
 				 	if($resultado == 1)
 				 	{ 
@@ -175,8 +168,7 @@
 		{
 			if($this->Geral_model->get_permissao(READ, get_class($this)) == TRUE)
 			{		
-				$this->data['title'] = 'Detalhes do curso';
-				$this->data['obj'] = $this->Curso_model->get_curso(FALSE, $id, FALSE, FALSE);
+	
 	
 				$this->view("curso/detalhes", $this->data);
 			}

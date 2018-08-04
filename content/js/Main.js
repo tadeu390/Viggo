@@ -1,5 +1,5 @@
 var Main = {
-	base_url : ((window.location.href.split("/")[2] == "localhost") ? "http://"+window.location.host+"/git/TCC/" : "http://"+window.location.host+"/"),
+	base_url : ((window.location.href.split("/")[2] == "localhost") ? "https://"+window.location.host+"/git/TCC/" : "https://"+window.location.host+"/"),
 	//base_url : "http://"+window.location.host+"/git/TCC/",//localhost (pra qualquer dispositivo na rede local)
 	load_mask : function(){
 		$(document).ready(function(){
@@ -152,14 +152,6 @@ var Main = {
 	},
 	logout : function (){
 		Main.modal("aguardar", "Aguarde... encerrando sessão");
-		$.ajax({
-			type: "POST",
-			dataType: "json",
-			url: Main.base_url+"account/logout",
-			complete: function(data) {
-				 location.reload();
-			}
-		});
 	},
 	login_isvalid : function (){
 		if($("#email-login").val() == "")
@@ -330,7 +322,7 @@ var Main = {
 			Main.show_error("descricao", 'Máximo 50 caracteres', 'is-invalid');
 		else if($("#url_modulo").val() == "")
 			Main.show_error("url_modulo", 'Informe a url do módulo', 'is-invalid');
-		else if($("#url_modulo").val().length > 20)
+		else if($("#url_modulo").val().length > 100)
 			Main.show_error("url_modulo", 'Máximo 20 caracteres', 'is-invalid');
 		else if($("#ordem").val() == "")
 			Main.show_error("ordem", 'Informe o número da ordem', 'is-invalid');
@@ -1341,5 +1333,21 @@ var Main = {
 				}
 			}
 		}
+	},
+	set_periodo_letivo : function(periodo_letivo_id)//para o professor ou aluno
+	{
+		$("#modal_periodos").html("Aguarde... carregando informações");
+		$.ajax({
+			url: Main.base_url + $("#controller").val() + '/set_periodo_letivo/' + '/' + periodo_letivo_id,
+			dataType:'json',
+			cache: false,
+			type: 'POST',
+			success: function (data) 
+			{
+				window.location.assign(Main.base_url + $("#controller").val() + "/dashboard");
+			}
+		}).fail(function(msg){
+		    	window.location.assign(Main.base_url + $("#controller").val() + "/dashboard");
+		});
 	}
 };

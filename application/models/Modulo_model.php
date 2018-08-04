@@ -1,8 +1,9 @@
 <?php
+	require_once("Geral_model.php");//INCLUI A CLASSE GENÉRICA.
 	/*!
 	*	ESTA MODEL TRATA DAS OPERAÇÕES NA BASE DE DADOS REFERENTE AOS MÓDULOS DO SISTEMA.
 	*/
-	class Modulo_model extends CI_Model 
+	class Modulo_model extends Geral_model 
 	{
 		public function __construct()
 		{
@@ -15,7 +16,7 @@
 		*	$id -> Id de um módulo específico.
 		*	$page-> Número da página de registros que se quer carregar.
 		*/
-		public function get_modulo($Ativo, $id = false, $page = false)
+		public function get_modulo($Ativo, $id = false, $page = false, $ordenacao = false)
 		{
 			$Ativos = "";
 			if($Ativo == true)
@@ -26,6 +27,11 @@
 				$limit = $page * ITENS_POR_PAGINA;
 				$inicio = $limit - ITENS_POR_PAGINA;
 				$step = ITENS_POR_PAGINA;
+
+				$order = "";
+				
+				if($ordenacao != FALSE)
+					$order = "ORDER BY ".$ordenacao['field']." ".$ordenacao['order'];
 				
 				$pagination = " LIMIT ".$inicio.",".$step;
 				if($page === false)
@@ -38,8 +44,8 @@
 					mo.nome as Nome_modulo, mo.Id, mo.Url as Url_modulo, mo.Icone 
 						FROM Menu me 
 					RIGHT JOIN Modulo mo ON me.Id = mo.Menu_id 
-					WHERE TRUE ".$Ativos."
-					ORDER BY mo.Data_registro ASC ".$pagination."");
+					WHERE TRUE ".$Ativos." 
+					".str_replace("'", "", $this->db->escape($order))." ".$pagination."");
 
 				return $query->result_array();
 			}

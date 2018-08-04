@@ -79,13 +79,15 @@
 			
 			$this->limpa_sessao_troca_senha();
 			
+			if($this->Account_model->session_is_valid()['grupo_id'] == ADMIN)
+				redirect('academico/dashboard');
+			else if($this->Account_model->session_is_valid()['grupo_id'] == PROFESSOR)
+				redirect('academico/professor');
+			//$this->logout();
+
 			$this->load->view('templates/header', $this->data);
 			$this->load->view('account/login', $this->data);
 			$this->load->view('templates/footer', $this->data);
-			
-			if($this->Account_model->session_is_valid()['status'] == "ok")
-				redirect('academico/dashboard');
-			$this->logout();
 		}
 		/*!
 		*	RESPONSÁVEL POR APAGAR TODAS AS SESSÕES ATIVAS NO COMPUTADOR DO CLIENTE.
@@ -97,9 +99,11 @@
 			unset($_SESSION['token']);
 			delete_cookie ('id');
 			delete_cookie ('token');
+			delete_cookie ('periodo_letivo_id');
 			delete_cookie ('page');
 			delete_cookie('url_redirect');
 			delete_cookie ('grupo_id');
+			redirect("account/login");
 		}
 		/*!
 		*	RESPONSÁVEL POR ELIMINAR AS SESSÕES UTILIZADAS NA TROCA DE SENHA TANTO NO PRIMEIRO ACESSO QUANTO PARA REDEFINIÇÃO DE SENHA.
@@ -127,7 +131,7 @@
 			$senha = $this->input->post('senha-login');
 			$conectado = $this->input->post('conectado');
 
-			$login = $this->Account_model->valida_login($email, $senha);
+			$login = $this->Account_model->valida_login($email);
 			$data['title'] = 'Login';
 
 
@@ -178,7 +182,8 @@
 		            'name'   => 'id',
 		            'value'  => $Usuario['Id'],
 		            'expire' => 100000000,
-		            'secure' => FALSE
+		            'secure' => TRUE,
+		            'httponly' => TRUE 
 	            );
 		  		$this->input->set_cookie($cookie);
 
@@ -186,7 +191,8 @@
 		            'name'   => 'grupo_id',
 		            'value'  => $Usuario['Grupo_id'],
 		            'expire' => 100000000,
-		            'secure' => FALSE
+		            'secure' => TRUE,
+		            'httponly' => TRUE 
 		            );
 		  		$this->input->set_cookie($cookie);
 
@@ -194,7 +200,8 @@
 		            'name'   => 'token',
 		            'value'  => $Usuario['Valor'],
 		            'expire' => 100000000,
-		            'secure' => FALSE
+		            'secure' => TRUE,
+		            'httponly' => TRUE 
 		            );
 		  		$this->input->set_cookie($cookie);
 	  		}

@@ -18,22 +18,36 @@
 				echo "<table class='table table-striped table-hover text-white'>";
 					echo "<thead>";
 						echo "<tr>";
-							echo "<td colspan='4'>Escolha a turma</td>";
-						echo "</tr>";
-						echo "<tr>";
 							echo "<td>#</td>";
-							echo "<td>Nome</td>";
+							echo "<td>";
+								echo"<a href='".$url."$controller/index/".$paginacao['pg_atual']."/Nome/".$paginacao['order']."'>Turma</a>";
+								if($paginacao['order'] == 'DESC' && $paginacao['field'] == 'Nome')
+									echo "&nbsp;<div class='fa fa-chevron-down'></div>";
+								else if($paginacao['order'] == 'ASC' && $paginacao['field'] == 'Nome')
+									echo "&nbsp;<div class='fa fa-chevron-up'></div>";
+							echo"</td>";
+							echo "<td>";
+								echo"<a href='".$url."$controller/index/".$paginacao['pg_atual']."/Ativo_turma/".$paginacao['order']."'>Ativo</a>";
+								if($paginacao['order'] == 'DESC' && $paginacao['field'] == 'Ativo_turma')
+									echo "&nbsp;<div class='fa fa-chevron-down'></div>";
+								else if($paginacao['order'] == 'ASC' && $paginacao['field'] == 'Ativo_turma')
+									echo "&nbsp;<div class='fa fa-chevron-up'></div>";
+							echo"</td>";
 							echo "<td class='text-right'>Ações</td>";
 						echo "<tr>";
 					echo "</thead>";
 					echo "<tbody>";
 						for($i = 0; $i < count($lista_turmas); $i++)
 						{
+							$cor = "";
+							if($lista_turmas[$i]['Ativo_turma'] == 0)
+								$cor = "class='color-danger'";
 							echo "<tr>";
 								echo "<td>".($i + 1)."</td>";
 								echo "<td>".$lista_turmas[$i]['Nome_turma']."</td>";
+								echo "<td $cor>".(($lista_turmas[$i]['Ativo_turma'] == 1) ? 'Sim' : 'Não')."</td>";
 								echo "<td class='text-right'>";
-								echo "<a href='".$url."$controller/turma/".$lista_turmas[$i]['Id']."' title='Selecionar' style='cursor: pointer;' class='glyphicon glyphicon-arrow-right text-danger'></a>";
+								echo "<a href='".$url."$controller/turma/".$lista_turmas[$i]['Id']."/0' title='Inserir Notas/Faltas' style='cursor: pointer;' class='glyphicon glyphicon-arrow-right text-danger'></a>";
 								echo "</td>";
 							echo "</tr>";
 						}

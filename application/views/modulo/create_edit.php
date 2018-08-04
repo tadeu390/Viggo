@@ -36,7 +36,7 @@
 		</div>
 
 		<div class="form-group relative">
-			<input maxlength="20" id="url_modulo" name="url_modulo" spellcheck="false" value='<?php echo (!empty($obj['Url_modulo']) ? $obj['Url_modulo']:''); ?>' type="text" class="input-material">
+			<input maxlength="100" id="url_modulo" name="url_modulo" spellcheck="false" value='<?php echo (!empty($obj['Url_modulo']) ? $obj['Url_modulo']:''); ?>' type="text" class="input-material">
 			<label for="url_modulo" class="label-material">URL</label>
 			<div class='input-group mb-2 mb-sm-0 text-danger' id='error-url_modulo'></div>
 		</div>

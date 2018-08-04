@@ -1,12 +1,10 @@
 <?php
+	require_once("Geral_model.php");//INCLUI A CLASSE GENÉRICA.
 	/*!
 	*	ESTA MODEL TRATA DAS OPERAÇÕES NO BANCO DE DADOS REFERENTE AS INFORMAÇÕES DE CONFIGURAÇÕES DE E-MAIL DO SISTEMA.
 	*/
-	class Configuracoes_email_model extends CI_Model 
+	class Configuracoes_email_model extends Geral_model 
 	{
-		/*
-			CARREGA O DRIVER DO BANCO DE DADOS
-		*/
 		public function __construct()
 		{
 			$this->load->database();

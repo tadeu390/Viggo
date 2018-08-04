@@ -1,13 +1,10 @@
 <?php
+	require_once("Geral_model.php");//INCLUI A CLASSE GENÉRICA.
 	/*!
 	*	ESTA MODAL TRATA DAS OPERAÇÕES NO BANCO DE DADOS REFERENTE AS INFORMAÇÕES DE DISCIPLINAS.
 	*/
-	class Disciplina_model extends CI_Model 
+	class Disciplina_model extends Geral_model 
 	{
-		/*
-			CONECTA AO BANCO DE DADOS DEIXANDO A CONEX�O ACESS�VEL PARA OS METODOS
-			QUE NECESSITAREM REALIZAR CONSULTAS.
-		*/
 		public function __construct()
 		{
 			$this->load->database();
@@ -20,7 +17,7 @@
 		*	$page -> Pagina atual.
 		*	$filter -> Quando há filtros, esta recebe os parâmetros utilizados para filtrar.
 		*/
-		public function get_disciplina($Ativo, $Id = FALSE, $page = FALSE, $filter = FALSE)
+		public function get_disciplina($Ativo, $Id = FALSE, $page = FALSE, $filter = FALSE, $ordenacao = FALSE)
 		{
 			$Ativos = "";
 			if($Ativo == TRUE)
@@ -30,7 +27,12 @@
 			{
 				$limit = $page * ITENS_POR_PAGINA;
 				$inicio = $limit - ITENS_POR_PAGINA;
-				$step = ITENS_POR_PAGINA;	
+				$step = ITENS_POR_PAGINA;
+
+				$order = "";
+				
+				if($ordenacao != FALSE)
+					$order = "ORDER BY ".$ordenacao['field']." ".$ordenacao['order'];
 				
 				$pagination = " LIMIT ".$inicio.",".$step;
 				if($page === FALSE)
@@ -42,7 +44,7 @@
 					d.Data_registro 
 						FROM Disciplina d
 					WHERE TRUE ".$Ativos." 
-					ORDER BY d.Id". $pagination ."");
+					".str_replace("'", "", $this->db->escape($order))." ". $pagination ."");
 
 				return $query->result_array();
 			}

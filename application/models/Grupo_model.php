@@ -1,8 +1,9 @@
 <?php
+	require_once("Geral_model.php");//INCLUI A CLASSE GENÉRICA.
 	/*!
 	*	ESTA MODEL TRATA DAS OPERAÇÕES NO BANCO DE DADOS REFERENTE AOS GRUPOS DE USUÁRIOS.
 	*/
-	class Grupo_model extends CI_Model 
+	class Grupo_model extends Geral_model 
 	{
 		public function __construct()
 		{
@@ -40,7 +41,7 @@
 				$query = $this->db->query("
 					SELECT (SELECT count(*) FROM  Grupo) AS Size, Id, Nome AS Nome_grupo, Ativo 
 						FROM Grupo WHERE TRUE ".$Ativos." 
-					".$order." ".$pagination."");
+					".str_replace("'", "", $this->db->escape($order))." ".$pagination."");
 
 				return $query->result_array();
 			}

@@ -1,13 +1,10 @@
 <?php
+	require_once("Geral_model.php");//INCLUI A CLASSE GENÉRICA.
 	/*!
 	*	ESTA MODEL TRATA DAS OPERAÇÕES NO BANCO DE DADOS REFERENTE AS INFORMAÇÕES DAS MODALIDADES DE ENSINO.
 	*/
-	class Modalidade_model extends CI_Model 
+	class Modalidade_model extends Geral_model 
 	{
-		/*
-			CONECTA AO BANCO DE DADOS DEIXANDO A CONEXÃO ACESSÍVEL PARA OS MÉTODOS
-			QUE NECESSITAREM REALIZAR CONSULTAS.
-		*/
 		public function __construct()
 		{
 			$this->load->database();
@@ -19,7 +16,7 @@
 		*	$id -> Id de uma modalidade específica.
 		*	$page-> Número da página de registros que se quer carregar.
 		*/
-		public function get_modalidade($Ativo = FALSE, $id = false, $page = false)
+		public function get_modalidade($Ativo = FALSE, $id = false, $page = false, $ordenacao = false)
 		{
 			$Ativos = "";
 			if($Ativo == TRUE)
@@ -30,6 +27,11 @@
 				$limit = $page * ITENS_POR_PAGINA;
 				$inicio = $limit - ITENS_POR_PAGINA;
 				$step = ITENS_POR_PAGINA;
+
+				$order = "";
+				
+				if($ordenacao != FALSE)
+					$order = "ORDER BY ".$ordenacao['field']." ".$ordenacao['order'];
 				
 				$pagination = " LIMIT ".$inicio.",".$step;
 				if($page === false)
@@ -39,7 +41,7 @@
 					SELECT (SELECT count(*) FROM  Modalidade) AS Size, Id, Nome AS Nome_modalidade, Ativo 
 						FROM Modalidade 
 					WHERE TRUE ".$Ativos."
-					ORDER BY Data_registro ASC ".$pagination."");
+					".str_replace("'", "", $this->db->escape($order))." ".$pagination."");
 				
 				return $query->result_array();
 			}

@@ -25,17 +25,25 @@
 		*
 		*	$page -> Número da página atual de registros.
 		*/
-		public function index($page = FALSE)
+		public function index($page = FALSE, $field = FALSE, $order = FALSE)
 		{
 			if($page === FALSE)
 				$page = 1;
+
+			$ordenacao = array(
+				"order" => $this->order_default($order),
+				"field" => $this->field_default($field)
+			);
 			
 			$this->set_page_cookie($page);
 			
 			$this->data['title'] = 'Menus';
 			if($this->Geral_model->get_permissao(READ, get_class($this)) == TRUE)
 			{
-				$this->data['lista_menus'] = $this->Menu_model->get_menu(FALSE, FALSE, $page);
+				$this->data['paginacao']['order'] =$this->inverte_ordem($ordenacao['order']);
+				$this->data['paginacao']['field'] = $ordenacao['field'];
+
+				$this->data['lista_menus'] = $this->Menu_model->get_menu(FALSE, FALSE, $page, $ordenacao);
 				$this->data['paginacao']['size'] = (!empty($this->data['lista_menus']) ? $this->data['lista_menus'][0]['Size'] : 0);
 				$this->data['paginacao']['pg_atual'] = $page;
 				$this->view("menu/index", $this->data);

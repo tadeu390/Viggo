@@ -1,13 +1,10 @@
 <?php
+	require_once("Geral_model.php");//INCLUI A CLASSE GENÉRICA.
 	/*!
 	*	ESTA MODAL TRATA DAS OPERAÇÕES NO BANCO DE DADOS REFERENTE AS INFORMAÇÕES DE CURSOS.
 	*/
-	class Curso_model extends CI_Model 
+	class Curso_model extends Geral_model 
 	{
-		/*
-			CONECTA AO BANCO DE DADOS DEIXANDO A CONEXÃO ACESSÍVEL PARA OS METODOS
-			QUE NECESSITAREM REALIZAR CONSULTAS.
-		*/
 		public function __construct()
 		{
 			$this->load->database();
@@ -46,7 +43,7 @@
 					c.Id, c.Nome as Nome_curso, 
 					DATE_FORMAT(c.Data_registro, '%d/%m/%Y') as Data_registro, c.Ativo 
 					FROM Curso c 
-					WHERE TRUE ".$Ativos." ".$order." ". $pagination ."");
+					WHERE TRUE ".$Ativos." ".str_replace("'", "", $this->db->escape($order))." ". $pagination ."");
 
 				return $query->result_array();
 			}

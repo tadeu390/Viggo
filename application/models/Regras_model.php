@@ -1,13 +1,10 @@
 <?php
+	require_once("Geral_model.php");//INCLUI A CLASSE GENÉRICA.
 	/*!
 	*	ESTA MODEL TRATA DAS OPERAÇÕES NO BANCO DE DADOS REFERENTE AS REGRAS DO PERÍODO LETIVO.
 	*/
-	class Regras_model extends CI_Model 
+	class Regras_model extends Geral_model 
 	{
-		/*
-			CONECTA AO BANCO DE DADOS DEIXANDO A CONEXÃO ACESSÍVEL PARA OS METODOS
-			QUE NECESSITAREM REALIZAR CONSULTAS.
-		*/
 		public function __construct()
 		{
 			$this->load->database();
@@ -49,13 +46,13 @@
 					pl.Quantidade_aula, pl.Reprovas, pl.Qtd_minima_aluno, Qtd_maxima_aluno 
 					FROM Periodo_letivo pl 
 					INNER JOIN Modalidade m ON pl.Modalidade_id = m.Id 
-					WHERE TRUE ".$Ativos." ".$order." ". $pagination ."");
+					WHERE TRUE ".$Ativos." ".str_replace("'", "", $this->db->escape($order))." ". $pagination ."");
 
 				return $query->result_array();
 			}
 
 			$query =  $this->db->query("
-				SELECT pl.Id, pl.Periodo, 
+				SELECT pl.Id, pl.Periodo, CONCAT(pl.Periodo, ' - ', m.Nome) AS Nome_periodo, 
 				DATE_FORMAT(pl.Data_registro, '%d/%m/%Y') as Data_registro, 
 				pl.Ativo, m.Nome as Nome_modalidade, pl.Limite_falta, pl.Dias_letivos, pl.Media, 
 				pl.Duracao_aula, pl.Hora_inicio_aula, pl.Quantidade_aula, pl.Reprovas, 

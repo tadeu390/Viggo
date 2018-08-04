@@ -1,8 +1,9 @@
 <?php
+	require_once("Geral_model.php");//INCLUI A CLASSE GENÉRICA.
 	/*!
 	*	ESTA MODEL TRATA DAS OPERAÇÕES NA BASE DE DADOS REFERENTE AS MATRICULAS DO SISTEMA.
 	*/
-	class Inscricao_model extends CI_Model 
+	class Inscricao_model extends Geral_model 
 	{
 		public function __construct()
 		{
@@ -64,7 +65,7 @@
 					INNER JOIN Periodo_letivo p ON p.Id = i.Periodo_letivo_id 
 					INNER JOIN Modalidade m ON m.Id = p.Modalidade_id 
 					WHERE TRUE ".$Ativos." 
-					".$order." ".$pagination."");
+					".str_replace("'", "", $this->db->escape($order))." ".$pagination."");
 
 				return $query->result_array();
 			}

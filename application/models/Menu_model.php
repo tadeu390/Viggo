@@ -1,8 +1,9 @@
 <?php
+	require_once("Geral_model.php");//INCLUI A CLASSE GENÉRICA.
 	/*!
 	*	ESTA MODEL TRATA DAS OPERAÇÕES NA BASE DE DADOS REFERENTE AOS MENUS DO SISTEMA.
 	*/
-	class Menu_model extends CI_Model 
+	class Menu_model extends Geral_model 
 	{
 		public function __construct()
 		{
@@ -15,7 +16,7 @@
 		*	$id -> Id de um menu específico.
 		*	$page-> Número da página de registros que se quer carregar.
 		*/
-		public function get_menu($Ativo = FALSE, $id = false, $page = false)
+		public function get_menu($Ativo = FALSE, $id = false, $page = false, $ordenacao = false)
 		{
 			$Ativos = "";
 			if($Ativo == true)
@@ -26,6 +27,11 @@
 				$limit = $page * ITENS_POR_PAGINA;
 				$inicio = $limit - ITENS_POR_PAGINA;
 				$step = ITENS_POR_PAGINA;
+
+				$order = "";
+				
+				if($ordenacao != FALSE)
+					$order = "ORDER BY ".$ordenacao['field']." ".$ordenacao['order'];
 				
 				$pagination = " LIMIT ".$inicio.",".$step;
 				if($page === false)
@@ -35,7 +41,7 @@
 					SELECT (SELECT count(*) FROM  Menu) AS Size, Id, Nome, Ordem, Ativo 
 						FROM Menu 
 					WHERE TRUE ".$Ativos."
-					ORDER BY Data_registro ASC ".$pagination."");
+					".str_replace("'", "", $this->db->escape($order))." ".$pagination."");
 				
 				return $query->result_array();
 			}

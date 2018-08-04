@@ -138,13 +138,12 @@
 							$resultado = parent::store_banco($dataToSave);
 
 							$dataToSaveAluno['Usuario_id'] = $resultado;//QUANDO ESTIVER CRIANDO ISSO É NECESSARIO, POIS O POST DO ID VIRÁ VAZIO
-
+							$Usuario_id = $resultado;
 							$resultado = $this->store_banco($dataToSaveAluno);
 
-							$resultado = "sucesso";
-
 							if($this->input->post('inscricao_aluno') != NULL)
-								$this->set_aluno_cookie($this->input->post('id'));
+								$this->set_aluno_cookie($Usuario_id);
+							$resultado = "sucesso";
 						}
 				 	}
 				}

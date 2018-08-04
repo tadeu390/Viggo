@@ -1,8 +1,9 @@
 <?php
+	require_once("Geral_model.php");//INCLUI A CLASSE GENÉRICA.
 	/*!
 	*	ESTA MODAL TRATA DAS OPERAÇÕES NO BANCO DE DADOS REFERENTE AS INFORMAÇÕES DE TURMAS.
 	*/
-	class Turma_model extends CI_Model 
+	class Turma_model extends Geral_model 
 	{
 		public function __construct()
 		{
@@ -46,7 +47,7 @@
 					INNER JOIN Periodo_letivo p ON dt.periodo_letivo_id = p.Id 
 					INNER JOIN Modalidade m ON p.Modalidade_id = m.Id 
 					WHERE TRUE ".$Ativos."".$filtros." GROUP BY t.Id, t.Nome 
-					".$order." ".$pagination."");
+					".str_replace("'", "", $this->db->escape($order))." ".$pagination."");
 
 				return $query->result_array();
 			}
@@ -126,8 +127,8 @@
 				SELECT t.Id 
 				FROM Turma t 
 				INNER JOIN Disc_turma dt ON t.Id = dt.Turma_Id 
-				WHERE UPPER(t.Nome) = UPPER(".$this->db->escape($nome).") AND
-			    DT.Periodo_letivo_id = ".$this->db->escape($periodo_letivo_id)."
+				WHERE UPPER(t.Nome) = UPPER(".$this->db->escape($nome).") AND 
+			    dt.Periodo_letivo_id = ".$this->db->escape($periodo_letivo_id)." 
 				GROUP BY 1");
 
 			$query = $query->row_array();
@@ -164,5 +165,3 @@
 		}
 	}
 ?>
-
-

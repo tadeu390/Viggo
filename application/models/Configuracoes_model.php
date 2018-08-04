@@ -1,12 +1,10 @@
 <?php
+	require_once("Geral_model.php");//INCLUI A CLASSE GENÉRICA.
 	/*!
 	*	ESTA MODEL TRATA DAS OPERAÇÕES NO BANCO DE DADOS REFERENTE AS INFORMAÇÕES DE CONFIGURAÇÕES DO SISTEMA.
 	*/
-	class Configuracoes_model extends CI_Model 
+	class Configuracoes_model extends Geral_model 
 	{
-		/*
-			CARREGA O DRIVER DO BANCO DE DADOS
-		*/
 		public function __construct()
 		{
 			$this->load->database();
