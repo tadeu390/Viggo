@@ -92,7 +92,7 @@
 								$this->data['lista_cursos'] = $this->Curso_model->get_curso(FALSE, FALSE, FALSE);
 				$this->data['lista_modalidades'] = $this->Modalidade_model->get_modalidade(FALSE, FALSE, FALSE);
 				$this->data['lista_disciplinas'] = $this->Disciplina_model->get_disciplina(FALSE,FALSE,FALSE);
-				$this->data['lista_disc_grade_disciplina'] = $this->Disc_grade_model->get_disc_grade_disciplina($id);
+				$this->data['lista_disc_grade'] = $this->Disc_grade_model->get_disc_grade($id);
 				$this->view("grade/create_edit", $this->data);
 			}
 			else
@@ -110,7 +110,7 @@
 				$this->data['lista_cursos'] = $this->Curso_model->get_curso(FALSE, FALSE, FALSE);
 				$this->data['lista_modalidades'] = $this->Modalidade_model->get_modalidade(FALSE, FALSE, FALSE);
 				$this->data['lista_disciplinas'] = $this->Disciplina_model->get_disciplina(FALSE,FALSE,FALSE);
-				$this->data['lista_disc_grade_disciplina'] = $this->Disc_grade_model->get_disc_grade_disciplina(0);
+				$this->data['lista_disc_grade'] = $this->Disc_grade_model->get_disc_grade(0);
 				$this->view("grade/create_edit", $this->data);
 			}
 			else
@@ -129,6 +129,8 @@
 				return "Informe a modalidade da grade.";
 			elseif(empty($Grade['Disc_grade_to_save']))
 				return "Selecione alguma disciplina para a grade.";
+			else if($Grade['Modalidade_id'] != $this->Modalidade_model->get_periodo_por_modalidade($Grade['Modalidade_id'])['Modalidade_id'])
+				return "A modalidade selecionada nao possui periodo letivo cadastrado.";
 			else
 				return 1;
 		}
@@ -169,9 +171,6 @@
 					array_push($Disc_grade_to_save, $Disc_grade_to_save_item);
 				}
 			}
-
-			print_r($dataToSave);
-			print_r($Disc_grade_to_save);
 
 			if(empty($dataToSave['Ativo']))
 				$dataToSave['Ativo'] = 0;
