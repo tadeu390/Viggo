@@ -1318,11 +1318,11 @@ var Main = {
 		});
 	},
 	validar_grade : function(){
-		if($("#curso_id").val() == "")
-			Main.show_error("curso_id","Informe o curso da grade.","is-invalid");
-		else if($("#modalidade_id").val() == "")
-			Main.show_error("modalidade_id", 'Informe a modalidade da grade.', 'is-invalid');
-		else if($("#limite_disciplina_add").val() == "")
+		if($("#curso_id").val() == "0")
+			Main.show_error("curso_id",'Informe o curso da grade.','');
+		else if($("#modalidade_id").val() == "0")
+			Main.show_error("modalidade_id", 'Informe a modalidade da grade.', '');
+		else if($("#limite_disciplina_add").val() == "0")
 			Main.show_error("limite_disciplina_add", 'Selecione alguma disciplina para a grade.', 'is-invalid');
 		/*else if(MODALIDADE SEM PERIODO)
 			Main.show_error("", 'A modalidade selecionada nao possui periodo letivo cadastrado.', 'is-invalid');*/

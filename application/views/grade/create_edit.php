@@ -171,6 +171,7 @@
 								echo "<input type='hidden' value='".$limite_disciplina_add."' id='limite_disciplina_add' name='limite_disciplina_add'>";
 							?>
 							</div>
+							<div class='input-group mb-2 mb-sm-0 text-danger' id='error-limite_disciplina_add'></div>
 						</fieldset>
 					</div>
 				</div>
