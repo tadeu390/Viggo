@@ -41,10 +41,10 @@
 									echo "&nbsp;<div class='fa fa-chevron-up'></div>";
 							echo "</td>";
 							echo "<td>";
-								echo"<a href='".$url."$controller/index/".$paginacao['pg_atual']."/Ativo_turma/".$paginacao['order']."'>Ativo</a>";
-								if($paginacao['order'] == 'DESC' && $paginacao['field'] == 'Ativo_turma')
+								echo"<a href='".$url."$controller/index/".$paginacao['pg_atual']."/Status_horario/".$paginacao['order']."'>Status</a>";
+								if($paginacao['order'] == 'DESC' && $paginacao['field'] == 'Status_horario')
 									echo "&nbsp;<div class='fa fa-chevron-down'></div>";
-								else if($paginacao['order'] == 'ASC' && $paginacao['field'] == 'Ativo_turma')
+								else if($paginacao['order'] == 'ASC' && $paginacao['field'] == 'Status_horario')
 									echo "&nbsp;<div class='fa fa-chevron-up'></div>";
 							echo "</td>";
 							echo "<td class='text-right'>Ações</td>";
@@ -61,7 +61,7 @@
 								echo "<td $cor>".$lista_turmas[$i]['Nome_turma']."</td>";
 								echo "<td $cor>".$lista_turmas[$i]['Nome_modalidade']."</td>";
 								echo "<td $cor>".$lista_turmas[$i]['Periodo']."</td>";
-								echo "<td $cor>".(($lista_turmas[$i]['Ativo_turma'] == 1) ? 'Sim' : 'Não')."</td>";
+								echo "<td $cor>".$lista_turmas[$i]['Status_horario']."</td>";
 								echo "<td class='text-right'>";
 								if(permissao::get_permissao(UPDATE, $controller))
 									echo "<a href='".$url."$controller/create/".$lista_turmas[$i]['Id']."' title='Alterar horário' style='cursor: pointer;' class='glyphicon glyphicon-edit  text-danger'></a>";

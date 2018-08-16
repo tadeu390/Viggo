@@ -59,17 +59,14 @@
 		{
 			$config_email = $this->Configuracoes_email_model->get_configuracoes_email();
 			$config['protocol'] = $config_email['Protocolo'];
-			//$config['smtp_crypto'] = 'tls';
-			//$config['mailpath'] = '/usr/sbin/sendmail';
+			$config['smtp_crypto'] = 'ssl';
 			$config['smtp_host'] = $config_email['Host'];
 			$config['smtp_port'] = $config_email['Porta'];
 			$config['mailtype'] = 'html';
-			$config['user'] = $config_email['Usuario'];
-			$config['pass'] = $config_email['Senha'];
-			
+			$config['smtp_user'] = $config_email['Usuario'];
+			$config['smtp_pass'] = $config_email['Senha'];
 			$config['charset'] = 'utf-8';
 			$config['wordwrap'] = TRUE;
-
 			$this->email->initialize($config);
 		}
 		/*!

@@ -1349,5 +1349,9 @@ var Main = {
 		}).fail(function(msg){
 		    	window.location.assign(Main.base_url + $("#controller").val() + "/dashboard");
 		});
+	},
+	alterar_disciplina : function (disc_grade_id)
+	{
+		window.location.assign(Main.base_url + $("#controller").val() + "/"+$("#method").val()+"/"+disc_grade_id+"/"+$("#turma_selecionada").val()+"/"+$("#bimestre_selecionado").val());
 	}
 };

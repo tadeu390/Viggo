@@ -10,7 +10,7 @@
 			$this->load->database();
 		}
 		/*!
-		*	RESPONSÁVEL POR RETORNAR UMA LISTA DE TURMAS OU UMA TURMA ESPECÍFICA.
+		*	RESPONSÁVEL POR RETORNAR UMA LISTA DE TURMAS (COM O STATUS DO HORÁRIO DA TURMA) OU UMA TURMA ESPECÍFICA.
 		*	
 		*	$Ativo -> Quando passadO "TRUE" quer dizer pra retornar somente registro(s) ativos(s), se for passado FALSE retorna tudo.
 		*	$id -> Id de uma turma específica.
@@ -41,7 +41,15 @@
 				
 				$query = $this->db->query("
 					SELECT (SELECT count(*) FROM Turma u WHERE TRUE ".$filtros.") AS Size, t.Id, 
-					t.Nome as Nome_turma, t.Ativo as Ativo_turma, dt.Periodo_letivo_id, p.Periodo, m.Nome as Nome_modalidade 
+					t.Nome as Nome_turma, t.Ativo as Ativo_turma, dt.Periodo_letivo_id, p.Periodo, m.Nome as Nome_modalidade,
+					CASE 
+						WHEN (SELECT COUNT(*) FROM Disc_turma dtx WHERE dtx.Turma_Id = dt.Turma_Id) = (SELECT COUNT(DISTINCT dty.Id) FROM Disc_turma dty INNER JOIN Disc_hor dh ON dty.Id = dh.Disc_turma_id WHERE dty.Turma_Id = dt.Turma_Id) THEN 
+							'Completo'
+						WHEN (SELECT COUNT(DISTINCT dty.Id) FROM Disc_turma dty INNER JOIN Disc_hor dh ON dty.Id = dh.Disc_turma_id WHERE dty.Turma_Id = dt.Turma_Id) = 0 THEN 
+							'Vazio'
+						ELSE 
+							'Parcial'
+					END AS Status_horario  
 					FROM Turma t 
 					INNER JOIN Disc_turma dt ON t.Id = dt.Turma_Id 
 					INNER JOIN Periodo_letivo p ON dt.periodo_letivo_id = p.Id 
