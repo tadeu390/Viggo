@@ -1290,6 +1290,45 @@ var Main = {
 
 		return true;
 	},
+	load_filtro_grade_disciplina : function()//monta o filtro de disciplina na grade
+	{
+		var nome = (($("#nome_disciplina").val() == "") ? 0 : $("#nome_disciplina").val());
+		Main.load_data_disciplina(nome);
+	},
+	load_data_disciplina : function(filtro)//Carrega as disciplinas para a lista a esquerda quando editando e quando usando o filtro pressionando o botão Pesquisar
+	{ 
+		var pesquisa = "get_disciplina";
+		$.ajax({
+			url: Main.base_url + $("#controller").val() + '/' + pesquisa + '/' + filtro,
+			dataType:'json',
+			cache: false,
+			type: 'POST',
+			success: function (data) 
+			{
+				setTimeout(function(){
+					$("#modal_aguardar").modal('hide');
+				},500);
+				document.getElementById("disciplinas").innerHTML = data.response;;
+			}
+		}).fail(function(msg){
+		    setTimeout(function(){
+		    	$("#modal_confirm").modal('hide');
+		    	Main.modal("aviso", "Houve um erro ao processar sua requisição. Verifique sua conexão com a internet.");
+			},500);
+		});
+	},
+	validar_grade : function(){
+		if($("#curso_id").val() == "0")
+			Main.show_error("curso_id",'Informe o curso da grade.','');
+		else if($("#modalidade_id").val() == "0")
+			Main.show_error("modalidade_id", 'Informe a modalidade da grade.', '');
+		else if($("#limite_disciplina_add").val() == "0")
+			Main.show_error("limite_disciplina_add", 'Selecione alguma disciplina para a grade.', 'is-invalid');
+		/*else if(MODALIDADE SEM PERIODO)
+			Main.show_error("", 'A modalidade selecionada nao possui periodo letivo cadastrado.', 'is-invalid');*/
+		else
+			Main.create_edit();
+	},
 	habilita_permissoes : function(permissao)
 	{
 		if(permissao == "all")

@@ -69,84 +69,109 @@
 					<div class="col-lg-6">
 						<div class="form-group relative">
 							<div class='input-group-addon' style="color: #8a8d93;">Nome da grade</div>
-							<input disabled maxlength="100" id="nome" name="nome" value='Geração automatica' type="text" class="input-material">
+							<input disabled maxlength="100" id="nome" name="nome" value='<?php echo (!empty($obj['Nome_grade']) ? $obj['Nome_grade']: 'Gerado automaticamente'); ?>' type="text" class="input-material">
 							<label for="nome" class="label-material"></label>
 						</div>
 					</div>
 				</div>
 
-				<div class="row">
-					<div class="col-lg-6">
-						<fieldset>
-							<legend class='text-white'>&nbsp; Disciplinas</legend>
-							<div style="border-radius: 5px 5px 0px 0px; border: 1px solid white; border-bottom: 0px;">
-								<div class="col-lg-6">
-									FILTROS
-								</div>
-								<br />
-								<div class="disciplinas" id="disciplinas" style="max-height: 460px; border-radius: 0px;">
-								<?php
-									$data['lista_disciplinas'] = $lista_disciplinas;
-									
-
-									$this->load->view("grade/_disciplinas", $data);
-
-								?>
+				<div class="row border_radius col-lg-6" style="margin-top: 3px; border-radius: 5px 5px 5px 5px; border: 1px solid white; margin: 0px; ">
+					<div class="col-lg-12 padding">
+						<div class="text-center">Filtrar disciplina</div>
+						<div class="row">
+							<div class="col-lg-9">
+								<div class="form-group relative">
+									<input id="nome_disciplina" name="nome_disciplina" type="text" class="input-material">
+									<label for="nome_disciplina" class="label-material">Nome da disciplina</label>
 								</div>
 							</div>
-							<div class="col-lg-12 padding0">
-								<button type="button" onclick="Main.add_disciplina();" class='btn btn-danger btn-block' style="border-radius: 0px 0px 5px 5px;"><span class='glyphicon glyphicon-plus'></span> Adicionar</button>
+							<div class="col-lg-3">
+								<button  onclick="Main.load_filtro_grade_disciplina();" type="button" class='btn btn-success btn-block'>
+									<span class='glyphicon glyphicon-search'></span> Pesquisar
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-lg-6 padding10">
+						<fieldset>
+							<legend class='text-white'>&nbsp; Disciplinas</legend>
+
+							<div class='row padding10' style=" margin-top: 3px; border-radius: 5px 5px 5px 5px; border: 1px solid white; margin: 0px;">
+								<div class="col-lg-6" style="padding-left: 0px; margin-top: 3px;">
+									<label for="nome_periodo_base" class="label-material">Adicionar no período/módulo </label>
+									<input type='number' class='text-center border_radius' style='width: 15%; color: black;' maxlength='2' id='periodo_base' name='periodo_base' value='1'>
+								</div>
+								<div class="col-lg-6 text-right" style="padding-right: 0px;">
+									<button onclick="Main.add_disciplina();" type="button" class="btn btn-outline-white padding0 btn-simple-white">Adicionar marcadas <span class='glyphicon glyphicon-menu-right'></span><span style="margin-left: -5px;" class='glyphicon glyphicon-menu-right'></span></button>
+								</div>
+							</div>
+
+							<br />
+
+							<div style="; border-bottom: 0px;">
+								<div class="disciplinas border_radius" id="disciplinas">
+									<?php
+										$data['lista_disciplinas'] = $lista_disciplinas;
+										
+
+										$this->load->view("grade/_disciplinas", $data);
+
+									?>
+								</div>
 							</div>
 						</fieldset>
 					</div>
-					<div class="col-lg-6">
+					<div class="col-lg-6 padding10">
 						<fieldset>
 							<legend class='text-white'>&nbsp; Disciplinas da grade</legend>
-							<div style="border-radius: 5px 5px 0px 0px; border: 1px solid white; border-bottom: 0px;">
-								<br />
-								<div style='vertical-align: center;'>
-									<label for="nome_periodo_base" class="label-material">Adicionar no período/módulo </label>
-									<input type='number' class='text-center' style='width: 10%; color: black;' maxlength='2' id='periodo_base' name='periodo_base' value='1'>
-								</div>
-								<div class='disciplinas'>
-								<?php
-									echo "<table class='table table-striped table-sm table-hover'>";
-										echo "<thead>";
-											echo "<tr>";
-												echo "<td style='width: 80%;'>Nome</td>";
-												echo "<td>Período/Módulo</td>";
-											echo "<tr>";
-										echo "</thead>";
-										echo "<tbody id='disciplinas_grade'>";
-											$limite_disciplina_add = 0;
-											for($i = 0; $i < count($lista_disc_grade_disciplina); $i++)
-											{
-												echo "<tr id='disciplina_item_add$i'>";
-													echo"<td title='".$lista_disc_grade_disciplina[$i]['Nome_disciplina']."'>";
-														echo"<div style='margin-top: 5px; height: 25px;' class='checkbox checbox-switch switch-success custom-controls-stacked'>";
-															echo "<label for='nome_disciplina_add$i' style='display: block; height: 25px;'>";
-																echo "<input type='checkbox' id='nome_disciplina_add$i' name='nome_disciplina_add$i' value='1' /><span></span>";
-																echo mstring::corta_string($lista_disc_grade_disciplina[$i]['Nome_disciplina'], 20);
-															echo "</label>";
-														echo"</div>";
-														echo "<input type='hidden' value='".$lista_disc_grade_disciplina[$i]['Disciplina_id']."' id='disciplina_id_add$i' name='disciplina_id_add$i'>";
-													echo"</td>";
 
-													echo "<td class='text-center' style='vertical-align: middle;'>";
-														echo "<input type='number' class='text-center' style='width: 60%;' maxlength='2' id='periodo_add$i' name='periodo_add$i' value='".$lista_disc_grade_disciplina[$i]['Periodo']."'>";
-													echo "</td>";
-												echo "</tr>";
-												$limite_disciplina_add = $limite_disciplina_add + 1;
-											}
-										echo "</tbody>";
-									echo "</table>";
-									echo "<input type='hidden' value='".$limite_disciplina_add."' id='limite_disciplina_add' name='limite_disciplina_add'>";
-								?>
+							<div class='row padding10' style=" margin-top: 3px; border-radius: 5px 5px 5px 5px; border: 1px solid white; margin: 0px;">
+								<div class="col-lg-6" style="padding-left: 0px;">
+									<button onclick="Main.remove_disciplina();" type="button" class="btn btn-outline-white padding0 btn-simple-white"><span class='glyphicon glyphicon-menu-left'></span><span style="margin-left: -5px;" class='glyphicon glyphicon-menu-left'></span> Remover marcadas</button>
 								</div>
 							</div>
-							<div class="col-lg-12 padding0">
-								<button type="button" class='btn btn-danger btn-block' onclick="Main.remove_disciplina();" style="border-radius: 0px 0px 5px 5px;"><span class='glyphicon glyphicon-trash'></span> Remover</button>
+
+							<br />
+
+							<div class='disciplinas border_radius'>
+							<?php
+								echo "<table class='table table-striped table-sm table-hover'>";
+									echo "<thead>";
+										echo "<tr>";
+											echo "<td style='width: 80%;'>Nome da disciplina</td>";
+											echo "<td>Período/Módulo</td>";
+										echo "<tr>";
+									echo "</thead>";
+									echo "<tbody id='disciplinas_grade'>";
+										$limite_disciplina_add = 0;
+										for($i = 0; $i < count($lista_disc_grade); $i++)
+										{
+											echo "<tr id='disciplina_item_add$i'>";
+												echo"<td title='".$lista_disc_grade[$i]['Nome_disciplina']."'>";
+													echo"<div style='margin-top: 5px; height: 25px;' class='checkbox checbox-switch switch-success custom-controls-stacked'>";
+														echo "<label for='nome_disciplina_add$i' style='display: block; height: 25px;'>";
+															echo "<input type='checkbox' id='nome_disciplina_add$i' name='nome_disciplina_add$i' value='1' /><span></span>";
+															echo mstring::corta_string($lista_disc_grade[$i]['Nome_disciplina'], 20);
+														echo "</label>";
+													echo"</div>";
+													echo "<input type='hidden' value='".$lista_disc_grade[$i]['Disciplina_id']."' id='disciplina_id_add$i' name='disciplina_id_add$i'>";
+												echo"</td>";
+
+												echo "<td class='text-center' style='vertical-align: middle;'>";
+													echo "<input type='number' class='text-center' style='width: 60%;' maxlength='2' id='periodo_add$i' name='periodo_add$i' value='".$lista_disc_grade[$i]['Periodo']."'>";
+												echo "</td>";
+											echo "</tr>";
+											$limite_disciplina_add = $limite_disciplina_add + 1;
+										}
+									echo "</tbody>";
+								echo "</table>";
+								echo "<input type='hidden' value='".$limite_disciplina_add."' id='limite_disciplina_add' name='limite_disciplina_add'>";
+							?>
 							</div>
+							<div class='input-group mb-2 mb-sm-0 text-danger' id='error-limite_disciplina_add'></div>
 						</fieldset>
 					</div>
 				</div>

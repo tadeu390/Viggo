@@ -15,7 +15,7 @@
 		*
 		*	$id -> Id da grade para que se possa obter as disciplinas já cadastradas para ela caso exista.
 		*/
-		public function get_disc_grade_disciplina($id)
+		public function get_disc_grade($id)
 		{
 			$query = $this->db->query("
 				SELECT d.Id AS Disciplina_id, d.Nome AS Nome_disciplina, d.Apelido AS Apelido_disciplina, dg.Periodo AS Periodo 
