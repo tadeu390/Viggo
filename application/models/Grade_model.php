@@ -179,7 +179,6 @@
 				//se nao achaou, entao remove do banco
 				if($flag == 0)
 				{
-					echo $grade_id;
 					$this->db->where('Id', $Disc_grade_banco[$i]['Id']);
 					$this->db->delete('Disc_grade');
 				}

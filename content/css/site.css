@@ -247,7 +247,7 @@ background-color: #336CD2;
   border-color: #DD3068;
 }
 
-.form-control:disabled
+select.form-control:disabled
 {
 	background-color: transparent !important;
 }

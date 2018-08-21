@@ -1,6 +1,6 @@
 var Main = {
-	base_url : ((window.location.href.split("/")[2] == "localhost") ? "http://"+window.location.host+"/git/TCC/" : "https://"+window.location.host+"/"),
-	//base_url : "http://"+window.location.host+"/git/TCC/",//localhost (pra qualquer dispositivo na rede local)
+	//base_url : ((window.location.href.split("/")[2] == "localhost") ? "http://"+window.location.host+"/git/TCC/" : "https://"+window.location.host+"/"),
+	base_url : "http://"+window.location.host+"/git/TCC/",//localhost (pra qualquer dispositivo na rede local)
 	load_mask : function(){
 		$(document).ready(function(){
 			$('[data-toggle="popover"]').popover(),
@@ -1548,22 +1548,28 @@ var Main = {
 			},500);
 		});
 	},
-	get_alunos_chamada : function (disc_grade_id, turma_id, disc_hor_id)
+	get_alunos_chamada : function (disc_grade_id, turma_id)
 	{
-		$.ajax({
-			url: Main.base_url + $("#controller").val() + '/get_alunos_chamada/' + disc_grade_id + '/' + turma_id + '/' + disc_hor_id,
-			dataType:'json',
-			cache: false,
-			type: 'POST',
-			success: function (data) 
-			{
-				$("#alunos_chamada").html(data.response);
-			}
-		}).fail(function(msg){
-		    setTimeout(function(){
-		    	//$("#modal_confirm").modal('hide');
-		    	Main.modal("aviso", "Houve um erro ao processar sua requisição. Verifique sua conexão com a internet.");
-			},500);
-		});
+		if($("#data_atual").val() != "" && $("#subturma").val() != "0")
+		{
+			var data_convert  = Main.convert_date($("#data_atual").val(),"en");
+			var subturma  = $("#subturma").val();
+
+			$.ajax({
+				url: Main.base_url + $("#controller").val() + '/get_alunos_chamada/' + disc_grade_id + '/' + turma_id + '/' + subturma + '/' + data_convert,
+				dataType:'json',
+				cache: false,
+				type: 'POST',
+				success: function (data) 
+				{
+					$("#alunos_chamada").html(data.response);
+				}
+			}).fail(function(msg){
+			    setTimeout(function(){
+			    	//$("#modal_confirm").modal('hide');
+			    	Main.modal("aviso", "Houve um erro ao processar sua requisição. Verifique sua conexão com a internet.");
+				},500);
+			});
+		}
 	}
 };

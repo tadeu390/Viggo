@@ -73,39 +73,29 @@
 				<div class="row padding10">
 					<div class="col-lg-6">
 						<div class="form-group relative" id="data1">
-							<input id="data_atual" name="data_atual" value="<?php echo date('d/m/Y');?>" type="text" class="input-material">
+							<input <?php echo "onchange='Main.get_alunos_chamada(".$url_part['disc_grade_id'].",".$url_part['turma_id'].");'"; ?> id="data_atual" name="data_atual" value="<?php echo date('d/m/Y');?>" type="text" class="input-material">
 							<label for="data_nascimento" class="label-material active">Data</label>
 							<div class='input-group mb-2 mb-sm-0 text-danger' id='error-data_atual'></div>
 						</div>
 					</div>
-					<div class="col-lg-6">
-						<select <?php echo "onchange='Main.get_alunos_chamada(".$url_part['disc_grade_id'].",".$url_part['turma_id'].",this.value);'"; ?> name='horarios' id='horarios' class='form-control' style='padding-left: 0px;'>
-							<option value='0' style='background-color: #393836;'>Selecione um horário</option>
-							<?php
-								$disc_hor_id = 0;
-								$hora_atual = date('H:i');
-							for ($i = 0; $i < count($lista_horarios); $i++)
-							{
-								$selected = "";
-								if($lista_horarios[0]['Dia_atual_semana'] == $lista_horarios[$i]['Dia_semana'] && 
-									strtotime($hora_atual) >= strtotime($lista_horarios[$i]['Inicio']) && 
-									strtotime($hora_atual) <= strtotime($lista_horarios[$i]['Fim'])
-								  )
-								{
-									$selected = "selected";
-									$disc_hor_id = $lista_horarios[$i]['Disc_hor_id'];
-								}
-								echo "<option $selected class='background_dark' value='" . $lista_horarios[$i]['Disc_hor_id'] . "'>" . $lista_horarios[$i]['Horario'] . "</option>";
-							}
-							?>
-						</select>
+					<div class="col-lg-6" id='subturmas'>
+						<?php 
+							$data['lista_subturmas'] = $lista_subturmas;
+							$data['url_part'] = $url_part;
+
+							$this->load->view("professor/_subturmas", $data);
+						?>
 					</div>
 					<div class="col-lg-12" id='alunos_chamada'>
 						<?php 
-						
-						$data['lista_alunos'] = faltas::get_alunos_chamada($url_part['disc_grade_id'], $url_part['turma_id'], $disc_hor_id);
-						$this->load->view("professor/_alunos", $data);
-							
+						if(!empty($lista_subturmas) && COUNT($lista_subturmas) == 1)
+						{
+							$subturma = $lista_subturmas[0]['Sub_turma']; 
+							$data['lista_alunos'] = faltas::get_alunos_chamada($url_part['disc_grade_id'], $url_part['turma_id'], $subturma);
+							$data['lista_horarios'] = $lista_horarios;
+							$data['lista_subturmas'] = $lista_subturmas;
+							$this->load->view("professor/_alunos", $data);
+						}	
 						?>
 					</div>
 					<div class="col-lg-12">

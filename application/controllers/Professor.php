@@ -391,24 +391,52 @@
 				$this->data['url_part']['disc_grade_id'] = $disc_grade_id;
 				$this->data['url_part']['bimestre_id'] = $bimestre_id;
 				
+				////obter a lista de sub_turmas
+				$this->data['lista_subturmas'] = $this->Professor_model->identifica_sub_turmas($disc_grade_id, $turma_id);
+				$subturma = (empty($this->data['lista_subturmas'][0]['Sub_turma']) ? 0 : $this->data['lista_subturmas'][0]['Sub_turma']);
 				/////obter a lista de horários.
-				$this->data['lista_horarios'] = $this->Professor_model->get_horarios_professor($disc_grade_id, $turma_id, $this->professor_id);
+				$this->data['lista_horarios'] = $this->Professor_model->get_horarios_professor($disc_grade_id, $turma_id, $this->professor_id, $subturma, date('Y-m-d'));
+
+
 				$this->view("professor/create", $this->data);
 			}
 			else
 				$this->view("templates/permissao", $this->data);
 		}
 		/*!
+		*	RESPONSÁVEL POR CARREGAR DA MODEL TODAS AS SUBTURMA DE UMA DETERMINADA DISCIPLINA DE UMA DETERMINADA 
+		*	TURM EM UMA DETERMINADA DATA (DIA DA SEMANA).
+		*
+		*	$disc_grade_id -> Id da disciplina que se quer obter as subturmas.
+		*	$turma_id -> Id da turma turma associada a disicplina.
+		*	$data -> Data selecionada pelo professor.
+		*/
+		public function get_sub_turmas($disc_grade_id, $turma_id, $data)
+		{
+			$resultado = "sucesso";
+			$this->data['url_part']['disc_grade_id'] = $disc_grade_id;
+			$this->data['url_part']['turma_id'] = $turma_id;
+
+			$this->data['lista_subturmas'] = $this->Professor_model->identifica_sub_turmas($disc_grade_id, $turma_id, $data);
+			$resultado = $this->load->view("professor/_subturmas", $this->data, TRUE);
+
+			$arr = array('response' => $resultado);
+			header('Content-Type: application/json');
+			echo json_encode($arr);
+		}
+		/*!
 			RESPONSÁVEL POR CARREGAR DA MODEL A LISTA DE ALUNOS DE ACORDO COM O HORÁRIO, O QUE ACARRETA EM
 			CARREGAR APENAS ALUNOS DA SUBTURMA EM QUESTÃO CASO EXISTA SUBTURMA.
 		*/
-		public function get_alunos_chamada($disc_grade_id, $turma_id, $disc_hor_id)
+		public function get_alunos_chamada($disc_grade_id, $turma_id, $subturma, $data)
 		{
 			$resultado = "sucesso";
 			$this->load->helper("mstring");
 			//print_r($this->Professor_model->get_alunos_chamada($disc_grade_id, $turma_id, $disc_hor_id));
 
-			$this->data['lista_alunos'] = $this->Professor_model->get_alunos_chamada($disc_grade_id, $turma_id, $disc_hor_id);
+			$this->data['lista_alunos'] = $this->Professor_model->get_alunos_chamada($disc_grade_id, $turma_id, $subturma);
+			/////obter a lista de horários.
+			$this->data['lista_horarios'] = $this->Professor_model->get_horarios_professor($disc_grade_id, $turma_id, $this->professor_id, $subturma, $data);
 			$resultado = $this->load->view("professor/_alunos", $this->data, TRUE);
 
 

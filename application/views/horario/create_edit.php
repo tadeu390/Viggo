@@ -219,7 +219,7 @@
 												{
 													$title = "";
 													if($lista_disc_turma_header['Qtd_sub_turma'] > 1)
-														$title = "title='Subturma".($x + 1)."'"; 
+														$title = "title='Subturma ".($x + 1)."'"; 
 													echo"<div class='form-group relative'>";
 														echo"<select $title name='dia".($k + 1)."_aula".$aula."_disc_turma".($x + 1)."' id='dia".($k + 1)."_aula".$aula."_disc_turma".($x + 1)."' class='form-control' style='padding-left: 0px;'>";
 														echo "<option value='0'></option>";

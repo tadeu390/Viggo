@@ -232,10 +232,7 @@ $(document).ready(
       Main.validar_regras();
     });
 
-    $("#form_cadastro_grade").submit(function(event) {
-      event.preventDefault();
-      Main.validar_grade();
-    });
+
 
     $("#form_cadastro_curso").submit(function(event) {
       event.preventDefault();
