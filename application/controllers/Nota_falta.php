@@ -16,7 +16,7 @@
 				redirect('account/login/'.$url_redirect);
 			}
 			
-			$this->load->model("Nota_falta_model");
+			$this->load->model("Nota_model");
 			$this->load->model("Turma_model");
 			$this->load->model("Disc_turma_model");
 			

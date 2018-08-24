@@ -8,9 +8,9 @@
 			echo "<input type='hidden' id='bimestre_selecionado' value='".$url_part['bimestre_id']."'>";
 		}
 
-		echo "<div class='col-lg-2'>";
+		echo "<div class='col-lg-3'>";
 			echo "<a href='".$url."professor/".$method."/".$url_part['disc_grade_id']."/".$url_part['turma_id']."/".$lista_bimestres[$i]['Id']."' class='btn ".$partial_class." btn-block'>";
-				echo $lista_bimestres[$i]['Nome'];
+				echo $lista_bimestres[$i]['Nome']." (".$lista_bimestres[$i]['Valor']." pts)";
 			echo "</a>";
 		echo "</div>";
 	}

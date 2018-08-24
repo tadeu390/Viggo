@@ -76,8 +76,8 @@ $query_builder = TRUE;
 $db['default'] = array(
 	'dsn'	=> 'mysql:host=localhost;port=3306;dbname=sw',
 	'hostname' => 'mysql:host=localhost',
-	'username' => 'sw',
-	'password' => 'sw',
+	'username' => 'dev',
+	'password' => 'mysql',
 	'database' => 'sw',
 	'dbdriver' => 'pdo',
 	'dbprefix' => '',

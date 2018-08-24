@@ -1,5 +1,5 @@
 var Main = {
-	base_url : ((window.location.href.split("/")[2] == "localhost") ? "https://"+window.location.host+"/git/TCC/" : "https://"+window.location.host+"/"),
+	base_url : ((window.location.href.split("/")[2] == "localhost") ? "http://"+window.location.host+"/git/TCC/" : "https://"+window.location.host+"/"),
 	//base_url : "http://"+window.location.host+"/git/TCC/",//localhost (pra qualquer dispositivo na rede local)
 	load_mask : function(){
 		$(document).ready(function(){
@@ -1392,5 +1392,178 @@ var Main = {
 	alterar_disciplina : function (disc_grade_id)
 	{
 		window.location.assign(Main.base_url + $("#controller").val() + "/"+$("#method").val()+"/"+disc_grade_id+"/"+$("#turma_selecionada").val()+"/"+$("#bimestre_selecionado").val());
+	},
+	//////NOTAS E FALTAS
+	altera_nota : function (id, nota, descricao_nota_id, matricula_id, turma_id, disc_grade_id, bimestre_id)
+	{
+		if(nota == "")
+			nota = null;
+		$.ajax({
+			url: Main.base_url + $("#controller").val() + '/altera_nota/' + nota + '/' + descricao_nota_id + '/' + matricula_id + '/' + turma_id + '/' + disc_grade_id + '/' + bimestre_id,
+			dataType:'json',
+			cache: false,
+			type: 'POST',
+			success: function (data) 
+			{
+				if(data.response != "sucesso")
+					Main.modal("aviso", data.response);
+				else
+				{
+					$("#"+id).val(data.somatorio);
+					document.getElementById(id).className = "form-control border_radius text-center text-"+data.status+" border-"+data.status;
+				}
+			}
+		}).fail(function(msg){
+		    setTimeout(function(){
+		    	//$("#modal_confirm").modal('hide');
+		    	Main.modal("aviso", "Houve um erro ao processar sua requisição. Verifique sua conexão com a internet.");
+			},500);
+		});
+	},
+	add_coluna_nota_validar : function() 
+	{
+		var flag = 0;
+		for(var i = 0; i < $("#limite_descricao_nota").val(); i++)
+		{
+			if($('#descricao_nota_id').val() == $("#descricao_nota_id_hidden"+i).val())
+				flag = 1;
+		}
+		return flag;
+	},
+	add_coluna_nota : function()
+	{
+		if($('#descricao_nota_id').val() == "0")
+			Main.modal("aviso", "Selecione uma descrição de nota");
+		else if(Main.add_coluna_nota_validar() == 0)
+		{
+			Main.remove_elemento("total");//primeiro remove o cabeçalho da coluna total por linha ou aluno
+			
+			//adiciona o cabeçalho da descrição de nota selecionada
+			var node_td_cabecalho = document.createElement("TD");
+				node_td_cabecalho.setAttribute("class", "text-center");
+				node_td_cabecalho.setAttribute("style", "width: 10%; position: relative;");
+			node_td_cabecalho.innerHTML = $('#descricao_nota_id :selected').text();
+
+			var node_span_cabecalho = document.createElement("SPAN");
+				node_span_cabecalho.setAttribute("style","cursor: pointer; position: absolute; right: 0px;");
+				node_span_cabecalho.setAttribute("class","glyphicon glyphicon-remove text-danger");
+				node_span_cabecalho.setAttribute("onclick", "Main.confirm_remover_coluna_nota("+$('#descricao_nota_id').val()+","+$("#turma_selecionada").val()+","+$("#disciplina_id").val()+","+$("#bimestre_selecionado").val()+")");
+				node_td_cabecalho.appendChild(node_span_cabecalho);
+
+			document.getElementById("cabecalho_nota").appendChild(node_td_cabecalho);
+
+			//coloca de volta o cabeçalho do total
+			var node_td_cabecalho = document.createElement("TD");
+				node_td_cabecalho.setAttribute("class", "text-center");
+				node_td_cabecalho.setAttribute("style", "width: 10%;");
+				node_td_cabecalho.setAttribute("id", "total");
+			node_td_cabecalho.innerHTML = "Total";
+			document.getElementById("cabecalho_nota").appendChild(node_td_cabecalho);
+			
+			for(var i = 0; i < $("#linha_disponivel").val(); i++)
+			{
+				var total_nota_linha = $("#total"+i).val();//armazena o total por linha para depois devolver a coluna total na tela
+				var classe = document.getElementById("total"+i).className; //armazena a class
+
+				var node_td = document.createElement("TD");
+					node_td.setAttribute("class", "text-center");
+					node_td.setAttribute("style", "width: 10%;");
+				var input_text = document.createElement("INPUT");
+					input_text.setAttribute("onblur", "Main.altera_nota('total"+i+"',this.value,"+$('#descricao_nota_id').val()+",'"+$("#matricula_id"+i).val()+"',"+$("#turma_selecionada").val()+","+$("#disciplina_id").val()+","+$("#bimestre_selecionado").val()+")");
+					input_text.setAttribute("type", "number");
+					input_text.setAttribute("min", "0");
+					input_text.setAttribute("class", "form-control border_radius");
+					input_text.setAttribute("style", "background-color: white;");
+
+				node_td.appendChild(input_text);
+
+				Main.remove_elemento("td_total"+i);//remove o total de aluno por aluno
+
+				document.getElementById("linha"+i).appendChild(node_td);//adiciona acoluna nova
+
+				//agora devolver a coluna total de aluno por aluno
+
+				var node_td = document.createElement("TD");
+					node_td.setAttribute("style", "width: 10%;");
+					node_td.setAttribute("style", "vertical-align: middle;");
+					node_td.setAttribute("class", "text-center");
+					node_td.setAttribute("id", "td_total"+i);
+
+				var input_text = document.createElement("INPUT");
+					input_text.setAttribute("type", "text");
+					input_text.setAttribute("readonly", "readonly");
+					input_text.setAttribute("id", "total"+i);
+					input_text.setAttribute("class", classe);
+					input_text.setAttribute("style", "background-color: white;");
+					input_text.setAttribute("value", total_nota_linha);
+
+				node_td.appendChild(input_text);
+				document.getElementById("linha"+i).appendChild(node_td);				
+			}
+		}
+		else
+			Main.modal("aviso","Esta coluna já se encontra adicionada.");
+	},
+	descricao_nota_id : 0,
+	turma_id : 0,
+	disc_grade_id : 0,
+	bimestre_id : 0,
+	confirm_remover_coluna_nota : function (descricao_nota_id, turma_id, disc_grade_id, bimestre_id)
+	{
+		Main.descricao_nota_id = descricao_nota_id;
+		Main.turma_id = turma_id;
+		Main.disc_grade_id = disc_grade_id;
+		Main.bimestre_id = bimestre_id;
+
+		$("#bt_delete").unbind();//remover o evento antes de adicionar.
+
+		Main.modal("confirm", "Deseja realmente apagar a coluna selecionada? Não é possível desfazer esta ação.");
+		$('#bt_delete').click(function() {
+    	  Main.remove_coluna_nota();
+    	});
+	},
+	remove_coluna_nota : function()
+	{
+		$.ajax({
+			url: Main.base_url + $("#controller").val() + '/remover_coluna_nota/' + Main.descricao_nota_id + '/' + Main.turma_id + '/' + Main.disc_grade_id + '/' + Main.bimestre_id,
+			dataType:'json',
+			cache: false,
+			type: 'POST',
+			success: function (data) 
+			{
+				if(data.response != "sucesso")
+				{
+					setTimeout(function(){
+			    	$("#modal_confirm").modal('hide');
+						Main.modal("aviso", data.response);			    	
+					},500);
+				}
+				else
+					location.reload();
+			}
+		}).fail(function(msg){
+		    setTimeout(function(){
+		    	//$("#modal_confirm").modal('hide');
+		    	Main.modal("aviso", "Houve um erro ao processar sua requisição. Verifique sua conexão com a internet.");
+			},500);
+		});
+	},
+	get_alunos_chamada : function (disc_grade_id, turma_id, disc_hor_id)
+	{
+		$.ajax({
+			url: Main.base_url + $("#controller").val() + '/get_alunos_chamada/' + disc_grade_id + '/' + turma_id + '/' + disc_hor_id,
+			dataType:'json',
+			cache: false,
+			type: 'POST',
+			success: function (data) 
+			{
+				$("#alunos_chamada").html(data.response);
+			}
+		}).fail(function(msg){
+		    setTimeout(function(){
+		    	//$("#modal_confirm").modal('hide');
+		    	Main.modal("aviso", "Houve um erro ao processar sua requisição. Verifique sua conexão com a internet.");
+			},500);
+		});
 	}
 };

@@ -1,4 +1,3 @@
-
 <div class='form-group relative'>
 	<?php if(empty($lista_disc_turma_header['Id'])): ?> 
 		<select onchange="Main.load_grade_disciplina();" name='periodo_grade_id' id='periodo_grade_id' class='form-control' style='padding-left: 0px;'>

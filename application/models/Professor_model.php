@@ -49,7 +49,9 @@
 			return $query->result_array();
 		}
 		/*!
-		*	RESPONSÁVEL POR CARREGAR O BIMESTRE A SER SELECIONADO POR PADRÃO NA TELA PARA O PROFESSOR, ISSO É FEITO COM BASE NA DATA CORRENTE.
+		*	RESPONSÁVEL POR CARREGAR O BIMESTRE A SER SELECIONADO POR PADRÃO NA TELA PARA O PROFESSOR, 
+		*	ISSO É FEITO COM BASE NA DATA CORRENTE E SE CASO O ACESSO ESTIVER OCORRENDO EM UMA DATA QUE NÃO
+		*	CORRESPONDE A NENHUMA DATA DE NENHUM BIMESTRE, O MÉTODO ENTÃO CARREGA O PRIMEIRO BIMESTRE POR DEFAULT.
 		*
 		*	$periodo_letivo_id -> Id do período letivo selecionado.
 		*/
@@ -60,6 +62,12 @@
 				WHERE CAST(NOW() AS DATE) >= CAST(Data_inicio AS DATE) AND CAST(NOW() AS DATE) <= CAST(Data_fim AS DATE) AND 
 				Periodo_letivo_id = ".$this->db->escape($periodo_letivo_id)."");
 
+			if(empty($query->row_array()))
+			{
+				$query = $this->db->query("
+				SELECT * FROM Bimestre 
+				WHERE Periodo_letivo_id = ".$this->db->escape($periodo_letivo_id)." ORDER BY Data_inicio LIMIT 1");
+			}
 			return $query->row_array();
 		}
 		/*!
@@ -77,11 +85,133 @@
 				INNER JOIN Disc_hor dh ON dt.Id = dh.Disc_turma_id 
 				INNER JOIN Horario h ON dh.Horario_id = h.Id 
 
-				WHERE dt.Periodo_letivo_id = ".$this->db->escape($periodo_letivo_id)." AND dt.Professor_Id = ".$this->db->escape($professor_id)." 
-				AND TIME_FORMAT(CAST(NOW() AS TIME), '%H:%i') >= TIME_FORMAT(h.Inicio, '%H:%i') AND TIME_FORMAT(CAST(NOW() AS TIME), '%H:%i') <= TIME_FORMAT(h.Fim, '%H:%i')
-			    ");
+				WHERE dt.Periodo_letivo_id = ".$this->db->escape($periodo_letivo_id)." AND 
+				dt.Professor_Id = ".$this->db->escape($professor_id)." 
+				AND TIME_FORMAT(CAST(NOW() AS TIME), '%H:%i') >= TIME_FORMAT(h.Inicio, '%H:%i') AND 
+				TIME_FORMAT(CAST(NOW() AS TIME), '%H:%i') <= TIME_FORMAT(h.Fim, '%H:%i')
+			");
 
 			return $query->row_array();
+		}
+		//MÉTODOS DAQUI PRA BAIXO TALVEZ SEJAM MIGRADOS PARA O NOTAS_MODEL
+		/*!
+			RESPONSÁVEL POR RETORNAR TODAS AS COLUNAS DE NOTAS EXISTENTES PARA UMA DETERMINADA DISCIPLINA EM UMA DETERMINADA TURMA DE UM DETERMINADO BIMESTRE
+		*/
+		public function get_colunas_nota($disc_grade_id, $turma_id, $bimestre_id)
+		{
+			$query = $this->db->query("
+				SELECT dn.Descricao, dn.Id AS Descricao_nota_id FROM Disc_turma dt 
+				INNER JOIN Matricula m ON dt.Id = m.Disc_turma_id 
+				INNER JOIN Notas n ON m.Id = n.Matricula_id 
+				INNER JOIN Descricao_nota dn ON dn.Id = n.Descricao_nota_id 
+				WHERE dt.Disc_grade_id = ".$this->db->escape($disc_grade_id)." AND 
+				dt.Turma_id = ".$this->db->escape($turma_id)." AND 
+				n.Bimestre_id = ".$this->db->escape($bimestre_id)." 
+				GROUP BY dn.Descricao, dn.Id ORDER BY n.Id");
+
+			return $query->result_array();
+		}
+		/*!
+			RESPONSÁVEL POR RETORNAR TODOS OS ALUNOS MATRICULADOS EM UMA DETERMINADA DISCIPLINA DE UMA DETERMINADA TURMA.
+		*/
+		public function get_alunos($disc_grade_id, $turma_id)
+		{
+			$query = $this->db->query("
+				SELECT u.Nome AS Nome_aluno, m.Id AS Matricula_id FROM Disc_turma dt 
+				INNER JOIN Matricula m ON m.Disc_turma_id = dt.Id 
+				INNER JOIN Inscricao i ON i.Id = m.Inscricao_id 
+				INNER JOIN Aluno a ON a.Id = i.Aluno_id 
+				INNER JOIN Usuario u ON u.Id = a.Usuario_id 
+				WHERE dt.Disc_grade_id = ".$this->db->escape($disc_grade_id)." AND 
+				dt.Turma_id = ".$this->db->escape($turma_id)."");
+
+			return $query->result_array();
+		}
+		/*!
+		*	RESPONSÁVEL POR RETORNAR UMA LISTA DE HORÁRIOS QUE O PROFESSOR DA AULA EM UMA DETERMINADA DISCIPLINA DE
+		*	UMA DETERMINADA TURMA.
+		*
+		*	$disc_grade_id -> Id da disciplina que se deseja obter os horários.
+		*	$turma_id -> Id da turma que se deseja obter o horário.
+		* 	$professor_id -> Id do professor (somente para certificar-se de que irá voltar os horários das disciplinas 
+		*	que dizem respeito ao mesmo).
+		*/
+		public function get_horarios_professor($disc_grade_id, $turma_id, $professor_id)
+		{
+			$query = $this->db->query("
+				SELECT CONCAT(x.Dia, ' / ', x.Inicio, ' - ', x.Fim) AS Horario, x.Disc_Hor_id, 
+				DAYNAME(NOW()) AS Dia_atual_semana, x.Inicio, x.Fim, x.Dia AS Dia_semana, x.Disc_hor_id FROM( 
+					SELECT 
+					CASE 
+				    	WHEN h.Dia = 1 THEN 'Segunda' 
+				    	WHEN h.Dia = 2 THEN 'Terça' 
+				        WHEN h.Dia = 3 THEN 'Quarta' 
+				        WHEN h.Dia = 4 THEN 'Quinta' 
+				        WHEN h.Dia = 5 THEN 'Sexta' 
+				        WHEN h.Dia = 6 THEN 'Sábado' 
+				        WHEN h.Dia = 7 THEN 'Domingo' 
+				    END AS Dia, 
+				    TIME_FORMAT(h.Inicio, '%H:%i') AS Inicio, TIME_FORMAT(h.Fim, '%H:%i') AS Fim, dh.Id AS Disc_hor_id  
+				    FROM Disc_turma dt 
+				    INNER JOIN Matricula m ON dt.Id = m.Disc_turma_id 
+				    INNER JOIN Disc_hor dh ON dt.Id = dh.Disc_turma_id 
+				    INNER JOIN Horario h ON h.Id = dh.Horario_id 
+				    WHERE dt.Turma_id = ".$this->db->escape($turma_id)." AND 
+				    dt.Disc_grade_id = ".$this->db->escape($disc_grade_id)." AND 
+				    dt.Professor_Id = ".$this->db->escape($professor_id)." 
+				    GROUP BY h.Dia, h.Inicio, h.Fim 
+			    ) AS x");
+
+			return $query->result_array();
+		}
+		/*!
+			RESPONSÁVEL POR RETORNAR TODOS OS ALUNOS MATRICULADOS EM UMA DETERMINADA DISCIPLINA DE UMA 
+			DETERMINADA TURMA, DE ACORDO COM O HORÁRIO (PARA IDENTIFICAR A SUBTURMA).
+		*/
+		public function get_alunos_chamada($disc_grade_id, $turma_id, $disc_hor_id)
+		{
+			$query = $this->db->query("
+				SELECT u.Nome AS Nome_aluno, m.Id AS Matricula_id, 
+				dh.Sub_turma, cp.Id AS Calendario_presenca_id 
+				FROM Disc_turma dt 
+				INNER JOIN Matricula m ON m.Disc_turma_id = dt.Id  
+				INNER JOIN Inscricao i ON i.Id = m.Inscricao_id 
+				INNER JOIN Aluno a ON a.Id = i.Aluno_id 
+				INNER JOIN Usuario u ON u.Id = a.Usuario_id 
+				INNER JOIN Disc_hor dh ON dt.Id = dh.Disc_turma_id AND m.Sub_turma = dh.Sub_turma 
+				LEFT JOIN Calendario_presenca cp ON m.Id = cp.Matricula_id 
+				WHERE dt.Disc_grade_id = ".$this->db->escape($disc_grade_id)." AND 
+				dt.Turma_id = ".$this->db->escape($turma_id)." AND 
+				dh.Id = ".$this->db->escape($disc_hor_id)." ");
+
+			return $query->result_array();
+		}
+		/*!
+			RESPONSÁVEL POR IDENTIFICAR A QUANTIDADE DE SUBTURMAS E RETORNAR CADA SUB_TURMA QUANDO EXISTIR.
+		*
+		*	$disc_grade_id -> Id da disciplina que se quer verificar se há subturma nela.
+		*	$turma_id -> Id da turma na qual está associada a disciplina em questão.
+		*/
+		public function identifica_sub_turmas($disc_grade_id, $turma_id)
+		{
+			$query = $this->db->query("
+				SELECT 
+				(SELECT COUNT(x.Sub_turma)  FROM 
+				(
+					SELECT dh.Sub_turma 
+					FROM Disc_turma dt 
+					INNER JOIN Disc_hor dh 
+					WHERE dt.Disc_grade_id = ".$this->db->escape($disc_grade_id)." AND dt.Turma_id = ".$this->db->escape($turma_id)." 
+				 	GROUP BY dh.Sub_turma 
+				)  AS x) AS qtd_sub_turma,
+				SELECT dh.Sub_turma 
+					FROM Disc_turma dt 
+					INNER JOIN Disc_hor dh 
+					WHERE dt.Disc_grade_id = ".$this->db->escape($disc_grade_id)." AND dt.Turma_id = ".$this->db->escape($turma_id)." 
+				 	GROUP BY dh.Sub_turma 
+			");
+
+			return $query->result_array();
 		}
 	}
 ?>

@@ -7,9 +7,10 @@
 		public function __construct()
 		{
 			$this->load->database();
-			//REMOVENDO  only_full_group_by , alterando o modo sql estrito caso o servidor a executar a aplicação possua o modo 'only_full_group_by' especficado
+			//CONFIGURANDO O MODO SQL ESTRITO PARA MELHOR ATENDER AS REGRAS DE NEGÓCIO.
 			$this->db->query("
 			SET SESSION sql_mode = 'NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION'");
+			$this->db->query("SET lc_time_names = 'pt_PT'");
 		}
 		/*!
 		*	RESPONSÁVEL POR DESCOBRIR QUAL MENU, O MÓDULO QUE ESTÁ EM USO PERTENCE, ISSO É NECESSÁRIO 

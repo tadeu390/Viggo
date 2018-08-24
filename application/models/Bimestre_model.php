@@ -14,17 +14,30 @@
 		*
 		*	$Periodo_letivo_id -> Para retornar os bimestres de um determinado periodo letivo.
 		*/
-		public function get_bimestre($Periodo_letivo_id = FALSE)
+		public function get_bimestre($Periodo_letivo_id = FALSE, $id = FALSE)
 		{
-			$query = $this->db->query("
-					SELECT Id, Ativo, Nome, Valor, DATE_FORMAT(Data_inicio, '%d/%m/%Y') as Data_inicio, 
-					DATE_FORMAT(Data_fim, '%d/%m/%Y') as Data_fim, 
-					DATE_FORMAT(Data_abertura, '%d/%m/%Y') as Data_abertura, 
-					DATE_FORMAT(Data_fechamento, '%d/%m/%Y') as Data_fechamento, Periodo_letivo_id 
-					FROM Bimestre 
-					WHERE Periodo_letivo_id = ".$this->db->escape($Periodo_letivo_id)."");
+			if($id === FALSE)
+			{
+				$query = $this->db->query("
+						SELECT Id, Ativo, Nome, Valor, DATE_FORMAT(Data_inicio, '%d/%m/%Y') as Data_inicio, 
+						DATE_FORMAT(Data_fim, '%d/%m/%Y') as Data_fim, 
+						DATE_FORMAT(Data_abertura, '%d/%m/%Y') as Data_abertura, 
+						DATE_FORMAT(Data_fechamento, '%d/%m/%Y') as Data_fechamento, Periodo_letivo_id 
+						FROM Bimestre 
+						WHERE Periodo_letivo_id = ".$this->db->escape($Periodo_letivo_id)." ORDER BY Data_inicio");
 
-			return $query->result_array();
+				return $query->result_array();
+			}
+
+			$query = $this->db->query("
+						SELECT Id, Ativo, Nome, Valor, DATE_FORMAT(Data_inicio, '%d/%m/%Y') as Data_inicio, 
+						DATE_FORMAT(Data_fim, '%d/%m/%Y') as Data_fim, 
+						DATE_FORMAT(Data_abertura, '%d/%m/%Y') as Data_abertura, 
+						DATE_FORMAT(Data_fechamento, '%d/%m/%Y') as Data_fechamento, Periodo_letivo_id 
+						FROM Bimestre 
+						WHERE Id = ".$this->db->escape($id)."");
+
+			return $query->row_array();
 		}
 		/*!
 		*	RESPONSÁVEL POR CADASTRAR/ATUALIZAR OS DADOS DE UM BIMESTRE NO BANCO DE DADOS.

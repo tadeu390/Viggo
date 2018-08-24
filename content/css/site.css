@@ -241,12 +241,15 @@ background-color: #336CD2;
   border-color: #fff;
 }
 
-
-
 .btn-outline-danger:hover 
 {
   background-color: #DD3068;
   border-color: #DD3068;
+}
+
+.form-control:disabled
+{
+	background-color: transparent !important;
 }
 
 .pointer

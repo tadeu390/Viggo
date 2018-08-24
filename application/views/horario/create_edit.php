@@ -2,7 +2,7 @@
 	.table-bordered th, .table-bordered td {
 	border: 1px solid #393836 !important;
 }
-</style>>
+</style>
 <?php $this->load->helper("mtime");?>
 <br /><br />
 <div class='row padding20 text-white relative' style="width: 98%; left: 2%">
