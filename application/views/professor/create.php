@@ -44,8 +44,8 @@
 			<div class="col-lg-10">
 				<div class="row padding10">
 					<div class="col-lg-4">
-						<a href="<?php echo $url; ?>professor/notas/<?php echo $url_part['disc_grade_id']."/".$url_part['turma_id']."/".$url_part['bimestre_id']; ?>" class="btn btn-danger" style="width: 100px">Notas</a>
-						<a href="<?php echo $url; ?>professor/faltas/<?php echo $url_part['disc_grade_id']."/".$url_part['turma_id']."/".$url_part['bimestre_id']; ?>" class="btn btn-success" style="width: 100px; margin-left: -8px; border-radius: 0px 5px 5px 0px;">Faltas</a>
+						<a href="<?php echo $url; ?>professor/notas/<?php echo $url_part['disciplina_id']."/".$url_part['turma_id']."/".$url_part['bimestre_id']; ?>" class="btn btn-danger" style="width: 100px">Notas</a>
+						<a href="<?php echo $url; ?>professor/faltas/<?php echo $url_part['disciplina_id']."/".$url_part['turma_id']."/".$url_part['bimestre_id']; ?>" class="btn btn-success" style="width: 100px; margin-left: -8px; border-radius: 0px 5px 5px 0px;">Faltas</a>
 					</div>
 					<div class="col-lg-8 text-right">
 						<?php 
@@ -68,12 +68,13 @@
 				<?php $atr = array("id" => "form_cadastro_chamada", "name" => "form_cadastro"); 
 					echo form_open("$controller/store_chamada", $atr);
 					echo "<input type='hidden' id='turma_id_form' name='turma_id_form' value='".$url_part['turma_id']."'>";
-					echo "<input type='hidden' id='disc_grade_id_form' name='disc_grade_id_form' value='".$url_part['disc_grade_id']."'>";
+					echo "<input type='hidden' id='disciplina_id_form' name='disciplina_id_form' value='".$url_part['disciplina_id']."'>";
 				?>	
+
 				<div class="row padding10">
 					<div class="col-lg-6">
 						<div class="form-group relative" id="data1">
-							<input <?php echo "onchange='Main.get_alunos_chamada(".$url_part['disc_grade_id'].",".$url_part['turma_id'].");'"; ?> id="data_atual" name="data_atual" value="<?php echo date('d/m/Y');?>" type="text" class="input-material">
+							<input <?php echo "onchange='Main.get_alunos_chamada(".$url_part['disciplina_id'].",".$url_part['turma_id'].");'"; ?> id="data_atual" name="data_atual" value="<?php echo date('d/m/Y');?>" type="text" class="input-material">
 							<label for="data_nascimento" class="label-material active">Data</label>
 							<div class='input-group mb-2 mb-sm-0 text-danger' id='error-data_atual'></div>
 						</div>
@@ -91,7 +92,7 @@
 						if(!empty($lista_subturmas) && COUNT($lista_subturmas) == 1)
 						{
 							$subturma = $lista_subturmas[0]['Sub_turma']; 
-							$data['lista_alunos'] = faltas::get_alunos_chamada($url_part['disc_grade_id'], $url_part['turma_id'], $subturma);
+							$data['lista_alunos'] = faltas::get_alunos_chamada($url_part['disciplina_id'], $url_part['turma_id'], $subturma);
 							$data['lista_horarios'] = $lista_horarios;
 							$data['lista_subturmas'] = $lista_subturmas;
 							$this->load->view("professor/_alunos", $data);

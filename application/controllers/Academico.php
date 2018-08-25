@@ -40,7 +40,7 @@
 			if($this->Account_model->session_is_valid()['grupo_id'] == PROFESSOR)
 			{
 				if(!empty($this->input->cookie('periodo_letivo_id')))
-					redirect("professor/faltas");
+					redirect("professor/chamada");
 				
 				$this->data['Nome_periodo'] = $this->Regras_model->get_regras(FALSE, $this->input->cookie('periodo_letivo_id'), FALSE, FALSE, FALSE)['Nome_periodo'];
 				$this->data['lista_periodos'] = $this->Academico_model->get_periodos_professor($this->Account_model->session_is_valid()['id']);

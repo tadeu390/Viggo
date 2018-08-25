@@ -43,8 +43,8 @@
 			<div class="col-lg-10">
 				<div class="row padding10">
 					<div class="col-lg-4">
-						<a href="<?php echo $url; ?>professor/notas/<?php echo $url_part['disc_grade_id']."/".$url_part['turma_id']."/".$url_part['bimestre_id']; ?>" class="btn btn-success" style="width: 100px">Notas</a>
-						<a href="<?php echo $url; ?>professor/faltas/<?php echo $url_part['disc_grade_id']."/".$url_part['turma_id']."/".$url_part['bimestre_id']; ?>" class="btn btn-danger" style="width: 100px; margin-left: -8px; border-radius: 0px 5px 5px 0px;">Faltas</a>
+						<a href="<?php echo $url; ?>professor/notas/<?php echo $url_part['disciplina_id']."/".$url_part['turma_id']."/".$url_part['bimestre_id']; ?>" class="btn btn-success" style="width: 100px">Notas</a>
+						<a href="<?php echo $url; ?>professor/faltas/<?php echo $url_part['disciplina_id']."/".$url_part['turma_id']."/".$url_part['bimestre_id']; ?>" class="btn btn-danger" style="width: 100px; margin-left: -8px; border-radius: 0px 5px 5px 0px;">Faltas</a>
 					</div>
 					<div class="col-lg-8 text-right">
 						<?php 
@@ -65,8 +65,8 @@
 
 					</div>
 					<div class="col-lg-4 text-right">
-						<a href="<?php echo $url; ?>professor/notas_geral/<?php echo $url_part['disc_grade_id']."/".$url_part['turma_id']."/".$url_part['bimestre_id']; ?>" class="btn btn-success" style="width: 100px">Geral</a>
-						<a href="<?php echo $url; ?>professor/notas/<?php echo $url_part['disc_grade_id']."/".$url_part['turma_id']."/".$url_part['bimestre_id']; ?>" class="btn btn-danger" style="width: 100px; margin-left: -8px; border-radius: 0px 5px 5px 0px;">Detalhado</a>
+						<a href="<?php echo $url; ?>professor/notas_geral/<?php echo $url_part['disciplina_id']."/".$url_part['turma_id']."/".$url_part['bimestre_id']; ?>" class="btn btn-success" style="width: 100px">Geral</a>
+						<a href="<?php echo $url; ?>professor/notas/<?php echo $url_part['disciplina_id']."/".$url_part['turma_id']."/".$url_part['bimestre_id']; ?>" class="btn btn-danger" style="width: 100px; margin-left: -8px; border-radius: 0px 5px 5px 0px;">Detalhado</a>
 					</div>
 				</div>
 				<div class="row padding10">
@@ -89,7 +89,7 @@
 												echo "<input type='hidden' value='".$lista_alunos[$i]['Matricula_id']."' id='matricula_id$i' name='matricula_id$i' />";
 											echo"</td>";
 											
-											$total = notas::get_nota_total_aluno($lista_bimestres, $lista_alunos[$i]['Matricula_id'], $url_part['disc_grade_id'], $url_part['turma_id']);
+											$total = notas::get_nota_total_aluno($lista_bimestres, $lista_alunos[$i]['Matricula_id'], $url_part['disciplina_id'], $url_part['turma_id']);
 											$status = notas::status_nota_total($total, $periodo_letivo_id);
 
 											echo"<td class='text-center text-danger' id='td_total".$i."' style='vertical-align: middle; width: 10%;'>";

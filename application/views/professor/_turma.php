@@ -9,7 +9,7 @@
 		}
 
 		echo "<div class='col-lg-12'>";
-			echo "<a href='".$url."professor/".$method."/".$url_part['disc_grade_id']."/".$lista_turmas[$i]['Turma_id']."/".$url_part['bimestre_id']."' class='btn ".$partial_class." btn-block'>";
+			echo "<a href='".$url."professor/".$method."/".$url_part['disciplina_id']."/".$lista_turmas[$i]['Turma_id']."/".$url_part['bimestre_id']."' class='btn ".$partial_class." btn-block'>";
 				echo $lista_turmas[$i]['Nome_turma'];
 			echo "</a>";
 		echo "</div>";

@@ -3,9 +3,9 @@
 	for ($i = 0; $i < COUNT($lista_disciplinas); $i++) 
 	{
 		$selected = "";
-		if($lista_disciplinas[$i]['Disc_grade_id'] == $url_part['disc_grade_id'])
+		if($lista_disciplinas[$i]['Disciplina_id'] == $url_part['disciplina_id'])
 			$selected = "selected";
-		echo "<option $selected value='".$lista_disciplinas[$i]['Disc_grade_id']."'>";
+		echo "<option $selected value='".$lista_disciplinas[$i]['Disciplina_id']."'>";
 			echo $lista_disciplinas[$i]['Nome_disciplina'];
 		echo "</option>";
 	}

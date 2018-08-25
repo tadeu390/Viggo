@@ -7,8 +7,9 @@
 	{
 		private $professor_id;
 		private $periodo_letivo_id;
-		private $disc_grade_id_default;
+		private $disciplina_id_default;
 		private $turma_id_default;
+		private $sub_turma_default;
 		private $bimestre_id_default;
 
 		/*
@@ -44,9 +45,12 @@
 
 			/////////DISCIPLINA, TURMA E BIMESTRE PADRÃO.
 			//A DISCIPLINA CARREGA COM BASE NO HORÁRIO.
-			$this->disc_grade_id_default = (empty($this->Professor_model->get_disciplina_default($this->professor_id, $this->periodo_letivo_id)['Disc_grade_id']) ? 
-														$this->Professor_model->get_disciplinas($this->professor_id, $this->periodo_letivo_id)[0]['Disc_grade_id'] : 
-														$this->Professor_model->get_disciplina_default($this->professor_id, $this->periodo_letivo_id)['Disc_grade_id']);
+			$this->disciplina_id_default = (empty($this->Professor_model->get_disciplina_default($this->professor_id, $this->periodo_letivo_id)['Disciplina_id']) ? 
+														$this->Professor_model->get_disciplinas($this->professor_id, $this->periodo_letivo_id)[0]['Disciplina_id'] : 
+														$this->Professor_model->get_disciplina_default($this->professor_id, $this->periodo_letivo_id)['Disciplina_id']);
+			
+			$this->sub_turma_default = $this->Professor_model->get_disciplina_default($this->professor_id, $this->periodo_letivo_id)['Sub_turma'];
+			
 			//A TURMA ESTÁ AMARRADA A DISCIPLINA, O QUE CONSEQUENTEMENTE CARREGA COM BASE NA DISCIPLINA
 			$this->turma_id_default = (empty($this->Professor_model->get_disciplina_default($this->professor_id, $this->periodo_letivo_id)['Turma_id']) ? $this->Professor_model->get_disciplinas($this->professor_id, $this->periodo_letivo_id)[0]['Turma_id'] : $this->Professor_model->get_disciplina_default($this->professor_id, $this->periodo_letivo_id)['Turma_id']);
 			//CARREGA O BIMESTRE PADRÃO COM BASE NA DATA.
@@ -62,15 +66,15 @@
 		/*!
 		*	RESPONSÁVEL POR RECEBER DA MODEL TODAS AS DISCIPLINAS E TODOS OS DADOS DE NOTA DE CADA ALUNO DE UM DETERMINADO PROFESSOR E ENVIA-LOS A VIEW.
 		*
-		*	$disc_grade_id -> Id da disciplina da grade. É usado para se obter as notas da disciplina pra cada aluno.
+		*	$disciplina_id -> Id da disciplina da grade. É usado para se obter as notas da disciplina pra cada aluno.
 		*	$turma_id -> Id da turma que está sendo consultada pelo professor.
 		*	$bimestre_id -> Id do bimestre especificado pelo usuário quando clicar nos botões de bimestres;
 		*/
-		public function notas($disc_grade_id = FALSE, $turma_id = FALSE, $bimestre_id = FALSE)
+		public function notas($disciplina_id = FALSE, $turma_id = FALSE, $bimestre_id = FALSE)
 		{
-			if($disc_grade_id == FALSE)//SE NADA FOI ESPECFICADO ENTAO DETERMINAR A PARTIR DOS DEFAULT.
+			if($disciplina_id == FALSE)//SE NADA FOI ESPECFICADO ENTAO DETERMINAR A PARTIR DOS DEFAULT.
 			{
-				$disc_grade_id = $this->disc_grade_id_default;
+				$disciplina_id = $this->disciplina_id_default;
 				$turma_id = $this->turma_id_default;
 				$bimestre_id = $this->bimestre_id_default;
 			}
@@ -81,7 +85,7 @@
 				$this->data['method'] = __FUNCTION__;
 				$this->data['lista_disciplinas'] = $this->Professor_model->get_disciplinas($this->professor_id, $this->periodo_letivo_id);
 				$this->data['lista_bimestres'] = $this->Bimestre_model->get_bimestre($this->periodo_letivo_id);
-				$this->data['lista_turmas'] = $this->Professor_model->get_turma($disc_grade_id, $this->professor_id, $this->periodo_letivo_id);
+				$this->data['lista_turmas'] = $this->Professor_model->get_turma($disciplina_id, $this->professor_id, $this->periodo_letivo_id);
 				$this->data['periodo_letivo_id'] = $this->periodo_letivo_id;
 				$this->data['bimestre'] = $this->Bimestre_model->get_bimestre(FALSE, $bimestre_id);
 
@@ -114,7 +118,7 @@
 				}
 				//////
 
-				$this->data['url_part']['disc_grade_id'] = $disc_grade_id;
+				$this->data['url_part']['disciplina_id'] = $disciplina_id;
 				$this->data['url_part']['bimestre_id'] = $bimestre_id;
 
 				//DESCRIÇÃO DE NOTA
@@ -122,8 +126,8 @@
 				//////
 
 				///TABELA DE NOTAS
-				$this->data['lista_colunas_nota'] = $this->Professor_model->get_colunas_nota($disc_grade_id, $turma_id, $bimestre_id);
-				$this->data['lista_alunos'] = $this->Professor_model->get_alunos($disc_grade_id, $turma_id);
+				$this->data['lista_colunas_nota'] = $this->Professor_model->get_colunas_nota($disciplina_id, $turma_id, $bimestre_id);
+				$this->data['lista_alunos'] = $this->Professor_model->get_alunos($disciplina_id, $turma_id);
 				//////
 
 				$this->view("professor/notas", $this->data);
@@ -131,11 +135,11 @@
 			else
 				$this->view("templates/permissao", $this->data);
 		}
-		public function notas_geral($disc_grade_id = FALSE, $turma_id = FALSE, $bimestre_id = FALSE)
+		public function notas_geral($disciplina_id = FALSE, $turma_id = FALSE, $bimestre_id = FALSE)
 		{
-			if($disc_grade_id == FALSE)//SE NADA FOI ESPECFICADO ENTAO DETERMINAR A PARTIR DOS DEFAULT.
+			if($disciplina_id == FALSE)//SE NADA FOI ESPECFICADO ENTAO DETERMINAR A PARTIR DOS DEFAULT.
 			{
-				$disc_grade_id = $this->disc_grade_id_default;
+				$disciplina_id = $this->disciplina_id_default;
 				$turma_id = $this->turma_id_default;
 				$bimestre_id = $this->bimestre_id_default;
 			}
@@ -146,7 +150,7 @@
 				$this->data['method'] = "notas";
 				$this->data['lista_disciplinas'] = $this->Professor_model->get_disciplinas($this->professor_id, $this->periodo_letivo_id);
 				$this->data['lista_bimestres'] = $this->Bimestre_model->get_bimestre($this->periodo_letivo_id);
-				$this->data['lista_turmas'] = $this->Professor_model->get_turma($disc_grade_id, $this->professor_id, $this->periodo_letivo_id);
+				$this->data['lista_turmas'] = $this->Professor_model->get_turma($disciplina_id, $this->professor_id, $this->periodo_letivo_id);
 				$this->data['periodo_letivo_id'] = $this->periodo_letivo_id;
 				$this->data['bimestre'] = $this->Bimestre_model->get_bimestre(FALSE, $bimestre_id);
 
@@ -168,11 +172,11 @@
 				}
 				//////
 
-				$this->data['url_part']['disc_grade_id'] = $disc_grade_id;
+				$this->data['url_part']['disciplina_id'] = $disciplina_id;
 				$this->data['url_part']['bimestre_id'] = $bimestre_id;
 
 				///TABELA DE ALUNOS
-				$this->data['lista_alunos'] = $this->Professor_model->get_alunos($disc_grade_id, $turma_id);
+				$this->data['lista_alunos'] = $this->Professor_model->get_alunos($disciplina_id, $turma_id);
 				//////
 
 				$this->view("professor/notas_geral", $this->data);
@@ -184,7 +188,7 @@
 			RESPONSÁVEL POR RECEBER OS DADOS DO FORMULÁRIO A NOTA A SER ALTERADA.
 
 		*/
-		public function altera_nota($nota, $descricao_nota_id, $matricula_id, $turma_id, $disc_grade_id, $bimestre_id)
+		public function altera_nota($nota, $descricao_nota_id, $matricula_id, $turma_id, $disciplina_id, $bimestre_id)
 		{
 			if($nota == 'null')
 				$nota = null;
@@ -194,7 +198,7 @@
 			$status = "";
 			if($this->Geral_model->get_permissao(CREATE, get_class($this)) == TRUE AND $this->Geral_model->get_permissao(UPDATE, get_class($this)) == TRUE)
 			{
-				$resultado = $this->Nota_model->validar_nota($matricula_id, $bimestre_id, $turma_id, $disc_grade_id, $nota, $descricao_nota_id);
+				$resultado = $this->Nota_model->validar_nota($matricula_id, $bimestre_id, $turma_id, $disciplina_id, $nota, $descricao_nota_id);
 
 				$this->data['bimestre'] = $this->Bimestre_model->get_bimestre(FALSE, $bimestre_id);
 
@@ -209,9 +213,9 @@
 					if($resultado != "invalido")
 					{
 						$somatorio = $resultado;
-						$resultado = $this->Nota_model->set_notas($nota, $descricao_nota_id, $matricula_id, $turma_id, $disc_grade_id, $bimestre_id);
+						$resultado = $this->Nota_model->set_notas($nota, $descricao_nota_id, $matricula_id, $turma_id, $disciplina_id, $bimestre_id);
 
-						$status = $this->Nota_model->status_nota_total_bimestre($matricula_id, $turma_id, $disc_grade_id, $bimestre_id, $this->periodo_letivo_id);
+						$status = $this->Nota_model->status_nota_total_bimestre($matricula_id, $turma_id, $disciplina_id, $bimestre_id, $this->periodo_letivo_id);
 						
 						if($status == "ok")
 							$status = "info";
@@ -233,7 +237,7 @@
 			echo json_encode($arr);
 		}
 
-		public function remover_coluna_nota($descricao_nota_id, $turma_id, $disc_grade_id, $bimestre_id)
+		public function remover_coluna_nota($descricao_nota_id, $turma_id, $disciplina_id, $bimestre_id)
 		{
 			$resultado = "sucesso";
 			$this->data['bimestre'] = $this->Bimestre_model->get_bimestre(FALSE, $bimestre_id);
@@ -245,7 +249,7 @@
 			$data_atual = DateTime::createFromFormat ('d/m/Y', date('d/m/Y'), $timeZone);
 			
 			if($data_atual >= $data_abertura && $data_atual <= $data_fechamento)
-				$this->Nota_model->remover_coluna_nota($descricao_nota_id, $turma_id, $disc_grade_id, $bimestre_id);
+				$this->Nota_model->remover_coluna_nota($descricao_nota_id, $turma_id, $disciplina_id, $bimestre_id);
 			else
 				$resultado = "Não foi possível apagar a coluna de nota.";
 
@@ -256,15 +260,15 @@
 		/*!
 		*	RESPONSÁVEL POR RECEBER DA MODEL TODAS AS DISCIPLINAS E TODOS OS DADOS DE FALTAS DE CADA ALUNO DE UM DETERMINADO PROFESSOR E ENVIA-LOS A VIEW.
 		*
-		*	$disc_grade_id -> Id da disciplina da grade. É usado para se obter as faltas da disciplina pra cada aluno.
+		*	$disciplina_id -> Id da disciplina da grade. É usado para se obter as faltas da disciplina pra cada aluno.
 		*	$turma_id -> Id da turma que está sendo consultada pelo professor.
 		*	$bimestre_id -> Id do bimestre especificado pelo usuário quando clicar nos botões de bimestres;
 		*/
-		public function faltas($disc_grade_id = FALSE, $turma_id = FALSE, $bimestre_id = FALSE)
+		public function faltas($disciplina_id = FALSE, $turma_id = FALSE, $bimestre_id = FALSE)
 		{
-			if($disc_grade_id == FALSE)//SE NADA FOI ESPECFICADO ENTAO DETERMINAR A PARTIR DOS DEFAULT.
+			if($disciplina_id == FALSE)//SE NADA FOI ESPECFICADO ENTAO DETERMINAR A PARTIR DOS DEFAULT.
 			{
-				$disc_grade_id = $this->disc_grade_id_default;
+				$disciplina_id = $this->disciplina_id_default;
 				$turma_id = $this->turma_id_default;
 				$bimestre_id = $this->bimestre_id_default;
 			}
@@ -275,7 +279,7 @@
 				$this->data['method'] = __FUNCTION__;
 				$this->data['lista_disciplinas'] = $this->Professor_model->get_disciplinas($this->professor_id, $this->periodo_letivo_id);
 				$this->data['lista_bimestres'] = $this->Bimestre_model->get_bimestre($this->periodo_letivo_id);
-				$this->data['lista_turmas'] = $this->Professor_model->get_turma($disc_grade_id, $this->professor_id, $this->periodo_letivo_id);
+				$this->data['lista_turmas'] = $this->Professor_model->get_turma($disciplina_id, $this->professor_id, $this->periodo_letivo_id);
 				$this->data['bimestre'] = $this->Bimestre_model->get_bimestre(FALSE, $bimestre_id);
 
 				//////DETERMINAR A DISCIPLINA PADRÃO A SER SELECIONADA, ESSE TRATAMENTO É NECESSÁRIO, POIS AO TROCAR DE DISCIPLINA, O ID DE TURMA SUBMETIDO PODE NÃO SERVIR DE NADA, 
@@ -292,7 +296,7 @@
 					$this->data['url_part']['turma_id'] = $this->data['lista_turmas'][0]['Turma_id'];//CASO CONTRÁRIO PEGAR POR DEFAUL O PRIMEIRO ID DISPONÍVEL.
 				//////
 
-				$this->data['url_part']['disc_grade_id'] = $disc_grade_id;
+				$this->data['url_part']['disciplina_id'] = $disciplina_id;
 				$this->data['url_part']['bimestre_id'] = $bimestre_id;
 				$this->view("professor/faltas", $this->data);
 			}
@@ -302,15 +306,15 @@
 		/*!
 		*	RESPONSÁVEL POR RECEBER DA MODEL TODAS AS DISCIPLINAS E TODOS OS DADOS DE FALTAS DE CADA ALUNO DE UM DETERMINADO PROFESSOR E ENVIA-LOS A VIEW.
 		*
-		*	$disc_grade_id -> Id da disciplina da grade. É usado para se obter as faltas da disciplina pra cada aluno.
+		*	$disciplina_id -> Id da disciplina da grade. É usado para se obter as faltas da disciplina pra cada aluno.
 		*	$turma_id -> Id da turma que está sendo consultada pelo professor.
 		*	$bimestre_id -> Id do bimestre especificado pelo usuário quando clicar nos botões de bimestres;
 		*/
-		public function faltas_geral($disc_grade_id = FALSE, $turma_id = FALSE, $bimestre_id = FALSE)
+		public function faltas_geral($disciplina_id = FALSE, $turma_id = FALSE, $bimestre_id = FALSE)
 		{
-			if($disc_grade_id == FALSE)//SE NADA FOI ESPECFICADO ENTAO DETERMINAR A PARTIR DOS DEFAULT.
+			if($disciplina_id == FALSE)//SE NADA FOI ESPECFICADO ENTAO DETERMINAR A PARTIR DOS DEFAULT.
 			{
-				$disc_grade_id = $this->disc_grade_id_default;
+				$disciplina_id = $this->disciplina_id_default;
 				$turma_id = $this->turma_id_default;
 				$bimestre_id = $this->bimestre_id_default;
 			}
@@ -321,7 +325,7 @@
 				$this->data['method'] = __FUNCTION__;
 				$this->data['lista_disciplinas'] = $this->Professor_model->get_disciplinas($this->professor_id, $this->periodo_letivo_id);
 				$this->data['lista_bimestres'] = $this->Bimestre_model->get_bimestre($this->periodo_letivo_id);
-				$this->data['lista_turmas'] = $this->Professor_model->get_turma($disc_grade_id, $this->professor_id, $this->periodo_letivo_id);
+				$this->data['lista_turmas'] = $this->Professor_model->get_turma($disciplina_id, $this->professor_id, $this->periodo_letivo_id);
 				$this->data['bimestre'] = $this->Bimestre_model->get_bimestre(FALSE, $bimestre_id);
 
 				//////DETERMINAR A DISCIPLINA PADRÃO A SER SELECIONADA, ESSE TRATAMENTO É NECESSÁRIO, POIS AO TROCAR DE DISCIPLINA, O ID DE TURMA SUBMETIDO PODE NÃO SERVIR DE NADA, 
@@ -338,7 +342,7 @@
 					$this->data['url_part']['turma_id'] = $this->data['lista_turmas'][0]['Turma_id'];//CASO CONTRÁRIO PEGAR POR DEFAUL O PRIMEIRO ID DISPONÍVEL.
 				//////
 
-				$this->data['url_part']['disc_grade_id'] = $disc_grade_id;
+				$this->data['url_part']['disciplina_id'] = $disciplina_id;
 				$this->data['url_part']['bimestre_id'] = $bimestre_id;
 				$this->view("professor/faltas_geral", $this->data);
 			}
@@ -348,16 +352,16 @@
 		/*!
 		*	RESPONSÁVEL POR CARREGAR DA MODEL AS INFORMAÇÕES PARA A CHAMADA, COMO A LISTA DE ALUNOS, OS HORÁRIOS.
 		*
-		*	$disc_grade_id -> Id da disciplina para fazer a chamada.
+		*	$disciplina_id -> Id da disciplina para fazer a chamada.
 		*	$turma_id -> Id da turma para se fazer a chamada.
 		*	$bimestre_id -> Id do bimestre (somente para identificar o bimestre a ser selecionado na tela e para verificar
 		*	se o bimestre está aberto ou não)
 		*/
-		public function chamada($disc_grade_id = FALSE, $turma_id = FALSE, $bimestre_id = FALSE)
+		public function chamada($disciplina_id = FALSE, $turma_id = FALSE, $bimestre_id = FALSE)
 		{
-			if($disc_grade_id == FALSE)//SE NADA FOI ESPECFICADO ENTAO DETERMINAR A PARTIR DOS DEFAULT.
+			if($disciplina_id == FALSE)//SE NADA FOI ESPECFICADO ENTAO DETERMINAR A PARTIR DOS DEFAULT.
 			{
-				$disc_grade_id = $this->disc_grade_id_default;
+				$disciplina_id = $this->disciplina_id_default;
 				$turma_id = $this->turma_id_default;
 				$bimestre_id = $this->bimestre_id_default;
 			}
@@ -368,7 +372,7 @@
 				$this->data['method'] = __FUNCTION__;
 				$this->data['lista_disciplinas'] = $this->Professor_model->get_disciplinas($this->professor_id, $this->periodo_letivo_id);
 				$this->data['lista_bimestres'] = $this->Bimestre_model->get_bimestre($this->periodo_letivo_id);
-				$this->data['lista_turmas'] = $this->Professor_model->get_turma($disc_grade_id, $this->professor_id, $this->periodo_letivo_id);
+				$this->data['lista_turmas'] = $this->Professor_model->get_turma($disciplina_id, $this->professor_id, $this->periodo_letivo_id);
 				$this->data['bimestre'] = $this->Bimestre_model->get_bimestre(FALSE, $bimestre_id);
 				//////DETERMINAR A DISCIPLINA PADRÃO A SER SELECIONADA, ESSE TRATAMENTO É NECESSÁRIO, POIS AO TROCAR DE DISCIPLINA, O ID DE TURMA SUBMETIDO PODE NÃO SERVIR DE NADA, 
 				//////CASO ESSA TURMA SELECIONADA NÃO APAREÇA NOVAMENTE COM A TROCA DE DISCIPLINA.
@@ -385,17 +389,22 @@
 					$this->data['url_part']['turma_id'] = $this->data['lista_turmas'][0]['Turma_id'];//CASO CONTRÁRIO PEGAR POR DEFAUL O PRIMEIRO ID DISPONÍVEL.
 					$turma_id = $this->data['lista_turmas'][0]['Turma_id'];
 				}
-				//////obter os alunos para a chamada
-				$this->data['lista_alunos'] = $this->Professor_model->get_alunos($disc_grade_id, $turma_id);
 				
-				$this->data['url_part']['disc_grade_id'] = $disc_grade_id;
+				
+				$this->data['url_part']['disciplina_id'] = $disciplina_id;
 				$this->data['url_part']['bimestre_id'] = $bimestre_id;
 				
+				$this->data['sub_turma'] = $this->sub_turma_default;
+
 				////obter a lista de sub_turmas
-				$this->data['lista_subturmas'] = $this->Professor_model->identifica_sub_turmas($disc_grade_id, $turma_id);
+				$this->data['lista_subturmas'] = $this->Professor_model->identifica_sub_turmas($disciplina_id, $turma_id);
 				$subturma = (empty($this->data['lista_subturmas'][0]['Sub_turma']) ? 0 : $this->data['lista_subturmas'][0]['Sub_turma']);
+				
+				//////obter os alunos para a chamada
+				$this->data['lista_alunos'] = $this->Professor_model->get_alunos($disciplina_id, $turma_id, $subturma);
+
 				/////obter a lista de horários.
-				$this->data['lista_horarios'] = $this->Professor_model->get_horarios_professor($disc_grade_id, $turma_id, $this->professor_id, $subturma, date('Y-m-d'));
+				$this->data['lista_horarios'] = $this->Professor_model->get_horarios_professor($disciplina_id, $turma_id, $this->professor_id, $subturma, date('Y-m-d'));
 
 
 				$this->view("professor/create", $this->data);
@@ -407,17 +416,17 @@
 		*	RESPONSÁVEL POR CARREGAR DA MODEL TODAS AS SUBTURMA DE UMA DETERMINADA DISCIPLINA DE UMA DETERMINADA 
 		*	TURM EM UMA DETERMINADA DATA (DIA DA SEMANA).
 		*
-		*	$disc_grade_id -> Id da disciplina que se quer obter as subturmas.
+		*	$disciplina_id -> Id da disciplina que se quer obter as subturmas.
 		*	$turma_id -> Id da turma turma associada a disicplina.
 		*	$data -> Data selecionada pelo professor.
 		*/
-		public function get_sub_turmas($disc_grade_id, $turma_id, $data)
+		public function get_sub_turmas($disciplina_id, $turma_id, $data)
 		{
 			$resultado = "sucesso";
-			$this->data['url_part']['disc_grade_id'] = $disc_grade_id;
+			$this->data['url_part']['disciplina_id'] = $disciplina_id;
 			$this->data['url_part']['turma_id'] = $turma_id;
 
-			$this->data['lista_subturmas'] = $this->Professor_model->identifica_sub_turmas($disc_grade_id, $turma_id, $data);
+			$this->data['lista_subturmas'] = $this->Professor_model->identifica_sub_turmas($disciplina_id, $turma_id, $data);
 			$resultado = $this->load->view("professor/_subturmas", $this->data, TRUE);
 
 			$arr = array('response' => $resultado);
@@ -428,15 +437,15 @@
 			RESPONSÁVEL POR CARREGAR DA MODEL A LISTA DE ALUNOS DE ACORDO COM O HORÁRIO, O QUE ACARRETA EM
 			CARREGAR APENAS ALUNOS DA SUBTURMA EM QUESTÃO CASO EXISTA SUBTURMA.
 		*/
-		public function get_alunos_chamada($disc_grade_id, $turma_id, $subturma, $data)
+		public function get_alunos_chamada($disciplina_id, $turma_id, $subturma, $data)
 		{
 			$resultado = "sucesso";
 			$this->load->helper("mstring");
-			//print_r($this->Professor_model->get_alunos_chamada($disc_grade_id, $turma_id, $disc_hor_id));
+			//print_r($this->Professor_model->get_alunos_chamada($disciplina_id, $turma_id, $disc_hor_id));
 
-			$this->data['lista_alunos'] = $this->Professor_model->get_alunos_chamada($disc_grade_id, $turma_id, $subturma);
+			$this->data['lista_alunos'] = $this->Professor_model->get_alunos($disciplina_id, $turma_id, $subturma);
 			/////obter a lista de horários.
-			$this->data['lista_horarios'] = $this->Professor_model->get_horarios_professor($disc_grade_id, $turma_id, $this->professor_id, $subturma, $data);
+			$this->data['lista_horarios'] = $this->Professor_model->get_horarios_professor($disciplina_id, $turma_id, $this->professor_id, $subturma, $data);
 			$resultado = $this->load->view("professor/_alunos", $this->data, TRUE);
 
 

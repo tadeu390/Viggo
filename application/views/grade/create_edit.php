@@ -162,6 +162,7 @@
 
 												echo "<td class='text-center' style='vertical-align: middle;'>";
 													//echo "<input type='number' class='text-center' style='width: 60%;' maxlength='2' id='periodo_add$i' name='periodo_add$i' value='".$lista_disc_grade[$i]['Periodo']."'>";
+													echo "<input type='hidden' class='text-center' style='width: 60%;' id='periodo_add$i' name='periodo_add$i' value='".$lista_disc_grade[$i]['Periodo']."'>";
 													echo $lista_disc_grade[$i]['Periodo'];
 												echo "</td>";
 											echo "</tr>";

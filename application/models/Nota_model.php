@@ -15,19 +15,20 @@
 		*	$descricao_nota_id -> Tipo de nota que se deseja obter.
 		*	$matricula_id -> Especifica a matricula do aluno para o qual se deseja saber a nota.
 		*	$turma_id -> Id da turma na qual se encontra o aluno.
-		*	$disc_grade_id -> Id da disciplina que se deseja saber a nota.
+		*	$disciplina_id -> Id da disciplina que se deseja saber a nota.
 		*	$bimestre_id -> Id do bimestres que se quer saber a nota para a disciplina.
 		*/
-		public function get_nota($descricao_nota_id, $matricula_id, $turma_id, $disc_grade_id, $bimestre_id)
+		public function get_nota($descricao_nota_id, $matricula_id, $turma_id, $disciplina_id, $bimestre_id)
 		{
 			$query = $this->db->query("
 				SELECT n.Valor AS Nota, n.Id AS Nota_id FROM Disc_turma dt 
+				INNER JOIN Disc_grade dg ON dt.Disc_grade_id = dg.Id 
 				INNER JOIN Matricula m ON m.Disc_turma_id = dt.Id 
 				INNER JOIN Notas n ON m.Id = n.Matricula_id 
 				WHERE n.Descricao_nota_id = ".$this->db->escape($descricao_nota_id)." AND n.Matricula_id = ".$this->db->escape($matricula_id)." AND 
-				dt.Turma_id = ".$this->db->escape($turma_id)." AND dt.Disc_grade_id = ".$this->db->escape($disc_grade_id)." AND 
+				dt.Turma_id = ".$this->db->escape($turma_id)." AND dg.Disciplina_id = ".$this->db->escape($disciplina_id)." AND 
 				n.Bimestre_id = ".$this->db->escape($bimestre_id)."");
-
+			
 			return $query->row_array();
 		}
 		/*!
@@ -38,13 +39,13 @@
 		*	$descricao_nota_id -> Tipo de nota adicionada.
 		*	$matricula_id -> Matricula do aluno.
 		*	$turma_id -> Id da turma na qual se encontra o aluno.
-		*	$disc_grade_id -> Id da disciplina.
+		*	$disciplina_id -> Id da disciplina.
 		*	$bimestre_id -> Id do bimestre para o qual se deseja inserir a nota.
 		*/
-		public function set_notas($nota, $descricao_nota_id, $matricula_id, $turma_id, $disc_grade_id, $bimestre_id)
+		public function set_notas($nota, $descricao_nota_id, $matricula_id, $turma_id, $disciplina_id, $bimestre_id)
 		{
 			//verificar se já existe essa nota no banco para os parâmetros informados acima
-			$query = $this->get_nota($descricao_nota_id, $matricula_id, $turma_id, $disc_grade_id, $bimestre_id);
+			$query = $this->get_nota($descricao_nota_id, $matricula_id, $turma_id, $disciplina_id, $bimestre_id);
 
 			if(!empty($query))
 			{
@@ -74,20 +75,20 @@
 		*	$matricula_id -> Matricula do aluno.
 		*	$bimestre_id -> Id do bimestre para o qual se deseja saber o total de nota.
 		*	$turma_id -> Id da turma na qual se encontra o aluno.
-		*	$disc_grade_id -> Id da disciplina.
+		*	$disciplina_id -> Id da disciplina.
 		* 	$nota -> Nota enviada pelo usuário.
 		*	$descricao_nota_id -> Tipo de nota adicionada.
 		*/
-		public function validar_nota($matricula_id, $bimestre_id, $turma_id, $disc_grade_id, $nota, $descricao_nota_id)
+		public function validar_nota($matricula_id, $bimestre_id, $turma_id, $disciplina_id, $nota, $descricao_nota_id)
 		{
 			if($nota == null)
 				$nota = 0;
 			//caso esteja alterando a nota, busca o valor já cadastrado no banco.
-			$nota_banco = $this->get_nota($descricao_nota_id, $matricula_id, $turma_id, $disc_grade_id, $bimestre_id)['Nota'];
-
+			$nota_banco = $this->get_nota($descricao_nota_id, $matricula_id, $turma_id, $disciplina_id, $bimestre_id)['Nota'];
+			
 			$nota_banco = (empty($nota_banco) ? 0 : $nota_banco);
 
-			$total_nota = $this->total_nota($matricula_id, $turma_id, $disc_grade_id, $bimestre_id);
+			$total_nota = $this->total_nota($matricula_id, $turma_id, $disciplina_id, $bimestre_id);
 
 			//buscar o valor do bimestre
 			$query = $this->db->query("
@@ -107,18 +108,19 @@
 		*
 		*	$matricula_id -> Matricula do aluno.
 		*	$turma_id -> Id da turma na qual se encontra o aluno.
-		*	$disc_grade_id -> Id da disciplina.
+		*	$disciplina_id -> Id da disciplina.
 		*	$bimestre_id -> Id do bimestre para o qual se deseja saber o total de nota.
 		*/
-		public function total_nota($matricula_id, $turma_id, $disc_grade_id, $bimestre_id)
+		public function total_nota($matricula_id, $turma_id, $disciplina_id, $bimestre_id)
 		{
 			//buscar todas as notas já cadastradas
 			$query = $this->db->query("
 				SELECT SUM(Valor) AS Total_nota 
 				FROM Disc_turma dt 
+				INNER JOIN Disc_grade dg ON dt.Disc_grade_id = dg.Id 
 				INNER JOIN Matricula m ON m.Disc_turma_id = dt.Id 
 				INNER JOIN Notas n ON n.Matricula_id = m.Id AND n.Matricula_id = ".$this->db->escape($matricula_id)." AND n.Bimestre_id = ".$this->db->escape($bimestre_id)." 
-				WHERE dt.Turma_id = ".$this->db->escape($turma_id)." AND dt.Disc_grade_id = ".$this->db->escape($disc_grade_id)."");
+				WHERE dt.Turma_id = ".$this->db->escape($turma_id)." AND dg.Disciplina_id = ".$this->db->escape($disciplina_id)."");
 
 			return $query->row_array()['Total_nota'];
 		}
@@ -127,14 +129,14 @@
 		*
 		*	$matricula_id -> Matricula do aluno.
 		*	$turma_id -> Id da turma na qual se encontra o aluno.
-		*	$disc_grade_id -> Id da disciplina.
+		*	$disciplina_id -> Id da disciplina.
 		*	$bimestre_id -> Id do bimestre para o qual se deseja saber o total de nota.			
 		*	$periodo_letivo_id -> Id do período letivo para se obter as regras do período.
 		*/
-		public function status_nota_total_bimestre($matricula_id, $turma_id, $disc_grade_id, $bimestre_id, $periodo_letivo_id)
+		public function status_nota_total_bimestre($matricula_id, $turma_id, $disciplina_id, $bimestre_id, $periodo_letivo_id)
 		{
 			//obter o total de nota
-			$total_nota = $this->total_nota($matricula_id, $turma_id, $disc_grade_id, $bimestre_id);
+			$total_nota = $this->total_nota($matricula_id, $turma_id, $disciplina_id, $bimestre_id);
 
 			$CI = get_instance();
 			$CI->load->model("Regras_model");
@@ -159,13 +161,14 @@
 		/*!
 			RESPONSÁVEL POR REMOVER UMA COLUNA DE NOTA PARA TODOS OS ALUNOS EM UMA DETERMINADA DISCIPLINA.
 		*/
-		public function remover_coluna_nota($descricao_nota_id, $turma_id, $disc_grade_id, $bimestre_id)
+		public function remover_coluna_nota($descricao_nota_id, $turma_id, $disciplina_id, $bimestre_id)
 		{
 			$query = $this->db->query("
 				SELECT n.Id FROM Disc_turma dt 
+				INNER JOIN Disc_grade dg ON dt.Disc_grade_id = dg.Id 
 				INNER JOIN Matricula m ON dt.Id = m.Disc_turma_id 
 				INNER JOIN Notas n ON m.Id = n.Matricula_id 
-				WHERE dt.Turma_id = ".$this->db->escape($turma_id)." AND dt.Disc_grade_id = ".$this->db->escape($disc_grade_id)." AND 
+				WHERE dt.Turma_id = ".$this->db->escape($turma_id)." AND dg.Disciplina_id = ".$this->db->escape($disciplina_id)." AND 
 				n.Bimestre_id = ".$this->db->escape($bimestre_id)." AND n.Descricao_nota_id = ".$this->db->escape($descricao_nota_id)."");
 
 			$result = $query->result_array();

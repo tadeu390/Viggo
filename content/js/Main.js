@@ -1250,14 +1250,15 @@ var Main = {
 					node_td.setAttribute("class","text-center");
 					node_td.setAttribute("style","vertical-align: middle;");
 					var inp_periodo = document.createElement("INPUT");
-					inp_periodo.setAttribute("type","number");
-					inp_periodo.setAttribute("class","text-center");
-					inp_periodo.setAttribute("style","width: 60%;");
-					inp_periodo.setAttribute("maxlength","1");
+					inp_periodo.setAttribute("type","hidden");
+					//inp_periodo.setAttribute("class","text-center");
+					//inp_periodo.setAttribute("style","width: 60%;");
+					//inp_periodo.setAttribute("maxlength","1");
 					inp_periodo.setAttribute("id","periodo_add"+limite_disciplina_add);
 					inp_periodo.setAttribute("name","periodo_add"+limite_disciplina_add);
 					inp_periodo.setAttribute("value", $("#periodo_base").val());
 					node_td.appendChild(inp_periodo);
+					node_td.innerHTML += $("#periodo_base").val();
 					node_tr.appendChild(node_td);			
 
 					document.getElementById("disciplinas_grade").appendChild(node_tr);
@@ -1389,17 +1390,17 @@ var Main = {
 		    	window.location.assign(Main.base_url + $("#controller").val() + "/dashboard");
 		});
 	},
-	alterar_disciplina : function (disc_grade_id)
+	alterar_disciplina : function (disciplina_id)
 	{
-		window.location.assign(Main.base_url + $("#controller").val() + "/"+$("#method").val()+"/"+disc_grade_id+"/"+$("#turma_selecionada").val()+"/"+$("#bimestre_selecionado").val());
+		window.location.assign(Main.base_url + $("#controller").val() + "/"+$("#method").val()+"/"+disciplina_id+"/"+$("#turma_selecionada").val()+"/"+$("#bimestre_selecionado").val());
 	},
 	//////NOTAS E FALTAS
-	altera_nota : function (id, nota, descricao_nota_id, matricula_id, turma_id, disc_grade_id, bimestre_id)
+	altera_nota : function (id, nota, descricao_nota_id, matricula_id, turma_id, disciplina_id, bimestre_id)
 	{
 		if(nota == "")
 			nota = null;
 		$.ajax({
-			url: Main.base_url + $("#controller").val() + '/altera_nota/' + nota + '/' + descricao_nota_id + '/' + matricula_id + '/' + turma_id + '/' + disc_grade_id + '/' + bimestre_id,
+			url: Main.base_url + $("#controller").val() + '/altera_nota/' + nota + '/' + descricao_nota_id + '/' + matricula_id + '/' + turma_id + '/' + disciplina_id + '/' + bimestre_id,
 			dataType:'json',
 			cache: false,
 			type: 'POST',
@@ -1506,13 +1507,13 @@ var Main = {
 	},
 	descricao_nota_id : 0,
 	turma_id : 0,
-	disc_grade_id : 0,
+	disciplina_id : 0,
 	bimestre_id : 0,
-	confirm_remover_coluna_nota : function (descricao_nota_id, turma_id, disc_grade_id, bimestre_id)
+	confirm_remover_coluna_nota : function (descricao_nota_id, turma_id, disciplina_id, bimestre_id)
 	{
 		Main.descricao_nota_id = descricao_nota_id;
 		Main.turma_id = turma_id;
-		Main.disc_grade_id = disc_grade_id;
+		Main.disciplina_id = disciplina_id;
 		Main.bimestre_id = bimestre_id;
 
 		$("#bt_delete").unbind();//remover o evento antes de adicionar.
@@ -1525,7 +1526,7 @@ var Main = {
 	remove_coluna_nota : function()
 	{
 		$.ajax({
-			url: Main.base_url + $("#controller").val() + '/remover_coluna_nota/' + Main.descricao_nota_id + '/' + Main.turma_id + '/' + Main.disc_grade_id + '/' + Main.bimestre_id,
+			url: Main.base_url + $("#controller").val() + '/remover_coluna_nota/' + Main.descricao_nota_id + '/' + Main.turma_id + '/' + Main.disciplina_id + '/' + Main.bimestre_id,
 			dataType:'json',
 			cache: false,
 			type: 'POST',
@@ -1548,21 +1549,26 @@ var Main = {
 			},500);
 		});
 	},
-	get_alunos_chamada : function (disc_grade_id, turma_id)
+	get_alunos_chamada : function (disciplina_id, turma_id)
 	{
-		if($("#data_atual").val() != "" && $("#subturma").val() != "0")
+		if($("#data_atual").val() != "" && document.getElementById("subturma") != undefined && $("#subturma").val() != "0")
 		{
+			Main.modal("aguardar", "Aguarde...");
 			var data_convert  = Main.convert_date($("#data_atual").val(),"en");
 			var subturma  = $("#subturma").val();
 
 			$.ajax({
-				url: Main.base_url + $("#controller").val() + '/get_alunos_chamada/' + disc_grade_id + '/' + turma_id + '/' + subturma + '/' + data_convert,
+				url: Main.base_url + $("#controller").val() + '/get_alunos_chamada/' + disciplina_id + '/' + turma_id + '/' + subturma + '/' + data_convert,
 				dataType:'json',
 				cache: false,
 				type: 'POST',
 				success: function (data) 
 				{
 					$("#alunos_chamada").html(data.response);
+					setTimeout(function(){
+						$("#modal_aguardar").modal('hide');
+					},500);
+					
 				}
 			}).fail(function(msg){
 			    setTimeout(function(){
