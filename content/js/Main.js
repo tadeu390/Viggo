@@ -1551,7 +1551,7 @@ var Main = {
 	},
 	get_alunos_chamada : function (disciplina_id, turma_id)
 	{
-		if($("#data_atual").val() != "" && document.getElementById("subturma") != undefined && $("#subturma").val() != "0")
+		if($("#data_atual").val() != "" && document.getElementById("subturma") != undefined && $("#subturma").val() != "x")
 		{
 			Main.modal("aguardar", "Aguarde...");
 			var data_convert  = Main.convert_date($("#data_atual").val(),"en");

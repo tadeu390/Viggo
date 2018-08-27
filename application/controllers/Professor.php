@@ -400,6 +400,7 @@
 				$this->data['lista_subturmas'] = $this->Professor_model->identifica_sub_turmas($disciplina_id, $turma_id);
 				$subturma = (empty($this->data['lista_subturmas'][0]['Sub_turma']) ? 0 : $this->data['lista_subturmas'][0]['Sub_turma']);
 				
+				$this->data['subturma'] = $subturma;
 				//////obter os alunos para a chamada
 				$this->data['lista_alunos'] = $this->Professor_model->get_alunos($disciplina_id, $turma_id, $subturma);
 
