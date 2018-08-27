@@ -92,6 +92,7 @@
 						if(!empty($lista_subturmas) && COUNT($lista_subturmas) == 1)
 						{
 							$subturma = $lista_subturmas[0]['Sub_turma']; 
+							$data['url_part'] = $url_part;
 							$data['lista_alunos'] = faltas::get_alunos_chamada($url_part['disciplina_id'], $url_part['turma_id'], $subturma);
 							$data['lista_horarios'] = $lista_horarios;
 							$data['lista_subturmas'] = $lista_subturmas;

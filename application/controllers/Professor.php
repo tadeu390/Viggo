@@ -414,7 +414,7 @@
 		}
 		/*!
 		*	RESPONSÁVEL POR CARREGAR DA MODEL TODAS AS SUBTURMA DE UMA DETERMINADA DISCIPLINA DE UMA DETERMINADA 
-		*	TURM EM UMA DETERMINADA DATA (DIA DA SEMANA).
+		*	TURMA EM UMA DETERMINADA DATA (DIA DA SEMANA).
 		*
 		*	$disciplina_id -> Id da disciplina que se quer obter as subturmas.
 		*	$turma_id -> Id da turma turma associada a disicplina.
@@ -440,7 +440,12 @@
 		public function get_alunos_chamada($disciplina_id, $turma_id, $subturma, $data)
 		{
 			$resultado = "sucesso";
+			$this->data['url_part']['disciplina_id'] = $disciplina_id;
+			$this->data['url_part']['turma_id'] = $turma_id;
+
 			$this->load->helper("mstring");
+			$this->load->helper("faltas");
+			$this->data['data'] = $data;
 			//print_r($this->Professor_model->get_alunos_chamada($disciplina_id, $turma_id, $disc_hor_id));
 
 			$this->data['lista_alunos'] = $this->Professor_model->get_alunos($disciplina_id, $turma_id, $subturma);
@@ -461,14 +466,20 @@
 			$dataToSave = array();
 			for($i = 0; $i < $this->input->post('qtd_aluno'); $i++)
 			{
-				$dataToSaveItem = array(
-					'Id' => $this->input->post('calendario_presenca_id'.$i),
-					'Matricula_id' => $this->input->post('matricula'.$i),
-					'Presenca' => (empty($this->input->post('presenca'.$i)) ? 0 : $this->input->post('presenca'.$i)),
-					'Justificativa' => $this->input->post('justificativa'.$i)
-				);
-				array_push($dataToSave, $dataToSaveItem);
+				for($j = 0; $j < $this->input->post('qtd_coluna'); $j++)
+				{
+					$dataToSaveItem = array(
+						'Id' => $this->input->post('calendario_presenca_id'.$i."".$j),
+						'Matricula_id' => $this->input->post('matricula_id'.$i),
+						'Presenca' => (empty($this->input->post('presenca'.$i."".$j)) ? 0 : $this->input->post('presenca'.$i."".$j)),
+						'Justificativa' => $this->input->post('justificativa'.$i),
+						'Data_registro' => $this->convert_date($this->input->post('data_atual'),"en").":".$this->input->post('hora_inicio'.$j).":00"
+					);
+					array_push($dataToSave, $dataToSaveItem);
+				}
 			}
+
+			print_r($dataToSave);
 
 			$conteudo = $this->input->post('conteudo_lecionado');
 			$disc_hor_id = $this->input->post('horarios');
@@ -479,11 +490,11 @@
 				if($this->Geral_model->get_permissao(CREATE, get_class($this)) == TRUE || $this->Geral_model->get_permissao(UPDATE, get_class($this)) == TRUE)
 				{
 					//$resultado = $this->valida_modulo($dataToSave);
-
+					$resultado = 1;
 				 	if($resultado == 1)
 				 	{
 				 		$this->Calendario_presenca_model->set_presenca($dataToSave);
-				 		$this->conteudo_model->set_conteudo($conteudo, $disc_hor_id);
+				 		$this->Conteudo_model->set_conteudo($conteudo, $disc_hor_id);
 				 		$resultado = "sucesso";
 				 	}
 				}

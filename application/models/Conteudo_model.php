@@ -8,5 +8,10 @@
 		{
 			$this->load->database();
 		}
+
+		public function set_conteudo($data, $disc_hor)
+		{
+
+		}
 	}
 ?>

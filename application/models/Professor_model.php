@@ -147,7 +147,9 @@
 		public function get_horarios_professor($disciplina_id, $turma_id, $professor_id, $subturma, $data)
 		{
 			$query = $this->db->query("
-				SELECT CONCAT(x.Dia, ' / ', x.Inicio, ' - ', x.Fim) AS Horario, x.Disc_Hor_id, x.Aula, 
+				SELECT CONCAT(x.Dia, ' / ', x.Inicio, ' - ', x.Fim) AS Horario, 
+				CONCAT(x.Inicio) AS Hora_inicio, 
+				x.Disc_Hor_id, x.Aula, 
 				DAYNAME(NOW()) AS Dia_atual_semana, x.Inicio, x.Fim, x.Dia AS Dia_semana, x.Disc_hor_id FROM( 
 					SELECT 
 					CASE 
@@ -186,12 +188,12 @@
 			
 			//DETERMINA SE DEVE CONSIDERAR A SUBTURMA OU NAO, CONSIDERA CASO HAJA SUBTURMA (DISCIPLINAS DIFERENTES)
 			$subturma = "";
-			if(!empty($Sub_turma) && !empty($lista_subturmas) && COUNT($lista_subturmas) > 1 && $sub_turma != "all")
+			if(!empty($sub_turma) && !empty($lista_subturmas) && COUNT($lista_subturmas) > 1 && $sub_turma != "all")
 				$subturma = "AND dh.Sub_turma = ".$this->db->escape($sub_turma);
 
 			$query = $this->db->query("
 				SELECT u.Nome AS Nome_aluno, m.Id AS Matricula_id, 
-				dh.Sub_turma, cp.Id AS Calendario_presenca_id 
+				dh.Sub_turma, cp.Id AS Calendario_presenca_id, cp.Presenca  
 				FROM Disc_turma dt 
 				INNER JOIN Disc_grade dg ON dt.Disc_grade_id = dg.Id 
 				INNER JOIN Matricula m ON m.Disc_turma_id = dt.Id  
