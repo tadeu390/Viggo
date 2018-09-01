@@ -1,12 +1,15 @@
 <?php 
 	$ultimo = 0;
+	if($method == "nota_especial")
+		$method = "notas";
 	for ($i = 0; $i < COUNT($lista_bimestres); $i++) 
 	{
 		$partial_class = "btn-danger";
 		if($i == $url_part['botao'])
 		{
 			$partial_class = "btn-success";
-			echo "<input type='hidden' id='bimestre_selecionado' value='".$url_part['etapa_id']."'>";
+			echo "<input type='hidden' id='etapa_selecionada' value='".$url_part['etapa_id']."'>";
+			echo "<input type='hidden' id='botao_selecionado' value='".$url_part['botao']."'>";
 		}
 
 		echo "<div class='col-lg-3  my-2'>";
@@ -18,13 +21,14 @@
 	}
 
 	$ultimo = $ultimo + 1;
-	for ($i = 0; $i < COUNT($lista_notas_especiais); $i++) 
+	for ($i = 0; $i < COUNT($lista_notas_especiais); $i++)
 	{
 		$partial_class = "btn-danger";
 		if($ultimo == $url_part['botao'])
 		{
 			$partial_class = "btn-success";
-			echo "<input type='hidden' id='bimestre_selecionado' value='".$url_part['etapa_id']."'>";
+			echo "<input type='hidden' id='etapa_selecionada' value='".$url_part['etapa_id']."'>";
+			echo "<input type='hidden' id='botao_selecionado' value='".$url_part['botao']."'>";
 		}
 
 		echo "<div class='col-lg-4 my-3'>";

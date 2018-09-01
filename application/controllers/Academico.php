@@ -7,7 +7,7 @@
 	{
 		/*!
 		*	CONSTRUTOR RESPONSÁVEL POR VALIDAR A SESSÃO E VERIFICAR O MENU SELECIONADO.
-		*/
+		*/ 
 		public function __construct()
 		{
 			parent::__construct();

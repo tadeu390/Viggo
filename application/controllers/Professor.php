@@ -57,7 +57,7 @@
 
 			//echo $this->sub_turma_default;
 			//CARREGA O BIMESTRE PADRÃO COM BASE NA DATA.
-			$this->etapa_id_default = $this->Professor_model->get_bimestre_default($this->periodo_letivo_id)['Id'];
+			$this->etapa_id_default = $this->Professor_model->get_etapa_default($this->periodo_letivo_id)['Id'];
 			/////////
 
 
@@ -80,6 +80,7 @@
 				$disciplina_id = $this->disciplina_id_default;
 				$turma_id = $this->turma_id_default;
 				$etapa_id = $this->etapa_id_default;
+				$botao = $this->etapa_id_default - 1;
 			}
 			
 			$this->data['title'] = 'Minhas disciplinas';
@@ -132,60 +133,10 @@
 
 				///TABELA DE NOTAS
 				$this->data['lista_colunas_nota'] = $this->Professor_model->get_colunas_nota($disciplina_id, $turma_id, $etapa_id);
-				$this->data['lista_alunos'] = $this->Professor_model->get_alunos($disciplina_id, $turma_id);
+				$this->data['lista_alunos'] = $this->Professor_model->get_alunos($disciplina_id, $turma_id, FALSE);
 				//////
 
 				$this->view("professor/notas", $this->data);
-			}
-			else
-				$this->view("templates/permissao", $this->data);
-		}
-		public function notas_geral($disciplina_id = FALSE, $turma_id = FALSE, $etapa_id = FALSE)//REMOVER
-		{
-			if($disciplina_id == FALSE)//SE NADA FOI ESPECFICADO ENTAO DETERMINAR A PARTIR DOS DEFAULT.
-			{
-				$disciplina_id = $this->disciplina_id_default;
-				$turma_id = $this->turma_id_default;
-				$etapa_id = $this->etapa_id_default;
-			}
-			
-			$this->data['title'] = 'Minhas disciplinas';
-			if($this->Geral_model->get_permissao(READ, get_class($this)) == TRUE)
-			{
-				$this->data['method'] = "notas";
-				$this->data['lista_disciplinas'] = $this->Professor_model->get_disciplinas($this->professor_id, $this->periodo_letivo_id);
-				$this->data['lista_bimestres'] = $this->Bimestre_model->get_bimestre($this->periodo_letivo_id);
-				$this->data['lista_notas_especiais'] = $this->Nota_especial_model->get_nota_especial($this->periodo_letivo_id);
-				$this->data['lista_turmas'] = $this->Professor_model->get_turma($disciplina_id, $this->professor_id, $this->periodo_letivo_id);
-				$this->data['periodo_letivo_id'] = $this->periodo_letivo_id;
-				$this->data['bimestre'] = $this->Bimestre_model->get_bimestre(FALSE, $etapa_id);
-
-
-				//////DETERMINAR A DISCIPLINA PADRÃO A SER SELECIONADA, ESSE TRATAMENTO É NECESSÁRIO, POIS AO TROCAR DE DISCIPLINA, O ID DE TURMA SUBMETIDO PODE NÃO SERVIR DE NADA, 
-				//////CASO ESSA TURMA SELECIONADA NÃO APAREÇA NOVAMENTE COM A TROCA DE DISCIPLINA.
-				$flag = 0;
-				for($i = 0; $i < COUNT($this->data['lista_turmas']); $i++)
-				{
-					if($this->data['lista_turmas'][$i]['Turma_id'] == $turma_id)
-						$flag = 1;
-				}
-				if($flag == 1)
-					$this->data['url_part']['turma_id'] = $turma_id;///SE A TURMA ESTÁ ASSOCIADA A DISCIPLINA SELECIONADA ENTÃO MANTÉM O ID DE TURMA SUBMETIDO.
-				else 
-				{
-					$this->data['url_part']['turma_id'] = $this->data['lista_turmas'][0]['Turma_id'];//CASO CONTRÁRIO PEGAR POR DEFAULT O PRIMEIRO ID DISPONÍVEL.
-					$turma_id = $this->data['lista_turmas'][0]['Turma_id'];//SOBRESCREVE O ID SUBMETIDO
-				}
-				//////
-
-				$this->data['url_part']['disciplina_id'] = $disciplina_id;
-				$this->data['url_part']['etapa_id'] = $etapa_id;
-
-				///TABELA DE ALUNOS
-				$this->data['lista_alunos'] = $this->Professor_model->get_alunos($disciplina_id, $turma_id);
-				//////
-
-				$this->view("professor/notas_geral", $this->data);
 			}
 			else
 				$this->view("templates/permissao", $this->data);
@@ -270,13 +221,14 @@
 		*	$turma_id -> Id da turma que está sendo consultada pelo professor.
 		*	$etapa_id -> Id do bimestre especificado pelo usuário quando clicar nos botões de bimestres;
 		*/
-		public function faltas($disciplina_id = FALSE, $turma_id = FALSE, $etapa_id = FALSE, $botao)
+		public function faltas($disciplina_id = FALSE, $turma_id = FALSE, $etapa_id = FALSE, $botao = FALSE)
 		{
 			if($disciplina_id == FALSE)//SE NADA FOI ESPECFICADO ENTAO DETERMINAR A PARTIR DOS DEFAULT.
 			{
 				$disciplina_id = $this->disciplina_id_default;
 				$turma_id = $this->turma_id_default;
 				$etapa_id = $this->etapa_id_default;
+				$botao = $this->etapa_id_default - 1;
 			}
 			
 			$this->data['title'] = 'Minhas disciplinas';
@@ -331,12 +283,14 @@
 		*	se o bimestre está aberto ou não)
 		*/
 		public function chamada($disciplina_id = FALSE, $turma_id = FALSE, $etapa_id = FALSE, $botao = FALSE)
-		{ ///TROCAR BIMESTRE OU etapa_id POR ETAPA
+		{ 
+			echo date('Y-m-d');
 			if($disciplina_id == FALSE)//SE NADA FOI ESPECFICADO ENTAO DETERMINAR A PARTIR DOS DEFAULT.
 			{
 				$disciplina_id = $this->disciplina_id_default;
 				$turma_id = $this->turma_id_default;
 				$etapa_id = $this->etapa_id_default;
+				$botao = $this->etapa_id_default - 1;
 			}
 			
 			$this->data['title'] = 'Minhas disciplinas';
@@ -541,7 +495,7 @@
 			$this->data['title'] = 'Minhas disciplinas';
 			if($this->Geral_model->get_permissao(READ, get_class($this)) == TRUE)
 			{
-				$this->data['method'] = "notas";
+				$this->data['method'] = __FUNCTION__;
 				$this->data['lista_disciplinas'] = $this->Professor_model->get_disciplinas($this->professor_id, $this->periodo_letivo_id);
 				$this->data['lista_bimestres'] = $this->Bimestre_model->get_bimestre($this->periodo_letivo_id);
 				$this->data['lista_notas_especiais'] = $this->Nota_especial_model->get_nota_especial($this->periodo_letivo_id);

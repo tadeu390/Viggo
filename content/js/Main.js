@@ -1492,7 +1492,7 @@ var Main = {
 	},
 	alterar_disciplina : function (disciplina_id)
 	{
-		window.location.assign(Main.base_url + $("#controller").val() + "/"+$("#method").val()+"/"+disciplina_id+"/"+$("#turma_selecionada").val()+"/"+$("#bimestre_selecionado").val());
+		window.location.assign(Main.base_url + $("#controller").val() + "/"+$("#method").val()+"/"+disciplina_id+"/"+$("#turma_selecionada").val()+"/"+$("#etapa_selecionada").val()+"/"+$("#botao_selecionado").val());
 	},
 	//////NOTAS E FALTAS
 	altera_nota : function (id, nota, descricao_nota_id, matricula_id, turma_id, disciplina_id, bimestre_id)
@@ -1548,7 +1548,7 @@ var Main = {
 			var node_span_cabecalho = document.createElement("SPAN");
 				node_span_cabecalho.setAttribute("style","cursor: pointer; position: absolute; right: 0px;");
 				node_span_cabecalho.setAttribute("class","glyphicon glyphicon-remove text-danger");
-				node_span_cabecalho.setAttribute("onclick", "Main.confirm_remover_coluna_nota("+$('#descricao_nota_id').val()+","+$("#turma_selecionada").val()+","+$("#disciplina_id").val()+","+$("#bimestre_selecionado").val()+")");
+				node_span_cabecalho.setAttribute("onclick", "Main.confirm_remover_coluna_nota("+$('#descricao_nota_id').val()+","+$("#turma_selecionada").val()+","+$("#disciplina_id").val()+","+$("#etapa_selecionada").val()+")");
 				node_td_cabecalho.appendChild(node_span_cabecalho);
 
 			document.getElementById("cabecalho_nota").appendChild(node_td_cabecalho);
@@ -1570,7 +1570,7 @@ var Main = {
 					node_td.setAttribute("class", "text-center");
 					node_td.setAttribute("style", "width: 10%;");
 				var input_text = document.createElement("INPUT");
-					input_text.setAttribute("onblur", "Main.altera_nota('total"+i+"',this.value,"+$('#descricao_nota_id').val()+",'"+$("#matricula_id"+i).val()+"',"+$("#turma_selecionada").val()+","+$("#disciplina_id").val()+","+$("#bimestre_selecionado").val()+")");
+					input_text.setAttribute("onblur", "Main.altera_nota('total"+i+"',this.value,"+$('#descricao_nota_id').val()+",'"+$("#matricula_id"+i).val()+"',"+$("#turma_selecionada").val()+","+$("#disciplina_id").val()+","+$("#etapa_selecionada").val()+")");
 					input_text.setAttribute("type", "number");
 					input_text.setAttribute("min", "0");
 					input_text.setAttribute("class", "form-control border_radius");
