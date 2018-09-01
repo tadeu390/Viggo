@@ -59,7 +59,7 @@
 		*
 		*	$periodo_letivo_id -> Id do período letivo selecionado.
 		*/
-		public function get_bimestre_default($periodo_letivo_id)
+		public function get_etapa_default($periodo_letivo_id)
 		{
 			$query = $this->db->query("
 				SELECT * FROM Bimestre 
@@ -69,8 +69,16 @@
 			if(empty($query->row_array()))
 			{
 				$query = $this->db->query("
-				SELECT * FROM Bimestre 
-				WHERE Periodo_letivo_id = ".$this->db->escape($periodo_letivo_id)." ORDER BY Data_inicio LIMIT 1");
+					SELECT * FROM Nota_especial  
+					WHERE CAST(NOW() AS DATE) >= CAST(Data_abertura AS DATE) AND CAST(NOW() AS DATE) <= CAST(Data_fechamento AS DATE) AND 
+					Periodo_letivo_id = ".$this->db->escape($periodo_letivo_id)."");
+				
+				if(empty($query->row_array()))
+				{
+					$query = $this->db->query("
+						SELECT * FROM Bimestre 
+						WHERE Periodo_letivo_id = ".$this->db->escape($periodo_letivo_id)." ORDER BY Data_inicio LIMIT 1");
+				}
 			}
 			return $query->row_array();
 		}
@@ -230,7 +238,7 @@
 		*/
 		public function get_alunos($disciplina_id, $turma_id, $sub_turma = FALSE)  //nome anterior get_alunos_chamada
 		{
-			if(!empty($sub_turma) || $sub_turma == 0)
+			if($sub_turma !== FALSE)
 				$sub_turma = "AND dh.Sub_turma = ".$this->db->escape($sub_turma);
 			else 
 				$sub_turma = "";
@@ -245,7 +253,8 @@
 				INNER JOIN Usuario u ON u.Id = a.Usuario_id 
 				LEFT JOIN Disc_hor dh ON dt.Id = dh.Disc_turma_id AND (m.Sub_turma = dh.Sub_turma OR dh.Sub_turma = 0)
 				WHERE dg.Disciplina_id = ".$this->db->escape($disciplina_id)." AND 
-				dt.Turma_id = ".$this->db->escape($turma_id)." ".$sub_turma." GROUP BY dh.Sub_turma, m.Id");
+				dt.Turma_id = ".$this->db->escape($turma_id)." ".$sub_turma." GROUP BY #dh.Sub_turma, 
+				m.Id");
 			
 				return $query->result_array();
 		}
