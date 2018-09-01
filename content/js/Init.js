@@ -99,8 +99,8 @@ $(document).ready(
       if (this.value != '') Main.show_error("dia", '', '');
     });
 
-    $('#nome_bimestre').change(function() {
-      if (this.value != '') Main.show_error("nome_bimestre", '', '');
+    $('#nome_etapa').change(function() {
+      if (this.value != '') Main.show_error("nome_etapa", '', '');
     });
 
     $('#valor').change(function() {
@@ -122,31 +122,31 @@ $(document).ready(
       }
     });
 
-    $('#nome_nota_especial').change(function() {
-      if (this.value != '') Main.show_error("nome_nota_especial", '', '');
+    $('#nome_etapa_extra').change(function() {
+      if (this.value != '') Main.show_error("nome_etapa_extra", '', '');
     });
 
-    $('#media_nota_especial').change(function() {
-      if (this.value != '') Main.show_error("media_nota_especial", '', '');
+    $('#media_etapa_extra').change(function() {
+      if (this.value != '') Main.show_error("media_etapa_extra", '', '');
     });
 
-    $('#valor_nota_especial').change(function() {
-      if (this.value != '') Main.show_error("valor_nota_especial", '', '');
+    $('#valor_etapa_extra').change(function() {
+      if (this.value != '') Main.show_error("valor_etapa_extra", '', '');
     });
 
     $('#data_fechamento').change(function() {
       if (this.value != '') Main.show_error("data_fechamento", '', '');
     });
 
-    $('#data_abertura_nota_especial').change(function() {
+    $('#data_abertura_etapa_extra').change(function() {
       if (this.value != '') {
-        Main.show_error("data_abertura_nota_especial", '', '');
-        Main.show_error("data_fechamento_nota_especial", '', '');
+        Main.show_error("data_abertura_etapa_extra", '', '');
+        Main.show_error("data_fechamento_etapa_extra", '', '');
       }
     });
 
-    $('#data_fechamento_nota_especial').change(function() {
-      if (this.value != '') Main.show_error("data_fechamento_nota_especial", '', '');
+    $('#data_fechamento_etapa_extra').change(function() {
+      if (this.value != '') Main.show_error("data_fechamento_etapa_extra", '', '');
     });
 
     //REGRAS LETIVAS

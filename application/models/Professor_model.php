@@ -62,21 +62,21 @@
 		public function get_etapa_default($periodo_letivo_id)
 		{
 			$query = $this->db->query("
-				SELECT * FROM Bimestre 
+				SELECT * FROM Etapa 
 				WHERE CAST(NOW() AS DATE) >= CAST(Data_inicio AS DATE) AND CAST(NOW() AS DATE) <= CAST(Data_fim AS DATE) AND 
 				Periodo_letivo_id = ".$this->db->escape($periodo_letivo_id)."");
 
 			if(empty($query->row_array()))
 			{
 				$query = $this->db->query("
-					SELECT * FROM Nota_especial  
+					SELECT * FROM Etapa  
 					WHERE CAST(NOW() AS DATE) >= CAST(Data_abertura AS DATE) AND CAST(NOW() AS DATE) <= CAST(Data_fechamento AS DATE) AND 
 					Periodo_letivo_id = ".$this->db->escape($periodo_letivo_id)."");
 				
 				if(empty($query->row_array()))
 				{
 					$query = $this->db->query("
-						SELECT * FROM Bimestre 
+						SELECT * FROM Etapa 
 						WHERE Periodo_letivo_id = ".$this->db->escape($periodo_letivo_id)." ORDER BY Data_inicio LIMIT 1");
 				}
 			}
@@ -150,7 +150,7 @@
 		/*!
 			RESPONSÁVEL POR RETORNAR TODAS AS COLUNAS DE NOTAS EXISTENTES PARA UMA DETERMINADA DISCIPLINA EM UMA DETERMINADA TURMA DE UM DETERMINADO BIMESTRE
 		*/
-		public function get_colunas_nota($disciplina_id, $turma_id, $bimestre_id)
+		public function get_colunas_nota($disciplina_id, $turma_id, $etapa_id)
 		{
 			$query = $this->db->query("
 				SELECT dn.Descricao, dn.Id AS Descricao_nota_id FROM Disc_turma dt 
@@ -161,7 +161,7 @@
 
 				WHERE dg.Disciplina_id = ".$this->db->escape($disciplina_id)." AND 
 				dt.Turma_id = ".$this->db->escape($turma_id)." AND 
-				n.Bimestre_id = ".$this->db->escape($bimestre_id)." 
+				n.etapa_id = ".$this->db->escape($etapa_id)." 
 				GROUP BY dn.Descricao, dn.Id ORDER BY n.Id");
 
 			return $query->result_array();

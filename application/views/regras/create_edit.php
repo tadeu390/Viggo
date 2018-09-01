@@ -212,13 +212,13 @@
 					</div>
 				</fieldset>
 				<fieldset style="margin-top: 20px;">
-					<legend>&nbsp;Bimestres <span class='glyphicon glyphicon-question-sign text-danger pointer'  data-toggle="tooltip" title="Define a quantidade de bimestres, data em que começa e termina, valor."></span></legend>
+					<legend>&nbsp;Bimestres <span class='glyphicon glyphicon-question-sign text-danger pointer'  data-toggle="tooltip" title="Define a quantidade de etapas, data em que começa e termina, valor."></span></legend>
 					<div class="row">
 						<div class="col-lg-6">
 							<div class="form-group relative">
-								<input id="nome_bimestre" name="nome_bimestre" type="text" class="input-material">
-								<label for="nome_bimestre" class="label-material">Nome</label>
-								<div class='input-group mb-2 mb-sm-0 text-danger' id='error-nome_bimestre'></div>
+								<input id="nome_etapa" name="nome_etapa" type="text" class="input-material">
+								<label for="nome_etapa" class="label-material">Nome</label>
+								<div class='input-group mb-2 mb-sm-0 text-danger' id='error-nome_etapa'></div>
 							</div>						
 						</div>
 						<div class="col-lg-6">
@@ -263,10 +263,10 @@
 					</div>
 					<div class="row" style="padding-bottom: 15px;">
 						<div class="col-lg-6">
-							<input style="width: 200px;" type='button' class='btn btn-danger btn-block' onclick="Main.add_bimestre();" value='Adicionar bimestre'>			
+							<input style="width: 200px;" type='button' class='btn btn-danger btn-block' onclick="Main.add_etapa();" value='Adicionar bimestre'>			
 						</div>
 					</div>
-					<div class="bimestres">
+					<div class="etapas">
 						<div class="table-responsive" style="/*width: 900px*/">
 							<?php
 								echo "<table class='table table-striped table-sm table-hover'>";
@@ -274,48 +274,48 @@
 										echo "<tr>";
 											echo "<td>Nome</td>";
 											echo "<td>Valor</td>";
-											echo "<td title='Data em que começa o bimestre durante o ano'>Data de início</td>";
-											echo "<td title='Data em que termina o bimestre durante o ano'>Data de fim</td>";
+											echo "<td title='Data em que começa o etapa durante o ano'>Data de início</td>";
+											echo "<td title='Data em que termina o etapa durante o ano'>Data de fim</td>";
 											echo "<td title='Data em que começa a ser permitido a inserção de notas no portal pelos professores'>Data de abertura</td>";
 											echo "<td title='Data em que termina a permissão de inserção de notas no portal pelos professores'>Data de fechamento</td>";
 											echo "<td></td>";
 										echo "</tr>";
 									echo "</thead>";
 									
-									echo "<tbody id='bimestres'>";
-										$max_value_bimestre = 0;
-										for($i = 0; $i < count($bimestres); $i++)
+									echo "<tbody id='etapas'>";
+										$max_value_etapa = 0;
+										for($i = 0; $i < count($etapas); $i++)
 										{
-											echo "<tr id='bimestre".$max_value_bimestre."'>";
+											echo "<tr id='etapa".$max_value_etapa."'>";
 												echo"<td>";
-													echo "<input type='hidden' id='nome_bimestre".$max_value_bimestre."' name='nome_bimestre".$max_value_bimestre."' value='".$bimestres[$i]['Nome']."'>";
-													echo $bimestres[$i]['Nome'];
+													echo "<input type='hidden' id='nome_etapa".$max_value_etapa."' name='nome_etapa".$max_value_etapa."' value='".$etapas[$i]['Nome']."'>";
+													echo $etapas[$i]['Nome'];
 												echo "</td>";
 												echo "<td>";
-													echo "<input type='hidden' id='valor".$max_value_bimestre."' name='valor".$max_value_bimestre."' value='".$bimestres[$i]['Valor']."'>";
-													echo $bimestres[$i]['Valor'];
+													echo "<input type='hidden' id='valor".$max_value_etapa."' name='valor".$max_value_etapa."' value='".$etapas[$i]['Valor']."'>";
+													echo $etapas[$i]['Valor'];
 												echo "</td>";
 												echo "<td>";
-													echo "<input type='hidden' id='data_inicio".$max_value_bimestre."' name='data_inicio".$max_value_bimestre."' value='".$bimestres[$i]['Data_inicio']."'>";
-													echo $bimestres[$i]['Data_inicio'];
+													echo "<input type='hidden' id='data_inicio".$max_value_etapa."' name='data_inicio".$max_value_etapa."' value='".$etapas[$i]['Data_inicio']."'>";
+													echo $etapas[$i]['Data_inicio'];
 												echo "</td>";
 												echo "<td>";
-													echo "<input type='hidden' id='data_fim".$max_value_bimestre."' name='data_fim".$max_value_bimestre."' value='".$bimestres[$i]['Data_fim']."'>";
-													echo $bimestres[$i]['Data_fim'];
+													echo "<input type='hidden' id='data_fim".$max_value_etapa."' name='data_fim".$max_value_etapa."' value='".$etapas[$i]['Data_fim']."'>";
+													echo $etapas[$i]['Data_fim'];
 												echo "</td>";
 												echo "<td>";
-													echo "<input type='hidden' id='data_abertura".$max_value_bimestre."' name='data_abertura".$max_value_bimestre."' value='".$bimestres[$i]['Data_abertura']."'>";
-													echo (($bimestres[$i]['Data_abertura'] == '00/00/0000') ? '' : $bimestres[$i]['Data_abertura']);
+													echo "<input type='hidden' id='data_abertura".$max_value_etapa."' name='data_abertura".$max_value_etapa."' value='".$etapas[$i]['Data_abertura']."'>";
+													echo (($etapas[$i]['Data_abertura'] == '00/00/0000') ? '' : $etapas[$i]['Data_abertura']);
 												echo "</td>";
 												echo "<td>";
-													echo "<input type='hidden' id='data_fechamento".$max_value_bimestre."' name='data_fechamento".$max_value_bimestre."' value='".$bimestres[$i]['Data_fechamento']."'>";
-													echo (($bimestres[$i]['Data_fechamento'] == '00/00/0000') ? '' : $bimestres[$i]['Data_fechamento']);
+													echo "<input type='hidden' id='data_fechamento".$max_value_etapa."' name='data_fechamento".$max_value_etapa."' value='".$etapas[$i]['Data_fechamento']."'>";
+													echo (($etapas[$i]['Data_fechamento'] == '00/00/0000') ? '' : $etapas[$i]['Data_fechamento']);
 												echo "</td>";
-												echo"<td><span class='glyphicon glyphicon-remove pointer' title='Remover' onclick='Main.remove_elemento(\"bimestre".$max_value_bimestre."\");'></span></td>";
+												echo"<td><span class='glyphicon glyphicon-remove pointer' title='Remover' onclick='Main.remove_elemento(\"etapa".$max_value_etapa."\");'></span></td>";
 											echo "</tr>";
-											$max_value_bimestre = $max_value_bimestre + 1;
+											$max_value_etapa = $max_value_etapa + 1;
 										}
-										echo "<input type='hidden' id='max_value_bimestre' name='max_value_bimestre' value='".$max_value_bimestre."' />";
+										echo "<input type='hidden' id='max_value_etapa' name='max_value_etapa' value='".$max_value_etapa."' />";
 									echo "</tbody>";
 								echo "</table>";
 							?>
@@ -323,52 +323,52 @@
 					</div>
 				</fieldset>
 				<fieldset style="margin-top: 20px;">
-					<legend>&nbsp;Notas especiais <span class='glyphicon glyphicon-question-sign text-danger pointer'  data-toggle="tooltip" title="Define as etapas de recuperação que o aluno poderá fazer."></span></legend>
+					<legend>&nbsp;Etapas extras <span class='glyphicon glyphicon-question-sign text-danger pointer'  data-toggle="tooltip" title="Define as etapas de recuperação que o aluno poderá fazer."></span></legend>
 					<div class="row">
 						<div class="col-lg-6">
 							<div class="form-group relative">
-								<input id="nome_nota_especial" name="nome_nota_especial" type="text" class="input-material">
-								<label for="nome_nota_especial" class="label-material">Nome</label>
-								<div class='input-group mb-2 mb-sm-0 text-danger' id='error-nome_nota_especial'></div>
+								<input id="nome_etapa_extra" name="nome_etapa_extra" type="text" class="input-material">
+								<label for="nome_etapa_extra" class="label-material">Nome</label>
+								<div class='input-group mb-2 mb-sm-0 text-danger' id='error-nome_etapa_extra'></div>
 							</div>						
 						</div>
 						<div class="col-lg-6">
 							<div class="form-group relative">
-								<input id="valor_nota_especial" name="valor_nota_especial" type="text" class="input-material">
-								<label for="valor_nota_especial" class="label-material">Valor</label>
-								<div class='input-group mb-2 mb-sm-0 text-danger' id='error-valor_nota_especial'></div>
+								<input id="valor_etapa_extra" name="valor_etapa_extra" type="text" class="input-material">
+								<label for="valor_etapa_extra" class="label-material">Valor</label>
+								<div class='input-group mb-2 mb-sm-0 text-danger' id='error-valor_etapa_extra'></div>
 							</div>
 						</div>
 					</div>
 					<div class="row">
 						<div class="col-lg-6">
 							<div class="form-group relative" id="data1">
-								<input id="data_abertura_nota_especial" name="data_abertura_nota_especial" type="text" class="input-material">
-								<label for="data_abertura_nota_especial" class="label-material">Data de abertura</label>
-								<div class='input-group mb-2 mb-sm-0 text-danger' id='error-data_abertura_nota_especial'></div>
+								<input id="data_abertura_etapa_extra" name="data_abertura_etapa_extra" type="text" class="input-material">
+								<label for="data_abertura_etapa_extra" class="label-material">Data de abertura</label>
+								<div class='input-group mb-2 mb-sm-0 text-danger' id='error-data_abertura_etapa_extra'></div>
 							</div>						
 						</div>
 						<div class="col-lg-6">
 							<div class="form-group relative" id="data1">
-								<input id="data_fechamento_nota_especial" name="data_fechamento_nota_especial" type="text" class="input-material">
-								<label for="data_fechamento_nota_especial" class="label-material">Data de fechamento</label>
-								<div class='input-group mb-2 mb-sm-0 text-danger' id='error-data_fechamento_nota_especial'></div>
+								<input id="data_fechamento_etapa_extra" name="data_fechamento_etapa_extra" type="text" class="input-material">
+								<label for="data_fechamento_etapa_extra" class="label-material">Data de fechamento</label>
+								<div class='input-group mb-2 mb-sm-0 text-danger' id='error-data_fechamento_etapa_extra'></div>
 							</div>
 						</div>
 					</div>
 					<div class="row">
 						<div class="col-lg-6">
-							<input style="width: 200px;" type='button' class='btn btn-danger btn-block' onclick="Main.add_nota_especial()" value='Adicionar Nota especial'>
+							<input style="width: 200px;" type='button' class='btn btn-danger btn-block' onclick="Main.add_etapa_extra();" value='Adicionar etapa extra'>
 						</div>
 						<div class="col-lg-6">
 							<div class="form-group relative">
-								<input id="media_nota_especial" name="media_nota_especial" type="text" class="input-material">
-								<label for="media_nota_especial" class="label-material">Média</label>
-								<div class='input-group mb-2 mb-sm-0 text-danger' id='error-media_nota_especial'></div>
+								<input id="media_etapa_extra" name="media_etapa_extra" type="text" class="input-material">
+								<label for="media_etapa_extra" class="label-material">Média</label>
+								<div class='input-group mb-2 mb-sm-0 text-danger' id='error-media_etapa_extra'></div>
 							</div>						
 						</div>
 					</div>
-					<div class="notas_especiais">
+					<div class="etapas_extras">
 						<div class="table-responsive" style="/*width: 900px*/">
 							<?php
 								echo "<table class='table table-striped table-sm table-hover'>";
@@ -383,36 +383,36 @@
 										echo "</tr>";
 									echo "</thead>";
 									
-									echo "<tbody id='notas_especiais'>";
-										$max_value_nota_especial = 0;
-										for($i = 0; $i < count($notas_especiais); $i++)
+									echo "<tbody id='etapas_extras'>";
+										$max_value_etapa_extra = 0;
+										for($i = 0; $i < count($etapas_extras); $i++)
 										{
-											echo "<tr id='nota_especial".$max_value_nota_especial."'>";
+											echo "<tr id='etapa_extra".$max_value_etapa_extra."'>";
 												echo"<td>";
-													echo "<input type='hidden' id='nome_nota_especial".$max_value_nota_especial."' name='nome_nota_especial".$max_value_nota_especial."' value='".$notas_especiais[$i]['Nome']."'>";
-													echo $notas_especiais[$i]['Nome'];
+													echo "<input type='hidden' id='nome_etapa_extra".$max_value_etapa_extra."' name='nome_etapa_extra".$max_value_etapa_extra."' value='".$etapas_extras[$i]['Nome']."'>";
+													echo $etapas_extras[$i]['Nome'];
 												echo "</td>";
 												echo "<td>";
-													echo "<input type='hidden' id='valor_nota_especial".$max_value_nota_especial."' name='valor_nota_especial".$max_value_nota_especial."' value='".$notas_especiais[$i]['Valor']."'>";
-													echo $notas_especiais[$i]['Valor'];
+													echo "<input type='hidden' id='valor_etapa_extra".$max_value_etapa_extra."' name='valor_etapa_extra".$max_value_etapa_extra."' value='".$etapas_extras[$i]['Valor']."'>";
+													echo $etapas_extras[$i]['Valor'];
 												echo "</td>";
 												echo "<td>";
-													echo "<input type='hidden' id='media_nota_especial".$max_value_nota_especial."' name='media_nota_especial".$max_value_nota_especial."' value='".$notas_especiais[$i]['Media']."'>";
-													echo $notas_especiais[$i]['Media'];
+													echo "<input type='hidden' id='media_etapa_extra".$max_value_etapa_extra."' name='media_etapa_extra".$max_value_etapa_extra."' value='".$etapas_extras[$i]['Media']."'>";
+													echo $etapas_extras[$i]['Media'];
 												echo "</td>";
 												echo "<td>";
-													echo "<input type='hidden' id='data_abertura_nota_especial".$max_value_nota_especial."' name='data_abertura_nota_especial".$max_value_nota_especial."' value='".$notas_especiais[$i]['Data_abertura']."'>";
-													echo (($notas_especiais[$i]['Data_abertura'] == '00/00/0000') ? '' : $notas_especiais[$i]['Data_abertura']);
+													echo "<input type='hidden' id='data_abertura_etapa_extra".$max_value_etapa_extra."' name='data_abertura_etapa_extra".$max_value_etapa_extra."' value='".$etapas_extras[$i]['Data_abertura']."'>";
+													echo (($etapas_extras[$i]['Data_abertura'] == '00/00/0000') ? '' : $etapas_extras[$i]['Data_abertura']);
 												echo "</td>";
 												echo "<td>";
-													echo "<input type='hidden' id='data_fechamento_nota_especial".$max_value_nota_especial."' name='data_fechamento_nota_especial".$max_value_nota_especial."' value='".$notas_especiais[$i]['Data_fechamento']."'>";
-													echo (($notas_especiais[$i]['Data_fechamento'] == '00/00/0000') ? '' : $notas_especiais[$i]['Data_fechamento']);
+													echo "<input type='hidden' id='data_fechamento_etapa_extra".$max_value_etapa_extra."' name='data_fechamento_etapa_extra".$max_value_etapa_extra."' value='".$etapas_extras[$i]['Data_fechamento']."'>";
+													echo (($etapas_extras[$i]['Data_fechamento'] == '00/00/0000') ? '' : $etapas_extras[$i]['Data_fechamento']);
 												echo "</td>";
-												echo"<td><span class='glyphicon glyphicon-remove pointer' title='Remover' onclick='Main.remove_elemento(\"nota_especial".$max_value_nota_especial."\");'></span></td>";
+												echo"<td><span class='glyphicon glyphicon-remove pointer' title='Remover' onclick='Main.remove_elemento(\"etapa_extra".$max_value_etapa_extra."\");'></span></td>";
 											echo "</tr>";
-											$max_value_nota_especial = $max_value_nota_especial + 1;
+											$max_value_etapa_extra = $max_value_etapa_extra + 1;
 										}
-										echo "<input type='hidden' id='max_value_nota_especial' name='max_value_nota_especial' value='".$max_value_nota_especial."' />";
+										echo "<input type='hidden' id='max_value_etapa_extra' name='max_value_etapa_extra' value='".$max_value_etapa_extra."' />";
 									echo "</tbody>";
 								echo "</table>";
 							?>

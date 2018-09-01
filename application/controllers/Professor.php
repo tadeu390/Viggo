@@ -11,6 +11,7 @@
 		private $turma_id_default;
 		private $sub_turma_default;
 		private $etapa_id_default;
+		private $nota_etapa_default;
 
 		/*
 			No construtor carregamos as bibliotecas necessarias e tambem nossa model.
@@ -29,12 +30,11 @@
 			$this->load->model('Professor_model');
 			$this->load->model('Regras_model');
 			$this->load->model('Nota_model');
-			$this->load->model('Bimestre_model');
+			$this->load->model('Etapa_model');
 			$this->load->model('Account_model');
 			$this->load->model('Descricao_nota_model');
 			$this->load->model('Calendario_presenca_model');
 			$this->load->model('Conteudo_model');
-			$this->load->model('Nota_especial_model');
 
 			//ABAIXO DETERMINA O PROFESSOR E O PERÍODO LETIVO
 			$this->professor_id = $this->Account_model->session_is_valid()['id'];
@@ -58,6 +58,7 @@
 			//echo $this->sub_turma_default;
 			//CARREGA O BIMESTRE PADRÃO COM BASE NA DATA.
 			$this->etapa_id_default = $this->Professor_model->get_etapa_default($this->periodo_letivo_id)['Id'];
+			$this->nota_etapa_default = $this->Professor_model->get_etapa_default($this->periodo_letivo_id)['Nome'];
 			/////////
 
 
@@ -71,16 +72,15 @@
 		*
 		*	$disciplina_id -> Id da disciplina da grade. É usado para se obter as notas da disciplina pra cada aluno.
 		*	$turma_id -> Id da turma que está sendo consultada pelo professor.
-		*	$etapa_id -> Id do bimestre especificado pelo usuário quando clicar nos botões de bimestres;
+		*	$etapa_id -> Id da etapa especificado pelo usuário quando clicar nos botões de etapas;
 		*/
-		public function notas($disciplina_id = FALSE, $turma_id = FALSE, $etapa_id = FALSE, $botao =FALSE)
+		public function notas($disciplina_id = FALSE, $turma_id = FALSE, $etapa_id = FALSE)
 		{
 			if($disciplina_id == FALSE)//SE NADA FOI ESPECFICADO ENTAO DETERMINAR A PARTIR DOS DEFAULT.
 			{
 				$disciplina_id = $this->disciplina_id_default;
 				$turma_id = $this->turma_id_default;
 				$etapa_id = $this->etapa_id_default;
-				$botao = $this->etapa_id_default - 1;
 			}
 			
 			$this->data['title'] = 'Minhas disciplinas';
@@ -88,22 +88,22 @@
 			{
 				$this->data['method'] = __FUNCTION__;
 				$this->data['lista_disciplinas'] = $this->Professor_model->get_disciplinas($this->professor_id, $this->periodo_letivo_id);
-				$this->data['lista_bimestres'] = $this->Bimestre_model->get_bimestre($this->periodo_letivo_id);
-				$this->data['lista_notas_especiais'] = $this->Nota_especial_model->get_nota_especial($this->periodo_letivo_id);
+				$this->data['lista_etapas'] = $this->Etapa_model->get_etapa($this->periodo_letivo_id, FALSE, FALSE);
+				//$this->data['lista_etapas_extras'] = $this->Etapa_model->get_etapa($this->periodo_letivo_id);
 				$this->data['lista_turmas'] = $this->Professor_model->get_turma($disciplina_id, $this->professor_id, $this->periodo_letivo_id);
 				$this->data['periodo_letivo_id'] = $this->periodo_letivo_id;
-				$this->data['bimestre'] = $this->Bimestre_model->get_bimestre(FALSE, $etapa_id);
+				$this->data['etapa'] = $this->Etapa_model->get_etapa(FALSE, $etapa_id, FALSE);
 
 				///DETERMINAR SE O BIMESTRE ESTÁ ABERTO.
 				$timeZone = new DateTimeZone('UTC');
-				$data_abertura = DateTime::createFromFormat ('d/m/Y', (!empty($this->data['bimestre']['Data_abertura']) ? $this->data['bimestre']['Data_abertura'] : '00/00/000'), $timeZone);
-				$data_fechamento = DateTime::createFromFormat ('d/m/Y', (!empty($this->data['bimestre']['Data_abertura']) ? $this->data['bimestre']['Data_fechamento'] : '00/00/000'), $timeZone);
+				$data_abertura = DateTime::createFromFormat ('d/m/Y', (!empty($this->data['etapa']['Data_abertura']) ? $this->data['etapa']['Data_abertura'] : '00/00/000'), $timeZone);
+				$data_fechamento = DateTime::createFromFormat ('d/m/Y', (!empty($this->data['etapa']['Data_abertura']) ? $this->data['etapa']['Data_fechamento'] : '00/00/000'), $timeZone);
 				$data_atual = DateTime::createFromFormat ('d/m/Y', date('d/m/Y'), $timeZone);
 				
 				if($data_atual >= $data_abertura && $data_atual <= $data_fechamento)
-					$this->data['status_bimestre'] = '';
+					$this->data['status_etapa'] = '';
 				else 
-					$this->data['status_bimestre'] = "disabled";
+					$this->data['status_etapa'] = "disabled";
 				/////
 
 				//////DETERMINAR A DISCIPLINA PADRÃO A SER SELECIONADA, ESSE TRATAMENTO É NECESSÁRIO, POIS AO TROCAR DE DISCIPLINA, O ID DE TURMA SUBMETIDO PODE NÃO SERVIR DE NADA, 
@@ -122,7 +122,6 @@
 					$turma_id = $this->data['lista_turmas'][0]['Turma_id'];//SOBRESCREVE O ID SUBMETIDO
 				}
 				//////
-				$this->data['url_part']['botao'] = $botao;
 
 				$this->data['url_part']['disciplina_id'] = $disciplina_id;
 				$this->data['url_part']['etapa_id'] = $etapa_id;
@@ -157,12 +156,12 @@
 			{
 				$resultado = $this->Nota_model->validar_nota($matricula_id, $etapa_id, $turma_id, $disciplina_id, $nota, $descricao_nota_id);
 
-				$this->data['bimestre'] = $this->Bimestre_model->get_bimestre(FALSE, $etapa_id);
+				$this->data['etapa'] = $this->Etapa_model->get_etapa(FALSE, $etapa_id);
 
 				///DETERMINAR SE O BIMESTRE ESTÁ ABERTO.
 				$timeZone = new DateTimeZone('UTC');
-				$data_abertura = DateTime::createFromFormat ('d/m/Y', (!empty($this->data['bimestre']['Data_abertura']) ? $this->data['bimestre']['Data_abertura'] : '00/00/000'), $timeZone);
-				$data_fechamento = DateTime::createFromFormat ('d/m/Y', (!empty($this->data['bimestre']['Data_abertura']) ? $this->data['bimestre']['Data_fechamento'] : '00/00/000'), $timeZone);
+				$data_abertura = DateTime::createFromFormat ('d/m/Y', (!empty($this->data['etapa']['Data_abertura']) ? $this->data['etapa']['Data_abertura'] : '00/00/000'), $timeZone);
+				$data_fechamento = DateTime::createFromFormat ('d/m/Y', (!empty($this->data['etapa']['Data_abertura']) ? $this->data['etapa']['Data_fechamento'] : '00/00/000'), $timeZone);
 				$data_atual = DateTime::createFromFormat ('d/m/Y', date('d/m/Y'), $timeZone);
 				
 				if($data_atual >= $data_abertura && $data_atual <= $data_fechamento)
@@ -172,7 +171,7 @@
 						$somatorio = $resultado;
 						$resultado = $this->Nota_model->set_notas($nota, $descricao_nota_id, $matricula_id, $turma_id, $disciplina_id, $etapa_id);
 
-						$status = $this->Nota_model->status_nota_total_bimestre($matricula_id, $turma_id, $disciplina_id, $etapa_id, $this->periodo_letivo_id);
+						$status = $this->Nota_model->status_nota_total_etapa($matricula_id, $turma_id, $disciplina_id, $etapa_id, $this->periodo_letivo_id);
 						
 						if($status == "ok")
 							$status = "info";
@@ -180,7 +179,7 @@
 							$status = "danger";
 					}
 					else 
-						$resultado = "O valor informado ultrapassa o limite de ".$this->Bimestre_model->get_bimestre(FALSE, $etapa_id)['Valor']." pontos estabelecido para o ".$this->Bimestre_model->get_bimestre(FALSE, $etapa_id)['Nome'].".";
+						$resultado = "O valor informado ultrapassa o limite de ".$this->Etapa_model->get_etapa(FALSE, $etapa_id, FALSE)['Valor']." pontos estabelecido para o ".$this->Etapa_model->get_etapa(FALSE, $etapa_id)['Nome'].".";
 				}
 				else
 					$resultado = "Não é possível alterar a nota.";
@@ -197,12 +196,12 @@
 		public function remover_coluna_nota($descricao_nota_id, $turma_id, $disciplina_id, $etapa_id)
 		{
 			$resultado = "sucesso";
-			$this->data['bimestre'] = $this->Bimestre_model->get_bimestre(FALSE, $etapa_id);
+			$this->data['etapa'] = $this->Etapa_model->get_etapa(FALSE, $etapa_id, FALSE);
 
 			///DETERMINAR SE O BIMESTRE ESTÁ ABERTO.
 			$timeZone = new DateTimeZone('UTC');
-			$data_abertura = DateTime::createFromFormat ('d/m/Y', (!empty($this->data['bimestre']['Data_abertura']) ? $this->data['bimestre']['Data_abertura'] : '00/00/000'), $timeZone);
-			$data_fechamento = DateTime::createFromFormat ('d/m/Y', (!empty($this->data['bimestre']['Data_abertura']) ? $this->data['bimestre']['Data_fechamento'] : '00/00/000'), $timeZone);
+			$data_abertura = DateTime::createFromFormat ('d/m/Y', (!empty($this->data['etapa']['Data_abertura']) ? $this->data['etapa']['Data_abertura'] : '00/00/000'), $timeZone);
+			$data_fechamento = DateTime::createFromFormat ('d/m/Y', (!empty($this->data['etapa']['Data_abertura']) ? $this->data['etapa']['Data_fechamento'] : '00/00/000'), $timeZone);
 			$data_atual = DateTime::createFromFormat ('d/m/Y', date('d/m/Y'), $timeZone);
 			
 			if($data_atual >= $data_abertura && $data_atual <= $data_fechamento)
@@ -219,16 +218,15 @@
 		*
 		*	$disciplina_id -> Id da disciplina da grade. É usado para se obter as faltas da disciplina pra cada aluno.
 		*	$turma_id -> Id da turma que está sendo consultada pelo professor.
-		*	$etapa_id -> Id do bimestre especificado pelo usuário quando clicar nos botões de bimestres;
+		*	$etapa_id -> Id da etapa especificado pelo usuário quando clicar nos botões de etapas;
 		*/
-		public function faltas($disciplina_id = FALSE, $turma_id = FALSE, $etapa_id = FALSE, $botao = FALSE)
+		public function faltas($disciplina_id = FALSE, $turma_id = FALSE, $etapa_id = FALSE)
 		{
 			if($disciplina_id == FALSE)//SE NADA FOI ESPECFICADO ENTAO DETERMINAR A PARTIR DOS DEFAULT.
 			{
 				$disciplina_id = $this->disciplina_id_default;
 				$turma_id = $this->turma_id_default;
 				$etapa_id = $this->etapa_id_default;
-				$botao = $this->etapa_id_default - 1;
 			}
 			
 			$this->data['title'] = 'Minhas disciplinas';
@@ -236,14 +234,14 @@
 			{
 				$this->data['method'] = __FUNCTION__;
 				$this->data['lista_disciplinas'] = $this->Professor_model->get_disciplinas($this->professor_id, $this->periodo_letivo_id);
-				$this->data['lista_bimestres'] = $this->Bimestre_model->get_bimestre($this->periodo_letivo_id);
-				$this->data['lista_notas_especiais'] = $this->Nota_especial_model->get_nota_especial($this->periodo_letivo_id);
+				$this->data['lista_etapas'] = $this->Etapa_model->get_etapa($this->periodo_letivo_id, FALSE, FALSE);
+				//$this->data['lista_etapas_extras'] = $this->Etapa_model->get_nota_especial($this->periodo_letivo_id);
 				$this->data['lista_turmas'] = $this->Professor_model->get_turma($disciplina_id, $this->professor_id, $this->periodo_letivo_id);
-				$this->data['bimestre'] = $this->Bimestre_model->get_bimestre(FALSE, $etapa_id);
+				$this->data['etapa'] = $this->Etapa_model->get_etapa(FALSE, FALSE, $etapa_id);
 
 				$this->data['meses'] = $this->Calendario_presenca_model->get_intervalo_mes(
-					$this->convert_date($this->Bimestre_model->get_bimestre(FALSE, $etapa_id)['Data_inicio'],"en"), 
-					$this->convert_date($this->Bimestre_model->get_bimestre(FALSE, $etapa_id)['Data_fim'],"en"));
+					$this->convert_date($this->Etapa_model->get_etapa(FALSE, $etapa_id, FALSE)['Data_inicio'],"en"), 
+					$this->convert_date($this->Etapa_model->get_etapa(FALSE, $etapa_id, FALSE)['Data_fim'],"en"));
 				
 				//especificar uma subturma default para a turma em questão
 				$this->data['lista_subturmas'] = $this->Professor_model->get_sub_turmas($disciplina_id, $turma_id, date('Y-m-d'));
@@ -265,7 +263,6 @@
 				else 
 					$this->data['url_part']['turma_id'] = $this->data['lista_turmas'][0]['Turma_id'];//CASO CONTRÁRIO PEGAR POR DEFAUL O PRIMEIRO ID DISPONÍVEL.
 				//////
-				$this->data['url_part']['botao'] = $botao;
 
 				$this->data['url_part']['disciplina_id'] = $disciplina_id;
 				$this->data['url_part']['etapa_id'] = $etapa_id;
@@ -279,18 +276,16 @@
 		*
 		*	$disciplina_id -> Id da disciplina para fazer a chamada.
 		*	$turma_id -> Id da turma para se fazer a chamada.
-		*	$etapa_id -> Id do bimestre (somente para identificar o bimestre a ser selecionado na tela e para verificar
-		*	se o bimestre está aberto ou não)
+		*	$etapa_id -> Id da etapa (somente para identificar o etapa a ser selecionado na tela e para verificar
+		*	se o etapa está aberto ou não)
 		*/
-		public function chamada($disciplina_id = FALSE, $turma_id = FALSE, $etapa_id = FALSE, $botao = FALSE)
-		{ 
-			echo date('Y-m-d');
+		public function chamada($disciplina_id = FALSE, $turma_id = FALSE, $etapa_id = FALSE)
+		{
 			if($disciplina_id == FALSE)//SE NADA FOI ESPECFICADO ENTAO DETERMINAR A PARTIR DOS DEFAULT.
 			{
 				$disciplina_id = $this->disciplina_id_default;
 				$turma_id = $this->turma_id_default;
 				$etapa_id = $this->etapa_id_default;
-				$botao = $this->etapa_id_default - 1;
 			}
 			
 			$this->data['title'] = 'Minhas disciplinas';
@@ -298,11 +293,11 @@
 			{
 				$this->data['method'] = __FUNCTION__;
 				$this->data['lista_disciplinas'] = $this->Professor_model->get_disciplinas($this->professor_id, $this->periodo_letivo_id);
-				$this->data['lista_bimestres'] = $this->Bimestre_model->get_bimestre($this->periodo_letivo_id);
-				$this->data['lista_notas_especiais'] = $this->Nota_especial_model->get_nota_especial($this->periodo_letivo_id);
+				$this->data['lista_etapas'] = $this->Etapa_model->get_etapa($this->periodo_letivo_id, FALSE, FALSE);
+				//$this->data['lista_etapas_extras'] = $this->Etapa_model->get_nota_especial($this->periodo_letivo_id);
 				
 				$this->data['lista_turmas'] = $this->Professor_model->get_turma($disciplina_id, $this->professor_id, $this->periodo_letivo_id);
-				$this->data['bimestre'] = $this->Bimestre_model->get_bimestre(FALSE, $etapa_id);
+				$this->data['etapa'] = $this->Etapa_model->get_etapa(FALSE, $etapa_id, FALSE);
 				//////DETERMINAR A DISCIPLINA PADRÃO A SER SELECIONADA, ESSE TRATAMENTO É NECESSÁRIO, POIS AO TROCAR DE DISCIPLINA, O ID DE TURMA SUBMETIDO PODE NÃO SERVIR DE NADA, 
 				//////CASO ESSA TURMA SELECIONADA NÃO APAREÇA NOVAMENTE COM A TROCA DE DISCIPLINA.
 				$flag = 0;
@@ -490,15 +485,15 @@
 				redirect('professor/faltas');
 		}
 
-		public function nota_especial($disciplina_id = FALSE, $turma_id = FALSE, $etapa_id = FALSE, $botao = FALSE)
+		public function nota_especial($disciplina_id = FALSE, $turma_id = FALSE, $etapa_id = FALSE)
 		{
 			$this->data['title'] = 'Minhas disciplinas';
 			if($this->Geral_model->get_permissao(READ, get_class($this)) == TRUE)
 			{
 				$this->data['method'] = __FUNCTION__;
 				$this->data['lista_disciplinas'] = $this->Professor_model->get_disciplinas($this->professor_id, $this->periodo_letivo_id);
-				$this->data['lista_bimestres'] = $this->Bimestre_model->get_bimestre($this->periodo_letivo_id);
-				$this->data['lista_notas_especiais'] = $this->Nota_especial_model->get_nota_especial($this->periodo_letivo_id);
+				$this->data['lista_etapas'] = $this->Etapa_model->get_etapa($this->periodo_letivo_id);
+				$this->data['lista_etapas_extras'] = $this->Etapa_model->get_nota_especial($this->periodo_letivo_id);
 				$this->data['lista_turmas'] = $this->Professor_model->get_turma($disciplina_id, $this->professor_id, $this->periodo_letivo_id);
 
 				$flag = 0;
@@ -518,7 +513,6 @@
 				$this->data['status_nota_especial'] = '';
 				$this->data['url_part']['disciplina_id'] = $disciplina_id;
 				$this->data['url_part']['etapa_id'] = $etapa_id;
-				$this->data['url_part']['botao'] = $botao;
 
 
 				//DESCRIÇÃO DE NOTA

@@ -17,15 +17,13 @@
 		<div class="row">
 			<div class="col-lg-2 padding10" style="border-right: 1px solid white; border-bottom: 1px solid white">
 				<?php
-					$data['lista_disciplinas'] = $lista_disciplinas;
-					$this->load->view("professor/_disciplina", $data);
+					$this->load->view("professor/_disciplina");
 				?>
 			</div>
 			<div class="col-lg-10" style="border-bottom: 1px solid white">
 				<div class="row padding10">
 					<?php
-						$data['lista_bimestres'] = $lista_bimestres;
-						$this->load->view("professor/_etapas", $data);
+						$this->load->view("professor/_etapas");
 					?>
 				</div>
 			</div>
@@ -34,9 +32,7 @@
 			<div class="col-lg-2" style="border-right: 1px solid white">
 				<div class="row padding10">
 					<?php
-						$data['lista_turmas'] = $lista_turmas;
-						$data['url_part'] = $url_part;
-						$this->load->view("professor/_turma", $data);
+						$this->load->view("professor/_turma");
 					?>
 				</div>
 			</div>
@@ -49,7 +45,7 @@
 					</div>
 					<div class="col-lg-6 text-right">
 						<?php 
-							echo "Aberto a partir de ".(!empty($bimestre['Data_abertura']) ? $bimestre['Data_abertura'] : '')." até ".(!empty($bimestre['Data_fechamento']) ? $bimestre['Data_fechamento'] : '');
+							echo "Aberto a partir de ".(!empty($etapa['Data_abertura']) ? $etapa['Data_abertura'] : '')." até ".(!empty($etapa['Data_fechamento']) ? $etapa['Data_fechamento'] : '');
 						?>
 					</div>
 				</div>
@@ -60,7 +56,7 @@
 				</div>
 				<div class="row padding10">
 					<div class="col-lg-4">
-						<select <?php echo $status_bimestre; ?> name='descricao_nota_id' id='descricao_nota_id' class='form-control' style='padding-left: 0px;'>
+						<select <?php echo $status_etapa; ?> name='descricao_nota_id' id='descricao_nota_id' class='form-control' style='padding-left: 0px;'>
 							<option value='0' style='background-color: #393836;'>Descrição de nota</option>
 							<?php
 							for ($i = 0; $i < count($lista_descricao_nota); $i++)
@@ -69,7 +65,7 @@
 						</select>
 					</div>
 					<div class="col-lg-4">
-						<button class="btn btn-danger" <?php echo $status_bimestre; ?> onclick="Main.add_coluna_nota();">Adicionar coluna</button>
+						<button class="btn btn-danger" <?php echo $status_etapa; ?> onclick="Main.add_coluna_nota();">Adicionar coluna</button>
 					</div>
 				</div>
 				<div class="row padding10">
@@ -85,7 +81,7 @@
 											echo "<td style='width: 10%; position: relative;' class='text-center'>";
 												echo $lista_colunas_nota[$i]['Descricao'];
 												echo "<input type='hidden' id='descricao_nota_id_hidden$i' value='".$lista_colunas_nota[$i]['Descricao_nota_id']."' />";
-												if(empty($status_bimestre))
+												if(empty($status_etapa))
 													echo "<span onclick='Main.confirm_remover_coluna_nota(".$lista_colunas_nota[$i]['Descricao_nota_id'].",",$url_part['turma_id'].",".$url_part['disciplina_id'].",".$url_part['etapa_id'].");' title='Remover coluna' style='cursor: pointer; position: absolute; right: 0px;' class='glyphicon glyphicon-remove text-danger'></span>";
 											echo "</td>";
 											$limite_descricao_nota = $limite_descricao_nota + 1;
@@ -110,11 +106,11 @@
 												$nota = notas::get_nota($lista_colunas_nota[$j]['Descricao_nota_id'], $lista_alunos[$i]['Matricula_id'], $url_part['turma_id'], $url_part['disciplina_id'], $url_part['etapa_id'])['Nota'];
 												$total = $total + $nota;
 												echo"<td class='text-center' style='width: 10%;'>";
-													echo"<input min='0' $status_bimestre min='0' onblur='Main.altera_nota(\"total".$i."\", this.value,".$lista_colunas_nota[$j]['Descricao_nota_id'].",\"".$lista_alunos[$i]['Matricula_id']."\",",$url_part['turma_id'].",".$url_part['disciplina_id'].",".$url_part['etapa_id'].");' name='aluno".$i."_nota".$j."' type='number' value='".$nota."' class='form-control border_radius text-info' style='background-color: white;' />";
+													echo"<input min='0' $status_etapa min='0' onblur='Main.altera_nota(\"total".$i."\", this.value,".$lista_colunas_nota[$j]['Descricao_nota_id'].",\"".$lista_alunos[$i]['Matricula_id']."\",",$url_part['turma_id'].",".$url_part['disciplina_id'].",".$url_part['etapa_id'].");' name='aluno".$i."_nota".$j."' type='number' value='".$nota."' class='form-control border_radius text-info' style='background-color: white;' />";
 												echo"</td>";
 											}
 
-											$status = notas::status_nota_total_bimestre($lista_alunos[$i]['Matricula_id'], $url_part['turma_id'], $url_part['disciplina_id'], $url_part['etapa_id'], $periodo_letivo_id);
+											$status = notas::status_nota_total_etapa($lista_alunos[$i]['Matricula_id'], $url_part['turma_id'], $url_part['disciplina_id'], $url_part['etapa_id'], $periodo_letivo_id);
 
 											echo"<td class='text-center text-danger' id='td_total".$i."' style='vertical-align: middle; width: 10%;'>";
 												 echo "<input type='text' id='total".$i."' value='".$total."' readonly='readonly' class='border-".$status." form-control border_radius text-center text-".$status."' style=' background-color: white;' />";

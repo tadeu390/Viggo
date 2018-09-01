@@ -19,7 +19,9 @@ var Main = {
 			$('#duracao_aula').mask('000'),
 			$('#quantidade_aula').mask('00'),
 			$('#reprovas').mask('00'),
-			$('#valor').mask('00'),
+			$('#valor').mask('000'),
+			$('#valor_etapa_extra').mask('000'),
+			$('#media_etapa_extra').mask('000'),
 			$('#qtd_minimo').mask('000'),
 			$('#qtd_maxima').mask('000'),
 			$('[data-toggle="tooltip"]').tooltip(),
@@ -710,14 +712,14 @@ var Main = {
 		if(linha != undefined)
 			linha.parentNode.removeChild(linha);
 	},
-	add_bimestre : function ()
+	add_etapa : function ()
 	{
-		if(Main.bimestre_validar() == true)
+		if(Main.etapa_validar() == true)
 		{
-			var max_value_bimestre  =  $("#max_value_bimestre").val();
+			var max_value_etapa  =  $("#max_value_etapa").val();
 
 			var a = new Array();
-			a.push($("#nome_bimestre").val());
+			a.push($("#nome_etapa").val());
 			a.push($("#valor").val());
 			a.push($("#data_inicio").val());
 			a.push($("#data_fim").val());
@@ -726,7 +728,7 @@ var Main = {
 			a.push("");
 
 			var aux = new Array();
-			aux.push("nome_bimestre");
+			aux.push("nome_etapa");
 			aux.push("valor");
 			aux.push("data_inicio");
 			aux.push("data_fim");
@@ -735,7 +737,7 @@ var Main = {
 			aux.push("");
 
 			var node_tr = document.createElement("TR");
-			node_tr.setAttribute("id","bimestre"+max_value_bimestre);
+			node_tr.setAttribute("id","bimestre"+max_value_etapa);
 			
 			for(var i = 0; i < 7; i++)
 			{
@@ -745,26 +747,26 @@ var Main = {
 				input_text.setAttribute("type", "hidden");
 				if(i < 6)
 					input_text.setAttribute("value", a[i]);
-				input_text.setAttribute("id",aux[i]+max_value_bimestre);
-				input_text.setAttribute("name",aux[i]+max_value_bimestre);
+				input_text.setAttribute("id",aux[i]+max_value_etapa);
+				input_text.setAttribute("name",aux[i]+max_value_etapa);
 				
 				var textnode = document.createTextNode(a[i]); 
 				node_td.appendChild(input_text);
 				node_td.appendChild(textnode);
 				
 				if(i == 6)
-					node_td.innerHTML = "<span class='glyphicon glyphicon-remove pointer' title='Remover' onclick='Main.remove_elemento(\"bimestre"+max_value_bimestre+"\");'></span>";
+					node_td.innerHTML = "<span class='glyphicon glyphicon-remove pointer' title='Remover' onclick='Main.remove_elemento(\"etapa"+max_value_etapa+"\");'></span>";
 				
 				node_tr.appendChild(node_td);
-				document.getElementById("bimestres").appendChild(node_tr);
+				document.getElementById("etapas").appendChild(node_tr);
 			}
-			$("#max_value_bimestre").val(parseInt(max_value_bimestre) + 1);
+			$("#max_value_etapa").val(parseInt(max_value_etapa) + 1);
 		}
 	},
-	bimestre_validar : function()
+	etapa_validar : function()
 	{
-		if($("#nome_bimestre").val() == "")
-			Main.show_error("nome_bimestre", 'Informe o nome do bimestre.', '');
+		if($("#nome_etapa").val() == "")
+			Main.show_error("nome_etapa", 'Informe o nome do bimestre.', '');
 		else if($("#valor").val() == "")
 			Main.show_error("valor", 'Informe o valor do bimestre.', '');
 		else if($("#data_inicio").val() == "")
@@ -784,10 +786,10 @@ var Main = {
 			Main.show_error("data_fechamento", 'Data de abertura / fechamento deve estar entre a data de início e fim.', '');
 		else
 		{
-			var max_value_bimestre  =  $("#max_value_bimestre").val();
+			var max_value_etapa  =  $("#max_value_etapa").val();
 
 			var a = new Array();
-			a.push($("#nome_bimestre").val());
+			a.push($("#nome_etapa").val());
 			a.push($("#valor").val());
 			a.push($("#data_inicio").val());
 			a.push($("#data_fim").val());
@@ -796,9 +798,9 @@ var Main = {
 			a.push("");
 
 			var flag = 0;
-			for(var i = 0; i < max_value_bimestre; i++)
+			for(var i = 0; i < max_value_etapa; i++)
 			{
-				if($("#nome_bimestre"+i).val() == a[0] && $("#valor"+i).val() == a[1] &&
+				if($("#nome_etapa"+i).val() == a[0] && $("#valor"+i).val() == a[1] &&
 					$("#data_inicio"+i).val() == a[2] && $("#data_fim"+i).val() == a[3])
 					flag = 1;
 				else if($("#valor"+i).val() == a[1] &&
@@ -814,30 +816,30 @@ var Main = {
 				return true;
 		}
 	},
-	add_nota_especial : function ()
+	add_etapa_extra : function ()
 	{
-		if(Main.nota_especial_validar() == true)
+		if(Main.etapa_extra_validar() == true)
 		{
-			var max_value_nota_especial  =  $("#max_value_nota_especial").val();
+			var max_value_etapa_extra  =  $("#max_value_etapa_extra").val();
 
 			var a = new Array();
-			a.push($("#nome_nota_especial").val());
-			a.push($("#valor_nota_especial").val());
-			a.push($("#media_nota_especial").val());
-			a.push(($("#data_abertura_nota_especial").val() == '') ? '' : $("#data_abertura_nota_especial").val());
-			a.push(($("#data_fechamento_nota_especial").val() == '') ? '' : $("#data_fechamento_nota_especial").val());
+			a.push($("#nome_etapa_extra").val());
+			a.push($("#valor_etapa_extra").val());
+			a.push($("#media_etapa_extra").val());
+			a.push(($("#data_abertura_etapa_extra").val() == '') ? '' : $("#data_abertura_etapa_extra").val());
+			a.push(($("#data_fechamento_etapa_extra").val() == '') ? '' : $("#data_fechamento_etapa_extra").val());
 			a.push("");
 
 			var aux = new Array();
-			aux.push("nome_nota_especial");
-			aux.push("valor_nota_especial");
-			aux.push("media_nota_especial");
-			aux.push("data_abertura_nota_especial");
-			aux.push("data_fechamento_nota_especial");
+			aux.push("nome_etapa_extra");
+			aux.push("valor_etapa_extra");
+			aux.push("media_etapa_extra");
+			aux.push("data_abertura_etapa_extra");
+			aux.push("data_fechamento_etapa_extra");
 			aux.push("");
 
 			var node_tr = document.createElement("TR");
-			node_tr.setAttribute("id","nota_especial"+max_value_nota_especial);
+			node_tr.setAttribute("id","etapa_extra"+max_value_etapa_extra);
 			
 			for(var i = 0; i < 6; i++)
 			{
@@ -847,42 +849,42 @@ var Main = {
 				input_text.setAttribute("type", "hidden");
 				if(i < 5)
 					input_text.setAttribute("value", a[i]);
-				input_text.setAttribute("id",aux[i]+max_value_nota_especial);
-				input_text.setAttribute("name",aux[i]+max_value_nota_especial);
+				input_text.setAttribute("id",aux[i]+max_value_etapa_extra);
+				input_text.setAttribute("name",aux[i]+max_value_etapa_extra);
 				
 				var textnode = document.createTextNode(a[i]); 
 				node_td.appendChild(input_text);
 				node_td.appendChild(textnode);
 				
 				if(i == 5)
-					node_td.innerHTML = "<span class='glyphicon glyphicon-remove pointer' title='Remover' onclick='Main.remove_elemento(\"nota_especial"+max_value_nota_especial+"\");'></span>";
+					node_td.innerHTML = "<span class='glyphicon glyphicon-remove pointer' title='Remover' onclick='Main.remove_elemento(\"etapa_extra"+max_value_etapa_extra+"\");'></span>";
 				
 				node_tr.appendChild(node_td);
-				document.getElementById("notas_especiais").appendChild(node_tr);
+				document.getElementById("etapas_extras").appendChild(node_tr);
 			}
-			$("#max_value_nota_especial").val(parseInt(max_value_nota_especial) + 1);
+			$("#max_value_etapa_extra").val(parseInt(max_value_etapa_extra) + 1);
 		}
 	},
-	nota_especial_validar : function ()
+	etapa_extra_validar : function ()
 	{
-		if($("#nome_nota_especial").val() == "")
-			Main.show_error("nome_nota_especial", 'Informe o nome da nota especial.', '');
-		else if($("#valor_nota_especial").val() == "")
-			Main.show_error("valor_nota_especial", 'Informe o valor da nota especial.', '');
-		else if($("#data_abertura_nota_especial").val() == "")
-			Main.show_error("data_abertura_nota_especial", 'Informe a data de abertura', '');
-		else if($("#data_fechamento_nota_especial").val() == "")
-			Main.show_error("data_fechamento_nota_especial", 'Informe a data de fechamento', '');
-		else if(Main.str_to_date($("#data_fechamento_nota_especial").val()) <= Main.str_to_date($("#data_abertura_nota_especial").val()))
-			Main.show_error("data_fechamento_nota_especial", 'A data de fechamento deve ser maior que a data de abertura.', '');
-		else if($("#media_nota_especial").val() == "")
-			Main.show_error("media_nota_especial", 'Informe a média da nota especial.', '');
+		if($("#nome_etapa_extra").val() == "")
+			Main.show_error("nome_etapa_extra", 'Informe o nome da etapa extra.', '');
+		else if($("#valor_etapa_extra").val() == "")
+			Main.show_error("valor_etapa_extra", 'Informe o valor da etaoa extra.', '');
+		else if($("#data_abertura_etapa_extra").val() == "")
+			Main.show_error("data_abertura_etapa_extra", 'Informe a data de abertura', '');
+		else if($("#data_fechamento_etapa_extra").val() == "")
+			Main.show_error("data_fechamento_etapa_extra", 'Informe a data de fechamento', '');
+		else if(Main.str_to_date($("#data_fechamento_etapa_extra").val()) <= Main.str_to_date($("#data_abertura_etapa_extra").val()))
+			Main.show_error("data_fechamento_etapa_extra", 'A data de fechamento deve ser maior que a data de abertura.', '');
+		else if($("#media_etapa_extra").val() == "")
+			Main.show_error("media_etapa_extra", 'Informe a média da etapa extra.', '');
 		else
 		{
-			var max_value_nota_especial  =  $("#max_value_nota_especial").val();
+			var max_value_etapa_extra  =  $("#max_value_etapa_extra").val();
 
 			var a = new Array();
-			a.push($("#nome_bimestre").val());
+			a.push($("#nome_etapa_extra").val());
 			a.push($("#valor").val());
 			a.push($("#data_inicio").val());
 			a.push($("#data_fim").val());
@@ -891,13 +893,13 @@ var Main = {
 			a.push("");
 
 			var flag = 0;
-			for(var i = 0; i < max_value_nota_especial; i++)
+			for(var i = 0; i < max_value_etapa_extra; i++)
 			{
-				if($("#nome_nota_especial"+i).val() == a[0] && $("#valor_nota_especial"+i).val() == a[1] &&
-					$("#data_abertura_nota_especial"+i).val() == a[2] && $("#data_fechamento_nota_especial"+i).val() == a[3])
+				if($("#nome_etapa_extra"+i).val() == a[0] && $("#valor_etapa_extra"+i).val() == a[1] &&
+					$("#data_abertura_etapa_extra"+i).val() == a[2] && $("#data_fechamento_etapa_extra"+i).val() == a[3])
 					flag = 1;
-				else if($("#valor_nota_especial"+i).val() == a[1] &&
-					$("#data_abertura_nota_especial"+i).val() == a[2] && $("#data_fechamento_nota_especial"+i).val() == a[3])
+				else if($("#valor_etapa_extra"+i).val() == a[1] &&
+					$("#data_abertura_etapa_extra"+i).val() == a[2] && $("#data_fechamento_etapa_extra"+i).val() == a[3])
 					flag = 2;
 			}
 
@@ -1492,7 +1494,7 @@ var Main = {
 	},
 	alterar_disciplina : function (disciplina_id)
 	{
-		window.location.assign(Main.base_url + $("#controller").val() + "/"+$("#method").val()+"/"+disciplina_id+"/"+$("#turma_selecionada").val()+"/"+$("#etapa_selecionada").val()+"/"+$("#botao_selecionado").val());
+		window.location.assign(Main.base_url + $("#controller").val() + "/"+$("#method").val()+"/"+disciplina_id+"/"+$("#turma_selecionada").val()+"/"+$("#etapa_selecionada").val());
 	},
 	//////NOTAS E FALTAS
 	altera_nota : function (id, nota, descricao_nota_id, matricula_id, turma_id, disciplina_id, bimestre_id)

@@ -12,6 +12,10 @@
 	define("ALUNO", 2);
 	define("PROFESSOR", 4);
 	define("SECRETARIA", 3);
+
+	define("ETAPA_NORMAL", 1);
+	define("ETAPA_EXTRA", 2);
+	
 	class Geral extends CI_Controller 
 	{
 		//VARIAVEL RESPONSÁVEL POR ARMAZENZAR TODO O CONTEÚDO A SER EXIBIDO NAS VIEWS.

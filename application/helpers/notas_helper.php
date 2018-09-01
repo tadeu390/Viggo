@@ -4,34 +4,34 @@
 		/*!
 			RESPONSÁVEL POR INTERFACEAR O MÉTODO DO MODEL PARA SE OBTER UM DETERMINADO TIPO DE NOTA (DESCRICAO DA NOTA) DO ALUNO.
 		*/
-		public static function get_nota($descricao_nota_id, $matricula_id, $turma_id, $disc_grade_id, $bimestre_id)
+		public static function get_nota($descricao_nota_id, $matricula_id, $turma_id, $disc_grade_id, $etapa_id)
 		{
 			$CI = get_instance();
 			$CI->load->model("Nota_model");	
 			
-			return $CI->Nota_model->get_nota($descricao_nota_id, $matricula_id, $turma_id, $disc_grade_id, $bimestre_id);
+			return $CI->Nota_model->get_nota($descricao_nota_id, $matricula_id, $turma_id, $disc_grade_id, $etapa_id);
 		}
 
-		public static function status_nota_total_bimestre($matricula_id, $turma_id, $disc_grade_id, $bimestre_id, $periodo_letivo_id)
+		public static function status_nota_total_etapa($matricula_id, $turma_id, $disc_grade_id, $etapa_id, $periodo_letivo_id)
 		{
 			$CI = get_instance();
 			$CI->load->model("Nota_model");	
 
-			$status = $CI->Nota_model->status_nota_total_bimestre($matricula_id, $turma_id, $disc_grade_id, $bimestre_id, $periodo_letivo_id);
+			$status = $CI->Nota_model->status_nota_total_etapa($matricula_id, $turma_id, $disc_grade_id, $etapa_id, $periodo_letivo_id);
 			if($status == "ok")
 				return "info";
 			return "danger";
 		}
 
-		public static function get_nota_total_aluno($lista_bimestres, $matricula_id, $disc_grade_id, $turma_id)
+		public static function get_nota_total_aluno($lista_etapas, $matricula_id, $disc_grade_id, $turma_id)
 		{
 			$CI = get_instance();
 			$CI->load->model("Nota_model");	
 
 			$total_nota = 0;
-			for($i = 0; $i < COUNT($lista_bimestres); $i++)
+			for($i = 0; $i < COUNT($lista_etapas); $i++)
 			{
-				$total_nota = $total_nota + $CI->Nota_model->total_nota($matricula_id, $turma_id, $disc_grade_id, $lista_bimestres[$i]['Id']);
+				$total_nota = $total_nota + $CI->Nota_model->total_nota($matricula_id, $turma_id, $disc_grade_id, $lista_etapas[$i]['Id']);
 			}
 			return $total_nota;
 		}
@@ -49,6 +49,6 @@
 			if($total_nota >= $media)
 				return "info";
 			return "danger";
-		}	
+		}
 	}
 ?>
