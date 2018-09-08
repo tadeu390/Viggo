@@ -16,6 +16,7 @@
 		*	$id -> Quando especificado na chamada do método retorna apenas um grupo específico, se for passado FALSE retorna 
 		*	todos os registros de acordo com o primeiro argumento.
 		*	$page -> Número da página que determina o intervalo de registros a serem buscados no banco, se for passado como FALSE retorna tudo sem paginar.
+		* 	$ordenacao -> Contém um array com a ordenacao (ASC OU DESC) e o campo que se deseja ordenar.
 		*/
 		public function get_grupo($Ativo = FALSE, $id = FALSE, $page = FALSE, $ordenacao = FALSE)
 		{
@@ -100,12 +101,12 @@
 				FROM(
 						SELECT m.Id as Modulo_id, a.Id as Acesso_id, g.Nome as Nome_grupo,
 						m.Nome as Nome_modulo, a.Criar, a.Ler,
-						a.Atualizar, a.Remover
+						a.Atualizar, a.Remover, m.Url AS Url_modulo 
 						FROM Modulo m 
                         LEFT JOIN Acesso a ON m.Id = a.Modulo_id 
                        	LEFT JOIN Usuario u ON a.Usuario_id = u.Id 
                         LEFT JOIN Grupo g ON u.Grupo_id = g.Id 
-                        GROUP BY m.Nome 
+                        GROUP BY m.Nome, m.Url  
 					) as x ORDER BY x.Modulo_id"); //ORDER BY, NÃO REMOVER EM HIPÓTESE ALGUMA, O MÉTODO GET_ACESSO DA MODEL ACESSO_MODEL FAZ A MESMA ORDENAÇÃO, OS DOIS SÃO NECESSÁRIOS PRA PODER ESPECIFICAR AS PERMISSIOS NO BANCO DE FORMA CORRETA.
 			return $query->result_array();
 		}

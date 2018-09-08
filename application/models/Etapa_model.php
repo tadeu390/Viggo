@@ -29,9 +29,11 @@
 						DATE_FORMAT(Data_abertura, '%d/%m/%Y') as Data_abertura, 
 						DATE_FORMAT(Data_fechamento, '%d/%m/%Y') as Data_fechamento,
 						CAST(Data_abertura AS DATE) as Data_abertura2, #somente para comparar ao criar um etapa
-						CAST(Data_fechamento AS DATE) as Data_fechamento2, Periodo_letivo_id  #somente para comparar ao criar um etapa
+						CAST(Data_fechamento AS DATE) as Data_fechamento2, Periodo_letivo_id,  #somente para comparar ao criar um etapa
+						Tipo 
 						FROM Etapa 
-						WHERE Periodo_letivo_id = ".$this->db->escape($Periodo_letivo_id)." ".$tipo." ORDER BY Id"); //arryumar a ordencao
+						WHERE Periodo_letivo_id = ".$this->db->escape($Periodo_letivo_id)." ".$tipo." ORDER BY Data_abertura2"); //arryumar a ordencao
+
 				return $query->result_array();
 			}
 
@@ -144,6 +146,23 @@
 		{
 			return $this->db->query("
 				DELETE FROM Etapa WHERE Id = ".$this->db->escape($id)."");
+		}
+		/*!
+		*	RESPONSÁVEL POR PROCURAR NO BANCO DE DADOS A ÚLTIMA ETAPA DO PERÍODO LETIVO DE ACORDO COM A DATA 
+		*	(utilizado para determinar se acabou as etapas normais para exibir o status do aluno).
+		*
+		*	$periodo_letivo_id - > Id do período letivo que se deseja consultar a etapa.
+		*	$tipo -> Etapa normal, ou etapa extra.
+		*/
+		public function get_ultima_etapa($periodo_letivo_id, $tipo)
+		{
+			$query = $this->db->query("
+				SELECT * FROM Etapa 
+				WHERE Periodo_letivo_id = ".$this->db->escape($periodo_letivo_id)." AND Tipo = ".$this->db->escape($tipo)." 
+				ORDER BY Data_abertura DESC LIMIT 1 
+			");
+
+			return $query->row_array();
 		}
 	}
 ?>

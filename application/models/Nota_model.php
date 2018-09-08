@@ -10,7 +10,7 @@
 			$this->load->database();
 		}
 		/*!
-		*	RESPONSÁVEL POR RETORNAR UMA DETERMINADA NOTA POR ALUNO EM UMA DETERMINADA DISCIPLINA.
+		*	RESPONSÁVEL POR RETORNAR UM DETERMINADO TIPO DE NOTA POR ALUNO EM UMA DETERMINADA DISCIPLINA.
 		*
 		*	$descricao_nota_id -> Tipo de nota que se deseja obter.
 		*	$matricula_id -> Especifica a matricula do aluno para o qual se deseja saber a nota.
@@ -90,10 +90,11 @@
 
 			$total_nota = $this->total_nota($matricula_id, $turma_id, $disciplina_id, $etapa_id);
 
+			$total_nota = (empty($total_nota) ? 0 : $total_nota);
 			//buscar o valor do bimestre
 			$query = $this->db->query("
-				SELECT b.Valor FROM Etapa e 
-				WHERE b.Id = ".$this->db->escape($etapa_id)."");
+				SELECT e.Valor FROM Etapa e 
+				WHERE e.Id = ".$this->db->escape($etapa_id)."");
 
 			$val_bimestre = $query->row_array()['Valor'];
 
@@ -101,10 +102,10 @@
 			if(($nota + $total_nota - $nota_banco) > $val_bimestre)
 				return "invalido";
 			else 
-				return ($nota + $total_nota - $nota_banco);
+				return (string)($nota + $total_nota - $nota_banco);
 		}
 		/*!
-		*	RESPONSÁVEL POR RETORNAR O TOTAL DE NOTA POR ALUNO EM UM DETERMINADO BIMESTRE PARA UMA DETERMINADA DISCIPLINA.
+		*	RESPONSÁVEL POR RETORNAR O TOTAL DE NOTA POR ALUNO EM UMA DETERMINADA ETAPA PARA UMA DETERMINADA DISCIPLINA.
 		*
 		*	$matricula_id -> Matricula do aluno.
 		*	$turma_id -> Id da turma na qual se encontra o aluno.
@@ -125,7 +126,7 @@
 			return $query->row_array()['Total_nota'];
 		}
 		/*!
-		*	RESPONSÁVEL POR VERIFICAR SE O ALUNO ESTÁ DENTRO DA MÉDIA OU NÃO EM UMA DETERMINADA DISCIPLINA EM UM DETERMINADADO BIMESTRE.
+		*	RESPONSÁVEL POR VERIFICAR SE O ALUNO ESTÁ DENTRO DA MÉDIA OU NÃO EM UMA DETERMINADA DISCIPLINA EM UMA DETERMINADADA ETAPA.
 		*
 		*	$matricula_id -> Matricula do aluno.
 		*	$turma_id -> Id da turma na qual se encontra o aluno.

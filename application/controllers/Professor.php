@@ -11,7 +11,6 @@
 		private $turma_id_default;
 		private $sub_turma_default;
 		private $etapa_id_default;
-		private $nota_etapa_default;
 
 		/*
 			No construtor carregamos as bibliotecas necessarias e tambem nossa model.
@@ -35,6 +34,10 @@
 			$this->load->model('Descricao_nota_model');
 			$this->load->model('Calendario_presenca_model');
 			$this->load->model('Conteudo_model');
+			$this->load->model('Disc_turma_model');
+			$this->load->model('Disciplina_model');
+			$this->load->model('Intervalo_model');
+			$this->load->model('Horario_model');
 
 			//ABAIXO DETERMINA O PROFESSOR E O PERÍODO LETIVO
 			$this->professor_id = $this->Account_model->session_is_valid()['id'];
@@ -58,7 +61,6 @@
 			//echo $this->sub_turma_default;
 			//CARREGA O BIMESTRE PADRÃO COM BASE NA DATA.
 			$this->etapa_id_default = $this->Professor_model->get_etapa_default($this->periodo_letivo_id)['Id'];
-			$this->nota_etapa_default = $this->Professor_model->get_etapa_default($this->periodo_letivo_id)['Nome'];
 			/////////
 
 
@@ -89,7 +91,7 @@
 				$this->data['method'] = __FUNCTION__;
 				$this->data['lista_disciplinas'] = $this->Professor_model->get_disciplinas($this->professor_id, $this->periodo_letivo_id);
 				$this->data['lista_etapas'] = $this->Etapa_model->get_etapa($this->periodo_letivo_id, FALSE, FALSE);
-				//$this->data['lista_etapas_extras'] = $this->Etapa_model->get_etapa($this->periodo_letivo_id);
+
 				$this->data['lista_turmas'] = $this->Professor_model->get_turma($disciplina_id, $this->professor_id, $this->periodo_letivo_id);
 				$this->data['periodo_letivo_id'] = $this->periodo_letivo_id;
 				$this->data['etapa'] = $this->Etapa_model->get_etapa(FALSE, $etapa_id, FALSE);
@@ -156,7 +158,7 @@
 			{
 				$resultado = $this->Nota_model->validar_nota($matricula_id, $etapa_id, $turma_id, $disciplina_id, $nota, $descricao_nota_id);
 
-				$this->data['etapa'] = $this->Etapa_model->get_etapa(FALSE, $etapa_id);
+				$this->data['etapa'] = $this->Etapa_model->get_etapa(FALSE, $etapa_id, FALSE);
 
 				///DETERMINAR SE O BIMESTRE ESTÁ ABERTO.
 				$timeZone = new DateTimeZone('UTC');
@@ -179,7 +181,7 @@
 							$status = "danger";
 					}
 					else 
-						$resultado = "O valor informado ultrapassa o limite de ".$this->Etapa_model->get_etapa(FALSE, $etapa_id, FALSE)['Valor']." pontos estabelecido para o ".$this->Etapa_model->get_etapa(FALSE, $etapa_id)['Nome'].".";
+						$resultado = "O valor informado ultrapassa o limite de ".$this->Etapa_model->get_etapa(FALSE, $etapa_id, FALSE)['Valor']." pontos estabelecido para o ".$this->Etapa_model->get_etapa(FALSE, $etapa_id, FALSE)['Nome'].".";
 				}
 				else
 					$resultado = "Não é possível alterar a nota.";
@@ -235,9 +237,8 @@
 				$this->data['method'] = __FUNCTION__;
 				$this->data['lista_disciplinas'] = $this->Professor_model->get_disciplinas($this->professor_id, $this->periodo_letivo_id);
 				$this->data['lista_etapas'] = $this->Etapa_model->get_etapa($this->periodo_letivo_id, FALSE, FALSE);
-				//$this->data['lista_etapas_extras'] = $this->Etapa_model->get_nota_especial($this->periodo_letivo_id);
 				$this->data['lista_turmas'] = $this->Professor_model->get_turma($disciplina_id, $this->professor_id, $this->periodo_letivo_id);
-				$this->data['etapa'] = $this->Etapa_model->get_etapa(FALSE, FALSE, $etapa_id);
+				$this->data['etapa'] = $this->Etapa_model->get_etapa(FALSE, $etapa_id, FALSE);
 
 				$this->data['meses'] = $this->Calendario_presenca_model->get_intervalo_mes(
 					$this->convert_date($this->Etapa_model->get_etapa(FALSE, $etapa_id, FALSE)['Data_inicio'],"en"), 
@@ -294,7 +295,6 @@
 				$this->data['method'] = __FUNCTION__;
 				$this->data['lista_disciplinas'] = $this->Professor_model->get_disciplinas($this->professor_id, $this->periodo_letivo_id);
 				$this->data['lista_etapas'] = $this->Etapa_model->get_etapa($this->periodo_letivo_id, FALSE, FALSE);
-				//$this->data['lista_etapas_extras'] = $this->Etapa_model->get_nota_especial($this->periodo_letivo_id);
 				
 				$this->data['lista_turmas'] = $this->Professor_model->get_turma($disciplina_id, $this->professor_id, $this->periodo_letivo_id);
 				$this->data['etapa'] = $this->Etapa_model->get_etapa(FALSE, $etapa_id, FALSE);
@@ -316,7 +316,6 @@
 				
 				$this->data['url_part']['disciplina_id'] = $disciplina_id;
 				$this->data['url_part']['etapa_id'] = $etapa_id;
-				$this->data['url_part']['botao'] = $botao;
 
 				////obter a lista de sub_turmas
 				$this->data['lista_subturmas'] = $this->Professor_model->get_sub_turmas($disciplina_id, $turma_id, date('Y-m-d'));
@@ -485,17 +484,17 @@
 				redirect('professor/faltas');
 		}
 
-		public function nota_especial($disciplina_id = FALSE, $turma_id = FALSE, $etapa_id = FALSE)
+		public function etapa_extra($disciplina_id = FALSE, $turma_id = FALSE, $etapa_id = FALSE)
 		{
 			$this->data['title'] = 'Minhas disciplinas';
 			if($this->Geral_model->get_permissao(READ, get_class($this)) == TRUE)
 			{
-				$this->data['method'] = __FUNCTION__;
+				$this->data['method'] = "notas";
 				$this->data['lista_disciplinas'] = $this->Professor_model->get_disciplinas($this->professor_id, $this->periodo_letivo_id);
-				$this->data['lista_etapas'] = $this->Etapa_model->get_etapa($this->periodo_letivo_id);
-				$this->data['lista_etapas_extras'] = $this->Etapa_model->get_nota_especial($this->periodo_letivo_id);
+				$this->data['lista_etapas'] = $this->Etapa_model->get_etapa($this->periodo_letivo_id, FALSE, FALSE);
 				$this->data['lista_turmas'] = $this->Professor_model->get_turma($disciplina_id, $this->professor_id, $this->periodo_letivo_id);
-
+				$this->data['etapa'] = $this->Etapa_model->get_etapa(FALSE, $etapa_id, FALSE);
+				
 				$flag = 0;
 				for($i = 0; $i < COUNT($this->data['lista_turmas']); $i++)
 				{
@@ -523,10 +522,86 @@
 				$this->data['lista_colunas_nota'] = $this->Professor_model->get_colunas_nota($disciplina_id, $turma_id, $etapa_id);
 				$this->data['lista_alunos'] = $this->Professor_model->get_alunos($disciplina_id, $turma_id);
 
-				$this->view("professor/nota_especial", $this->data);
+				$this->view("professor/etapa_extra", $this->data);
 			}
 			else
 				$this->view("templates/permissao", $this->data);
+		}
+		/*!
+		*	RESPONSÁVEL POR RETORNAR OS DADOS QUE IRÃO MONTAR UMA TABELA CONTENDO TODOS OS ALUNOS E TODAS AS NOTAS 
+		*	E FALTAS DE CADA UM E A SITUAÇÃO (APROVADO, REPROVADO, RECUPERACAO FINAL, ESTUDOS INDEPENDENTES).
+		*	
+		*	$disciplina_id -> Id da disciplina para se consultar os dados.
+		*	$turma_id -> Id da turma para indentificar uma disciplina em uma turma.
+		*/
+		public function visao_geral($disciplina_id, $turma_id)
+		{
+			$resultado = "sucesso";
+
+			//TRAZER TODOS OS ALUNOS
+			$this->data['lista_alunos'] = $this->Professor_model->get_alunos($disciplina_id, $turma_id, FALSE);
+			$this->data['lista_etapas'] = $this->Etapa_model->get_etapa($this->periodo_letivo_id, FALSE, FALSE);
+			$this->data['disciplina_id'] = $disciplina_id;
+			$this->data['turma_id'] = $turma_id;
+			$this->data['regra_letiva'] = $this->Regras_model->get_regras(FALSE, $this->periodo_letivo_id, FALSE, FALSE, FALSE);
+
+			$disciplina = $this->Disciplina_model->get_disciplina(FALSE, $disciplina_id, FALSE, FALSE, FALSE);
+			$turma = $this->Disc_turma_model->get_disc_turma_header($turma_id);
+			$periodo = $this->Disc_turma_model->get_periodo_turma($turma_id);
+			
+
+			$resultado = $this->load->view("/professor/_visao_geral", $this->data, TRUE);
+
+			$arr = array('response' => $resultado, 'disciplina' => $disciplina['Nome_disciplina'], 'turma' => $turma['Nome_turma'], 'periodo' => $periodo['Periodo']);
+				header('Content-Type: application/json');
+				echo json_encode($arr);
+		}
+		/*!
+		*	RESPONSÁVEL POR CARREGAR DA MODEL OS HORÁRIOS DE UMA ESPECÍFICA PARA O PROFESSOR.
+		*	
+		*	$turma_id -> Id da turma que se deseja obter os horários.
+		*/
+		public function horarios_turma($turma_id)
+		{
+			//validar o turma id, para garantir que o professor acesse somente os horários das turmas que lhe diz respeito.
+			$flag = 0;
+			$resultado = "sucesso";
+			$this->data['lista_disc_turma_header'] = $this->Disc_turma_model->get_disc_turma_header($turma_id);
+			$periodo = $this->Disc_turma_model->get_periodo_turma($turma_id);
+			$turmas = $this->Professor_model->get_turma(FALSE, $this->professor_id, $this->periodo_letivo_id);
+			for($i = 0; $i < COUNT($turmas); $i ++)
+			{
+				if($turmas[$i]['Turma_id'] == $turma_id)
+					$flag = 1;
+			}
+			if($flag == 1)
+			{
+				$this->data['regras'] = $this->Regras_model->get_regras(FALSE, $this->data['lista_disc_turma_header']['Periodo_letivo_id'], FALSE, FALSE, FALSE);
+				
+				///DADOS DA TURMA
+
+				//CARREGAR TODOS OS INTERVALOS PARA PODER MONTAR O HORÁRIO
+				$this->data['intervalos'] = $this->Intervalo_model->get_intervalo($this->data['lista_disc_turma_header']['Periodo_letivo_id']);
+				$this->data['qtd_intervalo_por_dia'] = $this->Intervalo_model->get_qtd_intervalo_dia($this->data['lista_disc_turma_header']['Periodo_letivo_id']);
+
+				//CARREGAR TODAS AS DISCIPLINAS DA TURMA
+				$this->data['lista_disc_turma_disciplina'] = $this->Disc_turma_model->get_grade_disciplina(
+					$this->Disc_turma_model->get_grade_id_turma($turma_id)['Grade_id'], 
+					$this->Disc_turma_model->get_periodo_turma($turma_id)['Periodo'], $turma_id);
+				
+				//CARREGAR OS DADOS DOS HORÁRIOS VINCULADOS AS DISCIPLINAS
+				$this->data['lista_disc_turma_horario'] = $this->Horario_model->get_disc_hor_turma($turma_id);
+				//print_r($this->data['lista_disc_turma_horario']);
+				//print_r($this->data['lista_disc_turma_header']);
+
+				$resultado = $this->load->view("/professor/horario", $this->data, TRUE);
+			}
+			else
+				$resultado = "Você não tem permissão para visualizar o horário dessa turma.";
+
+			$arr = array('response' => $resultado, 'turma' => $this->data['lista_disc_turma_header']['Nome_turma'],'periodo' => $periodo['Periodo']);
+				header('Content-Type: application/json');
+				echo json_encode($arr);
 		}
 	}
 ?>

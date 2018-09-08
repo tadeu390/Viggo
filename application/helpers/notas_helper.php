@@ -22,17 +22,21 @@
 				return "info";
 			return "danger";
 		}
-
-		public static function get_nota_total_aluno($lista_etapas, $matricula_id, $disc_grade_id, $turma_id)
+		/*!
+		*	RESPONSÁVEL POR CRIAR A INTERFACE QUE BUSCARÁ A NOTA TOTAL DO ALUNO DE UMA DISCIPLINA EM UMA TURMA.
+		*
+		*	$matricula_id -> Matrícula do aluno.
+		*	$disciplina_id -> Id da disciplina que se quer obter a nota.
+		*	$turma_id -> Id da turma do aluno.
+		*	$etapa_id -> Id da etapa, bimestres,trimestre.
+		*/
+		public static function get_total_nota_etapa($matricula_id, $disciplina_id, $turma_id, $etapa_id)
 		{
 			$CI = get_instance();
 			$CI->load->model("Nota_model");	
 
-			$total_nota = 0;
-			for($i = 0; $i < COUNT($lista_etapas); $i++)
-			{
-				$total_nota = $total_nota + $CI->Nota_model->total_nota($matricula_id, $turma_id, $disc_grade_id, $lista_etapas[$i]['Id']);
-			}
+			$total_nota = $CI->Nota_model->total_nota($matricula_id, $turma_id, $disciplina_id, $etapa_id);
+			
 			return $total_nota;
 		}
 

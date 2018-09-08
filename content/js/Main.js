@@ -40,7 +40,7 @@ var Main = {
 	{
 		$("#mensagem_"+tipo).html(mensagem);
 		$('#modal_'+tipo).modal({
-			keyboard: false,
+			keyboard: true,
 			backdrop : 'static',
 		});
 
@@ -1729,8 +1729,63 @@ var Main = {
 
 		Main.create_edit();
 	},
-	visao_geral : function ()
+	visao_geral : function (disciplina_id, turma_id)
 	{
-		Main.modal("large","te");
+		Main.modal("aguardar", "Aguarde...");
+		$.ajax({
+			url: Main.base_url + $("#controller").val() + '/visao_geral/' + disciplina_id + '/' + turma_id,
+			dataType:'json',
+			cache: false,
+			type: 'POST',
+			success: function (data) 
+			{
+				setTimeout(function(){
+					$("#modal_aguardar").modal('hide');
+					
+				},500);
+				Main.modal("large","te");
+
+				////CABEÇALHO
+					$("#header_large").html("<table class='table table-borderless'><tr><td class='text-center'>Turma: "+data.turma+"</td><td class='text-center'>Período / Módulo / Ano: "+data.periodo+"º</td><td class='text-center'>Disciplina: "+data.disciplina+"</td></tr></table>");
+				////CABEÇALHO
+
+				$("#mensagem_large").html(data.response);
+			}
+		}).fail(function(msg){
+		    setTimeout(function(){
+		    	//$("#modal_confirm").modal('hide');
+		    	Main.modal("aviso", "Houve um erro ao processar sua requisição. Verifique sua conexão com a internet.");
+			},500);
+		});
+	},
+	horarios_turma : function (turma_id)
+	{
+		Main.modal("aguardar", "Aguarde...");
+		$.ajax({
+			url: Main.base_url + $("#controller").val() + '/horarios_turma/' + turma_id,
+			dataType:'json',
+			cache: false,
+			type: 'POST',
+			success: function (data) 
+			{
+				setTimeout(function(){
+					$("#modal_aguardar").modal('hide');
+					
+				},500);
+				Main.modal("large","te");
+
+				////CABEÇALHO
+					$("#header_large").html("<table class='table table-borderless'><tr><td class='text-center'>Turma: "+data.turma+"</td><td class='text-center'>Período / Módulo / Ano: "+data.periodo+"º</td></tr></table>");
+				////CABEÇALHO
+
+				$("#mensagem_large").html(data.response);
+			}
+		}).fail(function(msg){
+		    setTimeout(function(){
+		    	//$("#modal_confirm").modal('hide');
+		    	Main.modal("aviso", "Houve um erro ao processar sua requisição. Verifique sua conexão com a internet.");
+			},500);
+		});
 	}
+
 };

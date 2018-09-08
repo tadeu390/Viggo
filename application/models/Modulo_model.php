@@ -101,19 +101,19 @@
 			return $query->row_array();
 		}
 		/*!
-		*	RESPONSÁVEL POR VERIFICAR SE UM DETERMIANDO MODULO JÁ EXISTE NO BANCO DE DADOS.
+		*	RESPONSÁVEL POR VERIFICAR SE UM DETERMIANDO MÓDULO JÁ EXISTE COM A URL INFORMADA.
 		*
 		*	$Nome -> Nome do modulo a ser validado.
 		*	$Id -> Id do modulo.
 		*/
-		public function nome_valido($Nome, $Id)
+		public function url_valida($Url, $Id)
 		{
 			$query = $this->db->query("
-				SELECT Nome FROM Modulo 
-				WHERE UPPER(Nome) = UPPER(".$this->db->escape($Nome).")");
+				SELECT Url FROM Modulo 
+				WHERE UPPER(Url) = UPPER(".$this->db->escape($Url).")");
 			$query = $query->row_array();
 			
-			if(!empty($query) && $this->get_modulo(FALSE ,$Id, FALSE)['Nome_modulo'] != $query['Nome'])
+			if(!empty($query) && $this->get_modulo(FALSE ,$Id, FALSE)['Url'] != $query['Url'])
 				return "invalido";
 			
 			return "valido";

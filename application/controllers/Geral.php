@@ -51,7 +51,7 @@
 			$this->data['url'] = base_url();
 			$this->data['paginacao']['url'] = base_url();
 			$this->data['paginacao']['itens_por_pagina'] = ITENS_POR_PAGINA;
-			$this->data['usuario'] = $this->Usuario_model->get_usuario(1, $this->Account_model->session_is_valid()['id'], FALSE)['Nome_usuario'];
+			$this->data['usuario_logado'] = $this->Usuario_model->get_usuario(1, $this->Account_model->session_is_valid()['id'], FALSE)['Nome_usuario'];
 
 			$this->config_email_server();
 		}
