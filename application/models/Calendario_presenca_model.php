@@ -71,13 +71,14 @@
 			return $query->row_array();
 		}
 		/*!
-			RESPONSÁVEL POR RETORNAR TODAS AS FALTAS DO ALUNO EM UM BIMESTRE.
-
-			$data_inicio - > Data de início do bimestre.
-			$data_fim -> Data de término do bimestre.
-			$matricula_id -> Matrícula do aluno na disciplina.
+		*	RESPONSÁVEL POR RETORNAR TODAS AS FALTAS DO ALUNO EM UM BIMESTRE PARA TUMA DETERMINADA 
+		*	DISCIPLINA.
+		*
+		*	$data_inicio -> Data de início do bimestre.
+		*	$data_fim -> Data de término do bimestre.
+		*	$matricula_id -> Matrícula do aluno na disciplina.
 		*/
-		public function get_faltas_bimestre($data_inicio, $data_fim, $matricula_id)
+		public function get_faltas_etapa($data_inicio, $data_fim, $matricula_id)
 		{
 			$query = $this->db->query("	
 				SELECT COUNT(cp.Presenca) AS Faltas FROM Calendario_presenca cp 
@@ -112,6 +113,27 @@
 				array_push($meses, $query2->row_array());
 			}
 			return $meses;
+		}
+		/*!
+		*	RESPONSÁEL POR RETORNAR DO BANCO A QUANTIDADE TOTAL DE FALTAS DE UM ALUNO EM TODAS AS DISCIPLINAS (utilizado para determinar se 
+		*	o aluno estourou em faltas).
+		*	
+		*	$aluno_id -> Id do aluno que se quer saber a quantidade de faltas.
+		*	$turma_id -> Id da turma do aluno para encontrar todas as disicplinas que o mesmo faz nela.
+		*/
+		public function get_total_faltas($aluno_id, $turma_id)
+		{
+			$query = $this->db->query("
+					SELECT COUNT(cp.Presenca) AS Faltas FROM Disc_turma dt 
+					INNER JOIN Matricula m ON dt.Id = m.Disc_turma_id 
+					INNER JOIN Calendario_presenca cp ON m.Id = cp.Matricula_id 
+					INNER JOIN Inscricao i ON i.Id = m.Inscricao_id 
+					INNER JOIN Aluno a ON i.Aluno_id = a.Id 
+					WHERE dt.Turma_id = ".$this->db->escape($turma_id)." AND a.Id = ".$this->db->escape($aluno_id)." AND 
+					cp.Presenca = 0
+			");
+
+			return $query->row_array();
 		}
 	}
 ?>

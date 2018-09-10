@@ -19,7 +19,7 @@
 		{
 			$query = $this->db->query("
 				SELECT m.Nome AS Nome_modulo, m.Id AS Modulo_id, a.Usuario_id, 
-				a.Criar, a.Ler, a.Atualizar, a.Remover, a.Id as Acesso_id  
+				a.Criar, a.Ler, a.Atualizar, a.Remover, a.Id as Acesso_id, m.Url AS Url_modulo   
 				FROM Modulo m 
 				LEFT JOIN Acesso a ON m.id = a.Modulo_id AND a.Usuario_id = ".$this->db->escape($id)."
 				WHERE a.Usuario_id = ".$this->db->escape($id)." OR a.Usuario_id IS NULL ORDER BY m.Id");

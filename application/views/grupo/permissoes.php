@@ -87,6 +87,8 @@
 										echo"</div>";
 									echo "</td>";
 									echo "<td>";
+									echo "</td>";
+									echo "<td>";
 										echo"<div  title='Habilitar/desabilitar permissão de Criar para todos módulos' class='checkbox checbox-switch switch-success custom-controls-stacked'>";
 											echo"<label for='hab_all_criar'>";
 												echo"<input onclick='Main.habilita_permissoes(\"criar\");' type='checkbox' id='hab_all_criar' name='hab_all_criar'><span></span>";
@@ -117,6 +119,7 @@
 								echo "</tr>";
 								echo "<tr>";
 									echo "<td>Módulo</td>";
+									echo "<td>Url</td>";
 									echo "<td>Criar</td>";
 									echo "<td>Ler</td>";
 									echo "<td>Atualizar</td>";
@@ -132,6 +135,9 @@
 										echo"<tr>";
 											echo"<td>";
 												echo $lista_grupo_acesso[$i]['Nome_modulo'];
+											echo"</td>";
+											echo"<td>";
+												echo $lista_grupo_acesso[$i]['Url_modulo'];
 											echo"</td>";
 											echo"<td>";
 												echo "<input type='hidden' name='modulo_id".$i."' value='".$lista_grupo_acesso[$i]['Modulo_id']."' />";

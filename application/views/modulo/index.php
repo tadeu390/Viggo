@@ -18,7 +18,7 @@
 				echo "<table class='table table-striped table-hover text-white'>";
 					echo "<thead>";
 						echo"<tr>";
-							echo"<td class='text-right' colspan='4'>";
+							echo"<td class='text-right' colspan='5'>";
 								if(permissao::get_permissao(CREATE,$controller))
 									echo"<a class='btn btn-success' href='".$url."$controller/create/0/'><span class='glyphicon glyphicon-plus'></span> Novo módulo</a>";
 							echo"</td>";
@@ -30,6 +30,13 @@
 								if($paginacao['order'] == 'DESC' && $paginacao['field'] == 'Nome_modulo')
 									echo "&nbsp;<div class='fa fa-chevron-down'></div>";
 								else if($paginacao['order'] == 'ASC' && $paginacao['field'] == 'Nome_modulo')
+									echo "&nbsp;<div class='fa fa-chevron-up'></div>";
+							echo"</td>";
+							echo "<td>";
+								echo"<a href='".$url."$controller/index/".$paginacao['pg_atual']."/Url/".$paginacao['order']."'>Url</a>";
+								if($paginacao['order'] == 'DESC' && $paginacao['field'] == 'Url')
+									echo "&nbsp;<div class='fa fa-chevron-down'></div>";
+								else if($paginacao['order'] == 'ASC' && $paginacao['field'] == 'Url')
 									echo "&nbsp;<div class='fa fa-chevron-up'></div>";
 							echo"</td>";
 							echo "<td>";
@@ -51,6 +58,7 @@
 							echo "<tr >";
 								echo "<td $cor>".($i + 1)."</td>";
 								echo "<td $cor>".$lista_modulos[$i]['Nome_modulo']."</td>";
+								echo "<td $cor>".$lista_modulos[$i]['Url_modulo']."</td>";
 								echo "<td $cor>".(($lista_modulos[$i]['Ativo'] == 1) ? 'Sim' : 'Não')."</td>";
 								echo "<td class='text-right'>";
 								if(permissao::get_permissao(UPDATE,$controller))

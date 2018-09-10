@@ -26,7 +26,7 @@
 						echo "<tr>";
 							echo "<td>#</td>";
 							echo "<td>";
-								echo"<a href='".$url."$controller/index/".$paginacao['pg_atual']."/Nome_modalidade/".$paginacao['order']."'>Nome</a>";
+								echo"<a href='".$url."$controller/index/".$paginacao['pg_atual']."/Nome/".$paginacao['order']."'>Nome</a>";
 								if($paginacao['order'] == 'DESC' && $paginacao['field'] == 'Nome')
 									echo "&nbsp;<div class='fa fa-chevron-down'></div>";
 								else if($paginacao['order'] == 'ASC' && $paginacao['field'] == 'Nome')

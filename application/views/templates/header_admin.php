@@ -127,7 +127,7 @@
 									</li>
 									<li class="nav-item">
 										<div class="dropdown">
-										  	<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><?php echo $usuario; ?>
+										  	<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><?php echo $usuario_logado; ?>
 										  	<span class="caret"></span></button>
 										  	<ul class="dropdown-menu">
 										    	<?php

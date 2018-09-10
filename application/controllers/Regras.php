@@ -4,6 +4,8 @@
 	*	ESTA CLASSE TEM POR FUNÇÃO CONTROLAR TUDO RELATIVO AS REGRAS DO PERÍODO LETIVO, OU SEJAS, AS REGRAS ADOTADAS GERENCIAR A SITUAÇÃO DO ALUNO EM 
 	*	VÁRIOS ASPECTOS.
 	*/
+
+
 	class Regras extends Geral 
 	{
 		public function __construct()
@@ -14,8 +16,7 @@
 			$this->load->model('Regras_model');
 			$this->load->model('Modalidade_model');
 			$this->load->model('Intervalo_model');
-			$this->load->model('Bimestre_model');
-			$this->load->model('Nota_especial_model');
+			$this->load->model('Etapa_model');
 			$this->set_menu();
 			$this->data['controller'] = strtolower(get_class($this));
 			$this->data['menu_selectd'] = $this->Geral_model->get_identificador_menu(strtolower(get_class($this)));
@@ -64,12 +65,13 @@
 				$this->data['obj'] = $this->Regras_model->get_regras(FALSE, $id, FALSE, FALSE);
 				$this->data['modalidades'] = $this->Modalidade_model->get_modalidade(TRUE, FALSE, FALSE);
 				$this->data['intervalos'] = $this->Intervalo_model->get_intervalo(FALSE);
-				$this->data['bimestres'] = $this->Bimestre_model->get_bimestre(FALSE);
-				$this->data['notas_especiais'] = $this->Nota_especial_model->get_nota_especial(FALSE);
+				$this->data['etapas'] = $this->Etapa_model->get_etapa(FALSE, FALSE, ETAPA_NORMAL);
+				$this->data['etapas_extras'] = $this->Etapa_model->get_etapa(FALSE, FALSE, ETAPA_EXTRA);
 				if($id > 0)//QUANDO CLICA EM COPIAR PARA
 				{
 					$this->data['intervalos'] = $this->Intervalo_model->get_intervalo($id);
-					$this->data['bimestres'] = $this->Bimestre_model->get_bimestre($id);
+					$this->data['etapas'] = $this->Etapa_model->get_etapa($id, FALSE, ETAPA_NORMAL);
+					$this->data['etapas_extras'] = array();//$this->Etapa_model->get_etapa($id, FALSE, ETAPA_EXTRA);
 					$this->data['obj']['Id'] = ""; //copiar para.
 				}
 				$this->view("regras/create_edit", $this->data);
@@ -91,8 +93,8 @@
 				$this->data['obj'] = $this->Regras_model->get_regras(FALSE, $id, FALSE, FALSE);
 				$this->data['modalidades'] = $this->Modalidade_model->get_modalidade(FALSE);
 				$this->data['intervalos'] = $this->Intervalo_model->get_intervalo($id);
-				$this->data['bimestres'] = $this->Bimestre_model->get_bimestre($id);
-				$this->data['notas_especiais'] = $this->Nota_especial_model->get_nota_especial($id);
+				$this->data['etapas'] = $this->Etapa_model->get_etapa($id, FALSE, ETAPA_NORMAL);
+				$this->data['etapas_extras'] = $this->Etapa_model->get_etapa($id, FALSE, ETAPA_EXTRA);
 				$this->view("regras/create_edit", $this->data);
 			}
 			else
@@ -144,44 +146,48 @@
 			
 			$dataToSave['intervalos'] = $dataIntervaloToSave;
 			
-			$dataBimestreToSave = array();
-			for($i = 0; $i < $this->input->post('max_value_bimestre'); $i++)
+			$dataEtapaToSave = array();
+			for($i = 0; $i < $this->input->post('max_value_etapa'); $i++)
 			{
-				if($this->input->post("nome_bimestre".$i) != null)
+				if($this->input->post("nome_etapa".$i) != null)
 				{
-					$dataBimestreLinhaToSave = array(
+					$dataEtapaLinhaToSave = array(
 						//'Periodo_letivo_id' => $Periodo_letivo_id,
-						'Nome' => $this->input->post("nome_bimestre".$i),
+						'Nome' => $this->input->post("nome_etapa".$i),
 						'Valor' => $this->input->post("valor".$i),
+						'Tipo' => ETAPA_NORMAL,
 						'Data_inicio' => $this->convert_date($this->input->post("data_inicio".$i),"en"),
 						'Data_fim' => $this->convert_date($this->input->post("data_fim".$i),"en"),
 						'Data_abertura' => $this->convert_date($this->input->post("data_abertura".$i),"en"),
 						'Data_fechamento' => $this->convert_date($this->input->post("data_fechamento".$i),"en")
 					);
-					array_push($dataBimestreToSave, $dataBimestreLinhaToSave);
+					array_push($dataEtapaToSave, $dataEtapaLinhaToSave);
 				}
 			}
-			$dataToSave['bimestres'] = $dataBimestreToSave;
+			$dataToSave['etapas'] = $dataEtapaToSave;
 
-			$dataNotaEspecialToSave = array();
-			for($i = 0; $i < $this->input->post('max_value_nota_especial'); $i++)
+			$dataEtapaExtraToSave = array();
+			for($i = 0; $i < $this->input->post('max_value_etapa_extra'); $i++)
 			{
-				if($this->input->post("nome_nota_especial".$i) != null)
+				if($this->input->post("nome_etapa_extra".$i) != null)
 				{
-					$dataNotaEspecialLinhaToSave = array(
+					$dataEtapaExtraLinhaToSave = array(
 						//'Periodo_letivo_id' => $Periodo_letivo_id,
-						'Nome' => $this->input->post("nome_nota_especial".$i),
-						'Valor' => $this->input->post("valor_nota_especial".$i),
-						'Media' => $this->input->post("media_nota_especial".$i),
-						'Data_abertura' => $this->convert_date($this->input->post("data_abertura_nota_especial".$i),"en"),
-						'Data_fechamento' => $this->convert_date($this->input->post("data_fechamento_nota_especial".$i),"en")
+						'Nome' => $this->input->post("nome_etapa_extra".$i),
+						'Valor' => $this->input->post("valor_etapa_extra".$i),
+						'Tipo' => ETAPA_EXTRA,
+						'Media' => $this->input->post("media_etapa_extra".$i),
+						'Data_abertura' => $this->convert_date($this->input->post("data_abertura_etapa_extra".$i),"en"),
+						'Data_fechamento' => $this->convert_date($this->input->post("data_fechamento_etapa_extra".$i),"en")
 					);
-					array_push($dataNotaEspecialToSave, $dataNotaEspecialLinhaToSave);
+					array_push($dataEtapaExtraToSave, $dataEtapaExtraLinhaToSave);
 				}
 			}
-			$dataToSave['notas_especiais'] = $dataNotaEspecialToSave;
+			$dataToSave['etapas_extras'] = $dataEtapaExtraToSave;
+
 
 			//BLOQUEIA ACESSO DIRETO AO MÉTODO
+			$a = 0;
 			 if(!empty($this->input->post()))
 			 {
 			 	if($this->Geral_model->get_permissao(CREATE, get_class($this)) == TRUE || $this->Geral_model->get_permissao(UPDATE, get_class($this)) == TRUE)
@@ -200,22 +206,24 @@
 								$this->Intervalo_model->delete_intervalo($intervalos[$i]['Id']);
 						}
 
-						if(count($dataToSave['bimestres']) > 0)
-							$this->Bimestre_model->set_bimestre($dataToSave['bimestres'], $resultado);
+						if(count($dataToSave['etapas']) > 0)
+							$this->Etapa_model->set_etapa($dataToSave['etapas'], $resultado);
 						else
 						{
-							$bimestres = $this->Bimestre_model->get_bimestre($resultado);
-							for($i = 0; $i < count($bimestres); $i++)
-								$this->Bimestre_model->delete_bimestre($bimestres[$i]['Id']);
+							$etapas = $this->Etapa_model->get_etapa($resultado, FALSE, ETAPA_NORMAL);
+							for($i = 0; $i < count($etapas); $i++)
+								$this->Etapa_model->delete_etapa($etapas[$i]['Id']);
 						}
 
-						if(count($dataToSave['notas_especiais']) > 0)
-							$this->Nota_especial_model->set_nota_especial($dataToSave['notas_especiais'], $resultado);
+						if(count($dataToSave['etapas_extras']) > 0)
+						{
+							$this->Etapa_model->set_etapa_extra($dataToSave['etapas_extras'], $resultado);
+						}
 						else
 						{
-							$notas_especiais = $this->Nota_especial_model->get_nota_especial($resultado);
-							for($i = 0; $i < count($notas_especiais); $i++)
-								$this->Nota_especial_model->delete_nota_especial($notas_especiais[$i]['Id']);
+							$etapas_extras = $this->Etapa_model->get_etapa($resultado, FALSE, ETAPA_EXTRA);
+							for($i = 0; $i < count($etapas_extras); $i++)
+								$this->Etapa_model->delete_etapa($etapas_extras[$i]['Id']);
 						}
 
 				 		$resultado = "sucesso";
@@ -310,7 +318,7 @@
 				$this->data['title'] = 'Detalhes da regra';
 				$this->data['obj'] = $this->Regras_model->get_regras(FALSE, $id, FALSE, FALSE);
 				$this->data['intervalos'] = $this->Intervalo_model->get_intervalo($id);
-				$this->data['bimestres'] = $this->Bimestre_model->get_bimestre($id);
+				$this->data['etapas'] = $this->Etapa_model->get_etapa($id, FALSE, ETAPA_NORMAL);
 				$this->view("regras/detalhes", $this->data);
 			}
 			else

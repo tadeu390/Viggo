@@ -116,8 +116,8 @@
 		{
 			if(empty($Modulo['Nome']))
 				return "Informe o nome de módulo";
-			else if($this->Modulo_model->nome_valido($Modulo['Nome'], $Modulo['Id']) == 'invalido')
-				return "O nome informado para o módulo já se encontra cadastrado no sistema.";
+			else if($this->Modulo_model->url_valida($Modulo['Url'], $Modulo['Id']) == 'invalido')
+				return "A URL informada para o módulo já se encontra cadastrada no sistema.";
 			else if(mb_strlen($Modulo['Nome']) > 20)
 				return "Máximo 20 caracteres";
 			else if(empty($Modulo['Descricao']))

@@ -18,16 +18,14 @@
 		<div class="row">
 			<div class="col-lg-2 padding10" style="border-right: 1px solid white; border-bottom: 1px solid white">
 				<?php
-					$data['lista_disciplinas'] = $lista_disciplinas;
-					$this->load->view("professor/_disciplina", $data);
+					$this->load->view("professor/_disciplina");
 				?>
 			</div>
 			<div class="col-lg-10" style="border-bottom: 1px solid white">
 				<div class="row padding10">
 					<?php
-						$data['lista_bimestres'] = $lista_bimestres;
-						$data['lista_notas_especiais'] = $lista_notas_especiais;
-						$this->load->view("professor/_etapas", $data);
+
+						$this->load->view("professor/_etapas");
 					?>
 				</div>
 			</div>
@@ -36,9 +34,7 @@
 			<div class="col-lg-2" style="border-right: 1px solid white">
 				<div class="row padding10">
 					<?php
-						$data['lista_turmas'] = $lista_turmas;
-						$data['url_part'] = $url_part;
-						$this->load->view("professor/_turma", $data);
+						$this->load->view("professor/_turma");
 					?>
 				</div>
 			</div>
@@ -46,12 +42,12 @@
 				<div class="row padding10">
 					<div class="col-lg-6">
 						<a href="<?php echo $url; ?>professor/notas/<?php echo $url_part['disciplina_id']."/".$url_part['turma_id']."/".$url_part['etapa_id']; ?>" class="btn btn-danger" style="width: 100px">Notas</a>
-						<a href="<?php echo $url; ?>professor/faltas/<?php echo $url_part['disciplina_id']."/".$url_part['turma_id']."/".$url_part['etapa_id']; ?>" class="btn btn-success" style="width: 100px; margin-left: -8px; border-radius: 0px 5px 5px 0px;">Faltas</a>
+						<a href="<?php echo $url; ?>professor/faltas/<?php echo $url_part['disciplina_id']."/".$url_part['turma_id']."/".$url_part['etapa_id']; ?>" class="btn btn-success" style="border-left: 1px solid white; width: 100px; margin-left: -8px; border-radius: 0px 5px 5px 0px;">Faltas</a>
 						<a href="#" onclick="Main.visao_geral(<?php echo $url_part['disciplina_id'].",".$url_part['turma_id']; ?>);" class="btn btn-danger" style="border-left: 1px solid white; width: 100px; margin-left: -8px; border-radius: 0px 5px 5px 0px;">Visão geral</a>
 					</div>
 					<div class="col-lg-6 text-right">
 						<?php 
-							echo "Aberto a partir de ".(!empty($bimestre['Data_abertura']) ? $bimestre['Data_abertura'] : '')." até ".(!empty($bimestre['Data_fechamento']) ? $bimestre['Data_fechamento'] : '');
+							echo "Aberto a partir de ".(!empty($etapa['Data_abertura']) ? $etapa['Data_abertura'] : '')." até ".(!empty($etapa['Data_fechamento']) ? $etapa['Data_fechamento'] : '');
 						?>
 					</div>
 				</div>

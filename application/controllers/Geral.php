@@ -12,6 +12,10 @@
 	define("ALUNO", 2);
 	define("PROFESSOR", 4);
 	define("SECRETARIA", 3);
+
+	define("ETAPA_NORMAL", 1);
+	define("ETAPA_EXTRA", 2);
+	
 	class Geral extends CI_Controller 
 	{
 		//VARIAVEL RESPONSÁVEL POR ARMAZENZAR TODO O CONTEÚDO A SER EXIBIDO NAS VIEWS.
@@ -47,7 +51,7 @@
 			$this->data['url'] = base_url();
 			$this->data['paginacao']['url'] = base_url();
 			$this->data['paginacao']['itens_por_pagina'] = ITENS_POR_PAGINA;
-			$this->data['usuario'] = $this->Usuario_model->get_usuario(1, $this->Account_model->session_is_valid()['id'], FALSE)['Nome_usuario'];
+			$this->data['usuario_logado'] = $this->Usuario_model->get_usuario(1, $this->Account_model->session_is_valid()['id'], FALSE)['Nome_usuario'];
 
 			$this->config_email_server();
 		}

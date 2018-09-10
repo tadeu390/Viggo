@@ -31,23 +31,28 @@
 			return $query->result_array();
 		}
 		/*!
-		*	RESPONSÁVEL POR RETORNAR TODAS AS TURMAS QUE O PROFESSOR DA AULA NO PERÍODO SELECIONADO.
+		*	RESPONSÁVEL POR RETORNAR TODAS AS TURMAS QUE O PROFESSOR DA AULA NO PERÍODO SELECIONADO (utilizado para listar as turmas de cada disciplina e 
+		*	também utilizado para listar as turmas pra que o professor possa ver o horário).
 		*
 		*	$disciplina_id -> Id da disciplina de uma determinada grade.
 		*	$professor_id -> Id do professor para se obter as disciplinas ligadas a ele.
 		*	$periodo_letivo_id -> Id do período letivo selecionado.
 		*/
-		public function get_turma($disciplina_id, $professor_id, $periodo_letivo_id)
+		public function get_turma($disciplina_id = FALSE, $professor_id, $periodo_letivo_id)
 		{
+			$disciplina = "";
+			if($disciplina_id !== FALSE)
+				$disciplina = " AND dg.Disciplina_id = ".$this->db->escape($disciplina_id);
+
 			$query = $this->db->query("
 				SELECT t.Nome AS Nome_turma, dg.Disciplina_id, t.Id AS Turma_id
 				FROM Turma t 
 				INNER JOIN Disc_turma dt ON t.Id = dt.Turma_id 
 				INNER JOIN Disc_grade dg ON dg.Id = dt.Disc_grade_id  
 				INNER JOIN Disc_hor dh ON dh.Disc_turma_id = dt.Id #somente turmas que tem a disciplina em questão em algum horário
-				WHERE dt.Professor_Id = ".$this->db->escape($professor_id)." AND dg.Disciplina_id = ".$this->db->escape($disciplina_id)."  AND 
+				WHERE dt.Professor_Id = ".$this->db->escape($professor_id)." ".$disciplina." AND 
 				dt.periodo_letivo_id = ".$this->db->escape($periodo_letivo_id)." 
-				GROUP BY 1, 2, 3  
+				GROUP BY 1, 2, 3
 			");
 
 			return $query->result_array();
@@ -62,21 +67,21 @@
 		public function get_etapa_default($periodo_letivo_id)
 		{
 			$query = $this->db->query("
-				SELECT * FROM Bimestre 
+				SELECT * FROM Etapa 
 				WHERE CAST(NOW() AS DATE) >= CAST(Data_inicio AS DATE) AND CAST(NOW() AS DATE) <= CAST(Data_fim AS DATE) AND 
 				Periodo_letivo_id = ".$this->db->escape($periodo_letivo_id)."");
 
 			if(empty($query->row_array()))
 			{
 				$query = $this->db->query("
-					SELECT * FROM Nota_especial  
+					SELECT * FROM Etapa  
 					WHERE CAST(NOW() AS DATE) >= CAST(Data_abertura AS DATE) AND CAST(NOW() AS DATE) <= CAST(Data_fechamento AS DATE) AND 
 					Periodo_letivo_id = ".$this->db->escape($periodo_letivo_id)."");
 				
 				if(empty($query->row_array()))
 				{
 					$query = $this->db->query("
-						SELECT * FROM Bimestre 
+						SELECT * FROM Etapa 
 						WHERE Periodo_letivo_id = ".$this->db->escape($periodo_letivo_id)." ORDER BY Data_inicio LIMIT 1");
 				}
 			}
@@ -150,7 +155,7 @@
 		/*!
 			RESPONSÁVEL POR RETORNAR TODAS AS COLUNAS DE NOTAS EXISTENTES PARA UMA DETERMINADA DISCIPLINA EM UMA DETERMINADA TURMA DE UM DETERMINADO BIMESTRE
 		*/
-		public function get_colunas_nota($disciplina_id, $turma_id, $bimestre_id)
+		public function get_colunas_nota($disciplina_id, $turma_id, $etapa_id)
 		{
 			$query = $this->db->query("
 				SELECT dn.Descricao, dn.Id AS Descricao_nota_id FROM Disc_turma dt 
@@ -161,7 +166,7 @@
 
 				WHERE dg.Disciplina_id = ".$this->db->escape($disciplina_id)." AND 
 				dt.Turma_id = ".$this->db->escape($turma_id)." AND 
-				n.Bimestre_id = ".$this->db->escape($bimestre_id)." 
+				n.etapa_id = ".$this->db->escape($etapa_id)." 
 				GROUP BY dn.Descricao, dn.Id ORDER BY n.Id");
 
 			return $query->result_array();
@@ -244,7 +249,7 @@
 				$sub_turma = "";
 			$query = $this->db->query("
 				SELECT u.Nome AS Nome_aluno, m.Id AS Matricula_id, 
-				dh.Sub_turma
+				dh.Sub_turma, a.Id AS Aluno_id
 				FROM Disc_turma dt 
 				INNER JOIN Disc_grade dg ON dt.Disc_grade_id = dg.Id 
 				INNER JOIN Matricula m ON m.Disc_turma_id = dt.Id  
