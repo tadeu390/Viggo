@@ -70,17 +70,13 @@
 					<div class="col-lg-4">
 						<button class="btn btn-danger" <?php echo $status_bimestre; ?> onclick="Main.add_coluna_nota();">Adicionar coluna</button>
 					</div>
-					<div class="col-lg-4 text-right">
-						<a href="<?php echo $url; ?>professor/notas_geral/<?php echo $url_part['disciplina_id']."/".$url_part['turma_id']."/".$url_part['bimestre_id']; ?>" class="btn btn-danger" style="width: 100px">Geral</a>
-						<a href="<?php echo $url; ?>professor/notas/<?php echo $url_part['disciplina_id']."/".$url_part['turma_id']."/".$url_part['bimestre_id']; ?>" class="btn btn-success" style="width: 100px; margin-left: -8px; border-radius: 0px 5px 5px 0px;">Detalhado</a>
-					</div>
 				</div>
 				<div class="row padding10">
 					<div class="col-lg-12">
 						<table class="table table-striped table-bordered text-white" style="width: auto;">
 							<thead>
 								<tr id='cabecalho_nota'>
-									<td style="width: 25%;" class="text-center">Aluno</td>
+									<td class="text-center">Aluno</td>
 									<?php
 										$limite_descricao_nota = 0;
 										for ($i = 0; $i < COUNT($lista_colunas_nota) ; $i++)

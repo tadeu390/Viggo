@@ -288,6 +288,17 @@
 				$this->data['lista_turmas'] = $this->Professor_model->get_turma($disciplina_id, $this->professor_id, $this->periodo_letivo_id);
 				$this->data['bimestre'] = $this->Bimestre_model->get_bimestre(FALSE, $bimestre_id);
 
+				$this->data['meses'] = $this->Calendario_presenca_model->get_intervalo_mes(
+					$this->convert_date($this->Bimestre_model->get_bimestre(FALSE, $bimestre_id)['Data_inicio'],"en"), 
+					$this->convert_date($this->Bimestre_model->get_bimestre(FALSE, $bimestre_id)['Data_fim'],"en"));
+				
+				//especificar uma subturma default para a turma em questão
+				$this->data['lista_subturmas'] = $this->Professor_model->get_sub_turmas($disciplina_id, $turma_id, date('Y-m-d'));
+				if($this->sub_turma_default == null)
+					$this->sub_turma_default =  (empty($this->data['lista_subturmas'][0]['Sub_turma']) ? 0 : $this->data['lista_subturmas'][0]['Sub_turma']);
+
+				$this->data['lista_alunos'] = $this->Professor_model->get_alunos($disciplina_id, $turma_id);
+
 				//////DETERMINAR A DISCIPLINA PADRÃO A SER SELECIONADA, ESSE TRATAMENTO É NECESSÁRIO, POIS AO TROCAR DE DISCIPLINA, O ID DE TURMA SUBMETIDO PODE NÃO SERVIR DE NADA, 
 				//////CASO ESSA TURMA SELECIONADA NÃO APAREÇA NOVAMENTE COM A TROCA DE DISCIPLINA.
 				$flag = 0;
@@ -305,59 +316,6 @@
 				$this->data['url_part']['disciplina_id'] = $disciplina_id;
 				$this->data['url_part']['bimestre_id'] = $bimestre_id;
 				$this->view("professor/faltas", $this->data);
-			}
-			else
-				$this->view("templates/permissao", $this->data);
-		}
-		/*!
-		*	RESPONSÁVEL POR RECEBER DA MODEL TODAS AS DISCIPLINAS E TODOS OS DADOS DE FALTAS DE CADA ALUNO DE UM DETERMINADO PROFESSOR E ENVIA-LOS A VIEW.
-		*
-		*	$disciplina_id -> Id da disciplina da grade. É usado para se obter as faltas da disciplina pra cada aluno.
-		*	$turma_id -> Id da turma que está sendo consultada pelo professor.
-		*	$bimestre_id -> Id do bimestre especificado pelo usuário quando clicar nos botões de bimestres;
-		*/
-		public function faltas_geral($disciplina_id = FALSE, $turma_id = FALSE, $bimestre_id = FALSE)
-		{
-			if($disciplina_id == FALSE)//SE NADA FOI ESPECFICADO ENTAO DETERMINAR A PARTIR DOS DEFAULT.
-			{
-				$disciplina_id = $this->disciplina_id_default;
-				$turma_id = $this->turma_id_default;
-				$bimestre_id = $this->bimestre_id_default;
-			}
-			
-			$this->data['title'] = 'Minhas disciplinas';
-			if($this->Geral_model->get_permissao(READ, get_class($this)) == TRUE)
-			{
-				$this->data['method'] = __FUNCTION__;
-				$this->data['lista_disciplinas'] = $this->Professor_model->get_disciplinas($this->professor_id, $this->periodo_letivo_id);
-				$this->data['lista_bimestres'] = $this->Bimestre_model->get_bimestre($this->periodo_letivo_id);
-				$this->data['lista_notas_especiais'] = $this->Nota_especial_model->get_nota_especial($this->periodo_letivo_id);
-				$this->data['lista_turmas'] = $this->Professor_model->get_turma($disciplina_id, $this->professor_id, $this->periodo_letivo_id);
-				$this->data['bimestre'] = $this->Bimestre_model->get_bimestre(FALSE, $bimestre_id);
-
-				$this->data['meses'] = $this->Calendario_presenca_model->get_intervalo_mes(
-					$this->convert_date($this->Bimestre_model->get_bimestre(FALSE, $bimestre_id)['Data_inicio'],"en"), 
-					$this->convert_date($this->Bimestre_model->get_bimestre(FALSE, $bimestre_id)['Data_fim'],"en"));
-				
-				$this->data['lista_alunos'] = $this->Professor_model->get_alunos($disciplina_id, $turma_id, $this->sub_turma_default);
-
-				//////DETERMINAR A DISCIPLINA PADRÃO A SER SELECIONADA, ESSE TRATAMENTO É NECESSÁRIO, POIS AO TROCAR DE DISCIPLINA, O ID DE TURMA SUBMETIDO PODE NÃO SERVIR DE NADA, 
-				//////CASO ESSA TURMA SELECIONADA NÃO APAREÇA NOVAMENTE COM A TROCA DE DISCIPLINA.
-				$flag = 0;
-				for($i = 0; $i < COUNT($this->data['lista_turmas']); $i++)
-				{
-					if($this->data['lista_turmas'][$i]['Turma_id'] == $turma_id)
-						$flag = 1;
-				}
-				if($flag == 1)
-					$this->data['url_part']['turma_id'] = $turma_id;///SE A TURMA EXISTE NA DISCIPLINA SELECIONADA ENTÃO MANTÉM O ID DE TURMA SUBMETIDO.
-				else 
-					$this->data['url_part']['turma_id'] = $this->data['lista_turmas'][0]['Turma_id'];//CASO CONTRÁRIO PEGAR POR DEFAUL O PRIMEIRO ID DISPONÍVEL.
-				//////
-
-				$this->data['url_part']['disciplina_id'] = $disciplina_id;
-				$this->data['url_part']['bimestre_id'] = $bimestre_id;
-				$this->view("professor/faltas_geral", $this->data);
 			}
 			else
 				$this->view("templates/permissao", $this->data);
@@ -405,16 +363,19 @@
 					$turma_id = $this->data['lista_turmas'][0]['Turma_id'];
 				}
 				
-				
 				$this->data['url_part']['disciplina_id'] = $disciplina_id;
 				$this->data['url_part']['bimestre_id'] = $bimestre_id;
 				
-				$this->data['sub_turma'] = $this->sub_turma_default;
 
 				////obter a lista de sub_turmas
 				$this->data['lista_subturmas'] = $this->Professor_model->get_sub_turmas($disciplina_id, $turma_id, date('Y-m-d'));
-				//$subturma = (empty($this->data['lista_subturmas'][0]['Sub_turma']) ? 0 : $this->data['lista_subturmas'][0]['Sub_turma']);
 				
+				//especificar uma subturma default para a turma em questão
+				if($this->sub_turma_default == null)
+					$this->sub_turma_default =  (empty($this->data['lista_subturmas'][0]['Sub_turma']) ? 0 : $this->data['lista_subturmas'][0]['Sub_turma']);
+				
+				$this->data['sub_turma'] = $this->sub_turma_default;
+
 				//$this->data['subturma'] = $subturma;
 				//////obter os alunos para a chamada
 				$this->data['lista_alunos'] = $this->Professor_model->get_alunos($disciplina_id, $turma_id, $this->sub_turma_default);
@@ -425,7 +386,15 @@
 					$this->data['lista_horarios'] = $this->Professor_model->get_horarios_professor($disciplina_id, $turma_id, $this->professor_id, $this->sub_turma_default, date('Y-m-d'), 0);
 
 				if(!empty($this->data['lista_horarios']))
-					$this->data['conteudo'] = $this->Conteudo_model->get_conteudo($this->data['lista_horarios'][0]['Disc_hor_id']);	
+				{
+					for($i = 0; $i < COUNT($this->data['lista_horarios']); $i ++)
+					{
+						$this->data['conteudo'] = $this->Conteudo_model->get_conteudo($this->data['lista_horarios'][$i]['Disc_hor_id']);	
+						if(!empty($this->data['conteudo']))//tentar até achar em algum horário, isso porque pra mesma data é registrado o mesmo conteudo independentemente 
+						//da quantidade de aula e se for removido alguma disciplina do horario entao é necessario procurar nas restantes que ficou até achar o coteúdo.
+							break;
+					}
+				}
 				else 
 					$this->data['conteudo'] = "";
 
@@ -482,7 +451,15 @@
 			}
 			
 			if(!empty($this->data['lista_horarios']))
-				$this->data['conteudo'] = $this->Conteudo_model->get_conteudo($this->data['lista_horarios'][0]['Disc_hor_id']);	
+			{
+				for($i = 0; $i < COUNT($this->data['lista_horarios']); $i ++)
+				{
+					$this->data['conteudo'] = $this->Conteudo_model->get_conteudo($this->data['lista_horarios'][$i]['Disc_hor_id']);	
+					if(!empty($this->data['conteudo']))//tentar até achar em algum horário, isso porque pra mesma data é registrado o mesmo conteudo independentemente 
+					//da quantidade de aula e se for removido alguma disciplina do horario entao é necessario procurar nas restantes que ficou até achar o coteúdo.
+						break;
+				}
+			}
 			else 
 				$this->data['conteudo'] = "";
 			

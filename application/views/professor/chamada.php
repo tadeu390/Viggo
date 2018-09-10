@@ -100,7 +100,7 @@
 					</div>
 				</div>
 				<div class="row padding10" style="padding-top: 0px; padding-bottom: 0px;">
-					<div class="col-lg-12" style="display: none;" id="div_btn_save">
+					<div class="col-lg-12" id="div_btn_save">
 						<?php
 							if (empty($obj['Id']))
 								echo "<input type='submit' class='btn btn-danger btn-block' style='width: 200px;' value='Cadastrar'>";

@@ -44,6 +44,7 @@
 				FROM Turma t 
 				INNER JOIN Disc_turma dt ON t.Id = dt.Turma_id 
 				INNER JOIN Disc_grade dg ON dg.Id = dt.Disc_grade_id  
+				INNER JOIN Disc_hor dh ON dh.Disc_turma_id = dt.Id #somente turmas que tem a disciplina em questão em algum horário
 				WHERE dt.Professor_Id = ".$this->db->escape($professor_id)." AND dg.Disciplina_id = ".$this->db->escape($disciplina_id)."  AND 
 				dt.periodo_letivo_id = ".$this->db->escape($periodo_letivo_id)." 
 				GROUP BY 1, 2, 3  
@@ -126,12 +127,16 @@
 			");
 			if(empty($query->row_array()))
 			{
-				$subturma = $this->get_sub_turmas($disciplina_id, $turma_id, date('Y-m-d'));
+				return null;//sem subturma para o horario corrente
+			}
+			$query->row_array()['Sub_turma'];
+			/*{echo "string";
+				$subturma = $this->get_sub_turmas($disciplina_id, $turma_id, date('Y-m-d'));//degbugar aqui
 				$subturma = (empty($subturma) ? 0 : $subturma[0]['Sub_turma']);
 				return $subturma;
 			}
 			else 
-				return $query->row_array()['Sub_turma'];
+				return $query->row_array()['Sub_turma'];*/
 		}
 		//MÉTODOS DAQUI PRA BAIXO TALVEZ SEJAM MIGRADOS PARA O NOTAS_MODEL
 		/*!
@@ -186,41 +191,10 @@
 			//NA TABELA DE CALENDEARIO_PRESENCA, ENTAO CONSIDERA O QUE ESTÁ LÁ
 			$query = $this->db->query("
 				SELECT  
-				CASE 
-					WHEN 
-						(SELECT COUNT(Horario_id) FROM Calendario_presenca cpx WHERE cpx.Matricula_id  = x.Matricula_id 
-							AND CAST(cpx.Data_registro AS DATE) = DATE_FORMAT(".$this->db->escape($data).",'%Y-%m-%d')) > 0 THEN 
-						(SELECT CONCAT((SELECT CASE 
-										    	WHEN hx.Dia = 1 THEN 'Segunda' 
-										    	WHEN hx.Dia = 2 THEN 'Terça' 
-										        WHEN hx.Dia = 3 THEN 'Quarta' 
-										        WHEN hx.Dia = 4 THEN 'Quinta' 
-										        WHEN hx.Dia = 5 THEN 'Sexta' 
-										        WHEN hx.Dia = 6 THEN 'Sábado' 
-										        WHEN hx.Dia = 7 THEN 'Domingo' 
-										    	END AS Dia), ' / ', hx.Inicio, ' - ', hx.Fim) 
-				    	FROM Calendario_presenca cpx INNER JOIN Horario  hx ON cpx.Horario_id = hx.Id 
-						WHERE cpx.Matricula_id  = x.Matricula_id 
-						AND CAST(cpx.Data_registro AS DATE) = DATE_FORMAT(".$this->db->escape($data).",'%Y-%m-%d'))
-					ELSE  
-					CONCAT(x.Dia, ' / ', x.Inicio, ' - ', x.Fim)
-				END AS Horario,
-				
-				CASE WHEN (SELECT COUNT(Horario_id) FROM Calendario_presenca cpx WHERE cpx.Matricula_id  = x.Matricula_id 
-					AND CAST(cpx.Data_registro AS DATE) = DATE_FORMAT(".$this->db->escape($data).",'%Y-%m-%d')) > 0 THEN 
-					(SELECT hx.Aula FROM Calendario_presenca cpx INNER JOIN Horario  hx ON cpx.Horario_id = hx.Id WHERE cpx.Matricula_id  = x.Matricula_id 
-					AND CAST(cpx.Data_registro AS DATE) = DATE_FORMAT(".$this->db->escape($data).",'%Y-%m-%d'))
-				ELSE  
-					x.Aula 
-				END AS Aula,
-
-				CASE WHEN (SELECT COUNT(Horario_id) FROM Calendario_presenca cpx WHERE cpx.Matricula_id  = x.Matricula_id 
-					AND CAST(cpx.Data_registro AS DATE) = DATE_FORMAT(".$this->db->escape($data).",'%Y-%m-%d')) > 0 THEN 
-					(SELECT Horario_id FROM Calendario_presenca cpx WHERE cpx.Matricula_id  = x.Matricula_id AND 
-					CAST(cpx.Data_registro AS DATE) = DATE_FORMAT(".$this->db->escape($data).",'%Y-%m-%d'))
-				ELSE 
+					CONCAT(x.Dia, ' / ', x.Inicio, ' - ', x.Fim) AS Horario,
+					x.Aula ,
 					x.Horario_id
-				END AS Horario_id, x.Disc_hor_id  
+					, x.Disc_hor_id 
 				FROM( 
 					SELECT 
 					CASE 
@@ -294,7 +268,6 @@
 				 	dh.Ativo = 1
 				 	GROUP BY dh.Horario_id) AS x GROUP BY x.Sub_turma 
 			");
-			
 			return $query->result_array();
 		}
 	}

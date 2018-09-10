@@ -40,22 +40,28 @@
 						
 					echo"</td>";
 					$justificativa = "";
-					
+					$count_presenca = (!empty($lista_presenca) ? COUNT($lista_presenca) : 0);
+
 					for($j = 0; $j < COUNT($lista_horarios); $j++)
 					{
 						//echo ($lista_horarios[$j]['Horario_id'] ."-".$lista_presenca[$j]['Horario_id'])."<br />";
 						$checked = "";
 						//echo $lista_horarios[$j]['Horario_id'];
-						if(empty($lista_presenca))
-							$checked = "checked";
-						else if($lista_horarios[$j]['Horario_id'] == $lista_presenca[$j]['Horario_id'] && $lista_presenca[$j]['Presenca'] == 1)
-						{
-							$checked = "checked";
-							$justificativa = $lista_presenca[$j]['Justificativa'];
+						if($j < $count_presenca) //caso ocorra a adicao de disciplinas em um determinado horário nao havera  presenca/falta cadastrada para tal horario e ai o for de horarios terá um limite maior do que o count de lista_presenca, ocasionando erro
+							{
+							if(empty($lista_presenca))
+								$checked = "checked";
+							else if($lista_horarios[$j]['Horario_id'] == $lista_presenca[$j]['Horario_id'] && $lista_presenca[$j]['Presenca'] == 1)
+							{
+								$checked = "checked";
+								$justificativa = $lista_presenca[$j]['Justificativa'];
+							}
+							else
+								$justificativa = $lista_presenca[$j]['Justificativa'];
 						}
 						else
-							$justificativa = $lista_presenca[$j]['Justificativa'];
-
+							$checked = "checked";
+						
 						echo "<td>";
 							echo "<input type='hidden' id='calendario_presenca_id$i$j' name='calendario_presenca_id$i$j' value='".(empty($lista_presenca[$j]['Calendario_presenca_id']) ? '' : $lista_presenca[$j]['Calendario_presenca_id'])."' />";
 							echo"<div style='margin-bottom: 0px; margin-top: 0px; height: 45px;' class='checkbox checbox-switch switch-success custom-controls-stacked'>";

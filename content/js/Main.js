@@ -1649,41 +1649,45 @@ var Main = {
 			},500);
 		});
 	},
+	gambi : 0,
 	get_sub_turmas : function (disciplina_id, turma_id, data)
 	{
-		Main.modal("aguardar", "Aguarde...");
+		if(Main.gambi != 0)//resolve o problema do autoload no campo de data
+		{
+			Main.modal("aguardar", "Aguarde...");
 
-		data = Main.convert_date(data, "en");
+			data = Main.convert_date(data, "en");
 
-		$.ajax({
-			url: Main.base_url + $("#controller").val() + '/get_sub_turmas/' + disciplina_id + '/' + turma_id + '/' + data,
-			dataType:'json',
-			cache: false,
-			type: 'POST',
-			success: function (data) 
-			{
-				if(data.response != "sucesso")
+			$.ajax({
+				url: Main.base_url + $("#controller").val() + '/get_sub_turmas/' + disciplina_id + '/' + turma_id + '/' + data,
+				dataType:'json',
+				cache: false,
+				type: 'POST',
+				success: function (data) 
 				{
-					setTimeout(function(){
-			    	$("#modal_aguardar").modal('hide');
-						$("#subturmas").html(data.response);
-						Main.get_alunos_chamada(disciplina_id, turma_id);
-						
-						if($("#subturma").val() == "x")
-							$("#chamada").html("");
-					},500);
+					if(data.response != "sucesso")
+					{
+						setTimeout(function(){
+				    	$("#modal_aguardar").modal('hide');
+							$("#subturmas").html(data.response);
+							Main.get_alunos_chamada(disciplina_id, turma_id);
+							
+							if($("#subturma").val() == "x")
+								$("#chamada").html("");
+						},500);
+					}
+					else
+						location.reload();
 				}
-				else
-					location.reload();
-			}
-		}).fail(function(msg){
-		    setTimeout(function(){
-		    	//$("#modal_confirm").modal('hide');
-		    	Main.modal("aviso", "Houve um erro ao processar sua requisição. Verifique sua conexão com a internet.");
-			},500);
-		});
+			}).fail(function(msg){
+			    setTimeout(function(){
+			    	//$("#modal_confirm").modal('hide');
+			    	Main.modal("aviso", "Houve um erro ao processar sua requisição. Verifique sua conexão com a internet.");
+				},500);
+			});
 
-		
+		}
+		Main.gambi = 1;
 	},
 	get_alunos_chamada : function (disciplina_id, turma_id)
 	{
