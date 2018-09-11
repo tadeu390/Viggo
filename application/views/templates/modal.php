@@ -52,3 +52,20 @@
 		</div>
 	</div>
 </div>
+
+<div id="modal_large" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header" style="background: rgb(241,193,0);">
+				<h5 class="modal-title text-white">
+				<span class="glyphicon glyphicon-warning-sign" style="color: white;"></span>&nbsp;&nbsp;Atenção</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div id="mensagem_large" class="modal-body">
+				Aguarde...
+			</div>
+		</div>
+	</div>
+</div>

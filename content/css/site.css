@@ -397,3 +397,8 @@ input[type="text"]:disabled {
 {
 	background-color: transparent !important;
 }*/
+
+#modal_large .modal-lg
+{
+	max-width: 98% !important;
+}

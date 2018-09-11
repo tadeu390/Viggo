@@ -1726,5 +1726,9 @@ var Main = {
 		Main.method_redirect = "faltas";
 
 		Main.create_edit();
+	},
+	visao_geral : function ()
+	{
+		Main.modal("large","te");
 	}
 };
