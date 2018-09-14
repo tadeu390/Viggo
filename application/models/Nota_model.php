@@ -178,5 +178,22 @@
 				$query = $this->db->query("DELETE FROM Notas WHERE Id = ".$result[$i]['Id']."");
 			}
 		}
+		/*!
+		*	RESPONSÁVEL POR FAZER A SOMA DAS NOTAS DE UM ALUNO EM UMA DISCIPLINA E RETORNAR O STATUS DO MESMO.
+		*
+		*	$matricula_id -> Id da matrícula do aluno na disciplina.
+		*	$etapas -> Id(s) da(s) etapa(s) utilizada(s) na soma para determinar o status.
+		*	$media -> Valor mínimo estipulado que o aluno deve alcançar para que possa ser aprovado.
+		*/
+		public function situacao_nota_aluno_disciplina($matricula_id, $etapas, $media)
+		{
+			$query = $this->db->query("
+				SELECT SUM(Valor) AS Total FROM Notas 
+				WHERE Matricula_id = ".$this->db->escape($matricula_id)." AND Etapa_id IN (".str_replace("'", "", $this->db->escape($etapas)).")");
+
+			if($query->row_array()['Total'] >= $media)
+				return APROVADO;
+			return RECUPERACAO;
+		}
 	}
 ?>

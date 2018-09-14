@@ -122,6 +122,16 @@ input.input-material ~ label.active {
   color: #007bff;
 }
 
+.bg-primary
+{
+	background-color: #336CD2 !important;
+}
+
+.bg-success
+{
+	background-color: #58A61A !important;
+}
+
 .text-info 
 {
 	color: #336CD2 !important;/*azul*/
@@ -305,7 +315,6 @@ fieldset{
 
 input[type="text"]:disabled {
     background-color: rgb(50,50,50);
-    border-bottom: 1px solid white;
 }
 
 .disciplinas
@@ -401,4 +410,9 @@ input[type="text"]:disabled {
 #modal_large .modal-lg
 {
 	max-width: 98% !important;
+}
+
+.icon-adm
+{
+	font-size: 30px;
 }

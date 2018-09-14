@@ -1,6 +1,6 @@
 var Main = {
-	//base_url : ((window.location.href.split("/")[2] == "localhost") ? "http://"+window.location.host+"/git/TCC/" : "https://"+window.location.host+"/"),
-	base_url : "http://"+window.location.host+"/git/TCC/",//localhost (pra qualquer dispositivo na rede local)
+    	//base_url : ((window.location.href.split("/")[2] == "localhost") ? "http://"+window.location.host+"/git/TCC/" : "https://"+window.location.host+"/"),
+î	base_url : "http://"+window.location.host+"/git/TCC/",//localhost (pra qualquer dispositivo na rede local)
 	load_mask : function(){
 		$(document).ready(function(){
 			$('[data-toggle="popover"]').popover(),

@@ -54,7 +54,7 @@
 				</div>
 				<div class="row padding10">
 					<div class="col-lg-4">
-						<select <?php echo $status_nota_especial; ?> name='descricao_nota_id' id='descricao_nota_id' class='form-control' style='padding-left: 0px;'>
+						<select <?php echo $status_etapa_extra; ?> name='descricao_nota_id' id='descricao_nota_id' class='form-control' style='padding-left: 0px;'>
 							<option value='0' style='background-color: #393836;'>Descrição de nota</option>
 							<?php
 							for ($i = 0; $i < count($lista_descricao_nota); $i++)
@@ -63,11 +63,12 @@
 						</select>
 					</div>
 					<div class="col-lg-4">
-						<button class="btn btn-danger" <?php echo $status_nota_especial; ?> onclick="Main.add_coluna_nota();">Adicionar coluna</button>
+						<button class="btn btn-danger" <?php echo $status_etapa_extra; ?> onclick="Main.add_coluna_nota();">Adicionar coluna</button>
 					</div>
 				</div>
 				<div class="row padding10">
 					<div class="col-lg-12">
+						<?php if(COUNT($lista_alunos) > 0): ?>
 						<table class="table table-striped table-bordered text-white" style="width: auto;">
 							<thead>
 								<tr id='cabecalho_nota'>
@@ -104,7 +105,7 @@
 												$nota = notas::get_nota($lista_colunas_nota[$j]['Descricao_nota_id'], $lista_alunos[$i]['Matricula_id'], $url_part['turma_id'], $url_part['disciplina_id'], $url_part['etapa_id'])['Nota'];
 												$total = $total + $nota;
 												echo"<td class='text-center' style='width: 10%;'>";
-													echo"<input min='0' $status_nota_especial min='0' onblur='Main.altera_nota(\"total".$i."\", this.value,".$lista_colunas_nota[$j]['Descricao_nota_id'].",\"".$lista_alunos[$i]['Matricula_id']."\",",$url_part['turma_id'].",".$url_part['disciplina_id'].",".$url_part['etapa_id'].");' name='aluno".$i."_nota".$j."' type='number' value='".$nota."' class='form-control border_radius text-info' style='background-color: white;' />";
+													echo"<input min='0' $status_etapa_extra min='0' onblur='Main.altera_nota(\"total".$i."\", this.value,".$lista_colunas_nota[$j]['Descricao_nota_id'].",\"".$lista_alunos[$i]['Matricula_id']."\",",$url_part['turma_id'].",".$url_part['disciplina_id'].",".$url_part['etapa_id'].");' name='aluno".$i."_nota".$j."' type='number' value='".$nota."' class='form-control border_radius text-info' style='background-color: white;' />";
 												echo"</td>";
 											}
 
@@ -121,6 +122,10 @@
 								?>
 							</tbody>
 						</table>
+						<?php else : ?>
+							Não disponível
+						<?php endif; ?>
+						
 					</div>
 				</div>
 			</div>

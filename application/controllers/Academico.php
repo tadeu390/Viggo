@@ -25,11 +25,12 @@
 		*/
 		public function dashboard()
 		{
+			$this->data['Nome_periodo'] = $this->Regras_model->get_regras(FALSE, $this->input->cookie('periodo_letivo_id'), FALSE, FALSE, FALSE)['Nome_periodo'];
 			$this->data['title'] = 'Acadêmico';
-			if($this->Account_model->session_is_valid()['grupo_id'] == ADMIN)
+			//if($this->Account_model->session_is_valid()['grupo_id'] == ADMIN)
 				$this->view("academico/dashboard", $this->data);
-			else 
-				redirect("account/login");
+			//else 
+				//redirect("account/login");
 		}
 		/*!
 		*	RESPONSÁVEL POR CARREGAR A TELA INICIAL DO PROFESSOR.

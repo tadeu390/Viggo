@@ -26,7 +26,6 @@
 			}
 
 			$this->load->model('Professor_model');
-			$this->load->model('Professor_model');
 			$this->load->model('Regras_model');
 			$this->load->model('Nota_model');
 			$this->load->model('Etapa_model');
@@ -96,35 +95,16 @@
 				$this->data['periodo_letivo_id'] = $this->periodo_letivo_id;
 				$this->data['etapa'] = $this->Etapa_model->get_etapa(FALSE, $etapa_id, FALSE);
 
-				///DETERMINAR SE O BIMESTRE ESTÁ ABERTO.
-				$timeZone = new DateTimeZone('UTC');
-				$data_abertura = DateTime::createFromFormat ('d/m/Y', (!empty($this->data['etapa']['Data_abertura']) ? $this->data['etapa']['Data_abertura'] : '00/00/000'), $timeZone);
-				$data_fechamento = DateTime::createFromFormat ('d/m/Y', (!empty($this->data['etapa']['Data_abertura']) ? $this->data['etapa']['Data_fechamento'] : '00/00/000'), $timeZone);
-				$data_atual = DateTime::createFromFormat ('d/m/Y', date('d/m/Y'), $timeZone);
-				
-				if($data_atual >= $data_abertura && $data_atual <= $data_fechamento)
+				///DETERMINAR SE A ETAPA ESTÁ ABERTA.
+				if($this->Etapa_model->get_status_etapa($this->data['etapa']['Id']) == true)
 					$this->data['status_etapa'] = '';
 				else 
 					$this->data['status_etapa'] = "disabled";
 				/////
 
-				//////DETERMINAR A DISCIPLINA PADRÃO A SER SELECIONADA, ESSE TRATAMENTO É NECESSÁRIO, POIS AO TROCAR DE DISCIPLINA, O ID DE TURMA SUBMETIDO PODE NÃO SERVIR DE NADA, 
-				//////CASO ESSA TURMA SELECIONADA NÃO APAREÇA NOVAMENTE COM A TROCA DE DISCIPLINA.
-				$flag = 0;
-				for($i = 0; $i < COUNT($this->data['lista_turmas']); $i++)
-				{
-					if($this->data['lista_turmas'][$i]['Turma_id'] == $turma_id)
-						$flag = 1;
-				}
-				if($flag == 1)
-					$this->data['url_part']['turma_id'] = $turma_id;///SE A TURMA ESTÁ ASSOCIADA A DISCIPLINA SELECIONADA ENTÃO MANTÉM O ID DE TURMA SUBMETIDO.
-				else 
-				{
-					$this->data['url_part']['turma_id'] = $this->data['lista_turmas'][0]['Turma_id'];//CASO CONTRÁRIO PEGAR POR DEFAULT O PRIMEIRO ID DISPONÍVEL.
-					$turma_id = $this->data['lista_turmas'][0]['Turma_id'];//SOBRESCREVE O ID SUBMETIDO
-				}
-				//////
+				$turma_id = $this->determina_turma($this->data['lista_turmas'], $turma_id);
 
+				$this->data['url_part']['turma_id'] = $turma_id;
 				$this->data['url_part']['disciplina_id'] = $disciplina_id;
 				$this->data['url_part']['etapa_id'] = $etapa_id;
 
@@ -145,7 +125,7 @@
 		/*!
 			RESPONSÁVEL POR RECEBER OS DADOS DO FORMULÁRIO A NOTA A SER ALTERADA.
 
-		*/
+		*///VERIFICAR SE PERTENCE AO PROFESSOR, POIS SE CHAMAR A URL DIRETO DA PRA MEXER DE QUALQUER PROF
 		public function altera_nota($nota, $descricao_nota_id, $matricula_id, $turma_id, $disciplina_id, $etapa_id)
 		{
 			if($nota == 'null')
@@ -160,13 +140,8 @@
 
 				$this->data['etapa'] = $this->Etapa_model->get_etapa(FALSE, $etapa_id, FALSE);
 
-				///DETERMINAR SE O BIMESTRE ESTÁ ABERTO.
-				$timeZone = new DateTimeZone('UTC');
-				$data_abertura = DateTime::createFromFormat ('d/m/Y', (!empty($this->data['etapa']['Data_abertura']) ? $this->data['etapa']['Data_abertura'] : '00/00/000'), $timeZone);
-				$data_fechamento = DateTime::createFromFormat ('d/m/Y', (!empty($this->data['etapa']['Data_abertura']) ? $this->data['etapa']['Data_fechamento'] : '00/00/000'), $timeZone);
-				$data_atual = DateTime::createFromFormat ('d/m/Y', date('d/m/Y'), $timeZone);
-				
-				if($data_atual >= $data_abertura && $data_atual <= $data_fechamento)
+				///DETERMINAR SE A ETAPA ESTÁ ABERTA.
+				if($this->Etapa_model->get_status_etapa($etapa_id) == true)
 				{
 					if($resultado != "invalido")
 					{
@@ -185,7 +160,6 @@
 				}
 				else
 					$resultado = "Não é possível alterar a nota.";
-
 			}
 			else
 				$resultado = "Você não tem permissão para realizar esta ação. Entre em contato com o administrador do sistema.";
@@ -194,19 +168,14 @@
 			header('Content-Type: application/json');
 			echo json_encode($arr);
 		}
-
+		//VERIFICAR SE PERTENCE AO PROFESSOR, POIS SE CHAMAR A URL DIRETO DA PRA MEXER DE QUALQUER PROF
 		public function remover_coluna_nota($descricao_nota_id, $turma_id, $disciplina_id, $etapa_id)
 		{
 			$resultado = "sucesso";
 			$this->data['etapa'] = $this->Etapa_model->get_etapa(FALSE, $etapa_id, FALSE);
 
-			///DETERMINAR SE O BIMESTRE ESTÁ ABERTO.
-			$timeZone = new DateTimeZone('UTC');
-			$data_abertura = DateTime::createFromFormat ('d/m/Y', (!empty($this->data['etapa']['Data_abertura']) ? $this->data['etapa']['Data_abertura'] : '00/00/000'), $timeZone);
-			$data_fechamento = DateTime::createFromFormat ('d/m/Y', (!empty($this->data['etapa']['Data_abertura']) ? $this->data['etapa']['Data_fechamento'] : '00/00/000'), $timeZone);
-			$data_atual = DateTime::createFromFormat ('d/m/Y', date('d/m/Y'), $timeZone);
-			
-			if($data_atual >= $data_abertura && $data_atual <= $data_fechamento)
+			///DETERMINAR SE A ETAPA ESTÁ ABERTA.
+			if($this->Etapa_model->get_status_etapa($etapa_id) == true)
 				$this->Nota_model->remover_coluna_nota($descricao_nota_id, $turma_id, $disciplina_id, $etapa_id);
 			else
 				$resultado = "Não foi possível apagar a coluna de nota.";
@@ -224,7 +193,7 @@
 		*/
 		public function faltas($disciplina_id = FALSE, $turma_id = FALSE, $etapa_id = FALSE)
 		{
-			if($disciplina_id == FALSE)//SE NADA FOI ESPECFICADO ENTAO DETERMINAR A PARTIR DOS DEFAULT.
+			if($disciplina_id == FALSE)//SE NADA FOI ESPECIFICADO ENTAO DETERMINAR A PARTIR DOS DEFAULT.
 			{
 				$disciplina_id = $this->disciplina_id_default;
 				$turma_id = $this->turma_id_default;
@@ -251,22 +220,12 @@
 
 				$this->data['lista_alunos'] = $this->Professor_model->get_alunos($disciplina_id, $turma_id);
 
-				//////DETERMINAR A DISCIPLINA PADRÃO A SER SELECIONADA, ESSE TRATAMENTO É NECESSÁRIO, POIS AO TROCAR DE DISCIPLINA, O ID DE TURMA SUBMETIDO PODE NÃO SERVIR DE NADA, 
-				//////CASO ESSA TURMA SELECIONADA NÃO APAREÇA NOVAMENTE COM A TROCA DE DISCIPLINA.
-				$flag = 0;
-				for($i = 0; $i < COUNT($this->data['lista_turmas']); $i++)
-				{
-					if($this->data['lista_turmas'][$i]['Turma_id'] == $turma_id)
-						$flag = 1;
-				}
-				if($flag == 1)
-					$this->data['url_part']['turma_id'] = $turma_id;///SE A TURMA EXISTE NA DISCIPLINA SELECIONADA ENTÃO MANTÉM O ID DE TURMA SUBMETIDO.
-				else 
-					$this->data['url_part']['turma_id'] = $this->data['lista_turmas'][0]['Turma_id'];//CASO CONTRÁRIO PEGAR POR DEFAUL O PRIMEIRO ID DISPONÍVEL.
-				//////
+				$turma_id = $this->determina_turma($this->data['lista_turmas'], $turma_id);
 
+				$this->data['url_part']['turma_id'] = $turma_id;
 				$this->data['url_part']['disciplina_id'] = $disciplina_id;
 				$this->data['url_part']['etapa_id'] = $etapa_id;
+
 				$this->view("professor/faltas", $this->data);
 			}
 			else
@@ -298,22 +257,10 @@
 				
 				$this->data['lista_turmas'] = $this->Professor_model->get_turma($disciplina_id, $this->professor_id, $this->periodo_letivo_id);
 				$this->data['etapa'] = $this->Etapa_model->get_etapa(FALSE, $etapa_id, FALSE);
-				//////DETERMINAR A DISCIPLINA PADRÃO A SER SELECIONADA, ESSE TRATAMENTO É NECESSÁRIO, POIS AO TROCAR DE DISCIPLINA, O ID DE TURMA SUBMETIDO PODE NÃO SERVIR DE NADA, 
-				//////CASO ESSA TURMA SELECIONADA NÃO APAREÇA NOVAMENTE COM A TROCA DE DISCIPLINA.
-				$flag = 0;
-				for($i = 0; $i < COUNT($this->data['lista_turmas']); $i++)
-				{
-					if($this->data['lista_turmas'][$i]['Turma_id'] == $turma_id)
-						$flag = 1;
-				}
-				if($flag == 1)
-					$this->data['url_part']['turma_id'] = $turma_id;///SE A TURMA EXISTE NA DISCIPLINA SELECIONADA ENTÃO MANTÉM O ID DE TURMA SUBMETIDO.
-				else 
-				{
-					$this->data['url_part']['turma_id'] = $this->data['lista_turmas'][0]['Turma_id'];//CASO CONTRÁRIO PEGAR POR DEFAUL O PRIMEIRO ID DISPONÍVEL.
-					$turma_id = $this->data['lista_turmas'][0]['Turma_id'];
-				}
-				
+
+				$turma_id = $this->determina_turma($this->data['lista_turmas'], $turma_id);
+
+				$this->data['url_part']['turma_id'] = $turma_id;
 				$this->data['url_part']['disciplina_id'] = $disciplina_id;
 				$this->data['url_part']['etapa_id'] = $etapa_id;
 
@@ -404,9 +351,9 @@
 			{
 				for($i = 0; $i < COUNT($this->data['lista_horarios']); $i ++)
 				{
-					$this->data['conteudo'] = $this->Conteudo_model->get_conteudo($this->data['lista_horarios'][$i]['Disc_hor_id']);	
+					$this->data['conteudo'] = $this->Conteudo_model->get_conteudo($this->data['lista_horarios'][$i]['Disc_hor_id'], $data);	
 					if(!empty($this->data['conteudo']))//tentar até achar em algum horário, isso porque pra mesma data é registrado o mesmo conteudo independentemente 
-					//da quantidade de aula e se for removido alguma disciplina do horario entao é necessario procurar nas restantes que ficou até achar o coteúdo.
+					//da quantidade de aula e se for removido alguma horario da disciplnina entao é necessario procurar nas restantes que ficou até achar o conteúdo.
 						break;
 				}
 			}
@@ -436,7 +383,8 @@
 						$conteudo_horario = array(
 							'Id' => $this->input->post('conteudo_id'),
 							'Descricao' => $this->input->post('conteudo_lecionado'),
-							'Disc_hor_id' => $this->input->post('disc_hor_id'.$j)
+							'Disc_hor_id' => $this->input->post('disc_hor_id'.$j),
+							'Data_registro' => $this->convert_date($this->input->post('data_atual'),"en")
 						);
 						array_push($conteudo, $conteudo_horario);
 					}
@@ -495,32 +443,66 @@
 				$this->data['lista_turmas'] = $this->Professor_model->get_turma($disciplina_id, $this->professor_id, $this->periodo_letivo_id);
 				$this->data['etapa'] = $this->Etapa_model->get_etapa(FALSE, $etapa_id, FALSE);
 				
-				$flag = 0;
-				for($i = 0; $i < COUNT($this->data['lista_turmas']); $i++)
-				{
-					if($this->data['lista_turmas'][$i]['Turma_id'] == $turma_id)
-						$flag = 1;
-				}
-				if($flag == 1)
-					$this->data['url_part']['turma_id'] = $turma_id;///SE A TURMA EXISTE NA DISCIPLINA SELECIONADA ENTÃO MANTÉM O ID DE TURMA SUBMETIDO.
-				else 
-				{
-					$this->data['url_part']['turma_id'] = $this->data['lista_turmas'][0]['Turma_id'];//CASO CONTRÁRIO PEGAR POR DEFAUL O PRIMEIRO ID DISPONÍVEL.
-					$turma_id = $this->data['lista_turmas'][0]['Turma_id'];
-				}
-				
-				$this->data['status_nota_especial'] = '';
+				$turma_id = $this->determina_turma($this->data['lista_turmas'], $turma_id);
+
+				$this->data['url_part']['turma_id'] = $turma_id;
 				$this->data['url_part']['disciplina_id'] = $disciplina_id;
 				$this->data['url_part']['etapa_id'] = $etapa_id;
+								
+				$this->data['lista_colunas_nota'] = array();
+				$this->data['lista_alunos'] = array();
+				
+				//determinar se a etapa anterior já passou 
+				if($this->Etapa_model->etapa_ja_passou($this->Etapa_model->get_etapa_anterior($etapa_id)['Id']) == true)
+				{
+					$this->data['status_etapa_extra'] = '';
 
+					$this->data['lista_colunas_nota'] = $this->Professor_model->get_colunas_nota($disciplina_id, $turma_id, $etapa_id);
+					$this->data['lista_alunos'] = $this->Professor_model->get_alunos($disciplina_id, $turma_id);
 
+					$regras = $this->Regras_model->get_regras(FALSE, $this->periodo_letivo_id, FALSE, FALSE, FALSE);
+					do{
+						$etapas = "";
+						$media = 0;
+						$e = $this->Etapa_model->get_etapa_anterior($etapa_id);
+
+						$etapa_id = $e['Id'];
+
+						if($e['Tipo'] == ETAPA_NORMAL)//se for, buscar todas as ids de etapa para o período letivo corrente
+						{
+							$lista_etapas = $this->Etapa_model->get_etapa($this->periodo_letivo_id, FALSE, ETAPA_NORMAL);
+							for($i = 0; $i < COUNT($lista_etapas); $i++)
+							{
+								$etapas = $etapas.$lista_etapas[$i]['Id'];
+								if($i != (COUNT($lista_etapas) - 1))
+									$etapas = $etapas.",";
+							}
+							$media = $this->Regras_model->get_regras(FALSE, $this->periodo_letivo_id, FALSE, FALSE, FALSE)['Media'];
+						}
+						else
+						{
+							$etapas = $etapa_id;
+							$media = $e['Media'];
+						}
+
+						//remover da lista os alunos que já passaram
+						for($i = 0; $i < COUNT($this->data['lista_alunos']); $i++)
+						{
+							if($this->Nota_model->situacao_nota_aluno_disciplina($this->data['lista_alunos'][$i]['Matricula_id'], $etapas, $media) == APROVADO && 
+							   $this->Calendario_presenca_model->situacao_falta_aluno($turma_id, $this->data['lista_alunos'][$i]['Aluno_id'], $regras, $e['Tipo']) == APROVADO)
+								unset($this->data['lista_alunos'][$i]);
+							//PROXIMO PASSO
+							//QUANDO FOR AVALIAR O STATUS DA RECUPERACAO FINAL, VERIFICAR SE O ALUNO ESTÁ CARREGANDO MAIS DO QUE O PERMITIDO DE DISCIPLINAS
+							//SE ESTIVER ENTÃO PODE IR PARA OS ESTUDOS INDEPENDENTES
+						}
+						$this->data['lista_alunos'] = array_values($this->data['lista_alunos']);//resetar o indice do array
+					}while($e['Tipo'] != ETAPA_NORMAL);//etapa normal é a última
+				}
+				else
+					$this->data['status_etapa_extra'] = "disabled";
 				//DESCRIÇÃO DE NOTA
 				$this->data['lista_descricao_nota'] = $this->Descricao_nota_model->get_descricao(TRUE, FALSE);
 				//////
-
-				///TABELA DE NOTAS
-				$this->data['lista_colunas_nota'] = $this->Professor_model->get_colunas_nota($disciplina_id, $turma_id, $etapa_id);
-				$this->data['lista_alunos'] = $this->Professor_model->get_alunos($disciplina_id, $turma_id);
 
 				$this->view("professor/etapa_extra", $this->data);
 			}
@@ -602,6 +584,26 @@
 			$arr = array('response' => $resultado, 'turma' => $this->data['lista_disc_turma_header']['Nome_turma'],'periodo' => $periodo['Periodo']);
 				header('Content-Type: application/json');
 				echo json_encode($arr);
+		}
+		/*!
+		*	RESPONSÁVEL POR DETERMINAR A TURMA QUE PERMANECERÁ SELECIONADA NA TELA, SE AO TROCAR DE DISCIPLINA, A TURMA QUE ESTAVA SELECIONADA
+		*	ANTES NÃO ESTIVER ASSOCIADA COM A DISCIPLINA TROCADA ENTÃO PROCURAR A PRIMEIRA TURMA DE ACORDO COM A DISCIPLINA QUE FOI PASSADA.
+		*
+		*	$lista_turmas -> Array contendo todas as turmas relacionadas com uma disciplina.
+		*	$turma_id -> Id da turma selecionada na tela do professor.
+		*/
+		public function determina_turma($lista_turmas, $turma_id)
+		{
+			$flag = 0;
+			for($i = 0; $i < COUNT($lista_turmas); $i++)
+			{
+				if($lista_turmas[$i]['Turma_id'] == $turma_id)
+					$flag = 1;
+			}
+			if($flag == 1)
+				return $turma_id;///SE A TURMA EXISTE NA DISCIPLINA SELECIONADA ENTÃO MANTÉM O ID DE TURMA SUBMETIDO.
+			else 
+				return $lista_turmas[0]['Turma_id'];//CASO CONTRÁRIO PEGAR POR DEFAUL O PRIMEIRO ID DISPONÍVEL.
 		}
 	}
 ?>
