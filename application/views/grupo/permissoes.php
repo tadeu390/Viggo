@@ -216,7 +216,7 @@
 								else
 								{
 									echo "<tr>";
-										echo "<td class='text-center' colspan='5'>";
+										echo "<td class='text-center' colspan='6'>";
 											echo "Não existem usuários neste grupo, portanto, não é possível conceder ou remover Permissões.";
 										echo "</td>";
 									echo "</tr>";

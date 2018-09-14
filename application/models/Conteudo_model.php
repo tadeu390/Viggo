@@ -9,11 +9,12 @@
 			$this->load->database();
 		}
 
-		public function get_conteudo($disc_hor_id)
+		public function get_conteudo($disc_hor_id, $data)
 		{
 			$query = $this->db->query("
 				SELECT Id AS Conteudo_id, Descricao FROM Conteudo 
-				WHERE Disc_hor_id = ".$this->db->escape($disc_hor_id)."
+				WHERE Disc_hor_id = ".$this->db->escape($disc_hor_id)." AND 
+				CAST(Data_registro AS DATE) = ".$this->db->escape($data)."
 			");
 			return $query->row_array();
 		}

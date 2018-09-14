@@ -8,13 +8,21 @@
 	define("UPDATE", 'Atualizar');
 	define("DELETE", 'Remover');
 	
+	//TIPO DE USUÁRIOS
 	define("ADMIN", 1);
 	define("ALUNO", 2);
 	define("PROFESSOR", 4);
 	define("SECRETARIA", 3);
 
-	define("ETAPA_NORMAL", 1);
-	define("ETAPA_EXTRA", 2);
+	//ETAPAS
+	define("ETAPA_NORMAL", 1);//BIMESTRES NORMAIS
+	define("ETAPA_EXTRA", 2);//ETAPAS DE RECUPERAÇÃO
+
+	//TIPO DE STATUS DO ALUNO
+	define("APROVADO", 'Aprovado');
+	define("REPROVADO", 'Reprovado');
+	define("RECUPERACAO", 'Recuperação');
+	define("RECUPERACAO_FALTA", 'Recuperação por faltas');
 	
 	class Geral extends CI_Controller 
 	{

@@ -13,6 +13,8 @@
 		*	RESPONSÁVEL POR RETORNAR UMA LISTA DE ETAPAS OU UMA ETAPA ESPECÍFICA.
 		*
 		*	$Periodo_letivo_id -> Para retornar os etapas de um determinado periodo letivo.
+		*	$id -> Id da etapa.
+		*	$tipo -> TIpo de etapa, etapas normais(1 bim, 2 bim, etc), etapa extra(rec. final, est. independentes).
 		*/
 		public function get_etapa($Periodo_letivo_id, $id, $tipo)
 		{
@@ -24,12 +26,12 @@
 				$query = $this->db->query("
 						SELECT Id, Ativo, Nome, Valor, Media, DATE_FORMAT(Data_inicio, '%d/%m/%Y') as Data_inicio, 
 						DATE_FORMAT(Data_fim, '%d/%m/%Y') as Data_fim, 
-						CAST(Data_inicio AS DATE) as Data_inicio2, #somente para comparar ao criar um etapa
-						CAST(Data_fim AS DATE) as Data_fim2, #somente para comparar ao criar um etapa
+						CAST(Data_inicio AS DATE) as Data_inicio2,
+						CAST(Data_fim AS DATE) as Data_fim2, 
 						DATE_FORMAT(Data_abertura, '%d/%m/%Y') as Data_abertura, 
 						DATE_FORMAT(Data_fechamento, '%d/%m/%Y') as Data_fechamento,
-						CAST(Data_abertura AS DATE) as Data_abertura2, #somente para comparar ao criar um etapa
-						CAST(Data_fechamento AS DATE) as Data_fechamento2, Periodo_letivo_id,  #somente para comparar ao criar um etapa
+						CAST(Data_abertura AS DATE) as Data_abertura2, 
+						CAST(Data_fechamento AS DATE) as Data_fechamento2, Periodo_letivo_id, 
 						Tipo 
 						FROM Etapa 
 						WHERE Periodo_letivo_id = ".$this->db->escape($Periodo_letivo_id)." ".$tipo." ORDER BY Data_abertura2"); //arryumar a ordencao
@@ -41,7 +43,12 @@
 						SELECT Id, Ativo, Nome, Valor, Media, DATE_FORMAT(Data_inicio, '%d/%m/%Y') as Data_inicio, 
 						DATE_FORMAT(Data_fim, '%d/%m/%Y') as Data_fim, 
 						DATE_FORMAT(Data_abertura, '%d/%m/%Y') as Data_abertura, 
-						DATE_FORMAT(Data_fechamento, '%d/%m/%Y') as Data_fechamento, Periodo_letivo_id 
+						CAST(Data_inicio AS DATE) as Data_inicio2, 
+						CAST(Data_fim AS DATE) as Data_fim2,
+						DATE_FORMAT(Data_fechamento, '%d/%m/%Y') as Data_fechamento, 
+						CAST(Data_abertura AS DATE) as Data_abertura2, 
+						CAST(Data_fechamento AS DATE) as Data_fechamento2, Periodo_letivo_id, 
+						Periodo_letivo_id 
 						FROM Etapa 
 						WHERE Id = ".$this->db->escape($id)."");
 
@@ -163,6 +170,49 @@
 			");
 
 			return $query->row_array();
+		}
+		/*!
+		*	RESPONSÁVEL POR RETORNAR O STATUS DE UMA ETAPA, SE ESTÁ ABERTA OU NÃO.
+		*	
+		*	$id -> Id da etapa que se deseja consultar o status.
+		*/
+		public function get_status_etapa($id)
+		{
+			$query = $this->db->query("
+				SELECT * FROM Etapa 
+				WHERE CAST(NOW() AS DATE) >= CAST(Data_abertura AS DATE) AND CAST(NOW() AS DATE) <= CAST(Data_fechamento AS DATE) AND 
+				Id = ".$this->db->escape($id)."");
+			
+			return !empty($query->row_array());//se estiver aberta, retornar verdadeiro
+		}
+		/*!
+		*	RESPONSÁVEL POR IDENTIFICAR A ETAPA ANTERIOR A ETAPA INFORMADA.
+		*	
+		*	$id -> Id da etapa que se deseja obter a anterior a ela.
+		*/
+		public function get_etapa_anterior($id)
+		{
+			$etapa = $this->get_etapa(FALSE, $id, FALSE);
+			$query = $this->db->query("
+				SELECT * FROM Etapa 
+				WHERE CAST(Data_abertura AS DATE) < '".$etapa['Data_abertura2']."'  
+				ORDER BY Data_abertura DESC LIMIT 1");
+			
+			return $query->row_array();
+		}
+		/*!
+		*	RESPONSÁVEL POR VERIFICAR SE A ETAPA INFORMADA JÁ PASSOU DE ACORDO COM A DATA ATUAL.
+		*	
+		*	$id -> Id da etapa.
+		*/
+		public function etapa_ja_passou($id)
+		{
+			$query = $this->db->query("
+				SELECT Id FROM Etapa
+				WHERE Id = ".$this->db->escape($id)." AND 
+				NOW() > Data_fechamento AND (Data_fim = '0000-00-00' OR NOW() > Data_fim)");
+			
+			return !empty($query->row_array());//se passou, retornar verdadeiro
 		}
 	}
 ?>

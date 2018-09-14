@@ -2,7 +2,7 @@
 	Status da chamada: 
 	<?php 
 		if(!empty($lista_alunos))
-			$lista_presenca = faltas::get_presenca_aluno($lista_alunos[0]['Matricula_id'], $url_part['disciplina_id'], $url_part['turma_id'], $lista_alunos[0]['Sub_turma'], $data);
+			$lista_presenca = faltas::get_presenca_aluno($lista_alunos[0]['Matricula_id'], $lista_alunos[0]['Sub_turma'], $data);
 		else 
 			$lista_presenca = "";
 
@@ -32,7 +32,7 @@
 		<?php
 			for($i=0; $i < COUNT($lista_alunos); $i++)
 			{//echo $lista_alunos[$i]['Sub_turma'];
-				$lista_presenca = faltas::get_presenca_aluno($lista_alunos[$i]['Matricula_id'], $url_part['disciplina_id'], $url_part['turma_id'], $lista_alunos[$i]['Sub_turma'], $data);
+				$lista_presenca = faltas::get_presenca_aluno($lista_alunos[$i]['Matricula_id'], $lista_alunos[$i]['Sub_turma'], $data);
 				echo "<tr>";
 					echo"<td style='vertical-align: middle;' title='".$lista_alunos[$i]['Nome_aluno']."'>";
 						echo mstring::corta_string($lista_alunos[$i]['Nome_aluno'], 30);

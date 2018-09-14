@@ -1,5 +1,5 @@
 <?php
-/*!
+	/*!
 	*	ESTA MODEL TRATA DAS OPERAÇÕES NO BANCO DE DADOS REFERENTE AS PRESÊNÇA DOS ALUNOS.
 	*/
 	class Calendario_presenca_model extends CI_Model 
@@ -9,16 +9,13 @@
 			$this->load->database();
 		}
 		/*!
-		*	REPONSÁVEL POR RETORNAR A PRESENÇA DE UM DETERMINADO ALUNO EM UMA DETERMINADA TURMA 
-		*	DE UMA DETERMINADA DISCIPLINA.
+		*	RESPONSÁVEL POR RETORNAR A PRESENÇA DE UM DETERMINADO ALUNO EM UMA DETERMINADA DISCIPLINA.
 		*
 		*	$matricula_id -> Matrícula do aluno na disciplina.
-		*	$disciplina_id -> Id da disciplina selecionada na tela.
-		*	$turma_id -> Id da turma selecionada.
 		*	$subturma -> Id da subturma da turma.
 		*	$data -> Data de que se precisar obter as presênças/faltas do aluno.
 		*/
-		public function get_presenca_aluno($matricula_id, $disciplina_id, $turma_id, $sub_turma, $data)
+		public function get_presenca_aluno($matricula_id, $sub_turma, $data)
 		{
 			$query = $this->db->query("
 				SELECT cp.Id AS Calendario_presenca_id, cp.Presenca, cp.Justificativa, h.Id AS Horario_id 
@@ -27,9 +24,7 @@
 					INNER JOIN Matricula m ON dt.Id = m.Disc_turma_id 
 					INNER JOIN Calendario_presenca cp ON m.Id = cp.Matricula_id 
 					INNER JOIN Horario h ON cp.Horario_id = h.Id 
-					WHERE dg.Disciplina_id = ".$this->db->escape($disciplina_id)." 
-					AND dt.Turma_id = ".$this->db->escape($turma_id)." AND 
-					CAST(cp.Data_registro AS DATE) = DATE_FORMAT(".$this->db->escape($data).",'%Y-%m-%d') AND 
+					WHERE CAST(cp.Data_registro AS DATE) = DATE_FORMAT(".$this->db->escape($data).",'%Y-%m-%d') AND 
 					m.Id = ".$this->db->escape($matricula_id)."
 			");
 			
@@ -54,28 +49,31 @@
 			}
 		}
 		/*!
-		*	RESPONSÁVEL POR RETORNAR AS FALTAS DE UM DETERMINADO ALUNO POR MÊS.
+		*	RESPONSÁVEL POR RETORNAR AS FALTAS DE UM DETERMINADO ALUNO POR MÊS (utilizado para contabilizar as faltas por mês).
 		*
-		*	$disciplina_id -> Id da disciplina selecionada na tela.
-		*	$turma_di -> Id da turma selecionada.
 		*	$matricula_id -> Matricula do aluno na disciplina.
+		* 	$data_inicio -> Data de iniício da etapa. Garante pegar no mês somente as faltas referente a etapa em questão.
+		* 	$data_fim -> Data de fim da etapa. Garante pegar no mês somente as faltas referente a etapa em questão.
+		*	*mes -> Mês em que se deseja obter as faltas.
 		*/
-		public function get_faltas($disciplina_id, $turma_id, $matricula_id, $mes)
+		public function get_faltas($matricula_id, $data_inicio, $data_fim, $mes)
 		{
 			$query = $this->db->query("	
 				SELECT COUNT(cp.Presenca) AS Faltas FROM Calendario_presenca cp 
 				WHERE MONTH(cp.Data_registro) = ".$this->db->escape($mes)." AND 
+				cp.Data_registro >= ".$this->db->escape($data_inicio)." AND 
+				cp.Data_registro <= ".$this->db->escape($data_fim)." AND 
 				Presenca = 0 AND cp.Matricula_id = ".$this->db->escape($matricula_id)."
 			");
 
 			return $query->row_array();
 		}
 		/*!
-		*	RESPONSÁVEL POR RETORNAR TODAS AS FALTAS DO ALUNO EM UM BIMESTRE PARA TUMA DETERMINADA 
+		*	RESPONSÁVEL POR RETORNAR TODAS AS FALTAS DO ALUNO EM UMA ETAPA PARA UMA DETERMINADA 
 		*	DISCIPLINA.
 		*
-		*	$data_inicio -> Data de início do bimestre.
-		*	$data_fim -> Data de término do bimestre.
+		*	$data_inicio -> Data de início da etapa.
+		*	$data_fim -> Data de término da etapa.
 		*	$matricula_id -> Matrícula do aluno na disciplina.
 		*/
 		public function get_faltas_etapa($data_inicio, $data_fim, $matricula_id)
@@ -90,10 +88,10 @@
 			return $query->row_array();		
 		}
 		/*!
-			RESPONSÁVEL POR RETORNAR OS MESES POR EXTENSO DE UM INTERVALO DE DATA.
-
-			$data_inicio -> Data de início do intervalo.
-			$data_inicio -> Data de fim do intervalo.
+		*	RESPONSÁVEL POR RETORNAR OS MESES POR EXTENSO DE UM INTERVALO DE DATA.
+		*
+		*	$data_inicio -> Data de início do intervalo.
+		*	$data_inicio -> Data de fim do intervalo.
 		*/
 		public function get_intervalo_mes($data_inicio, $data_fim)
 		{
@@ -115,7 +113,7 @@
 			return $meses;
 		}
 		/*!
-		*	RESPONSÁEL POR RETORNAR DO BANCO A QUANTIDADE TOTAL DE FALTAS DE UM ALUNO EM TODAS AS DISCIPLINAS (utilizado para determinar se 
+		*	RESPONSÁVEL POR RETORNAR DO BANCO A QUANTIDADE TOTAL DE FALTAS DE UM ALUNO EM TODAS AS DISCIPLINAS (utilizado para determinar se 
 		*	o aluno estourou em faltas).
 		*	
 		*	$aluno_id -> Id do aluno que se quer saber a quantidade de faltas.
@@ -134,6 +132,23 @@
 			");
 
 			return $query->row_array();
+		}
+		/*!
+		*	RESPONSÁVEL POR VERIFICAR SE UM ALUNO ESTOUROU OU NÃO EM FALTAS. NESSE CASO É SOMADO TODAS AS FALTAS DE TODAS AS DISCIPLINAS.
+		*
+		*	$aluno_id -> Id do aluno.
+		*	$turma_id -> Id da turma do aluno.
+		*	$regras -> Regras do período letivo para se determinar o status.
+		*	$tipo -> Se for etapa extra, simplesmente retorna aprovado, pois nessa situação não se contabiliza faltas.
+		*/
+		public function situacao_falta_aluno($aluno_id, $turma_id, $regras, $tipo)
+		{
+			if($tipo == ETAPA_EXTRA)
+				return APROVADO;
+			else if($this->get_total_faltas($aluno_id, $turma_id)['Faltas'] <= ($regras['Limite_falta'] / 100) * ($regras['Dias_letivos'] * $regras['Quantidade_aula']))
+				return APROVADO;
+			else 
+				return RECUPERACAO_FALTA;
 		}
 	}
 ?>

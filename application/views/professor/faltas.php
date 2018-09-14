@@ -90,7 +90,7 @@
 										$total_faltas = 0;
 										for($j = 0; $j < COUNT($meses); $j ++)
 										{
-											$faltas = faltas::get_faltas($url_part['disciplina_id'], $url_part['turma_id'], $lista_alunos[$i]['Matricula_id'], $meses[$j]['Mes_numero'])['Faltas']; 
+											$faltas = faltas::get_faltas($lista_alunos[$i]['Matricula_id'], $etapa['Data_inicio2'], $etapa['Data_fim2'], $meses[$j]['Mes_numero'])['Faltas']; 
 											echo "<td class='text-center' style='width: ".$percentual."%;'>";
 												echo "<input disabled  type='text' value='".$faltas."' class='form-control background_white border_radius text-center text-info'>";
 											echo"</td>";

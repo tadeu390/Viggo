@@ -10,27 +10,28 @@
 		*	$subturma -> Id da subturma da turma.
 		*	$data -> Data de que se precisar obter as presênças/faltas do aluno.
 		*/
-		public static function get_presenca_aluno($matricula_id, $disciplina_id, $turma_id, $subturma, $data)
+		public static function get_presenca_aluno($matricula_id, $subturma, $data)
 		{
 			$CI = get_instance();
 			$CI->load->model("Calendario_presenca_model");
 
-			$lista_presenca = $CI->Calendario_presenca_model->get_presenca_aluno($matricula_id, $disciplina_id, $turma_id, $subturma, $data);
+			$lista_presenca = $CI->Calendario_presenca_model->get_presenca_aluno($matricula_id, $subturma, $data);
 			return $lista_presenca;
 		}
 		/*!
 		*	RESPONSÁVEL POR RETORNAR DA MODEL AS FALTAS DE UM DETERMINADO ALUNO POR MÊS.
 		*
-		*	$disciplina_id -> Id da disciplina selecionada na tela.
-		*	$turma_di -> Id da turma selecionada.
 		*	$matricula_id -> Matricula do aluno na disciplina.
+		* 	$data_inicio -> Data de iniício da etapa. Garante pegar no mês somente as faltas referente a etapa em questão.
+		* 	$data_fim -> Data de fim da etapa. Garante pegar no mês somente as faltas referente a etapa em questão.
+		*	*mes -> Mês em que se deseja obter as faltas.
 		*/
-		public static function get_faltas($disciplina_id, $turma_id, $matricula_id, $mes)//ISSO AQUI VAI MUDAR, TEM BUG NO CONTEXTO EM QUE É UTILIZADO
+		public static function get_faltas($matricula_id, $data_inicio, $data_fim, $mes)
 		{
 			$CI = get_instance();
 			$CI->load->model("Calendario_presenca_model");
 
-			$faltas = $CI->Calendario_presenca_model->get_faltas($disciplina_id, $turma_id, $matricula_id, $mes);
+			$faltas = $CI->Calendario_presenca_model->get_faltas($matricula_id, $data_inicio, $data_fim, $mes);
 			return $faltas;
 		}
 		/*!
