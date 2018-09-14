@@ -74,6 +74,7 @@
 			{
 				unset($data['intervalos']);
 				unset($data['bimestres']);
+				unset($data['notas_especiais']);
 				$this->db->insert('Periodo_letivo',$data);	
 				return $this->get_regra_por_nome($data)['Id'];
 			}
@@ -81,6 +82,7 @@
 			{	
 				unset($data['intervalos']);
 				unset($data['bimestres']);
+				unset($data['notas_especiais']);
 				$this->db->where('Id', $data['Id']);
 				$this->db->update('Periodo_letivo', $data);
 				return $data['Id'];

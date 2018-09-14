@@ -25,108 +25,113 @@
 		<input type='hidden' id='controller' value='<?php echo $controller; ?>'/>
 		
 		<div class="row">
-			<div class="col-lg-5">
-				<div class='form-group'>
-					<div class='input-group-addon' style="color: #8a8d93;">Modalidade</div>
-					<select name='modalidade_id' id='modalidade_id' class='form-control' style='padding-left: 0px;'>
-						<option value='0' style='background-color: #393836;'>Selecione</option>
-						<?php
-						for ($i = 0; $i < count($modalidades); $i++)
-						{
-							$selected = "";
-							if ($modalidades[$i]['Id'] == $obj['Modalidade_id'])
-								$selected = "selected";
-							echo "<option class='background_dark' $selected value='" . $modalidades[$i]['Id'] . "'>" . $modalidades[$i]['Nome_modalidade'] . "</option>";
-						}
-						?>
-					</select>
-					<div class='input-group mb-2 mb-sm-0 text-danger' id='error-modalidade_id'></div>
-				</div>
+			<div class="col-lg-12">
+				<div class="row">
+					<div class="col-lg-6">
+						<div class='form-group'>
+							<div class='input-group-addon' style="color: #8a8d93;">Modalidade</div>
+							<select name='modalidade_id' id='modalidade_id' class='form-control' style='padding-left: 0px;'>
+								<option value='0' style='background-color: #393836;'>Selecione</option>
+								<?php
+								for ($i = 0; $i < count($modalidades); $i++)
+								{
+									$selected = "";
+									if ($modalidades[$i]['Id'] == $obj['Modalidade_id'])
+										$selected = "selected";
+									echo "<option class='background_dark' $selected value='" . $modalidades[$i]['Id'] . "'>" . $modalidades[$i]['Nome_modalidade'] . "</option>";
+								}
+								?>
+							</select>
+							<div class='input-group mb-2 mb-sm-0 text-danger' id='error-modalidade_id'></div>
+						</div>
 
-				<div class="form-group relative">
-					<input id="periodo" name="periodo" value='<?php echo (!empty($obj['Periodo']) ? $obj['Periodo']:''); ?>' type="text" class="input-material">
-					<label for="periodo" class="label-material">Periodo</label>
-					<div class='input-group mb-2 mb-sm-0 text-danger' id='error-periodo'></div>
-				</div>
+						<div class="form-group relative">
+							<input id="periodo" name="periodo" value='<?php echo (!empty($obj['Periodo']) ? $obj['Periodo']:''); ?>' type="text" class="input-material">
+							<label for="periodo" class="label-material">Periodo</label>
+							<div class='input-group mb-2 mb-sm-0 text-danger' id='error-periodo'></div>
+						</div>
 
-				<div class='form-group'>
-					<div class='checkbox checbox-switch switch-success custom-controls-stacked' onclick="Main.oculta_limite_falta(this.value)">
-						<?php
-						$checked = "";
-						if ($obj['Avaliar_faltas'] == 1)
-							$checked = "checked";
+						<div class='form-group'>
+							<div class='checkbox checbox-switch switch-success custom-controls-stacked' onclick="Main.oculta_limite_falta(this.value)">
+								<?php
+								$checked = "";
+								if ($obj['Avaliar_faltas'] == 1)
+									$checked = "checked";
 
-						echo "<label for='avaliar_faltas' style='color: #8a8d93;'>";
-						echo "<input type='checkbox' $checked id='avaliar_faltas' name='avaliar_faltas' value='1' /><span></span> Avaliar faltas por disciplina ";
-						echo "</label>";
-						 echo"<span class='glyphicon glyphicon-question-sign text-danger pointer padding10'  data-toggle='tooltip' title='Se o limite de falta for por disciplina, deverá ser especificado o limite para cada disciplina ao criar a turma.'></span>";
-						?>
+								echo "<label for='avaliar_faltas' style='color: #8a8d93;'>";
+								echo "<input type='checkbox' $checked id='avaliar_faltas' name='avaliar_faltas' value='1' /><span></span> Avaliar faltas por disciplina ";
+								echo "</label>";
+								 echo"<span class='glyphicon glyphicon-question-sign text-danger pointer padding10'  data-toggle='tooltip' title='Se o limite de falta for por disciplina, deverá ser especificado o limite para cada disciplina ao criar a turma.'></span>";
+								?>
+							</div>
+						</div>
+
+						<?php if($obj['Avaliar_faltas'] == 0 || $obj['Avaliar_faltas'] == NULL):?>	
+							<div class="form-group relative">
+								<input id="limite_falta" name="limite_falta" value='<?php echo (!empty($obj['Limite_falta']) ? $obj['Limite_falta']:''); ?>' type="text" class="input-material">
+								<label for="limite_falta" class="label-material">Limite de falta (%)</label>
+								<div class='input-group mb-2 mb-sm-0 text-danger' id='error-limite_falta'></div>
+							</div>
+						<?php else: ?>	
+							<div class="form-group relative">
+								<input id="limite_falta" name="limite_falta" disabled value='<?php echo (!empty($obj['Limite_falta']) ? $obj['Limite_falta']:''); ?>' type="text" class="input-material">
+								<label for="limite_falta" class="label-material">Limite de falta (%)</label>
+								<div class='input-group mb-2 mb-sm-0 text-danger' id='error-limite_falta'></div>
+							</div>
+						<?php endif; ?>	
+
+						<div class="form-group relative">
+							<input id="dias_letivos" name="dias_letivos" value='<?php echo (!empty($obj['Dias_letivos']) ? $obj['Dias_letivos']:''); ?>' type="text" class="input-material">
+							<label for="dias_letivos" class="label-material">Dias letivos</label>
+							<div class='input-group mb-2 mb-sm-0 text-danger' id='error-dias_letivos'></div>
+						</div>
+
+						<div class="form-group relative">
+							<input id="media" name="media" value='<?php echo (!empty($obj['Media']) ? $obj['Media']:''); ?>' type="text" class="input-material">
+							<label for="media" class="label-material">Média de aprovação (%)</label>
+							<div class='input-group mb-2 mb-sm-0 text-danger' id='error-media'></div>
+						</div>
 					</div>
-				</div>
+					<div class="col-lg-6" style="margin-top: 25px;">
+						<div class="form-group relative">
+							<input id="duracao_aula" name="duracao_aula" value='<?php echo (!empty($obj['Duracao_aula']) ? $obj['Duracao_aula']:''); ?>' type="text" class="input-material">
+							<label for="duracao_aula" class="label-material">Duração da aula</label>
+							<div class='input-group mb-2 mb-sm-0 text-danger' id='error-duracao_aula'></div>
+						</div>
 
-				<?php if($obj['Avaliar_faltas'] == 0 || $obj['Avaliar_faltas'] == NULL):?>	
-					<div class="form-group relative">
-						<input id="limite_falta" name="limite_falta" value='<?php echo (!empty($obj['Limite_falta']) ? $obj['Limite_falta']:''); ?>' type="text" class="input-material">
-						<label for="limite_falta" class="label-material">Limite de falta (%)</label>
-						<div class='input-group mb-2 mb-sm-0 text-danger' id='error-limite_falta'></div>
+						<div class="form-group relative">
+							<input style="padding-top:  7px;" id="hora_inicio_aula" name="hora_inicio_aula" value='<?php echo (!empty($obj['Hora_inicio_aula']) ? $obj['Hora_inicio_aula']:''); ?>' type="time" class="input-material">
+							<label for="hora_inicio_aula" class="label-material">Hora de início da aula</label>
+							<div class='input-group mb-2 mb-sm-0 text-danger' id='error-hora_inicio_aula'></div>
+						</div>
+
+						<div class="form-group relative">
+							<input id="quantidade_aula" name="quantidade_aula" value='<?php echo (!empty($obj['Quantidade_aula']) ? $obj['Quantidade_aula']:''); ?>' type="text" class="input-material">
+							<label for="quantidade_aula" class="label-material">Quantidade de aulas por dia</label>
+							<div class='input-group mb-2 mb-sm-0 text-danger' id='error-quantidade_aula'></div>
+						</div>
+
+						<div class="form-group relative">
+							<input style="padding-top: 11px;" id="reprovas" name="reprovas" value='<?php echo (!empty($obj['Reprovas']) ? $obj['Reprovas']:''); ?>' type="text" class="input-material">
+							<label for="reprovas" class="label-material">Reprovas <span class='glyphicon glyphicon-question-sign text-danger pointer'  data-toggle="tooltip" title="Define o limite de disciplinas que o aluno poderá carregar."></span></label>
+							<div class='input-group mb-2 mb-sm-0 text-danger' id='error-reprovas'></div>
+						</div>
+
+						<div class="form-group relative">
+							<input id="qtd_minima" name="qtd_minima" value='<?php echo (!empty($obj['Qtd_minima_aluno']) ? $obj['Qtd_minima_aluno']:''); ?>' type="text" class="input-material">
+							<label for="qtd_minima" class="label-material">Mínimo de alunos <span class='glyphicon glyphicon-question-sign text-danger pointer'  data-toggle="tooltip" title="Especifica uma quantidade mínima de alunos para que se possa criar uma turma."></span></label>
+							<div class='input-group mb-2 mb-sm-0 text-danger' id='error-qtd_minima'></div>
+						</div>
+
+						<div class="form-group relative">
+							<input id="qtd_maxima" name="qtd_maxima" value='<?php echo (!empty($obj['Qtd_maxima_aluno']) ? $obj['Qtd_maxima_aluno']:''); ?>' type="text" class="input-material">
+							<label for="qtd_maxima" class="label-material">Máximo de alunos <span class='glyphicon glyphicon-question-sign text-danger pointer'  data-toggle="tooltip" title="Especifica uma quantidade máxima de alunos para que se possa criar uma turma."></span></label>
+							<div class='input-group mb-2 mb-sm-0 text-danger' id='error-qtd_maxima'></div>
+						</div>
 					</div>
-				<?php else: ?>	
-					<div class="form-group relative">
-						<input id="limite_falta" name="limite_falta" disabled value='<?php echo (!empty($obj['Limite_falta']) ? $obj['Limite_falta']:''); ?>' type="text" class="input-material">
-						<label for="limite_falta" class="label-material">Limite de falta (%)</label>
-						<div class='input-group mb-2 mb-sm-0 text-danger' id='error-limite_falta'></div>
-					</div>
-				<?php endif; ?>	
-
-				<div class="form-group relative">
-					<input id="dias_letivos" name="dias_letivos" value='<?php echo (!empty($obj['Dias_letivos']) ? $obj['Dias_letivos']:''); ?>' type="text" class="input-material">
-					<label for="dias_letivos" class="label-material">Dias letivos</label>
-					<div class='input-group mb-2 mb-sm-0 text-danger' id='error-dias_letivos'></div>
-				</div>
-
-				<div class="form-group relative">
-					<input id="media" name="media" value='<?php echo (!empty($obj['Media']) ? $obj['Media']:''); ?>' type="text" class="input-material">
-					<label for="media" class="label-material">Média de aprovação (%)</label>
-					<div class='input-group mb-2 mb-sm-0 text-danger' id='error-media'></div>
-				</div>
-
-				<div class="form-group relative">
-					<input id="duracao_aula" name="duracao_aula" value='<?php echo (!empty($obj['Duracao_aula']) ? $obj['Duracao_aula']:''); ?>' type="text" class="input-material">
-					<label for="duracao_aula" class="label-material">Duração da aula</label>
-					<div class='input-group mb-2 mb-sm-0 text-danger' id='error-duracao_aula'></div>
-				</div>
-
-				<div class="form-group relative">
-					<input id="hora_inicio_aula" name="hora_inicio_aula" value='<?php echo (!empty($obj['Hora_inicio_aula']) ? $obj['Hora_inicio_aula']:''); ?>' type="time" class="input-material">
-					<label for="hora_inicio_aula" class="label-material">Hora de início da aula</label>
-					<div class='input-group mb-2 mb-sm-0 text-danger' id='error-hora_inicio_aula'></div>
-				</div>
-
-				<div class="form-group relative">
-					<input id="quantidade_aula" name="quantidade_aula" value='<?php echo (!empty($obj['Quantidade_aula']) ? $obj['Quantidade_aula']:''); ?>' type="text" class="input-material">
-					<label for="quantidade_aula" class="label-material">Quantidade de aulas por dia</label>
-					<div class='input-group mb-2 mb-sm-0 text-danger' id='error-quantidade_aula'></div>
-				</div>
-
-				<div class="form-group relative">
-					<input id="reprovas" name="reprovas" value='<?php echo (!empty($obj['Reprovas']) ? $obj['Reprovas']:''); ?>' type="text" class="input-material">
-					<label for="reprovas" class="label-material">Reprovas <span class='glyphicon glyphicon-question-sign text-danger pointer'  data-toggle="tooltip" title="Define o limite de disciplinas que o aluno poderá carregar."></span></label>
-					<div class='input-group mb-2 mb-sm-0 text-danger' id='error-reprovas'></div>
-				</div>
-
-				<div class="form-group relative">
-					<input id="qtd_minima" name="qtd_minima" value='<?php echo (!empty($obj['Qtd_minima_aluno']) ? $obj['Qtd_minima_aluno']:''); ?>' type="text" class="input-material">
-					<label for="qtd_minima" class="label-material">Mínimo de alunos <span class='glyphicon glyphicon-question-sign text-danger pointer'  data-toggle="tooltip" title="Especifica uma quantidade mínima de alunos para que se possa criar uma turma."></span></label>
-					<div class='input-group mb-2 mb-sm-0 text-danger' id='error-qtd_minima'></div>
-				</div>
-
-				<div class="form-group relative">
-					<input id="qtd_maxima" name="qtd_maxima" value='<?php echo (!empty($obj['Qtd_maxima_aluno']) ? $obj['Qtd_maxima_aluno']:''); ?>' type="text" class="input-material">
-					<label for="qtd_maxima" class="label-material">Máximo de alunos <span class='glyphicon glyphicon-question-sign text-danger pointer'  data-toggle="tooltip" title="Especifica uma quantidade máxima de alunos para que se possa criar uma turma."></span></label>
-					<div class='input-group mb-2 mb-sm-0 text-danger' id='error-qtd_maxima'></div>
 				</div>
 			</div>
-			<div class="col-lg-7">
+			<div class="col-lg-12">
 				<fieldset>
 					<legend>&nbsp;Intervalos <span class='glyphicon glyphicon-question-sign text-danger pointer'  data-toggle="tooltip" title="Define os intervalos que terão em cada dia da semana para o horário de aula da turma."></span></legend>
 					<div class="row">
@@ -147,6 +152,9 @@
 					</div>
 					<div class="row">
 						<div class="col-lg-6">
+							<input style="width: 200px;" type='button' class='btn btn-danger btn-block' onclick="Main.add_intervalo()" value='Adicionar intervalo'>
+						</div>
+						<div class="col-lg-6">
 							<div class='form-group'>
 								<select id="dia" name="dia" class='form-control padding0'>
 									<option class='background_dark' value="0">Selecione o dia</option>
@@ -160,9 +168,6 @@
 								</select>
 								<div class='input-group mb-2 mb-sm-0 text-danger' id='error-dia'></div>
 							</div>
-						</div>
-						<div class="col-lg-6">
-							<input type='button' class='btn btn-danger btn-block' onclick="Main.add_intervalo()" value='Adicionar intervalo'>
 						</div>
 					</div>
 
@@ -258,11 +263,11 @@
 					</div>
 					<div class="row" style="padding-bottom: 15px;">
 						<div class="col-lg-6">
-							<input type='button' class='btn btn-danger btn-block' onclick="Main.add_bimestre();" value='Adicionar bimestre'>			
+							<input style="width: 200px;" type='button' class='btn btn-danger btn-block' onclick="Main.add_bimestre();" value='Adicionar bimestre'>			
 						</div>
 					</div>
 					<div class="bimestres">
-						<div class="table-responsive" style="width: 900px">
+						<div class="table-responsive" style="/*width: 900px*/">
 							<?php
 								echo "<table class='table table-striped table-sm table-hover'>";
 									echo "<thead>";
@@ -271,8 +276,8 @@
 											echo "<td>Valor</td>";
 											echo "<td title='Data em que começa o bimestre durante o ano'>Data de início</td>";
 											echo "<td title='Data em que termina o bimestre durante o ano'>Data de fim</td>";
-											echo "<td title='Data em que começa a ser permitido a inserção de notas no portal pelos professores (opcional)'>Data de abertura</td>";
-											echo "<td title='Data em que termina a permissão de inserção de notas no portal pelos professores (opcional)'>Data de fechamento</td>";
+											echo "<td title='Data em que começa a ser permitido a inserção de notas no portal pelos professores'>Data de abertura</td>";
+											echo "<td title='Data em que termina a permissão de inserção de notas no portal pelos professores'>Data de fechamento</td>";
 											echo "<td></td>";
 										echo "</tr>";
 									echo "</thead>";
@@ -317,10 +322,106 @@
 						</div>
 					</div>
 				</fieldset>
+				<fieldset style="margin-top: 20px;">
+					<legend>&nbsp;Notas especiais <span class='glyphicon glyphicon-question-sign text-danger pointer'  data-toggle="tooltip" title="Define as etapas de recuperação que o aluno poderá fazer."></span></legend>
+					<div class="row">
+						<div class="col-lg-6">
+							<div class="form-group relative">
+								<input id="nome_nota_especial" name="nome_nota_especial" type="text" class="input-material">
+								<label for="nome_nota_especial" class="label-material">Nome</label>
+								<div class='input-group mb-2 mb-sm-0 text-danger' id='error-nome_nota_especial'></div>
+							</div>						
+						</div>
+						<div class="col-lg-6">
+							<div class="form-group relative">
+								<input id="valor_nota_especial" name="valor_nota_especial" type="text" class="input-material">
+								<label for="valor_nota_especial" class="label-material">Valor</label>
+								<div class='input-group mb-2 mb-sm-0 text-danger' id='error-valor_nota_especial'></div>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-lg-6">
+							<div class="form-group relative" id="data1">
+								<input id="data_abertura_nota_especial" name="data_abertura_nota_especial" type="text" class="input-material">
+								<label for="data_abertura_nota_especial" class="label-material">Data de abertura</label>
+								<div class='input-group mb-2 mb-sm-0 text-danger' id='error-data_abertura_nota_especial'></div>
+							</div>						
+						</div>
+						<div class="col-lg-6">
+							<div class="form-group relative" id="data1">
+								<input id="data_fechamento_nota_especial" name="data_fechamento_nota_especial" type="text" class="input-material">
+								<label for="data_fechamento_nota_especial" class="label-material">Data de fechamento</label>
+								<div class='input-group mb-2 mb-sm-0 text-danger' id='error-data_fechamento_nota_especial'></div>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-lg-6">
+							<input style="width: 200px;" type='button' class='btn btn-danger btn-block' onclick="Main.add_nota_especial()" value='Adicionar Nota especial'>
+						</div>
+						<div class="col-lg-6">
+							<div class="form-group relative">
+								<input id="media_nota_especial" name="media_nota_especial" type="text" class="input-material">
+								<label for="media_nota_especial" class="label-material">Média</label>
+								<div class='input-group mb-2 mb-sm-0 text-danger' id='error-media_nota_especial'></div>
+							</div>						
+						</div>
+					</div>
+					<div class="notas_especiais">
+						<div class="table-responsive" style="/*width: 900px*/">
+							<?php
+								echo "<table class='table table-striped table-sm table-hover'>";
+									echo "<thead>";
+										echo "<tr>";
+											echo "<td>Nome</td>";
+											echo "<td>Valor</td>";
+											echo "<td>Média</td>";
+											echo "<td title='Data em que começa a ser permitido a inserção de notas no portal pelos professores'>Data de abertura</td>";
+											echo "<td title='Data em que termina a permissão de inserção de notas no portal pelos professores'>Data de fechamento</td>";
+											echo "<td></td>";
+										echo "</tr>";
+									echo "</thead>";
+									
+									echo "<tbody id='notas_especiais'>";
+										$max_value_nota_especial = 0;
+										for($i = 0; $i < count($notas_especiais); $i++)
+										{
+											echo "<tr id='nota_especial".$max_value_nota_especial."'>";
+												echo"<td>";
+													echo "<input type='hidden' id='nome_nota_especial".$max_value_nota_especial."' name='nome_nota_especial".$max_value_nota_especial."' value='".$notas_especiais[$i]['Nome']."'>";
+													echo $notas_especiais[$i]['Nome'];
+												echo "</td>";
+												echo "<td>";
+													echo "<input type='hidden' id='valor_nota_especial".$max_value_nota_especial."' name='valor_nota_especial".$max_value_nota_especial."' value='".$notas_especiais[$i]['Valor']."'>";
+													echo $notas_especiais[$i]['Valor'];
+												echo "</td>";
+												echo "<td>";
+													echo "<input type='hidden' id='media_nota_especial".$max_value_nota_especial."' name='media_nota_especial".$max_value_nota_especial."' value='".$notas_especiais[$i]['Media']."'>";
+													echo $notas_especiais[$i]['Media'];
+												echo "</td>";
+												echo "<td>";
+													echo "<input type='hidden' id='data_abertura_nota_especial".$max_value_nota_especial."' name='data_abertura_nota_especial".$max_value_nota_especial."' value='".$notas_especiais[$i]['Data_abertura']."'>";
+													echo (($notas_especiais[$i]['Data_abertura'] == '00/00/0000') ? '' : $notas_especiais[$i]['Data_abertura']);
+												echo "</td>";
+												echo "<td>";
+													echo "<input type='hidden' id='data_fechamento_nota_especial".$max_value_nota_especial."' name='data_fechamento_nota_especial".$max_value_nota_especial."' value='".$notas_especiais[$i]['Data_fechamento']."'>";
+													echo (($notas_especiais[$i]['Data_fechamento'] == '00/00/0000') ? '' : $notas_especiais[$i]['Data_fechamento']);
+												echo "</td>";
+												echo"<td><span class='glyphicon glyphicon-remove pointer' title='Remover' onclick='Main.remove_elemento(\"nota_especial".$max_value_nota_especial."\");'></span></td>";
+											echo "</tr>";
+											$max_value_nota_especial = $max_value_nota_especial + 1;
+										}
+										echo "<input type='hidden' id='max_value_nota_especial' name='max_value_nota_especial' value='".$max_value_nota_especial."' />";
+									echo "</tbody>";
+								echo "</table>";
+							?>
+						</div>
+					</div>
+				</fieldset>
 			</div>
 		</div>
-
-		
+		<br />
 		<div class='form-group'>
 			<div class='checkbox checbox-switch switch-success custom-controls-stacked'>
 				<?php

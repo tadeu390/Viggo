@@ -195,6 +195,7 @@ var Main = {
 	},
 	method : '',
 	form : '',
+	method_redirect : '',
 	create_edit : function ()
 	{
 		Main.modal("aguardar", "Aguarde... processando dados.");
@@ -207,6 +208,10 @@ var Main = {
 		if(Main.form == "" || Main.form == null)
 			Main.form = "form_cadastro";
 
+		//QUANDO O MÉTODO DE REDIRECT NÃO É ESPECIFICADO, CONSIDERAR O PADRÃO index
+		if(Main.method_redirect == "" || Main.method_redirect == null)
+			Main.method_redirect = "index";
+
 		$.ajax({
 			url: Main.base_url+$("#controller").val()+'/'+Main.method,
 			data: $("#"+$("form[name="+Main.form+"]").attr("id")).serialize(),
@@ -217,7 +222,7 @@ var Main = {
 				if(msg.response == "sucesso")
 				{
 					$("#mensagem_aguardar").html("Dados salvos com sucesso");
-					window.location.assign(Main.base_url+$("#controller").val()+"/index/"+Main.get_cookie("page"));
+					window.location.assign(Main.base_url+$("#controller").val()+"/"+ Main.method_redirect +"/"+Main.get_cookie("page"));
 				}
 				else
 				{
@@ -805,6 +810,101 @@ var Main = {
 				Main.modal("aviso", "Este bimestre já existe na lista. Se deseja edita-lo, remova-o da lista e o adicione novamente.");
 			else if(flag == 2)
 				Main.modal("aviso", "As datas informadas já estão em uso para um bimestre na lista.");
+			else
+				return true;
+		}
+	},
+	add_nota_especial : function ()
+	{
+		if(Main.nota_especial_validar() == true)
+		{
+			var max_value_nota_especial  =  $("#max_value_nota_especial").val();
+
+			var a = new Array();
+			a.push($("#nome_nota_especial").val());
+			a.push($("#valor_nota_especial").val());
+			a.push($("#media_nota_especial").val());
+			a.push(($("#data_abertura_nota_especial").val() == '') ? '' : $("#data_abertura_nota_especial").val());
+			a.push(($("#data_fechamento_nota_especial").val() == '') ? '' : $("#data_fechamento_nota_especial").val());
+			a.push("");
+
+			var aux = new Array();
+			aux.push("nome_nota_especial");
+			aux.push("valor_nota_especial");
+			aux.push("media_nota_especial");
+			aux.push("data_abertura_nota_especial");
+			aux.push("data_fechamento_nota_especial");
+			aux.push("");
+
+			var node_tr = document.createElement("TR");
+			node_tr.setAttribute("id","nota_especial"+max_value_nota_especial);
+			
+			for(var i = 0; i < 6; i++)
+			{
+				var node_td = document.createElement("TD");
+				
+				var input_text = document.createElement("INPUT");
+				input_text.setAttribute("type", "hidden");
+				if(i < 5)
+					input_text.setAttribute("value", a[i]);
+				input_text.setAttribute("id",aux[i]+max_value_nota_especial);
+				input_text.setAttribute("name",aux[i]+max_value_nota_especial);
+				
+				var textnode = document.createTextNode(a[i]); 
+				node_td.appendChild(input_text);
+				node_td.appendChild(textnode);
+				
+				if(i == 5)
+					node_td.innerHTML = "<span class='glyphicon glyphicon-remove pointer' title='Remover' onclick='Main.remove_elemento(\"nota_especial"+max_value_nota_especial+"\");'></span>";
+				
+				node_tr.appendChild(node_td);
+				document.getElementById("notas_especiais").appendChild(node_tr);
+			}
+			$("#max_value_nota_especial").val(parseInt(max_value_nota_especial) + 1);
+		}
+	},
+	nota_especial_validar : function ()
+	{
+		if($("#nome_nota_especial").val() == "")
+			Main.show_error("nome_nota_especial", 'Informe o nome da nota especial.', '');
+		else if($("#valor_nota_especial").val() == "")
+			Main.show_error("valor_nota_especial", 'Informe o valor da nota especial.', '');
+		else if($("#data_abertura_nota_especial").val() == "")
+			Main.show_error("data_abertura_nota_especial", 'Informe a data de abertura', '');
+		else if($("#data_fechamento_nota_especial").val() == "")
+			Main.show_error("data_fechamento_nota_especial", 'Informe a data de fechamento', '');
+		else if(Main.str_to_date($("#data_fechamento_nota_especial").val()) <= Main.str_to_date($("#data_abertura_nota_especial").val()))
+			Main.show_error("data_fechamento_nota_especial", 'A data de fechamento deve ser maior que a data de abertura.', '');
+		else if($("#media_nota_especial").val() == "")
+			Main.show_error("media_nota_especial", 'Informe a média da nota especial.', '');
+		else
+		{
+			var max_value_nota_especial  =  $("#max_value_nota_especial").val();
+
+			var a = new Array();
+			a.push($("#nome_bimestre").val());
+			a.push($("#valor").val());
+			a.push($("#data_inicio").val());
+			a.push($("#data_fim").val());
+			a.push($("#data_abertura").val());
+			a.push($("#data_fechamento").val());
+			a.push("");
+
+			var flag = 0;
+			for(var i = 0; i < max_value_nota_especial; i++)
+			{
+				if($("#nome_nota_especial"+i).val() == a[0] && $("#valor_nota_especial"+i).val() == a[1] &&
+					$("#data_abertura_nota_especial"+i).val() == a[2] && $("#data_fechamento_nota_especial"+i).val() == a[3])
+					flag = 1;
+				else if($("#valor_nota_especial"+i).val() == a[1] &&
+					$("#data_abertura_nota_especial"+i).val() == a[2] && $("#data_fechamento_nota_especial"+i).val() == a[3])
+					flag = 2;
+			}
+
+			if(flag == 1)
+				Main.modal("aviso", "Esta nota especial já existe na lista. Se deseja edita-la, remova-a da lista e a adicione novamente.");
+			else if(flag == 2)
+				Main.modal("aviso", "As datas informadas já estão em uso para uma nota especial na lista.");
 			else
 				return true;
 		}
@@ -1549,6 +1649,42 @@ var Main = {
 			},500);
 		});
 	},
+	get_sub_turmas : function (disciplina_id, turma_id, data)
+	{
+		Main.modal("aguardar", "Aguarde...");
+
+		data = Main.convert_date(data, "en");
+
+		$.ajax({
+			url: Main.base_url + $("#controller").val() + '/get_sub_turmas/' + disciplina_id + '/' + turma_id + '/' + data,
+			dataType:'json',
+			cache: false,
+			type: 'POST',
+			success: function (data) 
+			{
+				if(data.response != "sucesso")
+				{
+					setTimeout(function(){
+			    	$("#modal_aguardar").modal('hide');
+						$("#subturmas").html(data.response);
+						Main.get_alunos_chamada(disciplina_id, turma_id);
+						
+						if($("#subturma").val() == "x")
+							$("#chamada").html("");
+					},500);
+				}
+				else
+					location.reload();
+			}
+		}).fail(function(msg){
+		    setTimeout(function(){
+		    	//$("#modal_confirm").modal('hide');
+		    	Main.modal("aviso", "Houve um erro ao processar sua requisição. Verifique sua conexão com a internet.");
+			},500);
+		});
+
+		
+	},
 	get_alunos_chamada : function (disciplina_id, turma_id)
 	{
 		if($("#data_atual").val() != "" && document.getElementById("subturma") != undefined && $("#subturma").val() != "x")
@@ -1564,11 +1700,13 @@ var Main = {
 				type: 'POST',
 				success: function (data) 
 				{
-					$("#alunos_chamada").html(data.response);
+					$("#chamada").html(data.response);
 					setTimeout(function(){
 						$("#modal_aguardar").modal('hide');
 					},500);
 					
+					if(data.status == "ok")
+						document.getElementById("div_btn_save").style.display = "block";
 				}
 			}).fail(function(msg){
 			    setTimeout(function(){
@@ -1577,5 +1715,12 @@ var Main = {
 				},500);
 			});
 		}
+	},
+	chamada_validar : function()
+	{
+		Main.method = "store_chamada";
+		Main.method_redirect = "faltas";
+
+		Main.create_edit();
 	}
 };

@@ -122,8 +122,31 @@ $(document).ready(
       }
     });
 
+    $('#nome_nota_especial').change(function() {
+      if (this.value != '') Main.show_error("nome_nota_especial", '', '');
+    });
+
+    $('#media_nota_especial').change(function() {
+      if (this.value != '') Main.show_error("media_nota_especial", '', '');
+    });
+
+    $('#valor_nota_especial').change(function() {
+      if (this.value != '') Main.show_error("valor_nota_especial", '', '');
+    });
+
     $('#data_fechamento').change(function() {
       if (this.value != '') Main.show_error("data_fechamento", '', '');
+    });
+
+    $('#data_abertura_nota_especial').change(function() {
+      if (this.value != '') {
+        Main.show_error("data_abertura_nota_especial", '', '');
+        Main.show_error("data_fechamento_nota_especial", '', '');
+      }
+    });
+
+    $('#data_fechamento_nota_especial').change(function() {
+      if (this.value != '') Main.show_error("data_fechamento_nota_especial", '', '');
     });
 
     //REGRAS LETIVAS
@@ -212,6 +235,11 @@ $(document).ready(
 
     //BTN CADASTROS
     
+    $("#form_cadastro_chamada").submit(function(event) {
+      event.preventDefault();
+      Main.chamada_validar();
+    });
+
     $("#form_cadastro_horario").submit(function(event) {
       event.preventDefault();
       Main.inscricao_validar();

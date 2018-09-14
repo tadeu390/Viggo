@@ -286,7 +286,7 @@ ol.breadcrumb
 	color: black;
 }
 
-.bimestres
+.bimestres,.notas_especiais
 {
 	background-color: white;
 	height: 185px;
@@ -392,3 +392,8 @@ input[type="text"]:disabled {
 	padding: 10px !important;
 	font-size: 1rem;
 }
+
+/*form-control:disabled, .form-control[readonly]
+{
+	background-color: transparent !important;
+}*/

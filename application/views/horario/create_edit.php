@@ -236,10 +236,11 @@
 																   $lista_disc_turma_horario[$y]['Inicio'] == $Hora_inicio_aula_temp && 
 																   $lista_disc_turma_horario[$y]['Fim'] == $Hora_inicio_aula && 
 																   ($lista_disc_turma_horario[$y]['Sub_turma'] == $sub_turma || $lista_disc_turma_horario[$y]['Sub_turma'] == 0) && 
-																   $lista_disc_turma_horario[$y]['Disc_turma_id'] == $lista_disc_turma_disciplina[$j]['Disc_turma_id'])
+																   $lista_disc_turma_horario[$y]['Disc_turma_id'] == $lista_disc_turma_disciplina[$j]['Disc_turma_id'] && 
+																   $lista_disc_turma_horario[$y]['Ativo'] == 1)
 																	$selected = "selected";
 															}
-															echo "<option class='' $selected value='" . $lista_disc_turma_disciplina[$j]['Disc_turma_id'] . "'>" . $lista_disc_turma_disciplina[$j]['Disc_prof'] . "</option>";
+															echo "<option $selected value='" . $lista_disc_turma_disciplina[$j]['Disc_turma_id'] . "'>" . $lista_disc_turma_disciplina[$j]['Disc_prof'] . "</option>";
 														}
 														echo"</select>";
 													echo "</div>";

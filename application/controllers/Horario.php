@@ -181,15 +181,11 @@
 								array_push($lista_horarios, $horario);
 								//print_r($horario);
 								//echo "<br />";
+								$lista_disc_hor_temp = array();
 								for($k = 0; $k < $this->input->post('qtd_sub_turma'); $k++)
 								{
 									if($this->input->post('dia'.($i + 1).'_aula'.($j + 1).'_disc_turma'.($k + 1)) != 0)
 									{
-										/*echo $this->input->post('dia'.($i + 1).'_aula'.($j + 1).'_disc_turma'.($k + 2))."-<br />";
-										$sub_turma = 0;
-										if($this->input->post('dia'.($i + 1).'_aula'.($j + 1).'_disc_turma'.($k + 2)) > 0 || $this->input->post('dia'.($i + 1).'_aula'.($j + 1).'_disc_turma'.$k) > 0)//se o sucessor estiver marcado ou o anterior estiver marcado(nesse caso seria a última posicao do array)
-											$sub_turma = ($k + 1);*/	
-
 										$disc_hor = array(
 											'Disc_turma_id' => $this->input->post('dia'.($i + 1).'_aula'.($j + 1).'_disc_turma'.($k + 1)), 
 											'Sub_turma' => (($this->input->post('qtd_sub_turma') == 1) ? 0 :($k + 1)),//se nao tiver sub_turmas entao zera
@@ -198,9 +194,28 @@
 											'Inicio' => $this->input->post('hour_init_dia'.($i + 1).'_aula'.($j + 1)),
 											'Fim' => $this->input->post('hour_fim_dia'.($i + 1).'_aula'.($j + 1))
 										);
-										array_push($lista_disc_hor, $disc_hor);
+										array_push($lista_disc_hor_temp, $disc_hor);
 									}
 								}
+								if(COUNT($lista_disc_hor_temp) > 0)
+								{
+									$flag = 1;
+									$disc_turma_id = $lista_disc_hor_temp[0]['Disc_turma_id'];//escolher a primeira posição para poder comparar se as demais posicoes possuem a mesma
+																							  //disciplina
+									for($x = 0; $x < COUNT($lista_disc_hor_temp); $x++)
+									{
+										if($lista_disc_hor_temp[$x]['Disc_turma_id'] != $disc_turma_id)
+											$flag = 0;//caso entre aqui, então mantém as subturmas 1,2.x...
+									}
+
+									for($x = 0; $x < COUNT($lista_disc_hor_temp); $x++)
+									{
+										if($flag == 1)
+											$lista_disc_hor_temp[$x]['Sub_turma'] = 0;
+										array_push($lista_disc_hor, $lista_disc_hor_temp[$x]);
+									}
+								}
+								//array_push($lista_disc_hor, $disc_hor);
 								//echo "<br />";
 								//echo "<br />";
 							}
@@ -213,6 +228,7 @@
 						print_r($lista_disc_hor[$i]);
 						echo "<br />";
 					}*/
+					//print_r($lista_disc_hor);
 
 					$this->store_banco($lista_horarios, $lista_disc_hor);
 					

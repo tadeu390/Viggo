@@ -58,7 +58,7 @@
 				</div>
 				<div class="row padding10">
 					<div class="col-lg-4">
-						<a href="<?php echo $url; ?>professor/chamada/<?php echo $url_part['disciplina_id']."/".$url_part['turma_id']."/".$url_part['bimestre_id']; ?>" class="btn btn-danger">Fazer chamada</a>
+						<a href="<?php echo $url; ?>professor/chamada/<?php echo $url_part['disciplina_id']."/".$url_part['turma_id']."/".$url_part['bimestre_id']; ?>" class="btn btn-primary">Fazer chamada</a>
 					</div>
 					<div class="col-lg-4">
 						

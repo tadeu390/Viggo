@@ -26,6 +26,7 @@
 				<div class="row padding10">
 					<?php
 						$data['lista_bimestres'] = $lista_bimestres;
+						$data['lista_notas_especiais'] = $lista_notas_especiais;
 						$this->load->view("professor/_bimestre", $data);
 					?>
 				</div>
@@ -74,8 +75,8 @@
 				<div class="row padding10">
 					<div class="col-lg-6">
 						<div class="form-group relative" id="data1">
-							<input <?php echo "onchange='Main.get_alunos_chamada(".$url_part['disciplina_id'].",".$url_part['turma_id'].");'"; ?> id="data_atual" name="data_atual" value="<?php echo date('d/m/Y');?>" type="text" class="input-material">
-							<label for="data_nascimento" class="label-material active">Data</label>
+							<input <?php echo "onchange='Main.get_sub_turmas(".$url_part['disciplina_id'].",".$url_part['turma_id'].", this.value);'"; ?> id="data_atual" name="data_atual" value="<?php echo date('d/m/Y');?>" type="text" class="input-material">
+							<label for="data_atual" class="label-material active">Data</label>
 							<div class='input-group mb-2 mb-sm-0 text-danger' id='error-data_atual'></div>
 						</div>
 					</div>
@@ -83,32 +84,23 @@
 						<?php 
 							$data['lista_subturmas'] = $lista_subturmas;
 							$data['url_part'] = $url_part;
-							$data['sub_turma'] = $subturma;
+							$data['sub_turma'] = $sub_turma;
 							$this->load->view("professor/_subturmas", $data);
 						?>
 					</div>
-					<div class="col-lg-12" id='alunos_chamada'>
-						<?php 
-						if(!empty($lista_subturmas) && COUNT($lista_subturmas) == 1)
-						{
-							$subturma = $lista_subturmas[0]['Sub_turma']; 
-							$data['url_part'] = $url_part;
-							$data['data'] = date('Y-m-d');
-							$data['lista_alunos'] = faltas::get_alunos_chamada($url_part['disciplina_id'], $url_part['turma_id'], $subturma);
-							$data['lista_horarios'] = $lista_horarios;
-							$data['lista_subturmas'] = $lista_subturmas;
-							$this->load->view("professor/_alunos", $data);
-						}	
-						?>
-					</div>
-					<div class="col-lg-12">
-						<div class="form-group">
-							<textarea id='conteudo_lecionado' name="conteudo_lecionado" style="height: 100px;" class="form-control background_white border_radius" placeholder="Conteúdo lecionado"></textarea>
-						</div>
+					<div id='chamada' class="col-lg-12">
+					<?php
+						$data['url_part'] = $url_part;
+						$data['data'] = date('Y-m-d');
+						$data['lista_alunos'] = $lista_alunos;
+						$data['lista_horarios'] = $lista_horarios;
+						$data['lista_subturmas'] = $lista_subturmas;
+						$this->load->view("professor/_alunos", $data);
+					?>
 					</div>
 				</div>
 				<div class="row padding10" style="padding-top: 0px; padding-bottom: 0px;">
-					<div class="col-lg-12">
+					<div class="col-lg-12" style="display: none;" id="div_btn_save">
 						<?php
 							if (empty($obj['Id']))
 								echo "<input type='submit' class='btn btn-danger btn-block' style='width: 200px;' value='Cadastrar'>";

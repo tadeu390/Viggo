@@ -17,9 +17,10 @@
 		public function get_disciplinas($professor_id, $periodo_letivo_id)
 		{
 			$query = $this->db->query("
-				SELECT d.Nome AS Nome_disciplina, dt.Id AS Disc_turma_id, d.Id AS Disciplina_id, t.Id AS Turma_id   
+				SELECT d.Nome AS Nome_disciplina, dt.Id AS Disc_turma_id, d.Id AS Disciplina_id, t.Id AS Turma_id, dh.Sub_turma    
 				FROM Disc_turma dt 
 				INNER JOIN Disc_grade dg ON dt.Disc_grade_id = dg.Id 
+				INNER JOIN Disc_hor dh ON dh.Disc_turma_id = dt.Id 
 				INNER JOIN Turma t ON dt.Turma_id = t.Id 
 				INNER JOIN Disciplina d ON dg.Disciplina_id = d.Id 
 				INNER JOIN Grade g ON dg.Grade_id = g.Id 
@@ -83,7 +84,7 @@
 			$data = date('Y-m-d');
 
 			$query = $this->db->query("
-				SELECT dg.Disciplina_id, dt.Turma_id, dh.Sub_turma  
+				SELECT dg.Disciplina_id, dt.Turma_id 
 				FROM Disc_turma dt 
 				INNER JOIN Disc_grade dg ON dt.Disc_grade_id = dg.Id 
 				INNER JOIN Disc_hor dh ON dt.Id = dh.Disc_turma_id 
@@ -92,11 +93,45 @@
 				WHERE dt.Periodo_letivo_id = ".$this->db->escape($periodo_letivo_id)." AND 
 				dt.Professor_Id = ".$this->db->escape($professor_id)." AND 
 				h.Dia = DATE_FORMAT(".$this->db->escape($data).", '%w') AND 
+				dh.Ativo = 1 AND  
 				TIME_FORMAT(CAST(NOW() AS TIME), '%H:%i') >= TIME_FORMAT(h.Inicio, '%H:%i') AND 
 				TIME_FORMAT(CAST(NOW() AS TIME), '%H:%i') <= TIME_FORMAT(h.Fim, '%H:%i') 
 			");
+		
 
 			return $query->row_array();
+		}
+		/*!
+			RESPONSÁVEL POR IDENTIFICAR A SUBTURMA PADRÃO QUANDO O PROFESSOR ACESSA O PORTAL, COM BASE NO DIA E HORÁRIO.
+		*
+		*	$disciplina_id -> Id da disciplina que se quer verificar se há subturma nela.
+		*	$turma_id -> Id da turma na qual está associada a disciplina em questão.
+		*/
+		public function get_sub_turma_default($disciplina_id, $turma_id)
+		{
+			$data = date('Y-m-d');
+			
+			$query = $this->db->query("
+				SELECT x.Sub_turma FROM (SELECT dh.Sub_turma 
+					FROM Disc_turma dt 
+					INNER JOIN Disc_hor dh ON dt.Id = dh.Disc_turma_id 
+					INNER JOIN Disc_grade dg ON dt.Disc_grade_id = dg.Id 
+					INNER JOIN Horario h ON dh.Horario_id = h.Id 
+					WHERE dg.Disciplina_id = ".$this->db->escape($disciplina_id)." AND dt.Turma_id = ".$this->db->escape($turma_id)." AND 
+					h.Dia = DATE_FORMAT(".$this->db->escape($data).", '%w') AND 
+				 	dh.Ativo = 1 AND 
+				 	TIME_FORMAT(CAST(NOW() AS TIME), '%H:%i') >= TIME_FORMAT(h.Inicio, '%H:%i') AND 
+					TIME_FORMAT(CAST(NOW() AS TIME), '%H:%i') <= TIME_FORMAT(h.Fim, '%H:%i') 
+				 	GROUP BY dh.Horario_id) AS x GROUP BY x.Sub_turma 
+			");
+			if(empty($query->row_array()))
+			{
+				$subturma = $this->get_sub_turmas($disciplina_id, $turma_id, date('Y-m-d'));
+				$subturma = (empty($subturma) ? 0 : $subturma[0]['Sub_turma']);
+				return $subturma;
+			}
+			else 
+				return $query->row_array()['Sub_turma'];
 		}
 		//MÉTODOS DAQUI PRA BAIXO TALVEZ SEJAM MIGRADOS PARA O NOTAS_MODEL
 		/*!
@@ -137,20 +172,56 @@
 		}*/
 		/*!
 		*	RESPONSÁVEL POR RETORNAR UMA LISTA DE HORÁRIOS QUE O PROFESSOR DA AULA EM UMA DETERMINADA DISCIPLINA DE
-		*	UMA DETERMINADA TURMA.
+		*	UMA DETERMINADA TURMA NUMA DETERMINADA DATA.
 		*
 		*	$disciplina_id -> Id da disciplina que se deseja obter os horários.
 		*	$turma_id -> Id da turma que se deseja obter o horário.
 		* 	$professor_id -> Id do professor (somente para certificar-se de que irá voltar os horários das disciplinas 
 		*	que dizem respeito ao mesmo).
 		*/
-		public function get_horarios_professor($disciplina_id, $turma_id, $professor_id, $subturma, $data)
+		public function get_horarios_professor($disciplina_id, $turma_id, $professor_id, $subturma, $data, $ativo)
 		{
+			
+			//OS CASES SÃO UTILIZADOS PARA DETECTAR MUDANÇAS NO HORÁRIO, OU SEJA, SE HOUVER UM HORÁRIO DIFERENTE PARA A DATA EM QUESTÃO
+			//NA TABELA DE CALENDEARIO_PRESENCA, ENTAO CONSIDERA O QUE ESTÁ LÁ
 			$query = $this->db->query("
-				SELECT CONCAT(x.Dia, ' / ', x.Inicio, ' - ', x.Fim) AS Horario, 
-				CONCAT(x.Inicio) AS Hora_inicio, 
-				x.Disc_Hor_id, x.Aula, 
-				DAYNAME(NOW()) AS Dia_atual_semana, x.Inicio, x.Fim, x.Dia AS Dia_semana, x.Disc_hor_id FROM( 
+				SELECT  
+				CASE 
+					WHEN 
+						(SELECT COUNT(Horario_id) FROM Calendario_presenca cpx WHERE cpx.Matricula_id  = x.Matricula_id 
+							AND CAST(cpx.Data_registro AS DATE) = DATE_FORMAT(".$this->db->escape($data).",'%Y-%m-%d')) > 0 THEN 
+						(SELECT CONCAT((SELECT CASE 
+										    	WHEN hx.Dia = 1 THEN 'Segunda' 
+										    	WHEN hx.Dia = 2 THEN 'Terça' 
+										        WHEN hx.Dia = 3 THEN 'Quarta' 
+										        WHEN hx.Dia = 4 THEN 'Quinta' 
+										        WHEN hx.Dia = 5 THEN 'Sexta' 
+										        WHEN hx.Dia = 6 THEN 'Sábado' 
+										        WHEN hx.Dia = 7 THEN 'Domingo' 
+										    	END AS Dia), ' / ', hx.Inicio, ' - ', hx.Fim) 
+				    	FROM Calendario_presenca cpx INNER JOIN Horario  hx ON cpx.Horario_id = hx.Id 
+						WHERE cpx.Matricula_id  = x.Matricula_id 
+						AND CAST(cpx.Data_registro AS DATE) = DATE_FORMAT(".$this->db->escape($data).",'%Y-%m-%d'))
+					ELSE  
+					CONCAT(x.Dia, ' / ', x.Inicio, ' - ', x.Fim)
+				END AS Horario,
+				
+				CASE WHEN (SELECT COUNT(Horario_id) FROM Calendario_presenca cpx WHERE cpx.Matricula_id  = x.Matricula_id 
+					AND CAST(cpx.Data_registro AS DATE) = DATE_FORMAT(".$this->db->escape($data).",'%Y-%m-%d')) > 0 THEN 
+					(SELECT hx.Aula FROM Calendario_presenca cpx INNER JOIN Horario  hx ON cpx.Horario_id = hx.Id WHERE cpx.Matricula_id  = x.Matricula_id 
+					AND CAST(cpx.Data_registro AS DATE) = DATE_FORMAT(".$this->db->escape($data).",'%Y-%m-%d'))
+				ELSE  
+					x.Aula 
+				END AS Aula,
+
+				CASE WHEN (SELECT COUNT(Horario_id) FROM Calendario_presenca cpx WHERE cpx.Matricula_id  = x.Matricula_id 
+					AND CAST(cpx.Data_registro AS DATE) = DATE_FORMAT(".$this->db->escape($data).",'%Y-%m-%d')) > 0 THEN 
+					(SELECT Horario_id FROM Calendario_presenca cpx WHERE cpx.Matricula_id  = x.Matricula_id AND 
+					CAST(cpx.Data_registro AS DATE) = DATE_FORMAT(".$this->db->escape($data).",'%Y-%m-%d'))
+				ELSE 
+					x.Horario_id
+				END AS Horario_id, x.Disc_hor_id  
+				FROM( 
 					SELECT 
 					CASE 
 				    	WHEN h.Dia = 1 THEN 'Segunda' 
@@ -161,8 +232,8 @@
 				        WHEN h.Dia = 6 THEN 'Sábado' 
 				        WHEN h.Dia = 7 THEN 'Domingo' 
 				    END AS Dia, 
-				    TIME_FORMAT(h.Inicio, '%H:%i') AS Inicio, TIME_FORMAT(h.Fim, '%H:%i') AS Fim, dh.Id AS Disc_hor_id,
-				    h.Aula   
+				    TIME_FORMAT(h.Inicio, '%H:%i') AS Inicio, TIME_FORMAT(h.Fim, '%H:%i') AS Fim, 
+				    h.Aula, h.Id AS Horario_id, m.Id AS Matricula_id, dh.Id AS Disc_hor_id    
 				    FROM Disc_turma dt 
 				    INNER JOIN Disc_grade dg ON dt.Disc_grade_id = dg.Id 
 				    INNER JOIN Matricula m ON dt.Id = m.Disc_turma_id 
@@ -171,11 +242,12 @@
 				    WHERE dt.Turma_id = ".$this->db->escape($turma_id)." AND 
 				    dg.Disciplina_id = ".$this->db->escape($disciplina_id)." AND 
 				    dt.Professor_Id = ".$this->db->escape($professor_id)." AND 
-				    dh.Sub_turma = ".$this->db->escape($subturma)." AND
+				    (dh.Sub_turma = ".$this->db->escape($subturma)." OR dh.Sub_turma = 0) AND  
+				    dh.Ativo = ".$this->db->escape($ativo)." AND 
 				    h.Dia = DATE_FORMAT(".$this->db->escape($data).", '%w') 
 				    GROUP BY h.Dia, h.Inicio, h.Fim 
 			    ) AS x");
-
+			
 			return $query->result_array();
 		}
 		/*!
@@ -184,28 +256,24 @@
 		*/
 		public function get_alunos($disciplina_id, $turma_id, $sub_turma = FALSE)  //nome anterior get_alunos_chamada
 		{
-			$lista_subturmas = $this->identifica_sub_turmas($disciplina_id, $turma_id);
-			
-			//DETERMINA SE DEVE CONSIDERAR A SUBTURMA OU NAO, CONSIDERA CASO HAJA SUBTURMA (DISCIPLINAS DIFERENTES)
-			$subturma = "";
-			if(!empty($sub_turma) && !empty($lista_subturmas) && COUNT($lista_subturmas) > 1 && $sub_turma != "all")
-				$subturma = "AND dh.Sub_turma = ".$this->db->escape($sub_turma);
-
+			if(!empty($sub_turma) || $sub_turma == 0)
+				$sub_turma = "AND dh.Sub_turma = ".$this->db->escape($sub_turma);
+			else 
+				$sub_turma = "";
 			$query = $this->db->query("
 				SELECT u.Nome AS Nome_aluno, m.Id AS Matricula_id, 
-				dh.Sub_turma, cp.Id AS Calendario_presenca_id, cp.Presenca  
+				dh.Sub_turma
 				FROM Disc_turma dt 
 				INNER JOIN Disc_grade dg ON dt.Disc_grade_id = dg.Id 
 				INNER JOIN Matricula m ON m.Disc_turma_id = dt.Id  
 				INNER JOIN Inscricao i ON i.Id = m.Inscricao_id 
 				INNER JOIN Aluno a ON a.Id = i.Aluno_id 
 				INNER JOIN Usuario u ON u.Id = a.Usuario_id 
-				LEFT JOIN Disc_hor dh ON dt.Id = dh.Disc_turma_id AND m.Sub_turma = dh.Sub_turma 
-				LEFT JOIN Calendario_presenca cp ON m.Id = cp.Matricula_id 
+				LEFT JOIN Disc_hor dh ON dt.Id = dh.Disc_turma_id AND (m.Sub_turma = dh.Sub_turma OR dh.Sub_turma = 0)
 				WHERE dg.Disciplina_id = ".$this->db->escape($disciplina_id)." AND 
-				dt.Turma_id = ".$this->db->escape($turma_id)." ".$subturma." GROUP BY dh.Sub_turma, m.Id");
-
-			return $query->result_array();
+				dt.Turma_id = ".$this->db->escape($turma_id)." ".$sub_turma." GROUP BY dh.Sub_turma, m.Id");
+			
+				return $query->result_array();
 		}
 		/*!
 			RESPONSÁVEL POR IDENTIFICAR A QUANTIDADE DE SUBTURMAS E RETORNAR CADA SUB_TURMA QUANDO EXISTIR.
@@ -213,18 +281,20 @@
 		*	$disciplina_id -> Id da disciplina que se quer verificar se há subturma nela.
 		*	$turma_id -> Id da turma na qual está associada a disciplina em questão.
 		*/
-		public function identifica_sub_turmas($disciplina_id, $turma_id)
+		public function get_sub_turmas($disciplina_id, $turma_id, $data= false)
 		{
 			$query = $this->db->query("
 				SELECT x.Sub_turma FROM (SELECT dh.Sub_turma 
 					FROM Disc_turma dt 
 					INNER JOIN Disc_hor dh ON dt.Id = dh.Disc_turma_id 
 					INNER JOIN Disc_grade dg ON dt.Disc_grade_id = dg.Id 
-					WHERE dg.Disciplina_id = ".$this->db->escape($disciplina_id)." AND dt.Turma_id = ".$this->db->escape($turma_id)." 
-				 	
+					INNER JOIN Horario h ON dh.Horario_id = h.Id 
+					WHERE dg.Disciplina_id = ".$this->db->escape($disciplina_id)." AND dt.Turma_id = ".$this->db->escape($turma_id)." AND 
+					h.Dia = DATE_FORMAT(".$this->db->escape($data).", '%w') AND 
+				 	dh.Ativo = 1
 				 	GROUP BY dh.Horario_id) AS x GROUP BY x.Sub_turma 
 			");
-
+			
 			return $query->result_array();
 		}
 	}

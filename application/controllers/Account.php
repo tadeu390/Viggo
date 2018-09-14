@@ -182,7 +182,7 @@
 		            'name'   => 'id',
 		            'value'  => $Usuario['Id'],
 		            'expire' => 100000000,
-		            'secure' => TRUE,
+		            'secure' => FALSE,
 		            'httponly' => TRUE 
 	            );
 		  		$this->input->set_cookie($cookie);
@@ -191,7 +191,7 @@
 		            'name'   => 'grupo_id',
 		            'value'  => $Usuario['Grupo_id'],
 		            'expire' => 100000000,
-		            'secure' => TRUE,
+		            'secure' => FALSE,
 		            'httponly' => TRUE 
 		            );
 		  		$this->input->set_cookie($cookie);
@@ -200,7 +200,7 @@
 		            'name'   => 'token',
 		            'value'  => $Usuario['Valor'],
 		            'expire' => 100000000,
-		            'secure' => TRUE,
+		            'secure' => FALSE,
 		            'httponly' => TRUE 
 		            );
 		  		$this->input->set_cookie($cookie);

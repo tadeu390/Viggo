@@ -21,6 +21,8 @@
 				$query = $this->db->query("
 						SELECT Id, Ativo, Nome, Valor, DATE_FORMAT(Data_inicio, '%d/%m/%Y') as Data_inicio, 
 						DATE_FORMAT(Data_fim, '%d/%m/%Y') as Data_fim, 
+						CAST(Data_inicio AS DATE) as Data_inicio2, #somente para comparar ao criar um bimestre
+						CAST(Data_fim AS DATE) as Data_fim2, #somente para comparar ao criar um bimestre
 						DATE_FORMAT(Data_abertura, '%d/%m/%Y') as Data_abertura, 
 						DATE_FORMAT(Data_fechamento, '%d/%m/%Y') as Data_fechamento, Periodo_letivo_id 
 						FROM Bimestre 
@@ -56,8 +58,8 @@
 				{
 					if($bimestres_banco[$j]['Nome'] == $data[$i]['Nome'] &&
 						$bimestres_banco[$j]['Valor'] == $data[$i]['Valor'] &&
-						$bimestres_banco[$j]['Data_inicio'] == $data[$i]['Data_inicio'] && 
-						$bimestres_banco[$j]['Data_fim'] == $data[$i]['Data_fim'] && 
+						$bimestres_banco[$j]['Data_inicio2'] == $data[$i]['Data_inicio'] && 
+						$bimestres_banco[$j]['Data_fim2'] == $data[$i]['Data_fim'] && 
 						$bimestres_banco[$j]['Periodo_letivo_id'] == $Periodo_letivo_id)
 						$flag = 1;
 				}
@@ -75,8 +77,8 @@
 				{
 					if($bimestres_banco[$i]['Nome'] == $data[$j]['Nome'] &&
 						$bimestres_banco[$i]['Valor'] == $data[$j]['Valor'] &&
-						$bimestres_banco[$i]['Data_inicio'] == $data[$j]['Data_inicio'] && 
-						$bimestres_banco[$i]['Data_fim'] == $data[$j]['Data_fim'] && 
+						$bimestres_banco[$i]['Data_inicio2'] == $data[$j]['Data_inicio'] && 
+						$bimestres_banco[$i]['Data_fim2'] == $data[$j]['Data_fim'] && 
 						$bimestres_banco[$i]['Periodo_letivo_id'] == $Periodo_letivo_id)
 						$flag = 1;
 				}

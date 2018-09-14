@@ -15,6 +15,7 @@
 			$this->load->model('Modalidade_model');
 			$this->load->model('Intervalo_model');
 			$this->load->model('Bimestre_model');
+			$this->load->model('Nota_especial_model');
 			$this->set_menu();
 			$this->data['controller'] = strtolower(get_class($this));
 			$this->data['menu_selectd'] = $this->Geral_model->get_identificador_menu(strtolower(get_class($this)));
@@ -64,6 +65,7 @@
 				$this->data['modalidades'] = $this->Modalidade_model->get_modalidade(TRUE, FALSE, FALSE);
 				$this->data['intervalos'] = $this->Intervalo_model->get_intervalo(FALSE);
 				$this->data['bimestres'] = $this->Bimestre_model->get_bimestre(FALSE);
+				$this->data['notas_especiais'] = $this->Nota_especial_model->get_nota_especial(FALSE);
 				if($id > 0)//QUANDO CLICA EM COPIAR PARA
 				{
 					$this->data['intervalos'] = $this->Intervalo_model->get_intervalo($id);
@@ -90,6 +92,7 @@
 				$this->data['modalidades'] = $this->Modalidade_model->get_modalidade(FALSE);
 				$this->data['intervalos'] = $this->Intervalo_model->get_intervalo($id);
 				$this->data['bimestres'] = $this->Bimestre_model->get_bimestre($id);
+				$this->data['notas_especiais'] = $this->Nota_especial_model->get_nota_especial($id);
 				$this->view("regras/create_edit", $this->data);
 			}
 			else
@@ -140,6 +143,7 @@
 			}
 			
 			$dataToSave['intervalos'] = $dataIntervaloToSave;
+			
 			$dataBimestreToSave = array();
 			for($i = 0; $i < $this->input->post('max_value_bimestre'); $i++)
 			{
@@ -158,6 +162,24 @@
 				}
 			}
 			$dataToSave['bimestres'] = $dataBimestreToSave;
+
+			$dataNotaEspecialToSave = array();
+			for($i = 0; $i < $this->input->post('max_value_nota_especial'); $i++)
+			{
+				if($this->input->post("nome_nota_especial".$i) != null)
+				{
+					$dataNotaEspecialLinhaToSave = array(
+						//'Periodo_letivo_id' => $Periodo_letivo_id,
+						'Nome' => $this->input->post("nome_nota_especial".$i),
+						'Valor' => $this->input->post("valor_nota_especial".$i),
+						'Media' => $this->input->post("media_nota_especial".$i),
+						'Data_abertura' => $this->convert_date($this->input->post("data_abertura_nota_especial".$i),"en"),
+						'Data_fechamento' => $this->convert_date($this->input->post("data_fechamento_nota_especial".$i),"en")
+					);
+					array_push($dataNotaEspecialToSave, $dataNotaEspecialLinhaToSave);
+				}
+			}
+			$dataToSave['notas_especiais'] = $dataNotaEspecialToSave;
 
 			//BLOQUEIA ACESSO DIRETO AO MÉTODO
 			 if(!empty($this->input->post()))
@@ -185,6 +207,15 @@
 							$bimestres = $this->Bimestre_model->get_bimestre($resultado);
 							for($i = 0; $i < count($bimestres); $i++)
 								$this->Bimestre_model->delete_bimestre($bimestres[$i]['Id']);
+						}
+
+						if(count($dataToSave['notas_especiais']) > 0)
+							$this->Nota_especial_model->set_nota_especial($dataToSave['notas_especiais'], $resultado);
+						else
+						{
+							$notas_especiais = $this->Nota_especial_model->get_nota_especial($resultado);
+							for($i = 0; $i < count($notas_especiais); $i++)
+								$this->Nota_especial_model->delete_nota_especial($notas_especiais[$i]['Id']);
 						}
 
 				 		$resultado = "sucesso";

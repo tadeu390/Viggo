@@ -10,20 +10,12 @@
 			$this->load->database();
 		}
 		/*!
-		*	RESPONSÁVEL POR RETORNAR UMA LISTA DE TURMAS COM HORÁRIOS OU UM TURMA COM HORÁRIO ESPECÍFICO.
+		*	RESPONSÁVEL POR RETORNAR UM DETERMINADO HORÁRIO CASO EXISTA.
 		*	
-		*	$Ativo -> Quando passado "TRUE" quer dizer pra retornar somente registro(s) ativos(s), se for passado FALSE retorna tudo.
-		*	$id -> Id de um horário específico.
-		*	$page-> Número da página de registros que se quer carregar.
+		*	$horario -> Array contendu as informações de um horário como, dia, hora de início e hora de fim.
 		*/
 		public function get_horario($horario = FALSE)
 		{
-			if($horario === false)
-			{
-				
-				//return $query->result_array();
-			}
-
 			$query = $this->db->query("
 				SELECT Id, Dia, Aula, Inicio, Fim 
 				FROM Horario  
@@ -42,7 +34,9 @@
 		public function get_disc_hor_turma($turma_id)
 		{
 			$query = $this->db->query("
-				SELECT t.Id AS Turma_id, dt.Id AS Disc_turma_id, dh.Sub_turma, h.Dia, h.Aula, h.Inicio, h.Fim, dh.Id AS Disc_hor_id, dh.Horario_id FROM Turma t 
+				SELECT t.Id AS Turma_id, dt.Id AS Disc_turma_id, dh.Sub_turma, h.Dia, 
+				h.Aula, h.Inicio, h.Fim, dh.Id AS Disc_hor_id, dh.Horario_id, dh.Ativo  
+				FROM Turma t 
 				INNER JOIN Disc_turma dt ON t.Id = dt.Turma_id 
 			    LEFT JOIN Disc_hor dh ON dt.Id = dh.Disc_turma_id 
 			    LEFT JOIN Horario h on dh.Horario_id = h.Id 
@@ -83,22 +77,27 @@
 				$disc_hor_consulta = array(
 					'Horario_id' => $this->get_horario($horario)['Id'],
 					'Disc_turma_id' => $disc_hor[$i]['Disc_turma_id'],
-					'Sub_turma' => $disc_hor[$i]['Sub_turma']
+					'Sub_turma' => $disc_hor[$i]['Sub_turma'],
+					'Ativo' => 1
 				);
 
 				$disc_hor_banco = $this->get_disc_hor($disc_hor_consulta);
 				//dar insert somente nos que são novos
 				if(empty($disc_hor_banco))
+				{
 					$this->db->insert('Disc_hor',$disc_hor_consulta);
+					//echo "insert ";
+				}
 				else
 				{
+					//echo "update";
 					$this->db->where('Id', $disc_hor_banco['Disc_hor_id']);
 					$this->db->update('Disc_hor',$disc_hor_consulta);//$disc_hor_consulta pois o disc_hor_banco contém o id do Disc_hor escrito "Disc_hor_id" em vez de Id
 				}
 			}
 		}
 		/*!
-		*	RESPONSÁVEL POR APAGAR  DO BANDO UMA DISC_TURMA ASSOCIADO A UM DETERMINADO HORÁRIO.
+		*	RESPONSÁVEL POR APAGAR  DO BANCO UMA DISC_TURMA ASSOCIADO A UM DETERMINADO HORÁRIO.
 		*
 		*	$lista_disc_hor -> Contém os horários atualizados que originaram do formulário submetido pelo usuário.
 		*	$turma_id -> Contém o id da turma que está com o horário em edição.
@@ -134,8 +133,16 @@
 				}
 				if($flag == 0)
 				{
+					//$this->db->delete('Disc_hor');
+					$up = array(
+						//'Horario_id' => $disc_hor_banco[$j]['Horario_id'],
+						//'Disc_turma_id' => $disc_hor_banco[$j]['Disc_turma_id'],
+						//'Sub_turma' => $disc_hor_banco[$j]['Sub_turma'],
+						'Ativo' => 0
+					);
 					$this->db->where('Id', $disc_hor_banco[$i]['Disc_hor_id']);
-					$this->db->delete('Disc_hor');
+					
+					$this->db->update('Disc_hor', $up);
 				}
 			}
 		}

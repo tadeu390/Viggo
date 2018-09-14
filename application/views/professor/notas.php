@@ -103,7 +103,7 @@
 									for ($i=0; $i < COUNT($lista_alunos); $i++)
 									{
 										echo "<tr id='linha".$i."'>";
-											echo"<td style='vertical-align: middle;' title='".$lista_alunos[$i]['Nome_aluno']."'>";
+											echo"<td class='align-middle' title='".$lista_alunos[$i]['Nome_aluno']."'>";
 												echo mstring::corta_string($lista_alunos[$i]['Nome_aluno'], 30);
 												echo "<input type='hidden' value='".$lista_alunos[$i]['Matricula_id']."' id='matricula_id$i' name='matricula_id$i' />";
 											echo"</td>";
@@ -113,7 +113,7 @@
 												$nota = notas::get_nota($lista_colunas_nota[$j]['Descricao_nota_id'], $lista_alunos[$i]['Matricula_id'], $url_part['turma_id'], $url_part['disciplina_id'], $url_part['bimestre_id'])['Nota'];
 												$total = $total + $nota;
 												echo"<td class='text-center' style='width: 10%;'>";
-													echo"<input min='0' $status_bimestre min='0' onblur='Main.altera_nota(\"total".$i."\", this.value,".$lista_colunas_nota[$j]['Descricao_nota_id'].",\"".$lista_alunos[$i]['Matricula_id']."\",",$url_part['turma_id'].",".$url_part['disciplina_id'].",".$url_part['bimestre_id'].");' name='aluno".$i."_nota".$j."' type='number' value='".$nota."' class='form-control border_radius' style='background-color: white;' />";
+													echo"<input min='0' $status_bimestre min='0' onblur='Main.altera_nota(\"total".$i."\", this.value,".$lista_colunas_nota[$j]['Descricao_nota_id'].",\"".$lista_alunos[$i]['Matricula_id']."\",",$url_part['turma_id'].",".$url_part['disciplina_id'].",".$url_part['bimestre_id'].");' name='aluno".$i."_nota".$j."' type='number' value='".$nota."' class='form-control border_radius text-info' style='background-color: white;' />";
 												echo"</td>";
 											}
 

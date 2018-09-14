@@ -84,7 +84,7 @@
 									for ($i=0; $i < COUNT($lista_alunos); $i++)
 									{
 										echo "<tr>";
-											echo"<td style='vertical-align: middle;' title='".$lista_alunos[$i]['Nome_aluno']."'>";
+											echo"<td class='align-middle w-75' title='".$lista_alunos[$i]['Nome_aluno']."'>";
 												echo mstring::corta_string($lista_alunos[$i]['Nome_aluno'], 30);
 												echo "<input type='hidden' value='".$lista_alunos[$i]['Matricula_id']."' id='matricula_id$i' name='matricula_id$i' />";
 											echo"</td>";
@@ -92,7 +92,7 @@
 											$total = notas::get_nota_total_aluno($lista_bimestres, $lista_alunos[$i]['Matricula_id'], $url_part['disciplina_id'], $url_part['turma_id']);
 											$status = notas::status_nota_total($total, $periodo_letivo_id);
 
-											echo"<td class='text-center text-danger' id='td_total".$i."' style='vertical-align: middle; width: 10%;'>";
+											echo"<td class='text-center text-danger' id='td_total".$i."'>";
 												
 												echo "<input type='text' id='total".$i."' value='".$total."' readonly='readonly' class='border-".$status." form-control border_radius text-center text-".$status."' style=' background-color: white;' />";
 											echo"</td>";

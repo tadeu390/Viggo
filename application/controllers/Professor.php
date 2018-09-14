@@ -34,6 +34,7 @@
 			$this->load->model('Descricao_nota_model');
 			$this->load->model('Calendario_presenca_model');
 			$this->load->model('Conteudo_model');
+			$this->load->model('Nota_especial_model');
 
 			//ABAIXO DETERMINA O PROFESSOR E O PERÍODO LETIVO
 			$this->professor_id = $this->Account_model->session_is_valid()['id'];
@@ -49,10 +50,12 @@
 														$this->Professor_model->get_disciplinas($this->professor_id, $this->periodo_letivo_id)[0]['Disciplina_id'] : 
 														$this->Professor_model->get_disciplina_default($this->professor_id, $this->periodo_letivo_id)['Disciplina_id']);
 			
-			$this->sub_turma_default = $this->Professor_model->get_disciplina_default($this->professor_id, $this->periodo_letivo_id)['Sub_turma'];
-			
 			//A TURMA ESTÁ AMARRADA A DISCIPLINA, O QUE CONSEQUENTEMENTE CARREGA COM BASE NA DISCIPLINA
 			$this->turma_id_default = (empty($this->Professor_model->get_disciplina_default($this->professor_id, $this->periodo_letivo_id)['Turma_id']) ? $this->Professor_model->get_disciplinas($this->professor_id, $this->periodo_letivo_id)[0]['Turma_id'] : $this->Professor_model->get_disciplina_default($this->professor_id, $this->periodo_letivo_id)['Turma_id']);
+			
+			$this->sub_turma_default = $this->Professor_model->get_sub_turma_default($this->disciplina_id_default, $this->turma_id_default);
+
+			//echo $this->sub_turma_default;
 			//CARREGA O BIMESTRE PADRÃO COM BASE NA DATA.
 			$this->bimestre_id_default = $this->Professor_model->get_bimestre_default($this->periodo_letivo_id)['Id'];
 			/////////
@@ -85,6 +88,7 @@
 				$this->data['method'] = __FUNCTION__;
 				$this->data['lista_disciplinas'] = $this->Professor_model->get_disciplinas($this->professor_id, $this->periodo_letivo_id);
 				$this->data['lista_bimestres'] = $this->Bimestre_model->get_bimestre($this->periodo_letivo_id);
+				$this->data['lista_notas_especiais'] = $this->Nota_especial_model->get_nota_especial($this->periodo_letivo_id);
 				$this->data['lista_turmas'] = $this->Professor_model->get_turma($disciplina_id, $this->professor_id, $this->periodo_letivo_id);
 				$this->data['periodo_letivo_id'] = $this->periodo_letivo_id;
 				$this->data['bimestre'] = $this->Bimestre_model->get_bimestre(FALSE, $bimestre_id);
@@ -150,6 +154,7 @@
 				$this->data['method'] = "notas";
 				$this->data['lista_disciplinas'] = $this->Professor_model->get_disciplinas($this->professor_id, $this->periodo_letivo_id);
 				$this->data['lista_bimestres'] = $this->Bimestre_model->get_bimestre($this->periodo_letivo_id);
+				$this->data['lista_notas_especiais'] = $this->Nota_especial_model->get_nota_especial($this->periodo_letivo_id);
 				$this->data['lista_turmas'] = $this->Professor_model->get_turma($disciplina_id, $this->professor_id, $this->periodo_letivo_id);
 				$this->data['periodo_letivo_id'] = $this->periodo_letivo_id;
 				$this->data['bimestre'] = $this->Bimestre_model->get_bimestre(FALSE, $bimestre_id);
@@ -279,6 +284,7 @@
 				$this->data['method'] = __FUNCTION__;
 				$this->data['lista_disciplinas'] = $this->Professor_model->get_disciplinas($this->professor_id, $this->periodo_letivo_id);
 				$this->data['lista_bimestres'] = $this->Bimestre_model->get_bimestre($this->periodo_letivo_id);
+				$this->data['lista_notas_especiais'] = $this->Nota_especial_model->get_nota_especial($this->periodo_letivo_id);
 				$this->data['lista_turmas'] = $this->Professor_model->get_turma($disciplina_id, $this->professor_id, $this->periodo_letivo_id);
 				$this->data['bimestre'] = $this->Bimestre_model->get_bimestre(FALSE, $bimestre_id);
 
@@ -325,8 +331,15 @@
 				$this->data['method'] = __FUNCTION__;
 				$this->data['lista_disciplinas'] = $this->Professor_model->get_disciplinas($this->professor_id, $this->periodo_letivo_id);
 				$this->data['lista_bimestres'] = $this->Bimestre_model->get_bimestre($this->periodo_letivo_id);
+				$this->data['lista_notas_especiais'] = $this->Nota_especial_model->get_nota_especial($this->periodo_letivo_id);
 				$this->data['lista_turmas'] = $this->Professor_model->get_turma($disciplina_id, $this->professor_id, $this->periodo_letivo_id);
 				$this->data['bimestre'] = $this->Bimestre_model->get_bimestre(FALSE, $bimestre_id);
+
+				$this->data['meses'] = $this->Calendario_presenca_model->get_intervalo_mes(
+					$this->convert_date($this->Bimestre_model->get_bimestre(FALSE, $bimestre_id)['Data_inicio'],"en"), 
+					$this->convert_date($this->Bimestre_model->get_bimestre(FALSE, $bimestre_id)['Data_fim'],"en"));
+				
+				$this->data['lista_alunos'] = $this->Professor_model->get_alunos($disciplina_id, $turma_id, $this->sub_turma_default);
 
 				//////DETERMINAR A DISCIPLINA PADRÃO A SER SELECIONADA, ESSE TRATAMENTO É NECESSÁRIO, POIS AO TROCAR DE DISCIPLINA, O ID DE TURMA SUBMETIDO PODE NÃO SERVIR DE NADA, 
 				//////CASO ESSA TURMA SELECIONADA NÃO APAREÇA NOVAMENTE COM A TROCA DE DISCIPLINA.
@@ -358,7 +371,7 @@
 		*	se o bimestre está aberto ou não)
 		*/
 		public function chamada($disciplina_id = FALSE, $turma_id = FALSE, $bimestre_id = FALSE)
-		{
+		{ ///TROCAR BIMESTRE OU BIMESTRE_ID POR ETAPA
 			if($disciplina_id == FALSE)//SE NADA FOI ESPECFICADO ENTAO DETERMINAR A PARTIR DOS DEFAULT.
 			{
 				$disciplina_id = $this->disciplina_id_default;
@@ -372,6 +385,8 @@
 				$this->data['method'] = __FUNCTION__;
 				$this->data['lista_disciplinas'] = $this->Professor_model->get_disciplinas($this->professor_id, $this->periodo_letivo_id);
 				$this->data['lista_bimestres'] = $this->Bimestre_model->get_bimestre($this->periodo_letivo_id);
+				$this->data['lista_notas_especiais'] = $this->Nota_especial_model->get_nota_especial($this->periodo_letivo_id);
+				
 				$this->data['lista_turmas'] = $this->Professor_model->get_turma($disciplina_id, $this->professor_id, $this->periodo_letivo_id);
 				$this->data['bimestre'] = $this->Bimestre_model->get_bimestre(FALSE, $bimestre_id);
 				//////DETERMINAR A DISCIPLINA PADRÃO A SER SELECIONADA, ESSE TRATAMENTO É NECESSÁRIO, POIS AO TROCAR DE DISCIPLINA, O ID DE TURMA SUBMETIDO PODE NÃO SERVIR DE NADA, 
@@ -397,25 +412,31 @@
 				$this->data['sub_turma'] = $this->sub_turma_default;
 
 				////obter a lista de sub_turmas
-				$this->data['lista_subturmas'] = $this->Professor_model->identifica_sub_turmas($disciplina_id, $turma_id);
-				$subturma = (empty($this->data['lista_subturmas'][0]['Sub_turma']) ? 0 : $this->data['lista_subturmas'][0]['Sub_turma']);
+				$this->data['lista_subturmas'] = $this->Professor_model->get_sub_turmas($disciplina_id, $turma_id, date('Y-m-d'));
+				//$subturma = (empty($this->data['lista_subturmas'][0]['Sub_turma']) ? 0 : $this->data['lista_subturmas'][0]['Sub_turma']);
 				
-				$this->data['subturma'] = $subturma;
+				//$this->data['subturma'] = $subturma;
 				//////obter os alunos para a chamada
-				$this->data['lista_alunos'] = $this->Professor_model->get_alunos($disciplina_id, $turma_id, $subturma);
+				$this->data['lista_alunos'] = $this->Professor_model->get_alunos($disciplina_id, $turma_id, $this->sub_turma_default);
 
 				/////obter a lista de horários.
-				$this->data['lista_horarios'] = $this->Professor_model->get_horarios_professor($disciplina_id, $turma_id, $this->professor_id, $subturma, date('Y-m-d'));
+				$this->data['lista_horarios'] = $this->Professor_model->get_horarios_professor($disciplina_id, $turma_id, $this->professor_id, $this->sub_turma_default, date('Y-m-d'), 1);
+				if(empty($this->data['lista_horarios']))
+					$this->data['lista_horarios'] = $this->Professor_model->get_horarios_professor($disciplina_id, $turma_id, $this->professor_id, $this->sub_turma_default, date('Y-m-d'), 0);
 
+				if(!empty($this->data['lista_horarios']))
+					$this->data['conteudo'] = $this->Conteudo_model->get_conteudo($this->data['lista_horarios'][0]['Disc_hor_id']);	
+				else 
+					$this->data['conteudo'] = "";
 
-				$this->view("professor/create", $this->data);
+				$this->view("professor/chamada", $this->data);
 			}
 			else
 				$this->view("templates/permissao", $this->data);
 		}
 		/*!
-		*	RESPONSÁVEL POR CARREGAR DA MODEL TODAS AS SUBTURMA DE UMA DETERMINADA DISCIPLINA DE UMA DETERMINADA 
-		*	TURMA EM UMA DETERMINADA DATA (DIA DA SEMANA).
+		*	RESPONSÁVEL POR CARREGAR DA MODEL TODAS AS SUBTURMAS DE UMA DETERMINADA DISCIPLINA DE UMA DETERMINADA 
+		*	TURMA EM UMA DETERMINADA DATA (DIA DA SEMANA). SE NÃO HOUVER SUBTURMA PRA TAL OCASIÃO A MODEL RETORNARÁ SUBTURMA 0
 		*
 		*	$disciplina_id -> Id da disciplina que se quer obter as subturmas.
 		*	$turma_id -> Id da turma turma associada a disicplina.
@@ -426,8 +447,9 @@
 			$resultado = "sucesso";
 			$this->data['url_part']['disciplina_id'] = $disciplina_id;
 			$this->data['url_part']['turma_id'] = $turma_id;
+			$this->data['sub_turma'] = $this->sub_turma_default;
 
-			$this->data['lista_subturmas'] = $this->Professor_model->identifica_sub_turmas($disciplina_id, $turma_id, $data);
+			$this->data['lista_subturmas'] = $this->Professor_model->get_sub_turmas($disciplina_id, $turma_id, $data);
 			$resultado = $this->load->view("professor/_subturmas", $this->data, TRUE);
 
 			$arr = array('response' => $resultado);
@@ -441,6 +463,7 @@
 		public function get_alunos_chamada($disciplina_id, $turma_id, $subturma, $data)
 		{
 			$resultado = "sucesso";
+			$status = "ok";
 			$this->data['url_part']['disciplina_id'] = $disciplina_id;
 			$this->data['url_part']['turma_id'] = $turma_id;
 
@@ -451,11 +474,21 @@
 
 			$this->data['lista_alunos'] = $this->Professor_model->get_alunos($disciplina_id, $turma_id, $subturma);
 			/////obter a lista de horários.
-			$this->data['lista_horarios'] = $this->Professor_model->get_horarios_professor($disciplina_id, $turma_id, $this->professor_id, $subturma, $data);
+			$this->data['lista_horarios'] = $this->Professor_model->get_horarios_professor($disciplina_id, $turma_id, $this->professor_id, $subturma, $data, 1);
+			if(empty($this->data['lista_horarios']))
+			{
+				$status = "vazio";
+				$this->data['lista_horarios'] = $this->Professor_model->get_horarios_professor($disciplina_id, $turma_id, $this->professor_id, $subturma, $data, 0);
+			}
+			
+			if(!empty($this->data['lista_horarios']))
+				$this->data['conteudo'] = $this->Conteudo_model->get_conteudo($this->data['lista_horarios'][0]['Disc_hor_id']);	
+			else 
+				$this->data['conteudo'] = "";
+			
 			$resultado = $this->load->view("professor/_alunos", $this->data, TRUE);
-
-
-			$arr = array('response' => $resultado);
+			
+			$arr = array('response' => $resultado, 'status' => $status);
 			header('Content-Type: application/json');
 			echo json_encode($arr);
 		}
@@ -465,37 +498,54 @@
 			$resultado = "sucesso";
 			$dataToSaveItem = array();
 			$dataToSave = array();
+			$conteudo = array();
+
 			for($i = 0; $i < $this->input->post('qtd_aluno'); $i++)
 			{
 				for($j = 0; $j < $this->input->post('qtd_coluna'); $j++)
 				{
+					if($i == 0)//só pege 1 na primeira volta do loop externo pra nao duplicar o conteudo lecionado
+					{
+						$conteudo_horario = array(
+							'Id' => $this->input->post('conteudo_id'),
+							'Descricao' => $this->input->post('conteudo_lecionado'),
+							'Disc_hor_id' => $this->input->post('disc_hor_id'.$j)
+						);
+						array_push($conteudo, $conteudo_horario);
+					}
+					
 					$dataToSaveItem = array(
 						'Id' => $this->input->post('calendario_presenca_id'.$i."".$j),
 						'Matricula_id' => $this->input->post('matricula_id'.$i),
 						'Presenca' => (empty($this->input->post('presenca'.$i."".$j)) ? 0 : $this->input->post('presenca'.$i."".$j)),
 						'Justificativa' => $this->input->post('justificativa'.$i),
-						'Data_registro' => $this->convert_date($this->input->post('data_atual'),"en").":".$this->input->post('hora_inicio'.$j).":00"
+						'Horario_id' => $this->input->post('horario_id'.$j),
+						'Data_registro' => $this->convert_date($this->input->post('data_atual'),"en")
 					);
 					array_push($dataToSave, $dataToSaveItem);
+
 				}
 			}
 
-			print_r($dataToSave);
+			//print_r($dataToSave);
 
-			$conteudo = $this->input->post('conteudo_lecionado');
+			
+
+
 			$disc_hor_id = $this->input->post('horarios');
-
+			//print_r($disc_hor_id);
+			//print_r($conteudo);
 			//bloquear acesso direto ao metodo store
 			 if(!empty($this->input->post()))
 			 {
 				if($this->Geral_model->get_permissao(CREATE, get_class($this)) == TRUE || $this->Geral_model->get_permissao(UPDATE, get_class($this)) == TRUE)
 				{
-					//$resultado = $this->valida_modulo($dataToSave);
+					//$resultado = $this->valida_chamada($dataToSave);
 					$resultado = 1;
 				 	if($resultado == 1)
 				 	{
 				 		$this->Calendario_presenca_model->set_presenca($dataToSave);
-				 		$this->Conteudo_model->set_conteudo($conteudo, $disc_hor_id);
+				 		$this->Conteudo_model->set_conteudo($conteudo);
 				 		$resultado = "sucesso";
 				 	}
 				}
