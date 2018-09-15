@@ -56,7 +56,7 @@
 				</div>
 				<div class="row padding10">
 					<div class="col-lg-4">
-						<select <?php echo $status_etapa; ?> name='descricao_nota_id' id='descricao_nota_id' class='form-control' style='padding-left: 0px;'>
+						<select <?php //echo $status_etapa; ?> name='descricao_nota_id' id='descricao_nota_id' class='form-control' style='padding-left: 0px;'>
 							<option value='0' style='background-color: #393836;'>Descrição de nota</option>
 							<?php
 							for ($i = 0; $i < count($lista_descricao_nota); $i++)
@@ -65,7 +65,7 @@
 						</select>
 					</div>
 					<div class="col-lg-4">
-						<button class="btn btn-danger" <?php echo $status_etapa; ?> onclick="Main.add_coluna_nota();">Adicionar coluna</button>
+						<button class="btn btn-danger" <?php //echo $status_etapa; ?> onclick="Main.add_coluna_nota();">Adicionar coluna</button>
 					</div>
 				</div>
 				<div class="row padding10">
@@ -78,16 +78,33 @@
 										$limite_descricao_nota = 0;
 										for ($i = 0; $i < COUNT($lista_colunas_nota) ; $i++)
 										{
-											echo "<td style='width: 10%; position: relative;' class='text-center'>";
-												echo $lista_colunas_nota[$i]['Descricao'];
-												echo "<input type='hidden' id='descricao_nota_id_hidden$i' value='".$lista_colunas_nota[$i]['Descricao_nota_id']."' />";
-												if(empty($status_etapa))
-													echo "<span onclick='Main.confirm_remover_coluna_nota(".$lista_colunas_nota[$i]['Descricao_nota_id'].",",$url_part['turma_id'].",".$url_part['disciplina_id'].",".$url_part['etapa_id'].");' title='Remover coluna' style='cursor: pointer; position: absolute; right: 0px;' class='glyphicon glyphicon-remove text-danger'></span>";
-											echo "</td>";
-											$limite_descricao_nota = $limite_descricao_nota + 1;
+											if($lista_colunas_nota[$i]['Descricao_nota_id'] != RECUPERACAO_PARALELA)
+											{
+												echo "<td style='width: 10%; position: relative;' class='text-center'>";
+													echo $lista_colunas_nota[$i]['Descricao'];
+													echo "<input type='hidden' id='descricao_nota_id_hidden$i' value='".$lista_colunas_nota[$i]['Descricao_nota_id']."' />";
+													//if(empty($status_etapa))
+														echo "<span onclick='Main.confirm_remover_coluna_nota(".$lista_colunas_nota[$i]['Descricao_nota_id'].",",$url_part['turma_id'].",".$url_part['disciplina_id'].",".$url_part['etapa_id'].");' title='Remover coluna' style='cursor: pointer; position: absolute; right: 0px;' class='glyphicon glyphicon-remove text-danger'></span>";
+												echo "</td>";
+												$limite_descricao_nota = $limite_descricao_nota + 1;
+											}
 										}
 									?>
 									<td id='total' style="width: 10%;" class="text-center">Total</td style="width: auto;">
+									<?php 
+										for ($i = 0; $i < COUNT($lista_colunas_nota) ; $i++)
+										{	
+											if($lista_colunas_nota[$i]['Descricao_nota_id'] == RECUPERACAO_PARALELA)
+											{
+												echo "<td style='width: 10%; position: relative;' class='text-center'>";
+													echo $lista_colunas_nota[$i]['Descricao'];
+													echo "<input type='hidden' id='descricao_nota_id_hidden$i' value='".$lista_colunas_nota[$i]['Descricao_nota_id']."' />";
+													//if(empty($status_etapa))
+														echo "<span onclick='Main.confirm_remover_coluna_nota(".$lista_colunas_nota[$i]['Descricao_nota_id'].",",$url_part['turma_id'].",".$url_part['disciplina_id'].",".$url_part['etapa_id'].");' title='Remover coluna' style='cursor: pointer; position: absolute; right: 0px;' class='glyphicon glyphicon-remove text-danger'></span>";
+												echo "</td>";
+											}
+										}
+									?>
 								</tr>
 							</thead>
 							<tbody>
@@ -103,18 +120,32 @@
 											$total = 0;
 											for ($j = 0; $j < COUNT($lista_colunas_nota) ; $j++)
 											{
-												$nota = notas::get_nota($lista_colunas_nota[$j]['Descricao_nota_id'], $lista_alunos[$i]['Matricula_id'], $url_part['turma_id'], $url_part['disciplina_id'], $url_part['etapa_id'])['Nota'];
-												$total = $total + $nota;
-												echo"<td class='text-center' style='width: 10%;'>";
-													echo"<input min='0' $status_etapa min='0' onblur='Main.altera_nota(\"total".$i."\", this.value,".$lista_colunas_nota[$j]['Descricao_nota_id'].",\"".$lista_alunos[$i]['Matricula_id']."\",",$url_part['turma_id'].",".$url_part['disciplina_id'].",".$url_part['etapa_id'].");' name='aluno".$i."_nota".$j."' type='number' value='".$nota."' class='form-control border_radius text-info' style='background-color: white;' />";
-												echo"</td>";
+												if($lista_colunas_nota[$j]['Descricao_nota_id'] != RECUPERACAO_PARALELA)
+												{
+													$nota = notas::get_nota($lista_colunas_nota[$j]['Descricao_nota_id'], $lista_alunos[$i]['Matricula_id'], $url_part['etapa_id']);
+													$total = $total + $nota;
+													echo"<td class='text-center' style='width: 10%;'>";
+														echo"<input min='0'  min='0' onblur='Main.altera_nota(\"total".$i."\", this.value,".$lista_colunas_nota[$j]['Descricao_nota_id'].",\"".$lista_alunos[$i]['Matricula_id']."\",".$url_part['etapa_id'].",\"aluno".$i."_nota".$j."\");' name='aluno".$i."_nota".$j."' type='number' value='".$nota."' class='form-control border_radius text-info' style='background-color: white;' />";
+													echo"</td>";
+												}
 											}
 
-											$status = notas::status_nota_total_etapa($lista_alunos[$i]['Matricula_id'], $url_part['turma_id'], $url_part['disciplina_id'], $url_part['etapa_id'], $periodo_letivo_id);
+											$status = notas::status_nota($url_part['etapa_id'], $periodo_letivo_id, $total);
 
 											echo"<td class='text-center text-danger' id='td_total".$i."' style='vertical-align: middle; width: 10%;'>";
-												 echo "<input type='text' id='total".$i."' value='".$total."' readonly='readonly' class='border-".$status." form-control border_radius text-center text-".$status."' style=' background-color: white;' />";
+												 echo "<input type='text' id='total".$i."' value='".$total."' disabled class='border-".$status." form-control border_radius text-center text-".$status."' style=' background-color: white;' />";
 											echo"</td>";
+											for ($j = 0; $j < COUNT($lista_colunas_nota) ; $j++)
+											{
+												if($lista_colunas_nota[$j]['Descricao_nota_id'] == RECUPERACAO_PARALELA)
+												{
+													$nota = notas::get_nota($lista_colunas_nota[$j]['Descricao_nota_id'], $lista_alunos[$i]['Matricula_id'], $url_part['etapa_id']);
+													$status = notas::status_nota($url_part['etapa_id'], $periodo_letivo_id , $nota);
+													echo"<td class='text-center' style='width: 10%;'>";
+														echo"<input min='0'  min='0' onblur='Main.altera_nota(\"total".$i."\", this.value,".$lista_colunas_nota[$j]['Descricao_nota_id'].",\"".$lista_alunos[$i]['Matricula_id']."\",".$url_part['etapa_id'].",\"aluno".$i."_nota".$j."\");' id='aluno".$i."_nota".$j."'  name='aluno".$i."_nota".$j."' type='number' value='".$nota."' class='form-control border_radius text-".$status."' style='background-color: white;' />";
+													echo"</td>";
+												}
+											}
 										echo "</tr>";
 										$limite = $limite + 1;
 									}

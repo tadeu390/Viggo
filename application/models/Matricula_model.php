@@ -24,5 +24,18 @@
 				return $this->db->update('Modalidade', $data);
 			}
 		}
+
+		public function get_matriculas($aluno_id, $turma_id)
+		{
+			$query = $this->db->query("
+				SELECT m.Id AS Matricula_id FROM Matricula m 
+				INNER JOIN Disc_turma dt ON m.Disc_turma_id = dt.Id 
+				INNER JOIN Inscricao i ON i.Id = m.Inscricao_id 
+				INNER JOIN Aluno a ON a.Id = i.Aluno_id 
+				WHERE dt.Turma_id = ".$this->db->escape($turma_id)." AND 
+				a.Id = ".$this->db->escape($aluno_id)."");
+
+			return $query->result_array();
+		}
 	}
 ?>

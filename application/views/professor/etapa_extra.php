@@ -100,19 +100,20 @@
 												echo "<input type='hidden' value='".$lista_alunos[$i]['Matricula_id']."' id='matricula_id$i' name='matricula_id$i' />";
 											echo"</td>";
 											$total = 0;
+											$nota = 0;
 											for ($j = 0; $j < COUNT($lista_colunas_nota) ; $j++)
 											{
-												$nota = notas::get_nota($lista_colunas_nota[$j]['Descricao_nota_id'], $lista_alunos[$i]['Matricula_id'], $url_part['turma_id'], $url_part['disciplina_id'], $url_part['etapa_id'])['Nota'];
+												$nota = notas::get_nota($lista_colunas_nota[$j]['Descricao_nota_id'], $lista_alunos[$i]['Matricula_id'], $url_part['etapa_id']);
 												$total = $total + $nota;
 												echo"<td class='text-center' style='width: 10%;'>";
-													echo"<input min='0' $status_etapa_extra min='0' onblur='Main.altera_nota(\"total".$i."\", this.value,".$lista_colunas_nota[$j]['Descricao_nota_id'].",\"".$lista_alunos[$i]['Matricula_id']."\",",$url_part['turma_id'].",".$url_part['disciplina_id'].",".$url_part['etapa_id'].");' name='aluno".$i."_nota".$j."' type='number' value='".$nota."' class='form-control border_radius text-info' style='background-color: white;' />";
+													echo"<input min='0' $status_etapa_extra min='0' onblur='Main.altera_nota(\"total".$i."\", this.value,".$lista_colunas_nota[$j]['Descricao_nota_id'].",\"".$lista_alunos[$i]['Matricula_id']."\",".$url_part['etapa_id'].",\"aluno".$i."_nota".$j."\");' id='aluno".$i."_nota".$j."' name='aluno".$i."_nota".$j."' type='number' value='".$nota."' class='form-control border_radius text-info' style='background-color: white;' />";
 												echo"</td>";
 											}
 
-											$status = "";//notas::status_nota_total_bimestre($lista_alunos[$i]['Matricula_id'], $url_part['turma_id'], $url_part['disciplina_id'], $url_part['etapa_id'], $periodo_letivo_id);
+											$status = notas::status_nota($url_part['etapa_id'], $periodo_letivo_id, $nota);
 
 											echo"<td class='text-center text-danger' id='td_total".$i."' style='vertical-align: middle; width: 10%;'>";
-												 echo "<input type='text' id='total".$i."' value='".$total."' readonly='readonly' class='border-".$status." form-control border_radius text-center text-".$status."' style=' background-color: white;' />";
+												 echo "<input type='text' id='total".$i."' value='".$total."' disabled class='border-".$status." form-control border_radius text-center text-".$status."' style=' background-color: white;' />";
 											echo"</td>";
 										echo "</tr>";
 										$limite = $limite + 1;

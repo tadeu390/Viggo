@@ -27,7 +27,7 @@
 				$query = $this->db->query("
 					SELECT Id, Descricao 
 					FROM Descricao_nota 
-					WHERE TRUE ".$Ativos." ORDER BY Id Desc");
+					WHERE TRUE ".$Ativos." ORDER BY Id");
 				return $query->result_array();
 			}
 

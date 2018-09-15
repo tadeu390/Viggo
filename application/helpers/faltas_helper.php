@@ -63,5 +63,12 @@
 			$faltas = $CI->Calendario_presenca_model->get_total_faltas($aluno_id, $turma_id)['Faltas'];
 			return $faltas;
 		}
+		public static function situacao_falta_aluno($aluno_id, $turma_id, $regras, $tipo)
+		{
+			$CI = get_instance();
+			$CI->load->model("Calendario_presenca_model");
+
+			return $CI->Calendario_presenca_model->situacao_falta_aluno($aluno_id, $turma_id, $regras, $tipo);
+		}
 	}
 ?>

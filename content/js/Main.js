@@ -28,8 +28,8 @@ var Main = {
 			$('#data1 input').datepicker({
 		    	language: "pt-BR",
 		    	 clearBtn: true,
-		    	todayHighlight: true//,
-		    	//autoclose: true
+		    	todayHighlight: true,
+		    	autoclose: true
 			}),
 			$('#clearDates').on('click', function(){
 			     
@@ -651,7 +651,10 @@ var Main = {
 				node_td.appendChild(textnode);
 				
 				if(i == 3)
+				{
+					node_td.setAttribute("class","text-right");
 					node_td.innerHTML = "<span class='glyphicon glyphicon-remove pointer' title='Remover' onclick='Main.remove_elemento(\"intervalo"+max_value_intervalo+"\");'></span>";
+				}
 				
 				node_tr.appendChild(node_td);
 				document.getElementById("intervalos").appendChild(node_tr);
@@ -755,7 +758,10 @@ var Main = {
 				node_td.appendChild(textnode);
 				
 				if(i == 6)
+				{
+					node_td.setAttribute("class","text-right");
 					node_td.innerHTML = "<span class='glyphicon glyphicon-remove pointer' title='Remover' onclick='Main.remove_elemento(\"etapa"+max_value_etapa+"\");'></span>";
+				}
 				
 				node_tr.appendChild(node_td);
 				document.getElementById("etapas").appendChild(node_tr);
@@ -857,7 +863,10 @@ var Main = {
 				node_td.appendChild(textnode);
 				
 				if(i == 5)
+				{
+					node_td.setAttribute("class","text-right");
 					node_td.innerHTML = "<span class='glyphicon glyphicon-remove pointer' title='Remover' onclick='Main.remove_elemento(\"etapa_extra"+max_value_etapa_extra+"\");'></span>";
+				}
 				
 				node_tr.appendChild(node_td);
 				document.getElementById("etapas_extras").appendChild(node_tr);
@@ -885,11 +894,9 @@ var Main = {
 
 			var a = new Array();
 			a.push($("#nome_etapa_extra").val());
-			a.push($("#valor").val());
-			a.push($("#data_inicio").val());
-			a.push($("#data_fim").val());
-			a.push($("#data_abertura").val());
-			a.push($("#data_fechamento").val());
+			a.push($("#valor_etapa_extra").val());
+			a.push($("#data_abertura_etapa_extra").val());
+			a.push($("#data_fechamento_etapa_extra").val());
 			a.push("");
 
 			var flag = 0;
@@ -898,15 +905,14 @@ var Main = {
 				if($("#nome_etapa_extra"+i).val() == a[0] && $("#valor_etapa_extra"+i).val() == a[1] &&
 					$("#data_abertura_etapa_extra"+i).val() == a[2] && $("#data_fechamento_etapa_extra"+i).val() == a[3])
 					flag = 1;
-				else if($("#valor_etapa_extra"+i).val() == a[1] &&
-					$("#data_abertura_etapa_extra"+i).val() == a[2] && $("#data_fechamento_etapa_extra"+i).val() == a[3])
+				else if($("#data_abertura_etapa_extra"+i).val() == a[2] && $("#data_fechamento_etapa_extra"+i).val() == a[3])
 					flag = 2;
 			}
 
 			if(flag == 1)
-				Main.modal("aviso", "Esta nota especial já existe na lista. Se deseja edita-la, remova-a da lista e a adicione novamente.");
+				Main.modal("aviso", "Esta etapa extra já existe na lista. Se deseja edita-la, remova-a da lista e a adicione novamente.");
 			else if(flag == 2)
-				Main.modal("aviso", "As datas informadas já estão em uso para uma nota especial na lista.");
+				Main.modal("aviso", "As datas informadas já estão em uso para uma etapa extra na lista.");
 			else
 				return true;
 		}
@@ -1497,12 +1503,12 @@ var Main = {
 		window.location.assign(Main.base_url + $("#controller").val() + "/"+$("#method").val()+"/"+disciplina_id+"/"+$("#turma_selecionada").val()+"/"+$("#etapa_selecionada").val());
 	},
 	//////NOTAS E FALTAS
-	altera_nota : function (id, nota, descricao_nota_id, matricula_id, turma_id, disciplina_id, bimestre_id)
+	altera_nota : function (id, nota, descricao_nota_id, matricula_id, etapa_id, id_rec)
 	{
 		if(nota == "")
 			nota = null;
 		$.ajax({
-			url: Main.base_url + $("#controller").val() + '/altera_nota/' + nota + '/' + descricao_nota_id + '/' + matricula_id + '/' + turma_id + '/' + disciplina_id + '/' + bimestre_id,
+			url: Main.base_url + $("#controller").val() + '/altera_nota/' + nota + '/' + descricao_nota_id + '/' + matricula_id + '/' + etapa_id,
 			dataType:'json',
 			cache: false,
 			type: 'POST',
@@ -1513,7 +1519,9 @@ var Main = {
 				else
 				{
 					$("#"+id).val(data.somatorio);
-					document.getElementById(id).className = "form-control border_radius text-center text-"+data.status+" border-"+data.status;
+					document.getElementById(id).className = "form-control border_radius text-center text-"+data.status+" border-"+data.status;//status da coluna total por aluno
+					if(descricao_nota_id == Main.rec_bim)//se estiver submetendo a coluna de rec do bimestre
+						document.getElementById(id_rec).className = "form-control border_radius text-"+data.status_rec+" border-"+data.status_rec;
 				}
 			}
 		}).fail(function(msg){
@@ -1533,19 +1541,28 @@ var Main = {
 		}
 		return flag;
 	},
+	rec_bim : 1,
 	add_coluna_nota : function()
 	{
 		if($('#descricao_nota_id').val() == "0")
 			Main.modal("aviso", "Selecione uma descrição de nota");
 		else if(Main.add_coluna_nota_validar() == 0)
 		{
-			Main.remove_elemento("total");//primeiro remove o cabeçalho da coluna total por linha ou aluno
+			if($('#descricao_nota_id').val() != Main.rec_bim)
+				Main.remove_elemento("total");//primeiro remove o cabeçalho da coluna total por linha ou aluno
 			
 			//adiciona o cabeçalho da descrição de nota selecionada
 			var node_td_cabecalho = document.createElement("TD");
 				node_td_cabecalho.setAttribute("class", "text-center");
 				node_td_cabecalho.setAttribute("style", "width: 10%; position: relative;");
-			node_td_cabecalho.innerHTML = $('#descricao_nota_id :selected').text();
+				node_td_cabecalho.innerHTML = $('#descricao_nota_id :selected').text();
+			var input_text = document.createElement("INPUT");
+				input_text.setAttribute("id", "descricao_nota_id_hidden"+$("#limite_descricao_nota").val());
+				input_text.setAttribute("type", "hidden");
+				input_text.setAttribute("value", $('#descricao_nota_id').val());
+				node_td_cabecalho.appendChild(input_text);
+
+			
 
 			var node_span_cabecalho = document.createElement("SPAN");
 				node_span_cabecalho.setAttribute("style","cursor: pointer; position: absolute; right: 0px;");
@@ -1555,14 +1572,16 @@ var Main = {
 
 			document.getElementById("cabecalho_nota").appendChild(node_td_cabecalho);
 
-			//coloca de volta o cabeçalho do total
-			var node_td_cabecalho = document.createElement("TD");
-				node_td_cabecalho.setAttribute("class", "text-center");
-				node_td_cabecalho.setAttribute("style", "width: 10%;");
-				node_td_cabecalho.setAttribute("id", "total");
-			node_td_cabecalho.innerHTML = "Total";
-			document.getElementById("cabecalho_nota").appendChild(node_td_cabecalho);
-			
+			if($('#descricao_nota_id').val() != Main.rec_bim)
+			{
+				//coloca de volta o cabeçalho do total
+				var node_td_cabecalho = document.createElement("TD");
+					node_td_cabecalho.setAttribute("class", "text-center");
+					node_td_cabecalho.setAttribute("style", "width: 10%;");
+					node_td_cabecalho.setAttribute("id", "total");
+				node_td_cabecalho.innerHTML = "Total";
+				document.getElementById("cabecalho_nota").appendChild(node_td_cabecalho);
+			}
 			for(var i = 0; i < $("#linha_disponivel").val(); i++)
 			{
 				var total_nota_linha = $("#total"+i).val();//armazena o total por linha para depois devolver a coluna total na tela
@@ -1572,37 +1591,42 @@ var Main = {
 					node_td.setAttribute("class", "text-center");
 					node_td.setAttribute("style", "width: 10%;");
 				var input_text = document.createElement("INPUT");
-					input_text.setAttribute("onblur", "Main.altera_nota('total"+i+"',this.value,"+$('#descricao_nota_id').val()+",'"+$("#matricula_id"+i).val()+"',"+$("#turma_selecionada").val()+","+$("#disciplina_id").val()+","+$("#etapa_selecionada").val()+")");
+					input_text.setAttribute("onblur", "Main.altera_nota('total"+i+"',this.value,"+$('#descricao_nota_id').val()+",'"+$("#matricula_id"+i).val()+"',"+$("#etapa_selecionada").val()+",'aluno"+i+"_nota"+$("#limite_descricao_nota").val()+"')");
 					input_text.setAttribute("type", "number");
+					input_text.setAttribute("name", "aluno"+i+"_nota"+$("#limite_descricao_nota").val());
+					input_text.setAttribute("id", "aluno"+i+"_nota"+$("#limite_descricao_nota").val());
 					input_text.setAttribute("min", "0");
-					input_text.setAttribute("class", "form-control border_radius");
+					input_text.setAttribute("class", "form-control border_radius text-info");
 					input_text.setAttribute("style", "background-color: white;");
 
 				node_td.appendChild(input_text);
 
-				Main.remove_elemento("td_total"+i);//remove o total de aluno por aluno
+				if($('#descricao_nota_id').val() != Main.rec_bim)
+					Main.remove_elemento("td_total"+i);//remove o total de aluno por aluno
 
 				document.getElementById("linha"+i).appendChild(node_td);//adiciona acoluna nova
 
 				//agora devolver a coluna total de aluno por aluno
+				if($('#descricao_nota_id').val() != Main.rec_bim)
+				{
+					var node_td = document.createElement("TD");
+						node_td.setAttribute("style", "width: 10%;");
+						node_td.setAttribute("style", "vertical-align: middle;");
+						node_td.setAttribute("class", "text-center");
+						node_td.setAttribute("id", "td_total"+i);
 
-				var node_td = document.createElement("TD");
-					node_td.setAttribute("style", "width: 10%;");
-					node_td.setAttribute("style", "vertical-align: middle;");
-					node_td.setAttribute("class", "text-center");
-					node_td.setAttribute("id", "td_total"+i);
-
-				var input_text = document.createElement("INPUT");
-					input_text.setAttribute("type", "text");
-					input_text.setAttribute("readonly", "readonly");
-					input_text.setAttribute("id", "total"+i);
-					input_text.setAttribute("class", classe);
-					input_text.setAttribute("style", "background-color: white;");
-					input_text.setAttribute("value", total_nota_linha);
-
-				node_td.appendChild(input_text);
-				document.getElementById("linha"+i).appendChild(node_td);				
+					var input_text = document.createElement("INPUT");
+						input_text.setAttribute("type", "text");
+						input_text.setAttribute("disabled", "true");
+						input_text.setAttribute("id", "total"+i);
+						input_text.setAttribute("class", classe);
+						input_text.setAttribute("style", "background-color: white;");
+						input_text.setAttribute("value", total_nota_linha);
+						node_td.appendChild(input_text);
+					document.getElementById("linha"+i).appendChild(node_td);				
+				}
 			}
+			$("#limite_descricao_nota").val((parseInt($("#limite_descricao_nota").val()) + 1));
 		}
 		else
 			Main.modal("aviso","Esta coluna já se encontra adicionada.");

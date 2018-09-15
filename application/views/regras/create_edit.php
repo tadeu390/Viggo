@@ -200,7 +200,7 @@
 												echo "<input type='hidden' id='hora_fim".$max_value_intervalo."' name='hora_fim".$max_value_intervalo."' value='".$intervalos[$i]['Hora_fim']."'>";
 												echo $intervalos[$i]['Hora_fim'];
 											echo "</td>";
-											echo"<td><span class='glyphicon glyphicon-remove pointer' title='Remover' onclick='Main.remove_elemento(\"intervalo".$max_value_intervalo."\");'></span></td>";
+											echo"<td class='text-right'><span class='glyphicon glyphicon-remove pointer' title='Remover' onclick='Main.remove_elemento(\"intervalo".$max_value_intervalo."\");'></span></td>";
 										echo "</tr>";
 										$max_value_intervalo = $max_value_intervalo + 1;
 									}
@@ -212,7 +212,7 @@
 					</div>
 				</fieldset>
 				<fieldset style="margin-top: 20px;">
-					<legend>&nbsp;Bimestres <span class='glyphicon glyphicon-question-sign text-danger pointer'  data-toggle="tooltip" title="Define a quantidade de etapas, data em que começa e termina, valor."></span></legend>
+					<legend>&nbsp;Bimestres <span class='glyphicon glyphicon-question-sign text-danger pointer'  data-toggle="tooltip" title="Define os bimestres e as regras associadas a cada um deles."></span></legend>
 					<div class="row">
 						<div class="col-lg-6">
 							<div class="form-group relative">
@@ -311,7 +311,7 @@
 													echo "<input type='hidden' id='data_fechamento".$max_value_etapa."' name='data_fechamento".$max_value_etapa."' value='".$etapas[$i]['Data_fechamento']."'>";
 													echo (($etapas[$i]['Data_fechamento'] == '00/00/0000') ? '' : $etapas[$i]['Data_fechamento']);
 												echo "</td>";
-												echo"<td><span class='glyphicon glyphicon-remove pointer' title='Remover' onclick='Main.remove_elemento(\"etapa".$max_value_etapa."\");'></span></td>";
+												echo"<td class='text-right'><span class='glyphicon glyphicon-remove pointer' title='Remover' onclick='Main.remove_elemento(\"etapa".$max_value_etapa."\");'></span></td>";
 											echo "</tr>";
 											$max_value_etapa = $max_value_etapa + 1;
 										}
@@ -408,7 +408,7 @@
 													echo "<input type='hidden' id='data_fechamento_etapa_extra".$max_value_etapa_extra."' name='data_fechamento_etapa_extra".$max_value_etapa_extra."' value='".$etapas_extras[$i]['Data_fechamento']."'>";
 													echo (($etapas_extras[$i]['Data_fechamento'] == '00/00/0000') ? '' : $etapas_extras[$i]['Data_fechamento']);
 												echo "</td>";
-												echo"<td><span class='glyphicon glyphicon-remove pointer' title='Remover' onclick='Main.remove_elemento(\"etapa_extra".$max_value_etapa_extra."\");'></span></td>";
+												echo"<td class='text-right'><span class='glyphicon glyphicon-remove pointer' title='Remover' onclick='Main.remove_elemento(\"etapa_extra".$max_value_etapa_extra."\");'></span></td>";
 											echo "</tr>";
 											$max_value_etapa_extra = $max_value_etapa_extra + 1;
 										}
