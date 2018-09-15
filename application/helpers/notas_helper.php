@@ -14,7 +14,7 @@
 			$CI = get_instance();
 			$CI->load->model("Nota_model");	
 			
-			return $CI->Nota_model->get_nota($descricao_nota_id, $matricula_id, $etapa_id);
+			return $CI->Nota_model->get_nota($descricao_nota_id, $matricula_id, $etapa_id)['Nota'];
 		}
 		/*!
 			RESPONSÁVEL POR AUXILIAR NA CONSTRUÇÃO DA VIEW DE NOTAS, PRA CADA ALUNO SE TEM UMA NOTA,

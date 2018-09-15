@@ -143,7 +143,7 @@
 		*/
 		public function situacao_falta_aluno($aluno_id, $turma_id, $regras, $tipo)
 		{
-			if($tipo == ETAPA_EXTRA)
+			if($tipo == ETAPA_EXTRA)//pois em etapas extras não se faz chamada em sala de aula.
 				return APROVADO;
 			else if($this->get_total_faltas($aluno_id, $turma_id)['Faltas'] <= ($regras['Limite_falta'] / 100) * ($regras['Dias_letivos'] * $regras['Quantidade_aula']))
 				return APROVADO;

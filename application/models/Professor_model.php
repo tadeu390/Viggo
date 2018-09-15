@@ -74,16 +74,8 @@
 			if(empty($query->row_array()))
 			{
 				$query = $this->db->query("
-					SELECT * FROM Etapa  
-					WHERE CAST(NOW() AS DATE) >= CAST(Data_abertura AS DATE) AND CAST(NOW() AS DATE) <= CAST(Data_fechamento AS DATE) AND 
-					Periodo_letivo_id = ".$this->db->escape($periodo_letivo_id)."");
-				
-				if(empty($query->row_array()))
-				{
-					$query = $this->db->query("
-						SELECT * FROM Etapa 
-						WHERE Periodo_letivo_id = ".$this->db->escape($periodo_letivo_id)." ORDER BY Data_inicio LIMIT 1");
-				}
+					SELECT * FROM Etapa 
+					WHERE Periodo_letivo_id = ".$this->db->escape($periodo_letivo_id)." ORDER BY Data_abertura LIMIT 1");
 			}
 			return $query->row_array();
 		}
