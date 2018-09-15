@@ -81,7 +81,7 @@
 					echo "</tr>";
 					echo"<tr>";
 						echo "<td colspan='2'>";
-							echo "<div class='bimestres' style='height: 250px; max-height: 250px;'>";
+							echo "<div class='etapas' style='height: 250px; max-height: 250px;'>";
 								echo "<table class='table table-striped table-hover'>";
 									echo "<thead>";
 										echo "<tr>";
@@ -94,26 +94,26 @@
 										echo "</tr>";
 									echo "</thead>";
 									echo "<tbody>";
-										for($i = 0; $i < count($bimestres); $i++)
+										for($i = 0; $i < count($etapas); $i++)
 										{
 											echo "<tr>";
 												echo"<td>";
-													echo $bimestres[$i]['Nome'];
+													echo $etapas[$i]['Nome'];
 												echo "</td>";
 												echo "<td>";
-													echo $bimestres[$i]['Valor'];
+													echo $etapas[$i]['Valor'];
 												echo "</td>";
 												echo "<td>";
-													echo $bimestres[$i]['Data_inicio'];
+													echo $etapas[$i]['Data_inicio'];
 												echo "</td>";
 												echo "<td>";
-													echo $bimestres[$i]['Data_fim'];
+													echo $etapas[$i]['Data_fim'];
 												echo "</td>";
 												echo "<td>";
-													echo (($bimestres[$i]['Data_abertura'] == '00/00/0000') ? '' : $bimestres[$i]['Data_abertura']);
+													echo (($etapas[$i]['Data_abertura'] == '00/00/0000') ? '' : $etapas[$i]['Data_abertura']);
 												echo "</td>";
 												echo "<td>";
-													echo (($bimestres[$i]['Data_fechamento'] == '00/00/0000') ? '' : $bimestres[$i]['Data_fechamento']);
+													echo (($etapas[$i]['Data_fechamento'] == '00/00/0000') ? '' : $etapas[$i]['Data_fechamento']);
 												echo "</td>";
 											echo "</tr>";
 										}
@@ -123,7 +123,7 @@
 						echo "</td>";
 					echo "</tr>";
 					echo "<tr>";
-						echo "<td colspan='2' class='text-center'>Bimestres</td>";
+						echo "<td colspan='2' class='text-center'>etapas</td>";
 					echo "</tr>";
 					echo "<tr>";
 						echo "<td colspan='2'>";

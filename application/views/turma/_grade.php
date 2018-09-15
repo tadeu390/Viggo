@@ -22,7 +22,7 @@
 			if ($lista_grades[$i]['Id'] == $lista_disc_turma_header['Grade_id'])
 			{
 				echo"<input readonly id='grade' name='grade' value='".$lista_grades[$i]['Nome_grade']."' type='text' class='input-material'>";
-				echo"<input id='grade_id' name='curso_id' value='".$lista_disc_turma_header['Grade_id']."' type='hidden' class='input-material'>";
+				echo"<input id='grade_id' name='grade_id' value='".$lista_disc_turma_header['Grade_id']."' type='hidden' class='input-material'>";
 				echo"<label for='grade' class='label-material'>Grade</label>";
 			}
 		}

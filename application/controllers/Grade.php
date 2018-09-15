@@ -88,10 +88,15 @@
 			$this->data['title'] = 'Editar grade';
 			if($this->Geral_model->get_permissao(UPDATE, get_class($this)) == TRUE)
 			{
+				$ordenacao = array(
+					"order" => "ASC",
+					"field" => "d.Nome"
+				);
+				
 				$this->data['obj'] = $this->Grade_model->get_grade(FALSE, $id, FALSE);
 								$this->data['lista_cursos'] = $this->Curso_model->get_curso(FALSE, FALSE, FALSE);
 				$this->data['lista_modalidades'] = $this->Modalidade_model->get_modalidade(FALSE, FALSE, FALSE);
-				$this->data['lista_disciplinas'] = $this->Disciplina_model->get_disciplina(FALSE,FALSE,FALSE);
+				$this->data['lista_disciplinas'] = $this->Disciplina_model->get_disciplina(1, FALSE, FALSE, FALSE, $ordenacao);
 				$this->data['lista_disc_grade'] = $this->Disc_grade_model->get_disc_grade($id);
 				$this->view("grade/create_edit", $this->data);
 			}
@@ -106,10 +111,14 @@
 			$this->data['title'] = 'Nova Grade';
 			if($this->Geral_model->get_permissao(CREATE, get_class($this)) == TRUE)
 			{
+				$ordenacao = array(
+					"order" => "ASC",
+					"field" => "d.Nome"
+				);
 				$this->data['obj'] = $this->Grade_model->get_grade(FALSE, 0, FALSE);
 				$this->data['lista_cursos'] = $this->Curso_model->get_curso(FALSE, FALSE, FALSE);
 				$this->data['lista_modalidades'] = $this->Modalidade_model->get_modalidade(FALSE, FALSE, FALSE);
-				$this->data['lista_disciplinas'] = $this->Disciplina_model->get_disciplina(FALSE,FALSE,FALSE);
+				$this->data['lista_disciplinas'] = $this->Disciplina_model->get_disciplina(1, FALSE, FALSE, FALSE, $ordenacao);
 				$this->data['lista_disc_grade'] = $this->Disc_grade_model->get_disc_grade(0);
 				$this->view("grade/create_edit", $this->data);
 			}

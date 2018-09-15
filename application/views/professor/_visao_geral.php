@@ -92,7 +92,7 @@
 						$timeZone = new DateTimeZone('UTC');
 						
 						$data_fim = DateTime::createFromFormat ('d/m/Y', $data_fim, $timeZone);
-						$data_atual = DateTime::createFromFormat ('d/m/Y', '10/06/2019', $timeZone);
+						$data_atual = DateTime::createFromFormat ('d/m/Y', date('d/m/Y'), $timeZone);
 						
 						$nota_etapa = notas::get_total_nota_etapa($lista_alunos[$i]['Matricula_id'], $lista_etapas[$j]['Id']);
 						if($lista_etapas[$j]['Tipo'] == ETAPA_NORMAL)

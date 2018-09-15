@@ -134,7 +134,7 @@
 			{
 				return null;//sem subturma para o horario corrente
 			}
-			$query->row_array()['Sub_turma'];
+			return $query->row_array()['Sub_turma'];
 			/*{echo "string";
 				$subturma = $this->get_sub_turmas($disciplina_id, $turma_id, date('Y-m-d'));//degbugar aqui
 				$subturma = (empty($subturma) ? 0 : $subturma[0]['Sub_turma']);

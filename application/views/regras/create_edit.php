@@ -323,7 +323,7 @@
 					</div>
 				</fieldset>
 				<fieldset style="margin-top: 20px;">
-					<legend>&nbsp;Etapas extras <span class='glyphicon glyphicon-question-sign text-danger pointer'  data-toggle="tooltip" title="Define as etapas de recuperação que o aluno poderá fazer."></span></legend>
+					<legend>&nbsp;Etapas extras <span class='glyphicon glyphicon-question-sign text-danger pointer'  data-toggle="tooltip" title="Define as etapas de recuperação, após ter terminado o período letivo."></span></legend>
 					<div class="row">
 						<div class="col-lg-6">
 							<div class="form-group relative">

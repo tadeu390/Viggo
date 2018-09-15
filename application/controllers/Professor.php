@@ -56,7 +56,7 @@
 			$this->turma_id_default = (empty($this->Professor_model->get_disciplina_default($this->professor_id, $this->periodo_letivo_id)['Turma_id']) ? $this->Professor_model->get_disciplinas($this->professor_id, $this->periodo_letivo_id)[0]['Turma_id'] : $this->Professor_model->get_disciplina_default($this->professor_id, $this->periodo_letivo_id)['Turma_id']);
 			
 			$this->sub_turma_default = $this->Professor_model->get_sub_turma_default($this->disciplina_id_default, $this->turma_id_default);
-
+			
 			//CARREGA A ETAPA PADRÃO COM BASE NA DATA.
 			$this->etapa_id_default = $this->Professor_model->get_etapa_default($this->periodo_letivo_id)['Id'];
 			/////////
@@ -463,7 +463,7 @@
 				$this->data['periodo_letivo_id'] = $this->periodo_letivo_id;
 
 				//determinar se a etapa anterior já passou 
-				if($this->Etapa_model->etapa_ja_passou($this->Etapa_model->get_etapa_anterior($etapa_id)['Id']) == false)//true
+				if($this->Etapa_model->etapa_ja_passou($this->Etapa_model->get_etapa_anterior($etapa_id)['Id']) == true)
 				{
 					$this->data['status_etapa_extra'] = '';
 
