@@ -90,7 +90,7 @@
 						$data_fim = DateTime::createFromFormat ('d/m/Y', $data_fim, $timeZone);
 						$data_atual = DateTime::createFromFormat ('d/m/Y', '13/12/2018', $timeZone);
 						
-						$nota_etapa = notas::get_total_nota_etapa($lista_alunos[$i]['Matricula_id'], $disciplina_id, $turma_id, $lista_etapas[$j]['Id']);
+						$nota_etapa = notas::get_total_nota_etapa($lista_alunos[$i]['Matricula_id'], $lista_etapas[$j]['Id']);
 						if($lista_etapas[$j]['Tipo'] == ETAPA_NORMAL)
 						{
 							$media_etapa = ($regra_letiva['Media'] / 100) * $lista_etapas[$j]['Valor'];
@@ -131,7 +131,7 @@
 
 
 
-								$nota_etapa_extra = notas::get_total_nota_etapa($lista_alunos[$i]['Matricula_id'], $disciplina_id, $turma_id, $lista_etapas[$j]['Id']);
+								$nota_etapa_extra = notas::get_total_nota_etapa($lista_alunos[$i]['Matricula_id'], $lista_etapas[$j]['Id']);
 								if(!empty($nota_etapa_extra)) //MEXER NO STATUS DE SOMENTE ALUNOS QUE FORAM PARA A PRÓXIMA ETAPA.
 								{
 									//AO ENTRAR PELA PRIMEIRA VEZ SIGNIFICA QUE A PRIMEIRA ETAPA EXTRA ACABOU, ENTÃO PARA O QUE O ALUNO POSSA IR PARA A

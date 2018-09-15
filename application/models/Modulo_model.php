@@ -113,7 +113,7 @@
 				WHERE UPPER(Url) = UPPER(".$this->db->escape($Url).")");
 			$query = $query->row_array();
 			
-			if(!empty($query) && $this->get_modulo(FALSE ,$Id, FALSE)['Url'] != $query['Url'])
+			if(!empty($query) && $this->get_modulo(FALSE ,$Id, FALSE)['Url_modulo'] != $query['Url'])
 				return "invalido";
 			
 			return "valido";

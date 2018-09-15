@@ -48,7 +48,7 @@
 						DATE_FORMAT(Data_fechamento, '%d/%m/%Y') as Data_fechamento, 
 						CAST(Data_abertura AS DATE) as Data_abertura2, 
 						CAST(Data_fechamento AS DATE) as Data_fechamento2, Periodo_letivo_id, 
-						Periodo_letivo_id 
+						Periodo_letivo_id, Tipo 
 						FROM Etapa 
 						WHERE Id = ".$this->db->escape($id)."");
 

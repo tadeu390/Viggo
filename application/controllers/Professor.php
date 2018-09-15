@@ -37,12 +37,13 @@
 			$this->load->model('Disciplina_model');
 			$this->load->model('Intervalo_model');
 			$this->load->model('Horario_model');
+			$this->load->model('Matricula_model');
 
 			//ABAIXO DETERMINA O PROFESSOR E O PERÍODO LETIVO
 			$this->professor_id = $this->Account_model->session_is_valid()['id'];
 			$this->periodo_letivo_id = $this->input->cookie('periodo_letivo_id');
 			
-			//ESTA CLASSE SÓ PODE SER ACESSADA NA PRESÊNÇA DE UM PERÍODO LETIVO SELECIONADO.
+			//ESTA CLASSE SÓ PODE SER ACESSADA DESDE QUE UM PERÍODO LETIVO ESTEJA SELECIONADO.
 			if(empty($this->periodo_letivo_id))
 				redirect("academico/professor");
 
@@ -126,7 +127,7 @@
 			RESPONSÁVEL POR RECEBER OS DADOS DO FORMULÁRIO A NOTA A SER ALTERADA.
 
 		*///VERIFICAR SE PERTENCE AO PROFESSOR, POIS SE CHAMAR A URL DIRETO DA PRA MEXER DE QUALQUER PROF
-		public function altera_nota($nota, $descricao_nota_id, $matricula_id, $turma_id, $disciplina_id, $etapa_id)
+		public function altera_nota($nota, $descricao_nota_id, $matricula_id, $etapa_id)
 		{
 			if($nota == 'null')
 				$nota = null;
@@ -134,37 +135,46 @@
 			$resultado = "sucesso";
 			$somatorio = 0;
 			$status = "";
+			$status_rec = "";
 			if($this->Geral_model->get_permissao(CREATE, get_class($this)) == TRUE AND $this->Geral_model->get_permissao(UPDATE, get_class($this)) == TRUE)
 			{
-				$resultado = $this->Nota_model->validar_nota($matricula_id, $etapa_id, $turma_id, $disciplina_id, $nota, $descricao_nota_id);
+				$resultado = $this->Nota_model->validar_nota($matricula_id, $etapa_id, $nota, $descricao_nota_id);
 
 				$this->data['etapa'] = $this->Etapa_model->get_etapa(FALSE, $etapa_id, FALSE);
 
 				///DETERMINAR SE A ETAPA ESTÁ ABERTA.
-				if($this->Etapa_model->get_status_etapa($etapa_id) == true)
-				{
+				//if($this->Etapa_model->get_status_etapa($etapa_id) == true)
+				//{
 					if($resultado != "invalido")
 					{
 						$somatorio = $resultado;
-						$resultado = $this->Nota_model->set_notas($nota, $descricao_nota_id, $matricula_id, $turma_id, $disciplina_id, $etapa_id);
+						$resultado = $this->Nota_model->set_notas($nota, $descricao_nota_id, $matricula_id, $etapa_id);
 
-						$status = $this->Nota_model->status_nota_total_etapa($matricula_id, $turma_id, $disciplina_id, $etapa_id, $this->periodo_letivo_id);
+						$status = $this->Nota_model->status_nota($etapa_id, $this->periodo_letivo_id, $somatorio);
 						
 						if($status == "ok")
 							$status = "info";
 						else
 							$status = "danger";
+
+						if($descricao_nota_id == RECUPERACAO_PARALELA)
+						{
+							if($this->Nota_model->status_nota($etapa_id, $this->periodo_letivo_id, $nota) == "ok")
+								$status_rec = "info";
+							else
+								$status_rec = "danger";
+						}
 					}
 					else 
 						$resultado = "O valor informado ultrapassa o limite de ".$this->Etapa_model->get_etapa(FALSE, $etapa_id, FALSE)['Valor']." pontos estabelecido para o ".$this->Etapa_model->get_etapa(FALSE, $etapa_id, FALSE)['Nome'].".";
-				}
-				else
-					$resultado = "Não é possível alterar a nota.";
+				//}
+				//else
+				//	$resultado = "Não é possível alterar a nota.";
 			}
 			else
 				$resultado = "Você não tem permissão para realizar esta ação. Entre em contato com o administrador do sistema.";
 				
-			$arr = array('response' => $resultado, 'somatorio' => $somatorio, 'status' => $status);
+			$arr = array('response' => $resultado, 'somatorio' => $somatorio, 'status' => $status, 'status_rec' => $status_rec);
 			header('Content-Type: application/json');
 			echo json_encode($arr);
 		}
@@ -175,10 +185,10 @@
 			$this->data['etapa'] = $this->Etapa_model->get_etapa(FALSE, $etapa_id, FALSE);
 
 			///DETERMINAR SE A ETAPA ESTÁ ABERTA.
-			if($this->Etapa_model->get_status_etapa($etapa_id) == true)
+//			if($this->Etapa_model->get_status_etapa($etapa_id) == true)
 				$this->Nota_model->remover_coluna_nota($descricao_nota_id, $turma_id, $disciplina_id, $etapa_id);
-			else
-				$resultado = "Não foi possível apagar a coluna de nota.";
+//			else
+//				$resultado = "Não foi possível apagar a coluna de nota.";
 
 			$arr = array('response' => $resultado);
 			header('Content-Type: application/json');
@@ -189,7 +199,7 @@
 		*
 		*	$disciplina_id -> Id da disciplina da grade. É usado para se obter as faltas da disciplina pra cada aluno.
 		*	$turma_id -> Id da turma que está sendo consultada pelo professor.
-		*	$etapa_id -> Id da etapa especificado pelo usuário quando clicar nos botões de etapas;
+		*	$etapa_id -> Id da etapa especificado pelo usuário quando clicar nos botões de etapas.
 		*/
 		public function faltas($disciplina_id = FALSE, $turma_id = FALSE, $etapa_id = FALSE)
 		{
@@ -286,7 +296,7 @@
 				{
 					for($i = 0; $i < COUNT($this->data['lista_horarios']); $i ++)
 					{
-						$this->data['conteudo'] = $this->Conteudo_model->get_conteudo($this->data['lista_horarios'][$i]['Disc_hor_id']);	
+						$this->data['conteudo'] = $this->Conteudo_model->get_conteudo($this->data['lista_horarios'][$i]['Disc_hor_id'], date('Y-m-d'));	
 						if(!empty($this->data['conteudo']))//tentar até achar em algum horário, isso porque pra mesma data é registrado o mesmo conteudo independentemente 
 						//da quantidade de aula e se for removido alguma disciplina do horario entao é necessario procurar nas restantes que ficou até achar o coteúdo.
 							break;
@@ -448,12 +458,12 @@
 				$this->data['url_part']['turma_id'] = $turma_id;
 				$this->data['url_part']['disciplina_id'] = $disciplina_id;
 				$this->data['url_part']['etapa_id'] = $etapa_id;
-								
+				$this->data['periodo_letivo_id'] = $this->periodo_letivo_id;						
 				$this->data['lista_colunas_nota'] = array();
 				$this->data['lista_alunos'] = array();
 				
 				//determinar se a etapa anterior já passou 
-				if($this->Etapa_model->etapa_ja_passou($this->Etapa_model->get_etapa_anterior($etapa_id)['Id']) == true)
+				if($this->Etapa_model->etapa_ja_passou($this->Etapa_model->get_etapa_anterior($etapa_id)['Id']) == false)//true
 				{
 					$this->data['status_etapa_extra'] = '';
 
@@ -485,12 +495,26 @@
 							$media = $e['Media'];
 						}
 
-						//remover da lista os alunos que já passaram
-						for($i = 0; $i < COUNT($this->data['lista_alunos']); $i++)
+						//remover da lista os alunos que estão aprovados
+						$lista_alunos = $this->data['lista_alunos'];
+						for($i = 0; $i < COUNT($lista_alunos); $i++)
 						{
 							if($this->Nota_model->situacao_nota_aluno_disciplina($this->data['lista_alunos'][$i]['Matricula_id'], $etapas, $media) == APROVADO && 
 							   $this->Calendario_presenca_model->situacao_falta_aluno($turma_id, $this->data['lista_alunos'][$i]['Aluno_id'], $regras, $e['Tipo']) == APROVADO)
 								unset($this->data['lista_alunos'][$i]);
+							
+							if($this->Etapa_model->get_etapa_anterior($etapas)['Tipo'] == ETAPA_NORMAL)
+							{
+								$disc_mat = $this->Matricula_model->get_matriculas($lista_alunos[$i]['Aluno_id'], $turma_id);//levantar as ids de todas as disciplinas que o aluno cursa
+								$reprovas = array();
+								for($j = 0; $j < COUNT($disc_mat); $j++)
+								{
+									if($this->Nota_model->situacao_nota_aluno_disciplina($disc_mat[$j]['Matricula_id'], $etapas, $media) != APROVADO)
+										array_push($reprovas, 1);
+								}
+								if(COUNT($reprovas) > $regras['Reprovas'])
+									unset($this->data['lista_alunos'][$i]);//NÃO PODE IR PARA PROGRESSÃO PARCIAL SE REPROVAR EM MAIS DO QUE A REGRA PERMITE.
+							}		
 							//PROXIMO PASSO
 							//QUANDO FOR AVALIAR O STATUS DA RECUPERACAO FINAL, VERIFICAR SE O ALUNO ESTÁ CARREGANDO MAIS DO QUE O PERMITIDO DE DISCIPLINAS
 							//SE ESTIVER ENTÃO PODE IR PARA OS ESTUDOS INDEPENDENTES
@@ -573,8 +597,6 @@
 				
 				//CARREGAR OS DADOS DOS HORÁRIOS VINCULADOS AS DISCIPLINAS
 				$this->data['lista_disc_turma_horario'] = $this->Horario_model->get_disc_hor_turma($turma_id);
-				//print_r($this->data['lista_disc_turma_horario']);
-				//print_r($this->data['lista_disc_turma_header']);
 
 				$resultado = $this->load->view("/professor/horario", $this->data, TRUE);
 			}

@@ -9,11 +9,11 @@
 		}
 
 		echo "<div class='col-lg-12'>";
-			echo "<a href='".$url."professor/".$method."/".$url_part['disciplina_id']."/".$lista_turmas[$i]['Turma_id']."/".$url_part['etapa_id']."' class='btn ".$partial_class." btn-block' style='border-bottom-left-radius: 0px;'>";
+			echo "<a href='".$url."professor/".$method."/".$url_part['disciplina_id']."/".$lista_turmas[$i]['Turma_id']."/".$url_part['etapa_id']."' class='btn ".$partial_class." btn-block' style='border-bottom-left-radius: 0px; border-bottom-right-radius: 0px;'>";
 				echo $lista_turmas[$i]['Nome_turma'];
 
 			echo "</a>";
-			echo "<button onclick='Main.horarios_turma(".$lista_turmas[$i]['Turma_id'].");' class='btn-warning' style='margin-bottom: 5px; border-radius: 0px 0px 5px 5px;'>";
+			echo "<button onclick='Main.horarios_turma(".$lista_turmas[$i]['Turma_id'].");' class='btn-warning btn-block' style='margin-top: 0px; margin-bottom: 10px; border-radius: 0px 0px 5px 5px;'>";
 				echo "Horários";
 			echo "</button>";
 		echo "</div>";
