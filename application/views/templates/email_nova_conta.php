@@ -57,7 +57,7 @@
 											<img style="width: 30px;" src="<?php echo $url;?>content/imagens/info.png">
 										</td>
 										<td style="padding-left: 10px; color: black; line-height: 25px;">
-											<?php echo"Olá ".$Nome_usuario.", seja bem vindo ao CEP - Centro de Educação Profissional \"Tancredo Neves\". Segue abaixo as suas credenciais para realizar seu acesso a sua conta através do portal da instituição e ficar por dentro do seu histórico escolar. <br /><br />E-mail: <b>".$Email."</b><br />Senha: <b>Utilize a senha que a escola lhe forneceu</b>. Esqueceu sua senha? <a  style='color: #336CD2;' href='".$url."account/redefinir_senha'>Clique aqui</a><br /><br /> Para entrar no portal e acessar a sua conta <a style='color: #336CD2;' href='".$url ."'>Clique aqui</a>";?>
+											<?php echo"Olá ".$Nome_usuario.", seja bem vindo ao CEP - Centro de Educação Profissional \"Tancredo Neves\". Segue abaixo as suas credenciais para realizar seu acesso a sua conta através do portal da instituição e ficar por dentro do seu histórico escolar. <br /><br />E-mail: <b>".$Email."</b><br />Senha: <b>".$Senha."<br /><br /> Para entrar no portal e acessar a sua conta <a style='color: #336CD2;' href='".$url ."'>Clique aqui</a>";?>
 										</td>
 									</tr>
 								</table>

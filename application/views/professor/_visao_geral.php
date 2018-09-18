@@ -43,8 +43,8 @@
 							echo "</td>";
 						}
 					}
-					echo "<td $colspan class='text-center'>";
-						echo $lista_etapas[$i]['Nome']." (".$lista_etapas[$i]['Valor']." pts)";
+					echo "<td $colspan class='text-center' title='".$lista_etapas[$i]['Nome']." (".$lista_etapas[$i]['Valor']." pts)"."'>";
+						echo mstring::corta_string($lista_etapas[$i]['Nome']." (".$lista_etapas[$i]['Valor']." pts)",20);
 					echo "</td>";
 				}
 			?>

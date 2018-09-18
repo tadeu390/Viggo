@@ -3,7 +3,7 @@
 	/*!
 	*	ESTA MODEL TRATA DAS OPERAÇÕES NA BASE DE DADOS REFERENTE AS OPERAÇÕES QUE O PROFESSOR REALIZA.
 	*/
-	class Professor_model extends Geral_model 
+	class Professor_model_DISABLED extends Geral_model 
 	{
 		public function __construct()
 		{

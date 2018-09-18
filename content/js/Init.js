@@ -262,7 +262,8 @@ $(document).ready(
 
     $("#form_cadastro_grade").submit(function(event) {
       event.preventDefault();
-      Main.validar_grade();
+        Main.validar_grade();
+     
     });
 
     $("#form_cadastro_curso").submit(function(event) {

@@ -239,7 +239,7 @@
 			//se trocar o usuario de grupo, setar para este as permissões padrões 
 			//do novo grupo atribuído a ele
 			$Usuario = $this->Usuario_model->get_usuario(FALSE, $dataToSave['Id'], FALSE);
-			
+			$senha_email = "";
 			if($dataToSave['Id'] >= 1)//somente se estiver editando, esse trecho é necessário ser executado antes da próxima linha depois do if
 			{
 				if($dataToSave['Grupo_id'] != $Usuario['Grupo_id'])
@@ -252,6 +252,8 @@
 				//SE O CAMPO CONTER ALGO ENTÃO SIGNIFICA QUE A SENHA DEVE SER ALTERADA.
 				if($this->input->post('nova_senha') != NULL && !empty($this->input->post('nova_senha')))
 				{
+					$senha_email = $this->input->post('nova_senha');
+
 					$data = array(
 						'Usuario_id' => $Usuario_id,
 						'Valor' => $this->hashing($this->input->post('nova_senha'))
@@ -261,6 +263,8 @@
 			}
 			else
 			{
+				$senha_email = $this->input->post('nova_senha');
+
 				$data = array(
 					'Usuario_id' => $Usuario_id,
 					'Valor' => $this->hashing($this->input->post('senha'))
@@ -271,10 +275,10 @@
 			if($dataToSave['Email_notifica_nova_conta'] == 1 && empty($Usuario))
 			{
 				$dataToSave['Nome_usuario'] = $dataToSave['Nome'];
-				$this->envia_email_nova_conta($dataToSave);
+				$this->envia_email_nova_conta($dataToSave, $senha_email);
 			}
 			else if($dataToSave['Email_notifica_nova_conta'] == 1 && $Usuario['Email_notifica_nova_conta'] == 0)
-				$this->envia_email_nova_conta($Usuario);
+				$this->envia_email_nova_conta($Usuario, $senha_email);
 			return $Usuario_id;
 		}
 		/*!
@@ -331,11 +335,12 @@
 		*
 		*	$Usuario -> Dados do usuário.
 		*/
-		public function envia_email_nova_conta($Usuario)
+		public function envia_email_nova_conta($Usuario, $senha_email)
 		{
 			$this->email->from($this->Configuracoes_email_model->get_configuracoes_email()['Email'], 'CEP - Centro de Educação Profissional "Tancredo Neves"');
 			$this->email->to($Usuario['Email']);
 			$Usuario['url'] = base_url();
+			$Usuario['Senha'] = $senha_email;
 			$mensagem = $this->load->view("templates/email_nova_conta", $Usuario, TRUE);
 			$this->email->subject('Bem vindo ao CEP');
 			$this->email->message($mensagem);

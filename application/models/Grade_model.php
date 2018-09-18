@@ -184,5 +184,23 @@
 				}
 			}
 		}
+		/*!
+		*	RESPONSÁVEL POR VERIFICAR SE JÁ EXISTE UMA GRADE CRIADA PARA O PERÍODO LETIVO CORRENTE, 
+		*	PARA O CURSO EM QUESTÃO.
+		*	
+		*	$nome => Nome da grade.
+		*/
+		public function valida_nome($nome, $id)
+		{
+			$query = $this->db->query("
+				SELECT Nome FROM Grade 
+				WHERE UPPER(Nome) = UPPER(".$this->db->escape($nome).")");
+			$query = $query->row_array();
+			
+			if(!empty($query) && $this->get_grade(FALSE ,$id, FALSE, FALSE, FALSE)['Nome_grade'] != $query['Nome'])
+				return "invalido";
+			
+			return "valido";
+		}
 	}
 ?>

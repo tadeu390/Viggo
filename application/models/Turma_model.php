@@ -42,14 +42,9 @@
 				$query = $this->db->query("
 					SELECT (SELECT count(*) FROM Turma u WHERE TRUE ".$filtros.") AS Size, t.Id, 
 					t.Nome as Nome_turma, t.Ativo as Ativo_turma, dt.Periodo_letivo_id, p.Periodo, m.Nome as Nome_modalidade,
-					CASE 
-						WHEN (SELECT COUNT(*) FROM Disc_turma dtx WHERE dtx.Turma_Id = dt.Turma_Id) = (SELECT COUNT(DISTINCT dty.Id) FROM Disc_turma dty INNER JOIN Disc_hor dh ON dty.Id = dh.Disc_turma_id WHERE dty.Turma_Id = dt.Turma_Id) THEN 
-							'Completo'
-						WHEN (SELECT COUNT(DISTINCT dty.Id) FROM Disc_turma dty INNER JOIN Disc_hor dh ON dty.Id = dh.Disc_turma_id WHERE dty.Turma_Id = dt.Turma_Id) = 0 THEN 
-							'Vazio'
-						ELSE 
-							'Parcial'
-					END AS Status_horario  
+					(SELECT COUNT(*) FROM Disc_turma dtx WHERE dtx.Turma_Id = dt.Turma_Id) AS Total_disciplina,
+					(SELECT COUNT(DISTINCT dty.Id) FROM Disc_turma dty INNER JOIN Disc_hor dh ON dty.Id = dh.Disc_turma_id 
+						WHERE dty.Turma_Id = dt.Turma_Id AND dh.Ativo = 1) AS Disciplina_com_horario 
 					FROM Turma t 
 					INNER JOIN Disc_turma dt ON t.Id = dt.Turma_Id 
 					INNER JOIN Periodo_letivo p ON dt.periodo_letivo_id = p.Id 
@@ -169,6 +164,90 @@
 				dt.Periodo_letivo_id < ".$this->db->escape($periodo_letivo_id)." AND 
 				m.Id = ".$this->db->escape($modalidade_id)." 
                 GROUP BY 1,2");
+			return $query->result_array();
+		}
+		/*!
+		*	RESPONSÁVEL POR RETORNAR TODAS AS TURMAS QUE O PROFESSOR DA AULA NO PERÍODO SELECIONADO (utilizado para listar as turmas de cada disciplina e 
+		*	também utilizado para listar as turmas pra que o professor possa ver o horário).
+		*
+		*	$disciplina_id -> Id da disciplina de uma determinada grade.
+		*	$professor_id -> Id do professor para se obter as disciplinas ligadas a ele.
+		*	$periodo_letivo_id -> Id do período letivo selecionado.
+		*/
+		public function get_turma_prof($disciplina_id = FALSE, $professor_id, $periodo_letivo_id)
+		{
+			$disciplina = "";
+			if($disciplina_id !== FALSE)
+				$disciplina = " AND dg.Disciplina_id = ".$this->db->escape($disciplina_id);
+
+			$query = $this->db->query("
+				SELECT t.Nome AS Nome_turma, dg.Disciplina_id, t.Id AS Turma_id
+				FROM Turma t 
+				INNER JOIN Disc_turma dt ON t.Id = dt.Turma_id 
+				INNER JOIN Disc_grade dg ON dg.Id = dt.Disc_grade_id  
+				INNER JOIN Disc_hor dh ON dh.Disc_turma_id = dt.Id #somente turmas que tem a disciplina em questão em algum horário
+				WHERE dt.Professor_Id = ".$this->db->escape($professor_id)." ".$disciplina." AND 
+				dt.periodo_letivo_id = ".$this->db->escape($periodo_letivo_id)." 
+				GROUP BY 1, 2, 3
+			");
+
+			return $query->result_array();
+		}
+		/*!
+		*	RESPONSÁVEL POR IDENTIFICAR A SUBTURMA PADRÃO QUANDO O PROFESSOR ACESSA O PORTAL, COM BASE NO DIA E HORÁRIO.
+		*
+		*	$disciplina_id -> Id da disciplina que se quer verificar se há subturma nela.
+		*	$turma_id -> Id da turma na qual está associada a disciplina em questão.
+		*/
+		public function get_sub_turma_default($disciplina_id, $turma_id)
+		{
+			$data = date('Y-m-d');
+			
+			$query = $this->db->query("
+				SELECT x.Sub_turma FROM (SELECT dh.Sub_turma 
+					FROM Disc_turma dt 
+					INNER JOIN Disc_hor dh ON dt.Id = dh.Disc_turma_id 
+					INNER JOIN Disc_grade dg ON dt.Disc_grade_id = dg.Id 
+					INNER JOIN Horario h ON dh.Horario_id = h.Id 
+					WHERE dg.Disciplina_id = ".$this->db->escape($disciplina_id)." AND dt.Turma_id = ".$this->db->escape($turma_id)." AND 
+					h.Dia = DATE_FORMAT(".$this->db->escape($data).", '%w') AND 
+				 	dh.Ativo = 1 AND 
+				 	TIME_FORMAT(CAST(NOW() AS TIME), '%H:%i') >= TIME_FORMAT(h.Inicio, '%H:%i') AND 
+					TIME_FORMAT(CAST(NOW() AS TIME), '%H:%i') <= TIME_FORMAT(h.Fim, '%H:%i') 
+				 	GROUP BY dh.Horario_id) AS x GROUP BY x.Sub_turma 
+			");
+			if(empty($query->row_array()))
+			{
+				return null;//sem subturma para o horario corrente
+			}
+			return $query->row_array()['Sub_turma'];
+			/*{echo "string";
+				$subturma = $this->get_sub_turmas($disciplina_id, $turma_id, date('Y-m-d'));//degbugar aqui
+				$subturma = (empty($subturma) ? 0 : $subturma[0]['Sub_turma']);
+				return $subturma;
+			}
+			else 
+				return $query->row_array()['Sub_turma'];*/
+		}
+		/*!
+		*	RESPONSÁVEL POR IDENTIFICAR A QUANTIDADE DE SUBTURMAS E RETORNAR CADA SUB_TURMA QUANDO EXISTIR.
+		*
+		*	$disciplina_id -> Id da disciplina que se quer verificar se há subturma nela.
+		*	$turma_id -> Id da turma na qual está associada a disciplina em questão.
+		*/
+		public function get_sub_turmas($disciplina_id, $turma_id, $data= false)
+		{
+			$query = $this->db->query("
+				SELECT x.Sub_turma FROM (SELECT dh.Sub_turma 
+					FROM Disc_turma dt 
+					INNER JOIN Disc_hor dh ON dt.Id = dh.Disc_turma_id 
+					INNER JOIN Disc_grade dg ON dt.Disc_grade_id = dg.Id 
+					INNER JOIN Horario h ON dh.Horario_id = h.Id 
+					WHERE dg.Disciplina_id = ".$this->db->escape($disciplina_id)." AND dt.Turma_id = ".$this->db->escape($turma_id)." AND 
+					h.Dia = DATE_FORMAT(".$this->db->escape($data).", '%w') AND 
+				 	dh.Ativo = 1
+				 	GROUP BY dh.Horario_id) AS x GROUP BY x.Sub_turma 
+			");
 			return $query->result_array();
 		}
 	}

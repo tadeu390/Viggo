@@ -147,12 +147,14 @@
 						<div class="col-lg-6 padding20">
 							<div class="form-group relative" id="data1">
 								<input id="data_renovacao_inicio" value='<?php echo date("d/m/Y", strtotime('-6 months')); ?>' name="data_renovacao_inicio" type="text" class="input-material">
+								<input id="data_renovacao_inicio_hidden" value='<?php echo date("d/m/Y", strtotime('-6 months')); ?>' type="hidden">
 								<label for="data_renovacao_inicio" class="label-material active">Data de início da renovação</label>
 							</div>
 						</div>
 						<div class="col-lg-6 padding20">
 							<div class="form-group relative" id="data1">
 								<input id="data_renovacao_fim" value='<?php echo date("d/m/Y"); ?>' name="data_renovacao_fim" type="text" class="input-material">
+								<input id="data_renovacao_fim_hidden" value='<?php echo date("d/m/Y"); ?>' type="hidden">
 								<label for="data_renovacao_fim" class="label-material active">Data de fim da renovação</label>
 							</div>
 						</div>
@@ -175,9 +177,16 @@
 						</div>
 					</div>
 					<div class="row padding10">
-						<button  onclick="Main.load_filtro_turma_aluno();" type="button" class='btn btn-success btn-block'>
-							<span class='glyphicon glyphicon-search'></span> Pesquisar
-						</button>
+						<div class="col-lg-6">
+							<button onclick="Main.load_filtro_turma_aluno();" type="button" class='btn btn-success btn-block'>
+								<span class='glyphicon glyphicon-search'></span> Pesquisar
+							</button>
+						</div>
+						<div class="col-lg-6">
+							<button  onclick="Main.limpa_filtro_aluno();" type="button" class='btn btn-success btn-block'>
+								<span class='glyphicon glyphicon-erase'></span> Limpar
+							</button>
+						</div>
 					</div>
 				</div>
 				<div class="col-lg-5" >

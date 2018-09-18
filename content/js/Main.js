@@ -263,6 +263,8 @@ var Main = {
 			Main.show_error("senha", 'Informe a senha de usuário', 'is-invalid');
 		else if(document.getElementById("senha") != undefined && $("#senha").val().length < 8)
 			Main.show_error("senha", 'A senha deve conter no mínimo 8 caracteres.', 'is-invalid');
+		else if($("id").val() != "" && document.getElementById("email_notifica_nova_conta").checked == true && $("#nova_senha").val() == "")
+			Main.modal("aviso","Para enviar e-mail de notificação é necessário que você altere a senha.");
 		else
 		{
 			var trava = 0;
@@ -297,6 +299,23 @@ var Main = {
 					return true;
 			}
 		}
+	},
+	gerador_senha : function ()
+	{
+		var senha = Math.floor((Math.random() * 100000000) + 1);
+
+		Main.modal("aviso","A senha gerada é: "+senha);
+
+		$("#senha").val(senha);
+		$("#confirmar_senha").val(senha);
+
+		if(document.getElementById("label_senha") != undefined)
+			document.getElementById("label_senha").className = "label-material active";
+		if(document.getElementById("label_confirmar_senha") != undefined)
+			document.getElementById("label_confirmar_senha").className = "label-material active";
+
+		$("#nova_senha").val(senha);
+		$("#confirmar_nova_senha").val(senha);
 	},
 	aluno_validar : function()
 	{
@@ -375,6 +394,13 @@ var Main = {
 			Main.modal("aviso", "A quantidade de alunos adicionados é superior a quantidade máxima permitda.");
 		else
 			Main.create_edit();
+	},
+	limpa_filtro_aluno : function ()
+	{
+		document.getElementById('data_renovacao_inicio').value = document.getElementById('data_renovacao_inicio_hidden').value;
+		document.getElementById('data_renovacao_fim').value = document.getElementById('data_renovacao_fim_hidden').value;;
+		document.getElementById('nome_aluno').value = '';
+		document.getElementById('aluno_novo').checked = false;
 	},
 	valida_turma_aluno : function()
 	{
@@ -1381,7 +1407,7 @@ var Main = {
 		}
 		$("#limite_disciplina_add").val(limite_disciplina_add);
 		if(valido == 0)
-			Main.modal("aviso","Algumas disciplinas selecionadas não foram adicionados, pois já se encontram na lista.");
+			Main.modal("aviso","Algumas disciplinas selecionadas não foram adicionadas, pois já se encontram na lista.");
 	},
 	remove_disciplina : function ()//REMOVE AS DISCIPLINAS ADICIONADAS E SELECIONADAS
 	{
@@ -1399,16 +1425,10 @@ var Main = {
 
 		return true;
 	},
-	load_filtro_grade_disciplina : function()//monta o filtro de disciplina na grade
+	filtra_grade_disciplina : function()//monta o filtro de disciplina na grade
 	{
-		var nome = (($("#nome_disciplina").val() == "") ? 0 : $("#nome_disciplina").val());
-		Main.load_data_disciplina(nome);
-	},
-	load_data_disciplina : function(filtro)//Carrega as disciplinas para a lista a esquerda quando editando e quando usando o filtro pressionando o botão Pesquisar
-	{ 
-		var pesquisa = "get_disciplina";
 		$.ajax({
-			url: Main.base_url + $("#controller").val() + '/' + pesquisa + '/' + filtro,
+			url: Main.base_url + $("#controller").val() + '/filtra_disciplina/' + $("#nome_disciplina").val(),
 			dataType:'json',
 			cache: false,
 			type: 'POST',
@@ -1420,9 +1440,9 @@ var Main = {
 				document.getElementById("disciplinas").innerHTML = data.response;;
 			}
 		}).fail(function(msg){
-		    setTimeout(function(){
-		    	$("#modal_confirm").modal('hide');
-		    	Main.modal("aviso", "Houve um erro ao processar sua requisição. Verifique sua conexão com a internet.");
+			setTimeout(function(){
+				$("#modal_confirm").modal('hide');
+				Main.modal("aviso", "Houve um erro ao processar sua requisição. Verifique sua conexão com a internet.");
 			},500);
 		});
 	},
@@ -1432,9 +1452,7 @@ var Main = {
 		else if($("#modalidade_id").val() == "0")
 			Main.show_error("modalidade_id", 'Informe a modalidade da grade.', '');
 		else if($("#limite_disciplina_add").val() == "0")
-			Main.show_error("limite_disciplina_add", 'Selecione alguma disciplina para a grade.', 'is-invalid');
-		/*else if(MODALIDADE SEM PERIODO)
-			Main.show_error("", 'A modalidade selecionada nao possui periodo letivo cadastrado.', 'is-invalid');*/
+			Main.show_error("limite_disciplina_add", 'Selecione pelo menos uma disciplina para a grade.', 'is-invalid');
 		else
 			Main.create_edit();
 	},

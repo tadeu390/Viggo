@@ -53,12 +53,15 @@
 				dt.Professor_id, 
                 d.Nome as Nome_disciplina, dt.Turma_id,
                 CONCAT(d.Apelido, ' - ', u.Nome) AS Disc_prof, 
-                dg.Id As Disc_Grade_id, dt.Id AS Disc_turma_id  
+                dg.Id As Disc_Grade_id, dt.Id AS Disc_turma_id, dh.Id AS Disc_hor_id   
 				FROM Disciplina d 
 				INNER JOIN Disc_grade dg ON dg.Disciplina_id = d.Id 
                 LEFT JOIN Disc_turma dt ON dg.Id = dt.Disc_grade_id  AND dt.Turma_id = ".$this->db->escape($turma_id)."
-                LEFT JOIN Usuario u ON dt.Professor_id = u.Id AND u.Grupo_id = ".PROFESSOR."
-                WHERE dg.Grade_id = ".$this->db->escape($id)." AND dg.Periodo = ".$this->db->escape($periodo)." ORDER BY d.Nome");
+                LEFT JOIN Usuario u ON dt.Professor_id = u.Id AND u.Grupo_id = ".PROFESSOR." 
+                LEFT JOIN Disc_hor dh ON dt.Id = dh.Disc_turma_id 
+                WHERE dg.Grade_id = ".$this->db->escape($id)." AND dg.Periodo = ".$this->db->escape($periodo)." 
+                GROUP BY dg.Id
+                 ORDER BY d.Nome");
 
 			return $query->result_array();
 		}

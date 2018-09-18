@@ -137,9 +137,11 @@
 			else if($Grade['Modalidade_id'] == 0)
 				return "Informe a modalidade da grade.";
 			elseif(empty($Grade['Disc_grade_to_save']))
-				return "Selecione alguma disciplina para a grade.";
+				return "Selecione pelo menos uma disciplina para a grade.";
 			else if($Grade['Modalidade_id'] != $this->Modalidade_model->get_periodo_por_modalidade($Grade['Modalidade_id'])['Modalidade_id'])
-				return "A modalidade selecionada nao possui periodo letivo cadastrado.";
+				return "A modalidade selecionada não possui um período letivo cadastrado.";
+			else if($this->Grade_model->valida_nome($Grade['Nome'], $Grade['Id']) == "invalido")
+				return "Já existe uma grade criada para o período letivo corrente.";
 			else
 				return 1;
 		}
@@ -208,6 +210,22 @@
 			 }
 			 else
 				redirect('grade/index');
+		}
+		
+		public function filtra_disciplina($filtro = false)
+		{
+			$ordenacao = array(
+				"order" => "ASC",
+				"field" => "d.Nome"
+			);
+			$filtro = array("nome_disciplina" => $filtro);
+			$this->data['lista_disciplinas'] = $this->Disciplina_model->get_disciplina(1, FALSE, FALSE, $filtro, $ordenacao);
+			
+			$resultado = $this->load->view("/grade/_disciplinas", $this->data, TRUE);
+			
+			$arr = array('response' => $resultado);
+				header('Content-Type: application/json');
+				echo json_encode($arr);
 		}
 	}
 ?>

@@ -50,5 +50,31 @@
 				$this->db->update('Aluno', $data);
 			}
 		}
+		/*!
+			RESPONSÁVEL POR RETORNAR TODOS OS ALUNOS MATRICULADOS EM UMA DETERMINADA DISCIPLINA DE UMA 
+			DETERMINADA TURMA, DE ACORDO COM O HORÁRIO, PODENDO RETORNAR OU A TURMA TODA OU UMA SUBTURMA.
+		*/
+		public function get_alunos($disciplina_id, $turma_id, $sub_turma = FALSE)  //nome anterior get_alunos_chamada
+		{
+			if($sub_turma !== FALSE)
+				$sub_turma = "AND dh.Sub_turma = ".$this->db->escape($sub_turma);
+			else 
+				$sub_turma = "";
+			$query = $this->db->query("
+				SELECT u.Nome AS Nome_aluno, m.Id AS Matricula_id, 
+				dh.Sub_turma, a.Id AS Aluno_id
+				FROM Disc_turma dt 
+				INNER JOIN Disc_grade dg ON dt.Disc_grade_id = dg.Id 
+				INNER JOIN Matricula m ON m.Disc_turma_id = dt.Id  
+				INNER JOIN Inscricao i ON i.Id = m.Inscricao_id 
+				INNER JOIN Aluno a ON a.Id = i.Aluno_id 
+				INNER JOIN Usuario u ON u.Id = a.Usuario_id 
+				LEFT JOIN Disc_hor dh ON dt.Id = dh.Disc_turma_id AND (m.Sub_turma = dh.Sub_turma OR dh.Sub_turma = 0)
+				WHERE dg.Disciplina_id = ".$this->db->escape($disciplina_id)." AND 
+				dt.Turma_id = ".$this->db->escape($turma_id)." ".$sub_turma." GROUP BY #dh.Sub_turma, 
+				m.Id");
+			
+				return $query->result_array();
+		}
 	}
 ?>

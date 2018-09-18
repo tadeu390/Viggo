@@ -197,5 +197,24 @@
 				return APROVADO;
 			return RECUPERACAO;
 		}
+		/*!
+			RESPONSÁVEL POR RETORNAR TODAS AS COLUNAS DE NOTAS EXISTENTES PARA UMA DETERMINADA DISCIPLINA EM UMA DETERMINADA TURMA DE UM DETERMINADO BIMESTRE
+		*/
+		public function get_colunas_nota($disciplina_id, $turma_id, $etapa_id)
+		{
+			$query = $this->db->query("
+				SELECT dn.Descricao, dn.Id AS Descricao_nota_id FROM Disc_turma dt 
+				INNER JOIN Disc_grade dg ON dt.Disc_grade_id = dg.Id 
+				INNER JOIN Matricula m ON dt.Id = m.Disc_turma_id 
+				INNER JOIN Notas n ON m.Id = n.Matricula_id 
+				INNER JOIN Descricao_nota dn ON dn.Id = n.Descricao_nota_id 
+
+				WHERE dg.Disciplina_id = ".$this->db->escape($disciplina_id)." AND 
+				dt.Turma_id = ".$this->db->escape($turma_id)." AND 
+				n.etapa_id = ".$this->db->escape($etapa_id)." 
+				GROUP BY dn.Descricao, dn.Id ORDER BY n.Id");
+
+			return $query->result_array();
+		}
 	}
 ?>

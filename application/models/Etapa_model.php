@@ -214,5 +214,27 @@
 			
 			return !empty($query->row_array());//se passou, retornar verdadeiro
 		}
+		/*!
+		*	RESPONSÁVEL POR CARREGAR O BIMESTRE A SER SELECIONADO POR PADRÃO NA TELA PARA O PROFESSOR, 
+		*	ISSO É FEITO COM BASE NA DATA CORRENTE E SE CASO O ACESSO ESTIVER OCORRENDO EM UMA DATA QUE NÃO
+		*	CORRESPONDE A NENHUMA DATA DE NENHUM BIMESTRE, O MÉTODO ENTÃO CARREGA O PRIMEIRO BIMESTRE POR DEFAULT.
+		*
+		*	$periodo_letivo_id -> Id do período letivo selecionado.
+		*/
+		public function get_etapa_default($periodo_letivo_id)
+		{
+			$query = $this->db->query("
+				SELECT * FROM Etapa 
+				WHERE CAST(NOW() AS DATE) >= CAST(Data_inicio AS DATE) AND CAST(NOW() AS DATE) <= CAST(Data_fim AS DATE) AND 
+				Periodo_letivo_id = ".$this->db->escape($periodo_letivo_id)."");
+
+			if(empty($query->row_array()))
+			{
+				$query = $this->db->query("
+					SELECT * FROM Etapa 
+					WHERE Periodo_letivo_id = ".$this->db->escape($periodo_letivo_id)." ORDER BY Data_abertura LIMIT 1");
+			}
+			return $query->row_array();
+		}
 	}
 ?>

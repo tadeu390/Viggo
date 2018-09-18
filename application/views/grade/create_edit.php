@@ -75,22 +75,30 @@
 					</div>
 				</div>
 
-				<div class="row border_radius col-lg-6" style="margin-top: 3px; border-radius: 5px 5px 5px 5px; border: 1px solid white; margin: 0px; ">
-					<div class="col-lg-12 padding">
-						<div class="text-center">Filtrar disciplina</div>
-						<div class="row">
-							<div class="col-lg-9">
-								<div class="form-group relative">
-									<input id="nome_disciplina" name="nome_disciplina" type="text" class="input-material">
-									<label for="nome_disciplina" class="label-material">Nome da disciplina</label>
+				<div class="row">
+					<div class="col-lg-12 padding10">
+						<fieldset>
+							<legend class='text-white'>&nbsp; Filtrar disciplina</legend>
+							
+								<div class="row">
+									<div class="col-lg-4">
+										<div class="form-group relative">
+											<input id="nome_disciplina" name="nome_disciplina" type="text" class="input-material">
+											<label for="nome_disciplina" class="label-material">Nome da disciplina</label>
+										</div>
+									</div>
+									<div class="col-lg-4">
+										<button  onclick="Main.filtra_grade_disciplina();" type="button" class='btn btn-success btn-block'>
+											<span class='glyphicon glyphicon-search'></span> Pesquisar
+										</button>
+									</div>
+									<div class="col-lg-4">
+										<button  onclick="document.getElementById('nome_disciplina').value = '';" type="button" class='btn btn-success btn-block'>
+											<span class='glyphicon glyphicon-erase'></span> Limpar
+										</button>
+									</div>
 								</div>
-							</div>
-							<div class="col-lg-3">
-								<button  onclick="Main.load_filtro_grade_disciplina();" type="button" class='btn btn-success btn-block'>
-									<span class='glyphicon glyphicon-search'></span> Pesquisar
-								</button>
-							</div>
-						</div>
+						</fieldset>
 					</div>
 				</div>
 
@@ -101,7 +109,7 @@
 
 							<div class='row padding10' style=" margin-top: 3px; border-radius: 5px 5px 5px 5px; border: 1px solid white; margin: 0px;">
 								<div class="col-lg-6" style="padding-left: 0px; margin-top: 3px;">
-									<label for="nome_periodo_base" class="label-material">Adicionar no período/módulo </label>
+									<label for="nome_periodo_base" class="label-material">Módulo </label>
 									<input type='number' class='text-center border_radius' style='width: 15%; color: black;' maxlength='2' id='periodo_base' name='periodo_base' value='1'>
 								</div>
 								<div class="col-lg-6 text-right" style="padding-right: 0px;">
@@ -153,7 +161,9 @@
 												echo"<td title='".$lista_disc_grade[$i]['Nome_disciplina']."'>";
 													echo"<div style='margin-top: 5px; height: 25px;' class='checkbox checbox-switch switch-success custom-controls-stacked'>";
 														echo "<label for='nome_disciplina_add$i' style='display: block; height: 25px;'>";
-															echo "<input type='checkbox' id='nome_disciplina_add$i' name='nome_disciplina_add$i' value='1' /><span></span>";
+															echo "<input type='checkbox' id='nome_disciplina_add$i' name='nome_disciplina_add$i' value='1' />";
+															if(empty($lista_disc_grade[$i]['Disc_turma_id']))
+																echo"<span></span>";
 															echo mstring::corta_string($lista_disc_grade[$i]['Nome_disciplina'], 20);
 														echo "</label>";
 													echo"</div>";
@@ -187,7 +197,7 @@
 								$checked = "checked";
 							
 							echo"<label for='grade_ativo' class='text-white'>";
-								echo "<input type='checkbox' $checked id='grade_ativo' name='grade_ativo' value='1' /><span></span> Grade ativo";
+								echo "<input type='checkbox' $checked id='grade_ativo' name='grade_ativo' value='1' /><span></span> Grade ativa";
 							echo"</label>";
 						?>
 					</div>

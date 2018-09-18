@@ -227,20 +227,23 @@
 														for($j = 0; $j < COUNT($lista_disc_turma_disciplina); $j++)
 														{
 															$selected = "";
-															for($y = 0; $y < COUNT($lista_disc_turma_horario); $y++)
+															if(!empty($lista_disc_turma_disciplina[$j]['Turma_id']))
 															{
-																$sub_turma = (($lista_disc_turma_header['Qtd_sub_turma'] == 1) ? 0 : ($x + 1));
+																for($y = 0; $y < COUNT($lista_disc_turma_horario); $y++)
+																{
+																	$sub_turma = (($lista_disc_turma_header['Qtd_sub_turma'] == 1) ? 0 : ($x + 1));
 
-																if($lista_disc_turma_horario[$y]['Dia'] == ($k + 1) && 
-																   $lista_disc_turma_horario[$y]['Aula'] == $aula  && 
-																   $lista_disc_turma_horario[$y]['Inicio'] == $Hora_inicio_aula_temp && 
-																   $lista_disc_turma_horario[$y]['Fim'] == $Hora_inicio_aula && 
-																   ($lista_disc_turma_horario[$y]['Sub_turma'] == $sub_turma || $lista_disc_turma_horario[$y]['Sub_turma'] == 0) && 
-																   $lista_disc_turma_horario[$y]['Disc_turma_id'] == $lista_disc_turma_disciplina[$j]['Disc_turma_id'] && 
-																   $lista_disc_turma_horario[$y]['Ativo'] == 1)
-																	$selected = "selected";
+																	if($lista_disc_turma_horario[$y]['Dia'] == ($k + 1) && 
+																	   $lista_disc_turma_horario[$y]['Aula'] == $aula  && 
+																	   $lista_disc_turma_horario[$y]['Inicio'] == $Hora_inicio_aula_temp && 
+																	   $lista_disc_turma_horario[$y]['Fim'] == $Hora_inicio_aula && 
+																	   ($lista_disc_turma_horario[$y]['Sub_turma'] == $sub_turma || $lista_disc_turma_horario[$y]['Sub_turma'] == 0) && 
+																	   $lista_disc_turma_horario[$y]['Disc_turma_id'] == $lista_disc_turma_disciplina[$j]['Disc_turma_id'] && 
+																	   $lista_disc_turma_horario[$y]['Ativo'] == 1)
+																		$selected = "selected";
+																}
+																echo "<option $selected value='" . $lista_disc_turma_disciplina[$j]['Disc_turma_id'] . "'>" . $lista_disc_turma_disciplina[$j]['Disc_prof'] . "</option>";
 															}
-															echo "<option $selected value='" . $lista_disc_turma_disciplina[$j]['Disc_turma_id'] . "'>" . $lista_disc_turma_disciplina[$j]['Disc_prof'] . "</option>";
 														}
 														echo"</select>";
 													echo "</div>";

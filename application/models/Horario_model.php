@@ -163,6 +163,44 @@
 
 			return $query->row_array();
 		}
-
+		public function get_horarios_professor($disciplina_id, $turma_id, $professor_id, $subturma, $data, $ativo)
+		{
+			//OS CASES SÃO UTILIZADOS PARA DETECTAR MUDANÇAS NO HORÁRIO, OU SEJA, SE HOUVER UM HORÁRIO DIFERENTE PARA A DATA EM QUESTÃO
+			//NA TABELA DE CALENDEARIO_PRESENCA, ENTAO CONSIDERA O QUE ESTÁ LÁ
+			$query = $this->db->query("
+				SELECT  
+					CONCAT(x.Dia, ' / ', x.Inicio, ' - ', x.Fim) AS Horario,
+					x.Aula ,
+					x.Horario_id
+					, x.Disc_hor_id 
+				FROM( 
+					SELECT 
+					CASE 
+				    	WHEN h.Dia = 1 THEN 'Segunda' 
+				    	WHEN h.Dia = 2 THEN 'Terça' 
+				        WHEN h.Dia = 3 THEN 'Quarta' 
+				        WHEN h.Dia = 4 THEN 'Quinta' 
+				        WHEN h.Dia = 5 THEN 'Sexta' 
+				        WHEN h.Dia = 6 THEN 'Sábado' 
+				        WHEN h.Dia = 7 THEN 'Domingo' 
+				    END AS Dia, 
+				    TIME_FORMAT(h.Inicio, '%H:%i') AS Inicio, TIME_FORMAT(h.Fim, '%H:%i') AS Fim, 
+				    h.Aula, h.Id AS Horario_id, m.Id AS Matricula_id, dh.Id AS Disc_hor_id    
+				    FROM Disc_turma dt 
+				    INNER JOIN Disc_grade dg ON dt.Disc_grade_id = dg.Id 
+				    INNER JOIN Matricula m ON dt.Id = m.Disc_turma_id 
+				    INNER JOIN Disc_hor dh ON dt.Id = dh.Disc_turma_id 
+				    INNER JOIN Horario h ON h.Id = dh.Horario_id 
+				    WHERE dt.Turma_id = ".$this->db->escape($turma_id)." AND 
+				    dg.Disciplina_id = ".$this->db->escape($disciplina_id)." AND 
+				    dt.Professor_Id = ".$this->db->escape($professor_id)." AND 
+				    (dh.Sub_turma = ".$this->db->escape($subturma)." OR dh.Sub_turma = 0) AND  
+				    dh.Ativo = ".$this->db->escape($ativo)." AND 
+				    h.Dia = DATE_FORMAT(".$this->db->escape($data).", '%w') 
+				    GROUP BY h.Dia, h.Inicio, h.Fim 
+			    ) AS x");
+			
+			return $query->result_array();
+		}
 	}
 ?>

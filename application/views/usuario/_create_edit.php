@@ -49,40 +49,49 @@
 	</div>
 	<div class='input-group mb-2 mb-sm-0 text-danger' id='error-sexo'></div>
 </div>
-<?php 
-	if(empty($obj['Id']))
-	{
-		echo "<div class='form-group relative'>";
-			echo "<input id='senha' name='senha' value='".(!empty($obj['Senha']) ? $obj['Senha']:'')."' type='password' class='input-material'>";
-			echo "<label for='senha' class='label-material'>Senha</label>";
-			echo "<div class='input-group mb-2 mb-sm-0 text-danger' id='error-senha'></div>";
-		echo "</div>";
+<div class="row">
+	<div class="col-lg-8">
+		<?php 
+			if(empty($obj['Id']))
+			{
+				echo "<div class='form-group relative'>";
+					echo "<input id='senha' name='senha' value='".(!empty($obj['Senha']) ? $obj['Senha']:'')."' type='password' class='input-material'>";
+					echo "<label for='senha' id='label_senha' class='label-material'>Senha</label>";
+					echo "<div class='input-group mb-2 mb-sm-0 text-danger' id='error-senha'></div>";
+				echo "</div>";
 
-		echo"<div class='form-group relative'>";
-			echo"<input id='confirmar_senha' name='confirmar_senha' value='".(!empty($obj['Senha']) ? $obj['Senha']:'')."' type='password' class='input-material'>";
-			echo"<label for='confirmar_senha' class='label-material'>Confirmar senha</label>";
-			echo"<div class='input-group mb-2 mb-sm-0 text-danger' id='error-confirmar_senha'></div>";
-		echo"</div>";
-	}
-?>
-<?php 
-	if(!empty($obj['Id']))
-	{
-		echo"<fieldset>";
-			echo"<legend class='text-white'>&nbsp;Alterar senha</legend>";
-			
-			echo"<div class='form-group relative'>";
-				echo"<input id='nova_senha' name='nova_senha' value='' type='password' class='input-material'>";
-				echo"<label for='nova_senha' class='label-material'>Nova senha</label>";
-				echo"<div class='input-group mb-2 mb-sm-0 text-danger' id='error-nova_senha'></div>";
-			echo"</div>";
+				echo"<div class='form-group relative'>";
+					echo"<input id='confirmar_senha' name='confirmar_senha' value='".(!empty($obj['Senha']) ? $obj['Senha']:'')."' type='password' class='input-material'>";
+					echo"<label for='confirmar_senha' id='label_confirmar_senha' class='label-material'>Confirmar senha</label>";
+					echo"<div class='input-group mb-2 mb-sm-0 text-danger' id='error-confirmar_senha'></div>";
+				echo"</div>";
+			}
+		?>
+		<?php 
+			if(!empty($obj['Id']))
+			{
+				echo"<fieldset>";
+					echo"<legend class='text-white'>&nbsp;Alterar senha</legend>";
+					
+					echo"<div class='form-group relative'>";
+						echo"<input id='nova_senha' name='nova_senha' value='' type='password' class='input-material'>";
+						echo"<label for='nova_senha' class='label-material'>Nova senha</label>";
+						echo"<div class='input-group mb-2 mb-sm-0 text-danger' id='error-nova_senha'></div>";
+					echo"</div>";
 
-			echo"<div class='form-group' style='position: relative;''>";
-				echo"<input id='confirmar_nova_senha' name='confirmar_nova_senha' value='' type='password' class='input-material'>";
-				echo"<label for='confirmar_nova_senha' class='label-material'>Confirmar senha</label>";
-				echo"<div class='input-group mb-2 mb-sm-0 text-danger' id='error-confirmar_nova_senha'></div>";
-			echo"</div>";
+					echo"<div class='form-group' style='position: relative;''>";
+						echo"<input id='confirmar_nova_senha' name='confirmar_nova_senha' value='' type='password' class='input-material'>";
+						echo"<label for='confirmar_nova_senha' class='label-material'>Confirmar senha</label>";
+						echo"<div class='input-group mb-2 mb-sm-0 text-danger' id='error-confirmar_nova_senha'></div>";
+					echo"</div>";
 
-		echo"</fieldset>";
-	}
-?>
+				echo"</fieldset>";
+			}
+		?>
+	</div>
+	<div class="col-lg-4">
+		<br />
+		<br />
+		<button type="button" class="btn btn-info" onclick="Main.gerador_senha()">Gerar senha</button>
+	</div>
+</div>

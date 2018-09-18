@@ -18,10 +18,12 @@
 		public function get_disc_grade($id)
 		{
 			$query = $this->db->query("
-				SELECT d.Id AS Disciplina_id, d.Nome AS Nome_disciplina, d.Apelido AS Apelido_disciplina, dg.Periodo AS Periodo 
-				FROM Disciplina d 
+				SELECT d.Id AS Disciplina_id, d.Nome AS Nome_disciplina, d.Apelido AS Apelido_disciplina, dg.Periodo AS Periodo,
+				dt.Id AS Disc_turma_id   
+				FROM Disciplina d
 				INNER JOIN Disc_grade dg ON dg.Disciplina_id = d.Id 
-                	AND dg.Grade_id = ".$this->db->escape($id)." ORDER BY Periodo");
+				LEFT JOIN Disc_turma dt ON dg.Id = dt.Disc_grade_id 
+                	WHERE dg.Grade_id = ".$this->db->escape($id)." GROUP BY d.Id, dg.Periodo ORDER BY Periodo");
 
 			return $query->result_array();
 		}
