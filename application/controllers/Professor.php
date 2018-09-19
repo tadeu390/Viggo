@@ -152,78 +152,124 @@
 				$this->view("templates/permissao", $this->data);
 		}
 		/*!
-			RESPONSÁVEL POR RECEBER OS DADOS DO FORMULÁRIO A NOTA A SER ALTERADA.
-
-		*///VERIFICAR SE PERTENCE AO PROFESSOR, POIS SE CHAMAR A URL DIRETO DA PRA MEXER DE QUALQUER PROF
-		public function altera_nota($nota, $descricao_nota_id, $matricula_id, $etapa_id)
+		*	RESPONSÁVEL POR RECEBER A NOTA A SER CADASTRADA/ALTERADA DE UM DETERMINADO ALUNO.
+		*	
+		*	$nota -> Nota do aluno.
+		*	$descricao_nota_id -> Descrição da nota, ou seja, o tipo.
+		*	$matricula_id -> Matrícula do aluno na disciplina.
+		*	$etapa_id -> Etapa que terá a nota do aluno alterada.
+		*	$disciplina_id -> Disciplina a alterar a nota.
+		*	$turma_id -> Turma do aluno
+		*	obs.:  os dois últimos parâmetros são apenas para verificar se o professor pode realizara a ação.
+		*/
+		public function altera_nota($nota, $descricao_nota_id, $matricula_id, $etapa_id, $disciplina_id, $turma_id)
 		{
-			if($nota == 'null')
-				$nota = null;
-			//Não foi possível completar esta operação. Entre em contato com o administrador do sistema.
 			$resultado = "sucesso";
 			$somatorio = 0;
 			$status = "";
 			$status_rec = "";
 			if($this->Geral_model->get_permissao(CREATE, get_class($this)) == TRUE AND $this->Geral_model->get_permissao(UPDATE, get_class($this)) == TRUE)
 			{
-				$resultado = $this->Nota_model->validar_nota($matricula_id, $etapa_id, $nota, $descricao_nota_id);
+				if($this->disc_turma_professor($disciplina_id, $this->professor_id, $turma_id) == true)//verifica se o professor logado da aula pra uma turma em uma determinada disciplina
+				{
+					if($nota == 'null')
+						$nota = null;
+					
+					$resultado = $this->Nota_model->validar_nota($matricula_id, $etapa_id, $nota, $descricao_nota_id);
 
-				$this->data['etapa'] = $this->Etapa_model->get_etapa(FALSE, $etapa_id, FALSE);
+					$this->data['etapa'] = $this->Etapa_model->get_etapa(FALSE, $etapa_id, FALSE);
 
-				///DETERMINAR SE A ETAPA ESTÁ ABERTA.
-				//if($this->Etapa_model->get_status_etapa($etapa_id) == true)
-				//{
-					if($resultado != "invalido")
-					{
-						$somatorio = $resultado;
-						$resultado = $this->Nota_model->set_notas($nota, $descricao_nota_id, $matricula_id, $etapa_id);
-
-						$status = $this->Nota_model->status_nota($etapa_id, $this->periodo_letivo_id, $somatorio);
-						
-						if($status == "ok")
-							$status = "info";
-						else
-							$status = "danger";
-
-						if($descricao_nota_id == RECUPERACAO_PARALELA)
+					///DETERMINAR SE A ETAPA ESTÁ ABERTA.
+					//if($this->Etapa_model->get_status_etapa($etapa_id) == true)
+					//{
+						if($resultado != "invalido")
 						{
-							if($this->Nota_model->status_nota($etapa_id, $this->periodo_letivo_id, $nota) == "ok")
-								$status_rec = "info";
+							$somatorio = $resultado;
+							$resultado = $this->Nota_model->set_notas($nota, $descricao_nota_id, $matricula_id, $etapa_id);
+
+							$status = $this->Nota_model->status_nota($etapa_id, $this->periodo_letivo_id, $somatorio);
+							
+							if($status == "ok")
+								$status = "info";
 							else
-								$status_rec = "danger";
+								$status = "danger";
+
+							if($descricao_nota_id == RECUPERACAO_PARALELA)
+							{
+								if($this->Nota_model->status_nota($etapa_id, $this->periodo_letivo_id, $nota) == "ok")
+									$status_rec = "info";
+								else
+									$status_rec = "danger";
+							}
 						}
-					}
-					else 
-						$resultado = "O valor informado ultrapassa o limite de ".$this->Etapa_model->get_etapa(FALSE, $etapa_id, FALSE)['Valor']." pontos estabelecido para o ".$this->Etapa_model->get_etapa(FALSE, $etapa_id, FALSE)['Nome'].".";
-				//}
-				//else
-				//	$resultado = "Não é possível alterar a nota.";
+						else 
+							$resultado = "O valor informado ultrapassa o limite de ".$this->Etapa_model->get_etapa(FALSE, $etapa_id, FALSE)['Valor']." pontos estabelecido para o ".$this->Etapa_model->get_etapa(FALSE, $etapa_id, FALSE)['Nome'].".";
+					//}
+					//else
+					//	$resultado = "Não é possível alterar a nota.";
+				}
 			}
 			else
 				$resultado = "Você não tem permissão para realizar esta ação. Entre em contato com o administrador do sistema.";
-				
+			
 			$arr = array('response' => $resultado, 'somatorio' => $somatorio, 'status' => $status, 'status_rec' => $status_rec);
 			header('Content-Type: application/json');
 			echo json_encode($arr);
 		}
-		//VERIFICAR SE PERTENCE AO PROFESSOR, POIS SE CHAMAR A URL DIRETO DA PRA MEXER DE QUALQUER PROF
+		/*!
+		*	RESPONSÁVEL POR VERIFICAR SE O PROFESSOR DA AULA PARA UMA TURMA EM UMA DETERMINADA DISCIPLINA.
+		*	ISSO É ÚTIL PARA VALIDAR A INSERÇÃO, REMOÇÃO OU ALTERAÇÃO DE UMA NOTA E TAMBÉM A REMOÇÃO DE UMA COLUNA DE NOTA
+		*	PELO PROFESSOR.
+		*
+		*	$disciplina_id -> Id da disciplina a ser validada.
+		*	$professor_id -> Id do professor logado no sistema.
+		*	$turma_id -> Id da turma a ser validada.
+		*/
+		public function disc_turma_professor($disciplina_id, $professor_id, $turma_id)
+		{
+			$turmas = $this->Turma_model->get_turma_prof($disciplina_id, $professor_id, $this->periodo_letivo_id);
+
+			for($i = 0; $i < COUNT($turmas); $i)
+			{
+				if($turmas[$i]['Turma_id'] == $turma_id)
+					return true;
+			}
+			return false;
+		}
+		/*!
+		*	RESPONSÁVEL POR SOLICITAR A MODEL A REMOÇÃO DE UMA COLUNA INTEIRA DE NOTA PARA UMA DETERMINADA DISCIPLINA,
+		*	ESTA AÇÃO NÃO É REVERSÍVEL DE FORMA ALGUMA ATÉ O PRESENTE MOMENTO.
+		
+		*	$descricao_nota_id -> Id da nota que se quer remover da disciplina.
+		*	$turma_id -> Id da turma que está associada com a disciplina.
+		*	$disciplina_id -> Id da disciplina que se quer remover a nota.
+		*	$etapa_id -> Id da etapa que está sendo removida a coluna de nota.
+		*/
 		public function remover_coluna_nota($descricao_nota_id, $turma_id, $disciplina_id, $etapa_id)
 		{
 			$resultado = "sucesso";
-			$this->data['etapa'] = $this->Etapa_model->get_etapa(FALSE, $etapa_id, FALSE);
+			if($this->Geral_model->get_permissao(DELETE, get_class($this)) == TRUE)
+			{
+				if($this->disc_turma_professor($disciplina_id, $this->professor_id, $turma_id) == true)//verifica se o professor logado da aula pra uma turma em uma determinada disciplina
+				{
+					$this->data['etapa'] = $this->Etapa_model->get_etapa(FALSE, $etapa_id, FALSE);
 
-			///DETERMINAR SE A ETAPA ESTÁ ABERTA.
-//			if($this->Etapa_model->get_status_etapa($etapa_id) == true)
-				$this->Nota_model->remover_coluna_nota($descricao_nota_id, $turma_id, $disciplina_id, $etapa_id);
-//			else
-//				$resultado = "Não foi possível apagar a coluna de nota.";
-
+					///DETERMINAR SE A ETAPA ESTÁ ABERTA.
+		//			if($this->Etapa_model->get_status_etapa($etapa_id) == true)
+						$this->Nota_model->remover_coluna_nota($descricao_nota_id, $turma_id, $disciplina_id, $etapa_id);
+		//			else
+		//				$resultado = "Não foi possível apagar a coluna de nota.";
+				}
+			}
+			else 
+				$resultado = "Você não tem permissão para realizar esta ação.";
 			$arr = array('response' => $resultado);
 			header('Content-Type: application/json');
 			echo json_encode($arr);
 		}
 		/*!
-		*	RESPONSÁVEL POR RECEBER DA MODEL TODAS AS DISCIPLINAS E TODOS OS DADOS DE FALTAS DE CADA ALUNO DE UM DETERMINADO PROFESSOR E ENVIA-LOS A VIEW.
+		*	RESPONSÁVEL POR RECEBER DA MODEL TODAS AS DISCIPLINAS E TODOS OS DADOS DE FALTAS DE CADA ALUNO DE 
+		*	UM DETERMINADO PROFESSOR E ENVIA-LOS A VIEW.
 		*
 		*	$disciplina_id -> Id da disciplina da grade. É usado para se obter as faltas da disciplina pra cada aluno.
 		*	$turma_id -> Id da turma que está sendo consultada pelo professor.
@@ -278,7 +324,7 @@
 			}
 			
 			$this->data['title'] = 'Minhas disciplinas';
-			if($this->Geral_model->get_permissao(READ, get_class($this)) == TRUE)
+			if($this->Geral_model->get_permissao(CREATE, get_class($this)) == TRUE && $this->Geral_model->get_permissao(UPDATE, get_class($this)) == TRUE)
 			{
 				$this->data['method'] = __FUNCTION__;
 				$this->data['lista_turmas'] = $this->Turma_model->get_turma_prof($disciplina_id, $this->professor_id, $this->periodo_letivo_id);
@@ -316,7 +362,7 @@
 				$this->view("professor/chamada", $this->data);
 			}
 			else
-				$this->view("templates/permissao", $this->data);
+				redirect("Professor/faltas");
 		}
 		/*!
 		*	RESPONSÁVEL POR CARREGAR DA MODEL TODAS AS SUBTURMAS DE UMA DETERMINADA DISCIPLINA DE UMA DETERMINADA 
@@ -341,8 +387,13 @@
 			echo json_encode($arr);
 		}
 		/*!
-			RESPONSÁVEL POR CARREGAR DA MODEL A LISTA DE ALUNOS DE ACORDO COM O HORÁRIO, O QUE ACARRETA EM
-			CARREGAR APENAS ALUNOS DA SUBTURMA EM QUESTÃO CASO EXISTA SUBTURMA.
+		*	RESPONSÁVEL POR CARREGAR DA MODEL A LISTA DE ALUNOS DE ACORDO COM O HORÁRIO, O QUE ACARRETA EM
+		*	CARREGAR APENAS ALUNOS DA SUBTURMA EM QUESTÃO CASO EXISTA SUBTURMA.
+		*
+		*	$disciplina_id -> Disciplina que os alunos cursam.
+		*	$turma_id -> Turma que se quer obter os alunos.
+		*	$subturma -> Se tiver uma subturma.
+		*	$data -> Data da chamada selecionada.
 		*/
 		public function get_alunos_chamada($disciplina_id, $turma_id, $subturma, $data)
 		{
@@ -384,7 +435,9 @@
 			header('Content-Type: application/json');
 			echo json_encode($arr);
 		}
-
+		/*!
+		*	RESPONSÁVEL POR PEGAR DO FORMULÁRIO A CHAMADA DOS ALUNOS, A JUSTIFICATIVA DE FALTA E O CONTEÚDO LECIONADO.
+		*/
 		public function store_chamada()
 		{
 			$resultado = "sucesso";
@@ -448,8 +501,14 @@
 			 else
 				redirect('professor/faltas');
 		}
-
-		public function etapa_extra($disciplina_id = FALSE, $turma_id = FALSE, $etapa_id = FALSE)
+		/*!
+		*	RESPONSÁVEL POR CARREGAR O DADOS PARA A ETAPA EXTRA, LEVANDO EM CONSIDERAÇÃO A DATA EM QUE ABRE E FECHA.
+		*
+		*	$disciplina_id -> Disciplina para a etapa.
+		*	$turma_id -> Turma para a etapa.
+		*	$etapa_id -> Id de uma determinada etapa extra, uma vez que podem existir várias.
+		*/
+		public function etapa_extra($disciplina_id, $turma_id, $etapa_id)
 		{
 			$this->data['title'] = 'Minhas disciplinas';
 			if($this->Geral_model->get_permissao(READ, get_class($this)) == TRUE)
@@ -552,7 +611,6 @@
 			$disciplina = $this->Disciplina_model->get_disciplina(FALSE, $disciplina_id, FALSE, FALSE, FALSE);
 			$turma = $this->Disc_turma_model->get_disc_turma_header($turma_id);
 			$periodo = $this->Disc_turma_model->get_periodo_turma($turma_id);
-			
 
 			$resultado = $this->load->view("/professor/_visao_geral", $this->data, TRUE);
 

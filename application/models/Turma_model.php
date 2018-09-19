@@ -167,8 +167,9 @@
 			return $query->result_array();
 		}
 		/*!
-		*	RESPONSÁVEL POR RETORNAR TODAS AS TURMAS QUE O PROFESSOR DA AULA NO PERÍODO SELECIONADO (utilizado para listar as turmas de cada disciplina e 
-		*	também utilizado para listar as turmas pra que o professor possa ver o horário).
+		*	RESPONSÁVEL POR RETORNAR TODAS AS TURMAS QUE O PROFESSOR DA AULA NO PERÍODO SELECIONADO.
+		* 	(utilizado para listar as turmas de cada disciplina e também utilizado para listar as turmas
+		*	pra que o professor possa ver o horário).
 		*
 		*	$disciplina_id -> Id da disciplina de uma determinada grade.
 		*	$professor_id -> Id do professor para se obter as disciplinas ligadas a ele.
@@ -209,25 +210,19 @@
 					INNER JOIN Disc_hor dh ON dt.Id = dh.Disc_turma_id 
 					INNER JOIN Disc_grade dg ON dt.Disc_grade_id = dg.Id 
 					INNER JOIN Horario h ON dh.Horario_id = h.Id 
-					WHERE dg.Disciplina_id = ".$this->db->escape($disciplina_id)." AND dt.Turma_id = ".$this->db->escape($turma_id)." AND 
+					WHERE dg.Disciplina_id = ".$this->db->escape($disciplina_id)." AND 
+					dt.Turma_id = ".$this->db->escape($turma_id)." AND 
 					h.Dia = DATE_FORMAT(".$this->db->escape($data).", '%w') AND 
 				 	dh.Ativo = 1 AND 
 				 	TIME_FORMAT(CAST(NOW() AS TIME), '%H:%i') >= TIME_FORMAT(h.Inicio, '%H:%i') AND 
 					TIME_FORMAT(CAST(NOW() AS TIME), '%H:%i') <= TIME_FORMAT(h.Fim, '%H:%i') 
 				 	GROUP BY dh.Horario_id) AS x GROUP BY x.Sub_turma 
 			");
+			
 			if(empty($query->row_array()))
-			{
 				return null;//sem subturma para o horario corrente
-			}
+			
 			return $query->row_array()['Sub_turma'];
-			/*{echo "string";
-				$subturma = $this->get_sub_turmas($disciplina_id, $turma_id, date('Y-m-d'));//degbugar aqui
-				$subturma = (empty($subturma) ? 0 : $subturma[0]['Sub_turma']);
-				return $subturma;
-			}
-			else 
-				return $query->row_array()['Sub_turma'];*/
 		}
 		/*!
 		*	RESPONSÁVEL POR IDENTIFICAR A QUANTIDADE DE SUBTURMAS E RETORNAR CADA SUB_TURMA QUANDO EXISTIR.

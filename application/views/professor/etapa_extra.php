@@ -1,5 +1,6 @@
 <?php $this->load->helper("notas");?>
 <?php $this->load->helper("mstring");?>
+<?php $this->load->helper("permissao");?>
 <br /><br />
 <div class='row padding20 text-white relative' style="width: 98%; left: 2%">
 	<?php
@@ -63,7 +64,9 @@
 						</select>
 					</div>
 					<div class="col-lg-4">
-						<button class="btn btn-danger" <?php echo $status_etapa_extra; ?> onclick="Main.add_coluna_nota();">Adicionar coluna</button>
+						<?php if(permissao::get_permissao(CREATE, $controller) && permissao::get_permissao(UPDATE, $controller)): ?>
+							<button class="btn btn-danger" <?php echo $status_etapa_extra; ?> onclick="Main.add_coluna_nota();">Adicionar coluna</button>
+						<?php endif; ?>
 					</div>
 				</div>
 				<div class="row padding10">
@@ -81,7 +84,8 @@
 												echo $lista_colunas_nota[$i]['Descricao'];
 												echo "<input type='hidden' id='descricao_nota_id_hidden$i' value='".$lista_colunas_nota[$i]['Descricao_nota_id']."' />";
 												if(empty($status_bimestre))
-													echo "<span onclick='Main.confirm_remover_coluna_nota(".$lista_colunas_nota[$i]['Descricao_nota_id'].",",$url_part['turma_id'].",".$url_part['disciplina_id'].",".$url_part['etapa_id'].");' title='Remover coluna' style='cursor: pointer; position: absolute; right: 0px;' class='glyphicon glyphicon-remove text-danger'></span>";
+													if(permissao::get_permissao(DELETE, $controller))
+														echo "<span onclick='Main.confirm_remover_coluna_nota(".$lista_colunas_nota[$i]['Descricao_nota_id'].",",$url_part['turma_id'].",".$url_part['disciplina_id'].",".$url_part['etapa_id'].");' title='Remover coluna' style='cursor: pointer; position: absolute; right: 0px;' class='glyphicon glyphicon-remove text-danger'></span>";
 											echo "</td>";
 											$limite_descricao_nota = $limite_descricao_nota + 1;
 										}
@@ -106,7 +110,9 @@
 												$nota = notas::get_nota($lista_colunas_nota[$j]['Descricao_nota_id'], $lista_alunos[$i]['Matricula_id'], $url_part['etapa_id']);
 												$total = $total + $nota;
 												echo"<td class='text-center' style='width: 10%;'>";
-													echo"<input min='0' $status_etapa_extra min='0' onblur='Main.altera_nota(\"total".$i."\", this.value,".$lista_colunas_nota[$j]['Descricao_nota_id'].",\"".$lista_alunos[$i]['Matricula_id']."\",".$url_part['etapa_id'].",\"aluno".$i."_nota".$j."\");' id='aluno".$i."_nota".$j."' name='aluno".$i."_nota".$j."' type='number' value='".$nota."' class='form-control border_radius text-info' style='background-color: white;' />";
+													if(permissao::get_permissao(CREATE, $controller) == false || permissao::get_permissao(UPDATE, $controller) == false)
+														$status_etapa_extra = 'disabled';
+													echo"<input min='0' $status_etapa_extra min='0' onblur='Main.altera_nota(\"total".$i."\", this.value,".$lista_colunas_nota[$j]['Descricao_nota_id'].",\"".$lista_alunos[$i]['Matricula_id']."\",".$url_part['etapa_id'].",\"aluno".$i."_nota".$j."\",".$url_part['disciplina_id'].",".$url_part['turma_id'].");' id='aluno".$i."_nota".$j."' name='aluno".$i."_nota".$j."' type='number' value='".$nota."' class='form-control border_radius text-info' style='background-color: white;' />";
 												echo"</td>";
 											}
 
