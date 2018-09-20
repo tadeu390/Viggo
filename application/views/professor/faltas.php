@@ -1,5 +1,6 @@
 <?php $this->load->helper("mstring");?>
 <?php $this->load->helper("faltas");?>
+<?php $this->load->helper("permissao");?>
 <br /><br />
 <div class='row padding20 text-white relative' style="width: 98%; left: 2%">
 	<?php
@@ -56,7 +57,9 @@
 				</div>
 				<div class="row padding10">
 					<div class="col-lg-4">
-						<a href="<?php echo $url; ?>professor/chamada/<?php echo $url_part['disciplina_id']."/".$url_part['turma_id']."/".$url_part['etapa_id']; ?>" class="btn btn-primary">Fazer chamada</a>
+						<?php if(permissao::get_permissao(CREATE, $controller) && permissao::get_permissao(UPDATE, $controller)): ?>
+							<a href="<?php echo $url; ?>professor/chamada/<?php echo $url_part['disciplina_id']."/".$url_part['turma_id']."/".$url_part['etapa_id']; ?>" class="btn btn-primary">Fazer chamada</a>
+						<?php endif; ?>
 					</div>
 				</div>
 				<div class="row padding10">

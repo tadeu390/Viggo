@@ -1,6 +1,4 @@
 var Main = {
-	//base_url : ((window.location.href.split("/")[2] == "localhost") ? "http://"+window.location.host+"/git/TCC/" : "https://"+window.location.host+"/"),
-	base_url : "http://"+window.location.host+"/git/TCC/",//localhost (pra qualquer dispositivo na rede local)
 	load_mask : function(){
 		$(document).ready(function(){
 			$('[data-toggle="popover"]').popover(),
@@ -114,14 +112,14 @@ var Main = {
 		{
 			Main.modal("aguardar","Aguarde... validando seus dados.");
 			$.ajax({
-				url: Main.base_url+'account/validar',
+				url: Url.base_url+'account/validar',
 				data: $("#form_login").serialize(),
 				dataType:'json',
 				cache: false,
 				type: 'POST',
 				success: function (msg) {
 					if(msg.response == "primeiro_acesso")
-						window.location.assign(Main.base_url+"account/primeiro_acesso");
+						window.location.assign(Url.base_url+"account/primeiro_acesso");
 					else if(msg.response == "valido")
 					{
 						var url_redirect = $("#url_redirect").val();
@@ -165,7 +163,6 @@ var Main = {
 		else
 			return true;
 	},
-	
 	valida_email : function(email)
 	{
 		var nome = email.substring(0, email.indexOf("@"));
@@ -215,7 +212,7 @@ var Main = {
 			Main.method_redirect = "index";
 
 		$.ajax({
-			url: Main.base_url+$("#controller").val()+'/'+Main.method,
+			url: Url.base_url+$("#controller").val()+'/'+Main.method,
 			data: $("#"+$("form[name="+Main.form+"]").attr("id")).serialize(),
 			dataType:'json',
 			cache: false,
@@ -224,7 +221,7 @@ var Main = {
 				if(msg.response == "sucesso")
 				{
 					$("#mensagem_aguardar").html("Dados salvos com sucesso");
-					window.location.assign(Main.base_url+$("#controller").val()+"/"+ Main.method_redirect +"/"+Main.get_cookie("page"));
+					window.location.assign(Url.base_url+$("#controller").val()+"/"+ Main.method_redirect +"/"+Main.get_cookie("page"));
 				}
 				else
 				{
@@ -235,11 +232,11 @@ var Main = {
 				}
 			}
 		}).fail(function(msg){
-			    setTimeout(function(){
-			    	$("#modal_aguardar").modal('hide');
-				    Main.modal("aviso", "Houve um erro ao processar sua requisição. Verifique sua conexão com a internet.");
-				},500);
-			});
+		    setTimeout(function(){
+		    	$("#modal_aguardar").modal('hide');
+			    Main.modal("aviso", "Houve um erro ao processar sua requisição. Verifique sua conexão com a internet.");
+			},500);
+		});
 	},
 	usuario_validar : function(){
 		if($("#grupo_id").val() == "0")
@@ -456,7 +453,7 @@ var Main = {
 	delete_registro : function()
 	{
 		$.ajax({
-			url: Main.base_url+$("#controller").val()+'/deletar/'+Main.id_registro,
+			url: Url.base_url+$("#controller").val()+'/deletar/'+Main.id_registro,
 			dataType:'json',
 			cache: false,
 			type: 'POST',
@@ -588,9 +585,9 @@ var Main = {
 			Main.modal("aguardar", "Aguarde um momento");
 
 			if(tipo == 1 || tipo == 3 || tipo == 4)//admin||secretaria||professor
-				window.location.assign(Main.base_url+"usuario/"+method+"/"+registro+"/"+tipo);
+				window.location.assign(Url.base_url+"usuario/"+method+"/"+registro+"/"+tipo);
 			else if(tipo == 2)//aluno
-				window.location.assign(Main.base_url+"aluno/"+method+"/"+registro+"/"+tipo);
+				window.location.assign(Url.base_url+"aluno/"+method+"/"+registro+"/"+tipo);
 		}
 	},
 	oculta_limite_falta : function()
@@ -957,7 +954,7 @@ var Main = {
 		if(modalidade_id != 0)
 		{
 			$.ajax({
-				url: Main.base_url+$("#controller").val()+'/periodo_letivo/'+modalidade_id,
+				url: Url.base_url+$("#controller").val()+'/periodo_letivo/'+modalidade_id,
 				dataType:'json',
 				cache: false,
 				type: 'POST',
@@ -1011,7 +1008,7 @@ var Main = {
 		{
 			Main.modal("aguardar", "Aguarde...");
 			$.ajax({
-				url: Main.base_url+$("#controller").val()+'/cursos/'+$("#modalidade_id").val() + '/' + $("#curso_id").val(),
+				url: Url.base_url+$("#controller").val()+'/cursos/'+$("#modalidade_id").val() + '/' + $("#curso_id").val(),
 				dataType:'json',
 				cache: false,
 				type: 'POST',
@@ -1047,7 +1044,7 @@ var Main = {
 		{
 			Main.modal("aguardar", "Aguarde...");
 			$.ajax({
-				url: Main.base_url+$("#controller").val()+'/grade/'+$("#modalidade_id").val() + '/' + $("#curso_id").val(),
+				url: Url.base_url+$("#controller").val()+'/grade/'+$("#modalidade_id").val() + '/' + $("#curso_id").val(),
 				dataType:'json',
 				cache: false,
 				type: 'POST',
@@ -1074,7 +1071,7 @@ var Main = {
 		{
 			Main.modal("aguardar", "Aguarde...");
 			$.ajax({
-				url: Main.base_url+$("#controller").val()+'/periodo_grade/'+$("#grade_id").val(),
+				url: Url.base_url+$("#controller").val()+'/periodo_grade/'+$("#grade_id").val(),
 				dataType:'json',
 				cache: false,
 				type: 'POST',
@@ -1102,7 +1099,7 @@ var Main = {
 		{
 			Main.modal("aguardar", "Aguarde...");
 			$.ajax({
-				url: Main.base_url+$("#controller").val()+'/grade_disciplina/'+$("#grade_id").val()+'/'+$("#periodo_grade_id").val() + '/' + (($("#id").val() == "") ? 0 : $("#id").val()),
+				url: Url.base_url+$("#controller").val()+'/grade_disciplina/'+$("#grade_id").val()+'/'+$("#periodo_grade_id").val() + '/' + (($("#id").val() == "") ? 0 : $("#id").val()),
 				dataType:'json',
 				cache: false,
 				type: 'POST',
@@ -1147,7 +1144,7 @@ var Main = {
 			Main.modal("aguardar", "Aguarde...");
 
 			$.ajax({
-				url: Main.base_url + $("#controller").val() + '/' + pesquisa + '/' + $("#curso_id").val() + "/" + $("#modalidade_id").val() + '/' + (($("#id").val() == "") ? 0 : $("#id").val()) + '/' + $("#grade_id").val() + '/' + filtro,
+				url: Url.base_url + $("#controller").val() + '/' + pesquisa + '/' + $("#curso_id").val() + "/" + $("#modalidade_id").val() + '/' + (($("#id").val() == "") ? 0 : $("#id").val()) + '/' + $("#grade_id").val() + '/' + filtro,
 				dataType:'json',
 				cache: false,
 				type: 'POST',
@@ -1175,7 +1172,7 @@ var Main = {
 			Main.modal("aguardar", "Aguarde...");
 
 			$.ajax({
-				url: Main.base_url + $("#controller").val() + '/get_alunos_inscritos_turma_antiga/' + turma_id,
+				url: Url.base_url + $("#controller").val() + '/get_alunos_inscritos_turma_antiga/' + turma_id,
 				dataType:'json',
 				cache: false,
 				type: 'POST',
@@ -1205,7 +1202,7 @@ var Main = {
 			Main.modal("aguardar", "Aguarde...");
 
 			$.ajax({
-				url: Main.base_url + $("#controller").val() + '/get_filtro_turma/' + '/' + $("#curso_id").val() + "/" + $("#modalidade_id").val() + '/' + $("#grade_id").val(),
+				url: Url.base_url + $("#controller").val() + '/get_filtro_turma/' + '/' + $("#curso_id").val() + "/" + $("#modalidade_id").val() + '/' + $("#grade_id").val(),
 				dataType:'json',
 				cache: false,
 				type: 'POST',
@@ -1296,7 +1293,7 @@ var Main = {
 						node_td = document.createElement("TD");
 						node_td.setAttribute("class","text-center");
 						node_td.setAttribute("style","vertical-align: middle;");
-						node_td.innerHTML = "<a title='Detalhes' target='n_guia' href='"+Main.base_url+"aluno/detalhes/"+$("#usuario_id"+i).val()+"'>"+
+						node_td.innerHTML = "<a title='Detalhes' target='n_guia' href='"+Url.base_url+"aluno/detalhes/"+$("#usuario_id"+i).val()+"'>"+
 											"<span class='glyphicon glyphicon-arrow-right text-warning'></span> "+
 											"</a>";
 						node_tr.appendChild(node_td);				
@@ -1333,7 +1330,7 @@ var Main = {
 	{
 		document.getElementById("bt"+inscricao_id).disabled = true;
 		$.ajax({
-			url: Main.base_url + $("#controller").val() + '/matricula/' + inscricao_id,
+			url: Url.base_url + $("#controller").val() + '/matricula/' + inscricao_id,
 			dataType:'json',
 			cache: false,
 			type: 'POST',
@@ -1428,7 +1425,7 @@ var Main = {
 	filtra_grade_disciplina : function()//monta o filtro de disciplina na grade
 	{
 		$.ajax({
-			url: Main.base_url + $("#controller").val() + '/filtra_disciplina/' + $("#nome_disciplina").val(),
+			url: Url.base_url + $("#controller").val() + '/filtra_disciplina/' + $("#nome_disciplina").val(),
 			dataType:'json',
 			cache: false,
 			type: 'POST',
@@ -1504,29 +1501,29 @@ var Main = {
 	{
 		$("#modal_periodos").html("Aguarde... carregando informações");
 		$.ajax({
-			url: Main.base_url + $("#controller").val() + '/set_periodo_letivo/' + '/' + periodo_letivo_id,
+			url: Url.base_url + $("#controller").val() + '/set_periodo_letivo/' + '/' + periodo_letivo_id,
 			dataType:'json',
 			cache: false,
 			type: 'POST',
 			success: function (data) 
 			{
-				window.location.assign(Main.base_url + $("#controller").val() + "/professor");
+				window.location.assign(Url.base_url + $("#controller").val() + "/professor");
 			}
 		}).fail(function(msg){
-		    	window.location.assign(Main.base_url + $("#controller").val() + "/dashboard");
+		    	window.location.assign(Url.base_url + $("#controller").val() + "/dashboard");
 		});
 	},
 	alterar_disciplina : function (disciplina_id)
 	{
-		window.location.assign(Main.base_url + $("#controller").val() + "/"+$("#method").val()+"/"+disciplina_id+"/"+$("#turma_selecionada").val()+"/"+$("#etapa_selecionada").val());
+		window.location.assign(Url.base_url + $("#controller").val() + "/"+$("#method").val()+"/"+disciplina_id+"/"+$("#turma_selecionada").val()+"/"+$("#etapa_selecionada").val());
 	},
-	//////NOTAS E FALTAS
-	altera_nota : function (id, nota, descricao_nota_id, matricula_id, etapa_id, id_rec)
+	//////NOTAS
+	altera_nota : function (id, nota, descricao_nota_id, matricula_id, etapa_id, id_rec, disciplina_id, turma_id)
 	{
 		if(nota == "")
 			nota = null;
 		$.ajax({
-			url: Main.base_url + $("#controller").val() + '/altera_nota/' + nota + '/' + descricao_nota_id + '/' + matricula_id + '/' + etapa_id,
+			url: Url.base_url + $("#controller").val() + '/altera_nota/' + nota + '/' + descricao_nota_id + '/' + matricula_id + '/' + etapa_id + '/' + disciplina_id + '/' + turma_id,
 			dataType:'json',
 			cache: false,
 			type: 'POST',
@@ -1571,7 +1568,7 @@ var Main = {
 			
 			//adiciona o cabeçalho da descrição de nota selecionada
 			var node_td_cabecalho = document.createElement("TD");
-				node_td_cabecalho.setAttribute("class", "text-center");
+				node_td_cabecalho.setAttribute("class", "text-center align-middle");
 				node_td_cabecalho.setAttribute("style", "width: 10%; position: relative;");
 				node_td_cabecalho.innerHTML = $('#descricao_nota_id :selected').text();
 			var input_text = document.createElement("INPUT");
@@ -1594,7 +1591,7 @@ var Main = {
 			{
 				//coloca de volta o cabeçalho do total
 				var node_td_cabecalho = document.createElement("TD");
-					node_td_cabecalho.setAttribute("class", "text-center");
+					node_td_cabecalho.setAttribute("class", "text-center align-middle");
 					node_td_cabecalho.setAttribute("style", "width: 10%;");
 					node_td_cabecalho.setAttribute("id", "total");
 				node_td_cabecalho.innerHTML = "Total";
@@ -1609,7 +1606,7 @@ var Main = {
 					node_td.setAttribute("class", "text-center");
 					node_td.setAttribute("style", "width: 10%;");
 				var input_text = document.createElement("INPUT");
-					input_text.setAttribute("onblur", "Main.altera_nota('total"+i+"',this.value,"+$('#descricao_nota_id').val()+",'"+$("#matricula_id"+i).val()+"',"+$("#etapa_selecionada").val()+",'aluno"+i+"_nota"+$("#limite_descricao_nota").val()+"')");
+					input_text.setAttribute("onblur", "Main.altera_nota('total"+i+"',this.value,"+$('#descricao_nota_id').val()+",'"+$("#matricula_id"+i).val()+"',"+$("#etapa_selecionada").val()+",'aluno"+i+"_nota"+$("#limite_descricao_nota").val()+"',"+$("#disciplina_id").val()+","+$("#turma_selecionada").val()+")");
 					input_text.setAttribute("type", "number");
 					input_text.setAttribute("name", "aluno"+i+"_nota"+$("#limite_descricao_nota").val());
 					input_text.setAttribute("id", "aluno"+i+"_nota"+$("#limite_descricao_nota").val());
@@ -1670,7 +1667,7 @@ var Main = {
 	remove_coluna_nota : function()
 	{
 		$.ajax({
-			url: Main.base_url + $("#controller").val() + '/remover_coluna_nota/' + Main.descricao_nota_id + '/' + Main.turma_id + '/' + Main.disciplina_id + '/' + Main.bimestre_id,
+			url: Url.base_url + $("#controller").val() + '/remover_coluna_nota/' + Main.descricao_nota_id + '/' + Main.turma_id + '/' + Main.disciplina_id + '/' + Main.bimestre_id,
 			dataType:'json',
 			cache: false,
 			type: 'POST',
@@ -1703,7 +1700,7 @@ var Main = {
 			data = Main.convert_date(data, "en");
 
 			$.ajax({
-				url: Main.base_url + $("#controller").val() + '/get_sub_turmas/' + disciplina_id + '/' + turma_id + '/' + data,
+				url: Url.base_url + $("#controller").val() + '/get_sub_turmas/' + disciplina_id + '/' + turma_id + '/' + data,
 				dataType:'json',
 				cache: false,
 				type: 'POST',
@@ -1742,7 +1739,7 @@ var Main = {
 			var subturma  = $("#subturma").val();
 
 			$.ajax({
-				url: Main.base_url + $("#controller").val() + '/get_alunos_chamada/' + disciplina_id + '/' + turma_id + '/' + subturma + '/' + data_convert,
+				url: Url.base_url + $("#controller").val() + '/get_alunos_chamada/' + disciplina_id + '/' + turma_id + '/' + subturma + '/' + data_convert,
 				dataType:'json',
 				cache: false,
 				type: 'POST',
@@ -1775,7 +1772,7 @@ var Main = {
 	{
 		Main.modal("aguardar", "Aguarde...");
 		$.ajax({
-			url: Main.base_url + $("#controller").val() + '/visao_geral/' + disciplina_id + '/' + turma_id,
+			url: Url.base_url + $("#controller").val() + '/visao_geral/' + disciplina_id + '/' + turma_id,
 			dataType:'json',
 			cache: false,
 			type: 'POST',
@@ -1804,7 +1801,7 @@ var Main = {
 	{
 		Main.modal("aguardar", "Aguarde...");
 		$.ajax({
-			url: Main.base_url + $("#controller").val() + '/horarios_turma/' + turma_id,
+			url: Url.base_url + $("#controller").val() + '/horarios_turma/' + turma_id,
 			dataType:'json',
 			cache: false,
 			type: 'POST',
