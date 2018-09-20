@@ -263,7 +263,7 @@
 			}
 			else
 			{
-				$senha_email = $this->input->post('nova_senha');
+				$senha_email = $this->input->post('senha');
 
 				$data = array(
 					'Usuario_id' => $Usuario_id,

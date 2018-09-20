@@ -26,6 +26,8 @@
 		public function dashboard()
 		{
 			$this->data['Nome_periodo'] = $this->Regras_model->get_regras(FALSE, $this->input->cookie('periodo_letivo_id'), FALSE, FALSE, FALSE)['Nome_periodo'];
+			if(empty($this->data['Nome_periodo']))
+				$this->data['Nome_periodo'] = "Aguardando período letivo";
 			$this->data['title'] = 'Acadêmico';
 			//if($this->Account_model->session_is_valid()['grupo_id'] == ADMIN)
 				$this->view("academico/dashboard", $this->data);
@@ -44,6 +46,9 @@
 					redirect("professor/chamada");
 				
 				$this->data['Nome_periodo'] = $this->Regras_model->get_regras(FALSE, $this->input->cookie('periodo_letivo_id'), FALSE, FALSE, FALSE)['Nome_periodo'];
+				if(empty($this->data['Nome_periodo']))
+				$this->data['Nome_periodo'] = "Aguardando período letivo";
+			
 				$this->data['lista_periodos'] = $this->Academico_model->get_periodos_professor($this->Account_model->session_is_valid()['id']);
 				$this->view("academico/professor", $this->data);
 			}
