@@ -22,7 +22,7 @@
 								<div class='text-right' style="margin-top: -26px; ">
 								<span class="glyphicon glyphicon-eye-open" id="espiar" title="Espiar senha" style="color:#336CD2; cursor: pointer;"></span>
 								</div>
-								<div class='input-group mb-2 mb-sm-0 text-danger' id='error-senha-login'></div>
+								<div class='input-group mb-2 mb-sm-0 text-danger' style="margin-top: 12px;" id='error-senha-login'></div>
 							</div>
 							<div class='checkbox checbox-switch switch-success custom-controls-stacked'>
 								<label for='conectado' class="text-dark">

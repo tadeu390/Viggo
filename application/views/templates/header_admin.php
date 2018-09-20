@@ -45,6 +45,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	</head>
 	<body>
+		<?php $this->load->helper("mstring");?>
 		<div class='container-fluid'>
 			<nav class="side-navbar">
 				<div class="sidenav-header d-flex align-items-center justify-content-center">
@@ -105,29 +106,21 @@
 									</a>
 								</div>
 								<ul class="nav-menu list-unstyled d-flex flex-md-row align-items-md-center">
-									<li class="nav-item pr-2 col-sm-9">
-
-											<?php
-												if(($this->input->cookie('grupo_id') == ADMIN || $this->session->grupo_id == ADMIN) OR 
-												   ($this->input->cookie('grupo_id') == SECRETARIA || $this->session->grupo_id == SECRETARIA))
-												{
-													$atr = array("id" => "form_filtros", "name" => "form_filtros", "method" => "get", "style" => "margin-bottom: 0em;"); 
-													echo form_open("usuario/index", $atr);
-														echo"<input id='nome_pesquisa_rapida' value='".((!empty($filtros['outros']['nome'])) ? $filtros['outros']['nome'] : '').((!empty($filtros['outros']['nome_pesquisa_rapida'])) ? $filtros['outros']['nome_pesquisa_rapida'] : '')."' placeholder='Pesquisar usuários' name='nome_pesquisa_rapida' type='text' class='form-control relative mr-1'  style='top:1px; background-color: white;'>";
-													echo"</form>";
-												}
-												if($this->input->cookie('grupo_id') == PROFESSOR || $this->session->grupo_id == PROFESSOR)
-												{
-													echo "<span class='text-white mx-2 my-2'>";
-														echo $Nome_periodo;
-													echo "</span>";
-												}
-											?>
-
+									<li class="nav-item" style="padding-right: 10px;">
+										<?php
+											if(($this->input->cookie('grupo_id') == ADMIN || $this->session->grupo_id == ADMIN) OR 
+											   ($this->input->cookie('grupo_id') == SECRETARIA || $this->session->grupo_id == SECRETARIA))
+											{
+												$atr = array("id" => "form_filtros", "name" => "form_filtros", "method" => "get", "style" => "margin-bottom: 0em;"); 
+												echo form_open("usuario/index", $atr);
+													echo"<input id='nome_pesquisa_rapida' value='".((!empty($filtros['outros']['nome'])) ? $filtros['outros']['nome'] : '').((!empty($filtros['outros']['nome_pesquisa_rapida'])) ? $filtros['outros']['nome_pesquisa_rapida'] : '')."' placeholder='Pesquisar usuários' name='nome_pesquisa_rapida' type='text' class='form-control relative mr-2'  style='top:1px; background-color: white;'>";
+												echo"</form>";
+											}
+										?>
 									</li>
 									<li class="nav-item">
 										<div class="dropdown">
-										  	<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><?php echo $usuario_logado; ?>
+										  	<button class="btn btn-primary dropdown-toggle" title="<?php echo $usuario_logado; ?>" type="button" data-toggle="dropdown"><?php echo mstring::corta_string($usuario_logado, 10); ?>
 										  	<span class="caret"></span></button>
 										  	<ul class="dropdown-menu">
 										    	<?php
@@ -156,7 +149,7 @@
 											    		echo "</a>";
 											    	echo "</li>";
 											    }
-											    if($this->input->cookie('grupo_id') == PROFESSOR || $this->session->grupo_id == PROFESSOR)
+											    if(($this->input->cookie('grupo_id') == PROFESSOR || $this->session->grupo_id == PROFESSOR) || ($this->input->cookie('grupo_id') == ALUNO || $this->session->grupo_id == ALUNO))
 										    	{
 											    	echo "<li>";
 											    		echo "<a class='btn-block' href='".$url."academico/delete_periodo_letivo'>";

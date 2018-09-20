@@ -13,8 +13,8 @@
                     echo "<div class='form-group'>";
                         echo "<div class='checkbox checbox-switch switch-success custom-controls-stacked'>";
                             echo "<label for='periodo$i' style='color: #8a8d93;'>";
-                                echo "<input onchange='Main.set_periodo_letivo(".$lista_periodos[$i]['Periodo_letivo_id'].");' type='checkbox' id='periodo$i' name='periodo$i' value='1' />";
-                                echo"<span></span> ".$lista_periodos[$i]['Nome_periodo']." - ".$lista_periodos[$i]['Nome_modalidade'];
+                                echo "<input onchange='Main.set_curso_periodo(".$lista_periodos[$i]['Periodo_letivo_id'].",".$lista_periodos[$i]['Curso_id'].");' type='checkbox' id='periodo$i' name='periodo$i' value='1' />";
+                                echo"<span></span> ".$lista_periodos[$i]['Curso'];
                             echo "</label>";
                         echo "</div>";
                     echo"</div>";

@@ -83,6 +83,8 @@
 				redirect('academico/dashboard');
 			else if($this->Account_model->session_is_valid()['grupo_id'] == PROFESSOR)
 				redirect('academico/professor');
+			else if($this->Account_model->session_is_valid()['grupo_id'] == ALUNO)
+				redirect('academico/aluno');
 			//$this->logout();
 
 			$this->load->view('templates/header', $this->data);
@@ -100,6 +102,7 @@
 			delete_cookie ('id');
 			delete_cookie ('token');
 			delete_cookie ('periodo_letivo_id');
+			delete_cookie ('curso_id');
 			delete_cookie ('page');
 			delete_cookie('url_redirect');
 			delete_cookie ('grupo_id');

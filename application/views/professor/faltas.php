@@ -1,7 +1,9 @@
 <?php $this->load->helper("mstring");?>
 <?php $this->load->helper("faltas");?>
 <?php $this->load->helper("permissao");?>
-<br /><br />
+
+<?php $this->load->view("/shared/_periodo"); ?>
+<br />
 <div class='row padding20 text-white relative' style="width: 98%; left: 2%">
 	<?php
     	echo"<div class='col-lg-12 padding0'>";

@@ -3,6 +3,10 @@
 		text-decoration: none !important;
 	}
 </style>
+<?php 
+	if($this->input->cookie('grupo_id') == PROFESSOR || $this->session->grupo_id == PROFESSOR)
+		$this->load->view("/shared/_periodo"); 
+?>
 <div class="row p-4" id="cards">
 	<div class="col-lg-10 offset-lg-1">
 	<a href="https://cepbrazopolis.com.br" target="_blank" class="ml-3">

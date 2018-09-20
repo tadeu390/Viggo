@@ -1497,7 +1497,7 @@ var Main = {
 			}
 		}
 	},
-	set_periodo_letivo : function(periodo_letivo_id)//para o professor ou aluno
+	set_periodo_letivo : function(periodo_letivo_id)//professor escolheu o período letivo
 	{
 		$("#modal_periodos").html("Aguarde... carregando informações");
 		$.ajax({
@@ -1511,6 +1511,22 @@ var Main = {
 			}
 		}).fail(function(msg){
 		    	window.location.assign(Url.base_url + $("#controller").val() + "/dashboard");
+		});
+	},
+	set_curso_periodo : function(curso_id, periodo_letivo_id)//aluno escolheu o período letivo
+	{
+		$("#modal_periodos").html("Aguarde... carregando informações");
+		$.ajax({
+			url: Url.base_url + $("#controller").val() + '/set_curso_periodo/' + '/' + curso_id + '/' + periodo_letivo_id,
+			dataType:'json',
+			cache: false,
+			type: 'POST',
+			success: function (data) 
+			{
+				window.location.assign(Url.base_url + $("#controller").val() + "/aluno");
+			}
+		}).fail(function(msg){
+		    	window.location.assign(Url.base_url + $("#controller").val() + "/aluno");
 		});
 	},
 	alterar_disciplina : function (disciplina_id)

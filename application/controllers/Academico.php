@@ -25,9 +25,9 @@
 		*/
 		public function dashboard()
 		{
-			$this->data['Nome_periodo'] = $this->Regras_model->get_regras(FALSE, $this->input->cookie('periodo_letivo_id'), FALSE, FALSE, FALSE)['Nome_periodo'];
-			if(empty($this->data['Nome_periodo']))
-				$this->data['Nome_periodo'] = "Aguardando período letivo";
+			$this->data['periodo'] = $this->Regras_model->get_regras(FALSE, $this->input->cookie('periodo_letivo_id'), FALSE, FALSE, FALSE)['Nome_periodo'];
+			if(empty($this->data['periodo']))
+				$this->data['periodo'] = "Aguardando período letivo";
 			$this->data['title'] = 'Acadêmico';
 			//if($this->Account_model->session_is_valid()['grupo_id'] == ADMIN)
 				$this->view("academico/dashboard", $this->data);
@@ -45,9 +45,9 @@
 				if(!empty($this->input->cookie('periodo_letivo_id')))
 					redirect("professor/chamada");
 				
-				$this->data['Nome_periodo'] = $this->Regras_model->get_regras(FALSE, $this->input->cookie('periodo_letivo_id'), FALSE, FALSE, FALSE)['Nome_periodo'];
-				if(empty($this->data['Nome_periodo']))
-				$this->data['Nome_periodo'] = "Aguardando período letivo";
+				$this->data['periodo'] = $this->Regras_model->get_regras(FALSE, $this->input->cookie('periodo_letivo_id'), FALSE, FALSE, FALSE)['Nome_periodo'];
+				if(empty($this->data['periodo']))
+				$this->data['periodo'] = "Aguardando período letivo";
 			
 				$this->data['lista_periodos'] = $this->Academico_model->get_periodos_professor($this->Account_model->session_is_valid()['id']);
 				$this->view("academico/professor", $this->data);
@@ -56,9 +56,29 @@
 				redirect("account/login");
 		}
 		/*!
+		*	RESPONSÁVEL POR CARREGAR A TELA INICIAL DO ALUNO.
+		*/
+		public function aluno()
+		{
+			$this->data['title'] = 'Portal do aluno';
+			if($this->Account_model->session_is_valid()['grupo_id'] == ALUNO)
+			{
+				$periodo = $this->Regras_model->Academico_model->get_periodos_aluno($this->Account_model->session_is_valid()['id'], $this->input->cookie('curso_id'));
+
+				$this->data['periodo'] = "Aguardando período letivo";
+				if(!empty($periodo))
+					$this->data['periodo'] = $periodo[0]['Curso'];
+
+				$this->data['lista_periodos'] = $this->Academico_model->get_periodos_aluno($this->Account_model->session_is_valid()['id'], FALSE);
+				$this->view("academico/aluno", $this->data);
+			}
+			else 
+				redirect("account/login");
+		}
+		/*!
 		*	RESPONSÁVEL POR CRIAR UM COOKIE ESPECIFICANDO O PERÍODO LETIVO EM QUE O PROFESSOR ESTÁ TRABALHANDO.
 		*
-		*	$periodo_letivo_id -> Periodo letivo a ser colocado em cookie.
+		*	$periodo_letivo_id -> Periodo letivo selecionado.
 		*/
 		public function set_periodo_letivo($periodo_letivo_id)
 		{
@@ -82,7 +102,28 @@
 		public function delete_periodo_letivo()
 		{
 			delete_cookie('periodo_letivo_id');
+			delete_cookie('curso_id');
 			redirect("account/login");
+		}
+		/*!
+		*	RESPONSÁVEL POR CRIAR UM COOKIE ESPECIFICANDO O QUAL O CURSO ELE DESEJA ACESSAR DENTRO DE UM PÉRÍODO LETIVO.
+		*
+		*	$curso_id -> Curso selecionado.
+		*	$periodo_letivo_id -> Periodo letivo selecionado.
+		*/
+		public function set_curso_periodo($curso_id, $periodo_letivo_id)
+		{
+			delete_cookie('curso_id');
+
+			$cookie = array(
+	            'name'   => 'curso_id',
+	            'value'  => $curso_id,
+	            'expire' => 100000000,
+	            'secure' => FALSE
+            );
+            $this->input->set_cookie($cookie);
+
+            $this->set_periodo_letivo($periodo_letivo_id);
 		}
 	}
 ?>
