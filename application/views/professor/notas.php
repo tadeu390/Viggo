@@ -132,7 +132,7 @@
 													$total = $total + $nota;
 													echo"<td class='text-center' style='width: 10%;'>";
 														if(permissao::get_permissao(CREATE, $controller) == false || permissao::get_permissao(UPDATE, $controller) == false)
-															$status_etapa = 'disabled';
+															$status_etapa = '';
 														echo"<input min='0' $status_etapa min='0' onblur='Main.altera_nota(\"total".$i."\", this.value,".$lista_colunas_nota[$j]['Descricao_nota_id'].",\"".$lista_alunos[$i]['Matricula_id']."\",".$url_part['etapa_id'].",\"aluno".$i."_nota".$j."\",".$url_part['disciplina_id'].",".$url_part['turma_id'].");' name='aluno".$i."_nota".$j."' type='number' value='".$nota."' class='form-control border_radius text-info' style='background-color: white;' />";
 													echo"</td>";
 												}
@@ -152,7 +152,7 @@
 													echo"<td class='text-center' style='width: 10%;'>";
 														if(permissao::get_permissao(CREATE, $controller) == false || permissao::get_permissao(UPDATE, $controller) == false)
 															$status_etapa = 'disabled';
-														echo"<input min='0'  min='0' onblur='Main.altera_nota(\"total".$i."\", this.value,".$lista_colunas_nota[$j]['Descricao_nota_id'].",\"".$lista_alunos[$i]['Matricula_id']."\",".$url_part['etapa_id'].",\"aluno".$i."_nota".$j."\",".$url_part['disciplina_id'].",".$url_part['turma_id'].");' id='aluno".$i."_nota".$j."'  name='aluno".$i."_nota".$j."' type='number' value='".$nota."' class='form-control border_radius text-".$status."' style='background-color: white;' />";
+														echo"<input min='0' $status_etapa min='0' onblur='Main.altera_nota(\"total".$i."\", this.value,".$lista_colunas_nota[$j]['Descricao_nota_id'].",\"".$lista_alunos[$i]['Matricula_id']."\",".$url_part['etapa_id'].",\"aluno".$i."_nota".$j."\",".$url_part['disciplina_id'].",".$url_part['turma_id'].");' id='aluno".$i."_nota".$j."'  name='aluno".$i."_nota".$j."' type='number' value='".$nota."' class='form-control border_radius text-".$status."' style='background-color: white;' />";
 													echo"</td>";
 												}
 											}

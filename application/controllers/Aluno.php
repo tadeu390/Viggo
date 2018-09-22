@@ -18,6 +18,10 @@
 			$this->load->model('Aluno_model');
 			$this->load->model('Curso_model');
 			$this->load->model('Modalidade_model');
+			$this->load->model('Account_model');
+			$this->load->model('Disciplina_model');
+			$this->load->model('Academico_model');
+			$this->load->model('Etapa_model');
 			$this->load->model('Regras_model');
 			$this->data['menu_selectd'] = $this->Geral_model->get_identificador_menu("usuario");
 		}
@@ -202,6 +206,36 @@
 			$arr = array('response' => $resultado);
 				header('Content-Type: application/json');
 				echo json_encode($arr);
+		}
+		////AQUI PRA BAIXO PARA ACESSO DO ALUNO NO PORTAL
+		private $curso_id;
+		private $periodo_letivo_id;
+		/*!
+		*	RESPONSÁVEL POR CARREGAR INFORMAÇÕES PARA O ACESSO DO ALUNO
+		*/
+		public function set_default()
+		{
+			$this->curso_id = $this->input->cookie("curso_id");
+			$this->periodo_letivo_id = $this->input->cookie("periodo_letivo_id");
+			$this->aluno_id = $this->Account_model->session_is_valid()['id'];
+			$this->data['periodo'] = $this->Regras_model->Academico_model->get_periodos_aluno($this->Account_model->session_is_valid()['id'], $this->input->cookie('curso_id'))[0]['Curso'];
+		}
+		/*!
+		*	RESPONSÁVEL POR CARREGAR  A TELA DE NOTAS E FALTAS DO ALUNO.
+		*/
+		public function resultado()
+		{
+			
+			$this->data['title'] = "Notas e faltas";
+			if($this->Geral_model->get_permissao(READ, get_class($this)) == TRUE)
+			{
+				$this->set_default();//carrega informações do período selecionado
+
+				$this->data['lista_etapas'] = $this->Etapa_model->get_etapa($this->periodo_letivo_id, FALSE, FALSE);
+				$this->data['lista_disciplinas'] = $this->Disciplina_model->get_disciplinas_aluno($this->curso_id, $this->periodo_letivo_id, $this->aluno_id);
+				$this->data['regra_letiva'] = $this->Regras_model->get_regras(FALSE, $this->periodo_letivo_id, FALSE, FALSE, FALSE);
+				return $this->view("aluno/nota_falta", $this->data);
+			}
 		}
 	}
 ?>

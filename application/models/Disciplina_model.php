@@ -175,5 +175,29 @@
 			");
 			return $query->row_array();
 		}
+		///AQUI COMEÇA OS MÉTODOS UTILIZADOS NO PORTAL DO ALUNO
+		/*!
+		*	RESPONSÁVEL POR RETORNAR TODAS AS DISCIPLINAS QUE UM ALUNO ESTÁ CURSANDO EM UM DETERMINADO 
+		*	CURSO EM UM DETERMINADO PERÍODO LETIVO.
+		*	
+		*	$curso_id -> Curso selecionado pelo aluno ao entrar no portal.
+		*	$periodo_letivo_id -> Período letivo selecionado pelo aluno ao entrar no portal.
+		*/
+		public function get_disciplinas_aluno($curso_id, $periodo_letivo_id, $aluno_id)
+		{
+			$query = $this->db->query("
+				SELECT d.Nome AS Nome_disciplina, m.Id AS Matricula_id 
+				FROM Aluno a 
+				INNER JOIN Inscricao i ON i.Aluno_id = a.Id AND i.Curso_id = ".$this->db->escape($curso_id)." 
+				INNER JOIN Matricula m ON m.Inscricao_id = i.Id 
+				INNER JOIN Disc_turma dt ON dt.Id = m.Disc_turma_id AND 
+					dt.Periodo_letivo_id = ".$this->db->escape($periodo_letivo_id)." 
+				INNER JOIN Disc_grade dg ON dg.Id = dt.Disc_grade_id 
+				INNER JOIN Disciplina d ON d.Id = dg.Disciplina_id 
+				WHERE a.Usuario_id = ".$this->db->escape($aluno_id)."
+			");
+			
+			return $query->result_array();
+		}
 	}
 ?>

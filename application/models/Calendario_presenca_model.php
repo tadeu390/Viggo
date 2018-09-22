@@ -56,7 +56,7 @@
 		* 	$data_fim -> Data de fim da etapa. Garante pegar no mês somente as faltas referente a etapa em questão.
 		*	*mes -> Mês em que se deseja obter as faltas.
 		*/
-		public function get_faltas($matricula_id, $data_inicio, $data_fim, $mes)
+		public function get_faltas($matricula_id, $data_inicio, $data_fim, $mes)//analisar melhor esse método
 		{
 			$query = $this->db->query("	
 				SELECT COUNT(cp.Presenca) AS Faltas FROM Calendario_presenca cp 
