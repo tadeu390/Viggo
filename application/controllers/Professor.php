@@ -83,7 +83,7 @@
 			$this->data['lista_disciplinas'] = $this->Disciplina_model->get_disciplinas_prof($this->professor_id, $this->periodo_letivo_id);
 			$this->data['lista_etapas'] = $this->Etapa_model->get_etapa($this->periodo_letivo_id, FALSE, FALSE);
 			$this->data['etapa'] = $this->Etapa_model->get_etapa(FALSE, $etapa_id, FALSE);
-			$this->data['lista_alunos'] = $this->Aluno_model->get_alunos($disciplina_id, $turma_id, $subturma);
+			$this->data['lista_alunos'] = $this->Aluno_model->get_aluno_turma($disciplina_id, $turma_id, $subturma);
 			$this->data['url_part']['turma_id'] = $turma_id;
 			$this->data['url_part']['disciplina_id'] = $disciplina_id;
 			$this->data['url_part']['etapa_id'] = $etapa_id;
@@ -407,7 +407,7 @@
 			$this->data['data'] = $data;
 			//print_r($this->Professor_model->get_alunos_chamada($disciplina_id, $turma_id, $disc_hor_id));
 
-			$this->data['lista_alunos'] = $this->Aluno_model->get_alunos($disciplina_id, $turma_id, $subturma);
+			$this->data['lista_alunos'] = $this->Aluno_model->get_aluno_turma($disciplina_id, $turma_id, $subturma);
 			/////obter a lista de horários.
 			$this->data['lista_horarios'] = $this->Horario_model->get_horarios_professor($disciplina_id, $turma_id, $this->professor_id, $subturma, $data, 1);
 			if(empty($this->data['lista_horarios']))
@@ -529,7 +529,7 @@
 					$this->data['status_etapa_extra'] = '';
 
 					$this->data['lista_colunas_nota'] = $this->Nota_model->get_colunas_nota($disciplina_id, $turma_id, $etapa_id);
-					$this->data['lista_alunos'] = $this->Aluno_model->get_alunos($disciplina_id, $turma_id);
+					$this->data['lista_alunos'] = $this->Aluno_model->get_aluno_turma($disciplina_id, $turma_id);
 
 					$regras = $this->Regras_model->get_regras(FALSE, $this->periodo_letivo_id, FALSE, FALSE, FALSE);
 					do{
@@ -602,7 +602,7 @@
 			$resultado = "sucesso";
 
 			//TRAZER TODOS OS ALUNOS
-			$this->data['lista_alunos'] = $this->Aluno_model->get_alunos($disciplina_id, $turma_id, FALSE);
+			$this->data['lista_alunos'] = $this->Aluno_model->get_aluno_turma($disciplina_id, $turma_id, FALSE);
 			$this->data['lista_etapas'] = $this->Etapa_model->get_etapa($this->periodo_letivo_id, FALSE, FALSE);
 			$this->data['disciplina_id'] = $disciplina_id;
 			$this->data['turma_id'] = $turma_id;

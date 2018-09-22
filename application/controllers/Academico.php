@@ -17,7 +17,7 @@
 			$this->data['controller'] = strtolower(get_class($this));
 			$this->data['menu_selectd'] = $this->Geral_model->get_identificador_menu(strtolower(get_class($this)));
 
-			$this->load->model("Academico_model");
+			$this->load->model("Professor_model");
 			$this->load->model("Regras_model");
 		}
 		/*!
@@ -49,7 +49,7 @@
 				if(empty($this->data['periodo']))
 				$this->data['periodo'] = "Aguardando período letivo";
 			
-				$this->data['lista_periodos'] = $this->Academico_model->get_periodos_professor($this->Account_model->session_is_valid()['id']);
+				$this->data['lista_periodos'] = $this->Professor_model->get_periodos_professor($this->Account_model->session_is_valid()['id']);
 				$this->view("academico/professor", $this->data);
 			}
 			else 
@@ -63,13 +63,13 @@
 			$this->data['title'] = 'Portal do aluno';
 			if($this->Account_model->session_is_valid()['grupo_id'] == ALUNO)
 			{
-				$periodo = $this->Regras_model->Academico_model->get_periodos_aluno($this->Account_model->session_is_valid()['id'], $this->input->cookie('curso_id'));
+				$periodo = $this->Regras_model->Aluno_model->get_periodos_aluno($this->Account_model->session_is_valid()['id'], $this->input->cookie('curso_id'));
 
 				$this->data['periodo'] = "Aguardando período letivo";
 				if(!empty($periodo))
 					$this->data['periodo'] = $periodo[0]['Curso'];
 
-				$this->data['lista_periodos'] = $this->Academico_model->get_periodos_aluno($this->Account_model->session_is_valid()['id'], FALSE);
+				$this->data['lista_periodos'] = $this->Aluno_model->get_periodos_aluno($this->Account_model->session_is_valid()['id'], FALSE);
 				$this->view("academico/aluno", $this->data);
 			}
 			else 

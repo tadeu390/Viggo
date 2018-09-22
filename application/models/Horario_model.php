@@ -12,7 +12,7 @@
 		/*!
 		*	RESPONSÁVEL POR RETORNAR UM DETERMINADO HORÁRIO CASO EXISTA.
 		*	
-		*	$horario -> Array contendu as informações de um horário como, dia, hora de início e hora de fim.
+		*	$horario -> Array contendo as informações de um horário como, dia, hora de início e hora de fim.
 		*/
 		public function get_horario($horario = FALSE)
 		{

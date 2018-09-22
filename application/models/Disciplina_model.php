@@ -58,7 +58,7 @@
 
 			return $query->row_array();
 		}
-				/*!
+		/*!
 		*	RESPONSÁVEL POR MONTAR A STRING SQL DO FILTRO.
 		*	
 		*	$filter -> Contém os filtros a serem colocados na string SQL.
