@@ -106,7 +106,6 @@
 		*	RESPONSÁVEL POR RETORAR UM TURMA DE ACORDO COM O NOME.
 		*
 		*	$nome -> Nome da turma a ser cadastrada/editada.
-		*	$modalidade_id -> Modalidade ensino especificado para a turma.
 		*/
 		public function get_turma_por_nome($nome)
 		{
@@ -122,7 +121,7 @@
 		*
 		*	$id -> Id da turma.
 		*	$nome -> Nome da turma.
-		*	$modalidade_id -> Modalidade selecionada para a turma.
+		*	$periodo_letivo_id -> Periodo letivo selecionado para a turma.
 		*/
 		public function nome_valido($id, $nome, $periodo_letivo_id)
 		{
@@ -147,7 +146,7 @@
 		*
 		*	$curso_id -> Curso da turma.
 		*	$periodo_letivo_id -> Id do período letivo das turmas a serem buscadas.
-		*	$grade -> Id da grade selecionada no formulário de cadastro de turma.
+		*	$grade_id -> Id da grade selecionada no formulário de cadastro de turma.
 		*/
 		public function get_turma_cp($curso_id, $modalidade_id,$periodo_letivo_id, $grade_id)//COLOCAR PERIODO
 		{

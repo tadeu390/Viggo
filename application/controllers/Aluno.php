@@ -218,7 +218,7 @@
 			$this->curso_id = $this->input->cookie("curso_id");
 			$this->periodo_letivo_id = $this->input->cookie("periodo_letivo_id");
 			$this->aluno_id = $this->Account_model->session_is_valid()['id'];
-			$this->data['periodo'] = $this->Regras_model->Academico_model->get_periodos_aluno($this->Account_model->session_is_valid()['id'], $this->input->cookie('curso_id'))[0]['Curso'];
+			$this->data['periodo'] = $this->Regras_model->Aluno_model->get_periodos_aluno($this->Account_model->session_is_valid()['id'], $this->input->cookie('curso_id'))[0]['Curso'];
 		}
 		/*!
 		*	RESPONSÁVEL POR CARREGAR  A TELA DE NOTAS E FALTAS DO ALUNO.
