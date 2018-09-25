@@ -69,8 +69,10 @@
 			$this->data['menu_selectd'] = $this->Geral_model->get_identificador_menu(strtolower(get_class($this)));
 		}
 		/*!
-		*	RESPONSÁVEL POR CARREGAR AS INFORMAÇÕES BÁSICAS UTILIZADAS EM TODOS OS MÉTODOS PRINCIPAIS, COMO O NOTAS, FALTAS, ETC.
-		*	ISSO É NECESSÁRIO, POIS COMO A TELA É PRATICAMENTE A MESMA, QUANDO USANDO OS MÉTODOS PRINCIPAIS, ENTÃO MUITA INFORMAÇÃO
+		*	RESPONSÁVEL POR CARREGAR AS INFORMAÇÕES BÁSICAS UTILIZADAS EM TODOS OS MÉTODOS PRINCIPAIS, 
+		*	COMO O NOTAS, FALTAS, ETC.
+		*	ISSO É NECESSÁRIO, POIS COMO A TELA É PRATICAMENTE A MESMA, QUANDO USANDO OS MÉTODOS PRINCIPAIS, 
+		*	ENTÃO MUITA INFORMAÇÃO
 		*	É EM COMUM ENTRE ELES PARA MONTAR A TELA.
 		*
 		*	$turma_id -> Id da turma para carregar os alunos.
@@ -89,8 +91,10 @@
 			$this->data['url_part']['etapa_id'] = $etapa_id;
 		}
 		/*!
-		*	RESPONSÁVEL POR DETERMINAR A TURMA QUE PERMANECERÁ SELECIONADA NA TELA, SE AO TROCAR DE DISCIPLINA, A TURMA QUE ESTAVA SELECIONADA
-		*	ANTES NÃO ESTIVER ASSOCIADA COM A DISCIPLINA TROCADA ENTÃO PROCURAR A PRIMEIRA TURMA DE ACORDO COM A DISCIPLINA QUE FOI PASSADA.
+		*	RESPONSÁVEL POR DETERMINAR A TURMA QUE PERMANECERÁ SELECIONADA NA TELA, SE AO TROCAR DE DISCIPLINA, 
+		*	A TURMA QUE ESTAVA SELECIONADA
+		*	ANTES NÃO ESTIVER ASSOCIADA COM A DISCIPLINA TROCADA ENTÃO PROCURAR A PRIMEIRA TURMA DE ACORDO 
+		*	COM A DISCIPLINA QUE FOI PASSADA.
 		*
 		*	$lista_turmas -> Array contendo todas as turmas relacionadas com uma disciplina.
 		*	$turma_id -> Id da turma selecionada na tela do professor.
@@ -109,9 +113,11 @@
 				return $lista_turmas[0]['Turma_id'];//CASO CONTRÁRIO PEGAR POR DEFAUL O PRIMEIRO ID DISPONÍVEL.
 		}
 		/*!
-		*	RESPONSÁVEL POR RECEBER DA MODEL TODOS OS DADOS DE NOTA DE CADA ALUNO DE UM DETERMINADO PROFESSOR E ENVIA-LOS A VIEW.
+		*	RESPONSÁVEL POR RECEBER DA MODEL TODOS OS DADOS DE NOTA DE CADA ALUNO DE UM DETERMINADO PROFESSOR 
+		*	E ENVIA-LOS A VIEW.
 		*
-		*	$disciplina_id -> Id da disciplina da grade. É usado para se obter as notas da disciplina pra cada aluno.
+		*	$disciplina_id -> Id da disciplina da grade. É usado para se obter as notas da disciplina 
+		*	pra cada aluno.
 		*	$turma_id -> Id da turma que está sendo consultada pelo professor.
 		*	$etapa_id -> Id da etapa especificado pelo usuário quando clica nos botões de etapas.
 		*/
@@ -218,8 +224,8 @@
 		}
 		/*!
 		*	RESPONSÁVEL POR VERIFICAR SE O PROFESSOR DA AULA PARA UMA TURMA EM UMA DETERMINADA DISCIPLINA.
-		*	ISSO É ÚTIL PARA VALIDAR A INSERÇÃO, REMOÇÃO OU ALTERAÇÃO DE UMA NOTA E TAMBÉM A REMOÇÃO DE UMA COLUNA DE NOTA
-		*	PELO PROFESSOR.
+		*	ISSO É ÚTIL PARA VALIDAR A INSERÇÃO, REMOÇÃO OU ALTERAÇÃO DE UMA NOTA E TAMBÉM A REMOÇÃO DE 
+		*	UMA COLUNA DE NOTA PELO PROFESSOR.
 		*
 		*	$disciplina_id -> Id da disciplina a ser validada.
 		*	$professor_id -> Id do professor logado no sistema.
@@ -366,7 +372,8 @@
 		}
 		/*!
 		*	RESPONSÁVEL POR CARREGAR DA MODEL TODAS AS SUBTURMAS DE UMA DETERMINADA DISCIPLINA DE UMA DETERMINADA 
-		*	TURMA EM UMA DETERMINADA DATA (DIA DA SEMANA). SE NÃO HOUVER SUBTURMA PRA TAL OCASIÃO A MODEL RETORNARÁ SUBTURMA 0
+		*	TURMA EM UMA DETERMINADA DATA (DIA DA SEMANA). SE NÃO HOUVER SUBTURMA PRA TAL OCASIÃO A MODEL 
+		*	RETORNARÁ SUBTURMA 0.
 		*
 		*	$disciplina_id -> Id da disciplina que se quer obter as subturmas.
 		*	$turma_id -> Id da turma turma associada a disicplina.
