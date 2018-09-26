@@ -19,6 +19,7 @@
 
 			$this->load->model("Professor_model");
 			$this->load->model("Regras_model");
+			$this->load->model("Aluno_model");
 		}
 		/*!
 		*	RESPONSÁVEL POR CARREGAR A TELA INICIAL DO ADMINISTRADOR.
@@ -63,7 +64,7 @@
 			$this->data['title'] = 'Portal do aluno';
 			if($this->Account_model->session_is_valid()['grupo_id'] == ALUNO)
 			{
-				$periodo = $this->Regras_model->Aluno_model->get_periodos_aluno($this->Account_model->session_is_valid()['id'], $this->input->cookie('curso_id'));
+				$periodo = $this->Aluno_model->get_periodos_aluno($this->Account_model->session_is_valid()['id'], $this->input->cookie('curso_id'));
 
 				$this->data['periodo'] = "Aguardando período letivo";
 				if(!empty($periodo))
@@ -108,10 +109,10 @@
 		/*!
 		*	RESPONSÁVEL POR CRIAR UM COOKIE ESPECIFICANDO O QUAL O CURSO ELE DESEJA ACESSAR DENTRO DE UM PÉRÍODO LETIVO.
 		*
-		*	$curso_id -> Curso selecionado.
 		*	$periodo_letivo_id -> Periodo letivo selecionado.
+		*	$curso_id -> Curso selecionado.
 		*/
-		public function set_curso_periodo($curso_id, $periodo_letivo_id)
+		public function set_curso_periodo($periodo_letivo_id, $curso_id)
 		{
 			delete_cookie('curso_id');
 

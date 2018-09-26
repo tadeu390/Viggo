@@ -102,7 +102,7 @@
 							<div class="navbar-holder d-flex align-items-center justify-content-between">
 								<div class="navbar-header">
 									<a id="toggle-btn" href="#" class="menu-bt">
-										<span class="glyphicon glyphicon-align-justify menu-color" style="transform: scale(3);" > </span>
+										<span class="glyphicon glyphicon-align-justify menu-color" style="transform: scale(2);" > </span>
 									</a>
 								</div>
 								<ul class="nav-menu list-unstyled d-flex flex-md-row align-items-md-center">

@@ -1513,11 +1513,11 @@ var Main = {
 		    	window.location.assign(Url.base_url + $("#controller").val() + "/dashboard");
 		});
 	},
-	set_curso_periodo : function(curso_id, periodo_letivo_id)//aluno escolheu o período letivo
+	set_curso_periodo : function(periodo_letivo_id, curso_id)//aluno escolheu o período letivo
 	{
 		$("#modal_periodos").html("Aguarde... carregando informações");
 		$.ajax({
-			url: Url.base_url + $("#controller").val() + '/set_curso_periodo/' + '/' + curso_id + '/' + periodo_letivo_id,
+			url: Url.base_url + $("#controller").val() + '/set_curso_periodo/' + '/' + periodo_letivo_id + '/' + curso_id,
 			dataType:'json',
 			cache: false,
 			type: 'POST',
