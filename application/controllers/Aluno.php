@@ -23,6 +23,7 @@
 			$this->load->model('Academico_model');
 			$this->load->model('Etapa_model');
 			$this->load->model('Regras_model');
+			$this->load->model('Doc_model');
 			$this->data['menu_selectd'] = $this->Geral_model->get_identificador_menu("usuario");
 		}
 		/*!
@@ -51,6 +52,9 @@
 			if($this->Geral_model->get_permissao(CREATE, get_parent_class($this)) == TRUE)
 			{
 				$this->data['obj'] = $this->Usuario_model->get_usuario(FALSE, 0, FALSE);
+				$this->data['lista_documentos_aluno'] = $this->Doc_model->get_doc(TRUE, FALSE, DOC_ALUNO);
+				$this->data['lista_documentos_responsavel'] = $this->Doc_model->get_doc(TRUE, FALSE, DOC_RESPONSAVEL);
+
 				$this->data['type'] = $type;
 				$this->data['grupos_usuario'] = $this->Grupo_model->get_grupo(FALSE, FALSE, FALSE);
 				$this->data['title'] = 'Novo aluno';
@@ -73,6 +77,8 @@
 			{
 				$this->data['obj'] = $this->Usuario_model->get_usuario(FALSE, $id, FALSE);
 				$this->data['obj_aluno'] = $this->Aluno_model->get_aluno($this->data['obj']['Id']);
+				$this->data['lista_documentos_aluno'] = $this->Doc_model->get_doc(FALSE, FALSE, DOC_ALUNO);
+				$this->data['lista_documentos_responsavel'] = $this->Doc_model->get_doc(FALSE, FALSE, DOC_RESPONSAVEL);
 				$this->data['type'] = ALUNO;
 				$this->data['grupos_usuario'] = $this->Grupo_model->get_grupo(FALSE, FALSE, FALSE);
 				$this->data['title'] = 'Editar aluno';

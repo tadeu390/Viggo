@@ -33,6 +33,10 @@
 				float: none; 
 				margin-bottom: 10px; 
 			}
+			tr:hover 
+			{
+				background-color: #EDC127 !important;
+			}
 		</style>
 		<script type="text/javascript">
 			window.onload = function()

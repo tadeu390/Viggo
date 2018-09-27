@@ -20,7 +20,7 @@
 		<fieldset>
 			<legend>&nbsp;Notas</legend>
 			<div class="table-responsive">
-				<table class="table table-bordered text-white table-sm" style="min-width: 800px;">
+				<table class="table table-bordered text-white table-sm table-hover" style="min-width: 800px;">
 					<thead>
 						<tr>
 							<td class="w-25 text-center align-middle" rowspan="2">
@@ -264,7 +264,8 @@
 			</div>
 			<div class="row padding20">
 				<div class="col-lg-12 text-right">
-					Total geral: <?php echo $total_geral; ?>
+					Total geral: <?php echo $total_geral; ?><br />
+					Limite permitido: 400
 				</div>
 			</div>
 		</fieldset>

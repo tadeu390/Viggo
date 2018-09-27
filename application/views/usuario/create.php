@@ -21,36 +21,37 @@
 			echo form_open("$controller/store", $atr); 
 			
 		?>	
+		<div class="row"><!--ABRE A ROW QUE FECHA O CREATE_EDIT DE USUARIO-->
+			<div class="col-lg-6">
+				<div class='form-group'>
+						<div style="color: #8a8d93;">Tipo de usuário</div>
+							<?php
+								if(empty($obj['Id']))
+									$method = "\"create\"";
+								else
+									$method = "\"edit\"";
+								
+								if(!empty($obj['Id']))
+									$id = $obj['Id'];
+								else
+									$id = 0;
 
-		<div class='form-group'>
-				<div style="color: #8a8d93;">Tipo de usuário</div>
-					<?php
-						if(empty($obj['Id']))
-							$method = "\"create\"";
-						else
-							$method = "\"edit\"";
-						
-						if(!empty($obj['Id']))
-							$id = $obj['Id'];
-						else
-							$id = 0;
-
-						echo"<select name='grupo_id' id='grupo_id' class='form-control padding0' onchange='Main.altera_tipo_cadastro_usuario(this.value,$id,$method)'>";
-						echo"<option value='0' class='background_dark'>Selecione</option>";
-					
-						for($i = 0; $i < count($grupos_usuario); $i++)
-						{
-							$selected = "";
-							if($grupos_usuario[$i]['Id'] == $type)
-								$selected = "selected";
-	
-							echo"<option class='background_dark' $selected value='". $grupos_usuario[$i]['Id'] ."'>".$grupos_usuario[$i]['Nome_grupo']."</option>";
-						}
-						echo "</select>";
-					?>
-			<div class='input-group mb-2 mb-sm-0 text-danger' id='error-grupo_id'></div>
-		</div>
-
+								echo"<select name='grupo_id' id='grupo_id' class='form-control padding0' onchange='Main.altera_tipo_cadastro_usuario(this.value,$id,$method)'>";
+								echo"<option value='0' class='background_dark'>Selecione</option>";
+							
+								for($i = 0; $i < count($grupos_usuario); $i++)
+								{
+									$selected = "";
+									if($grupos_usuario[$i]['Id'] == $type)
+										$selected = "selected";
+			
+									echo"<option class='background_dark' $selected value='". $grupos_usuario[$i]['Id'] ."'>".$grupos_usuario[$i]['Nome_grupo']."</option>";
+								}
+								echo "</select>";
+							?>
+					<div class='input-group mb-2 mb-sm-0 text-danger' id='error-grupo_id'></div>
+				</div>
+			</div>
 		<?php
 			$this->load->view("usuario/_create_edit",$obj);
 		?>
