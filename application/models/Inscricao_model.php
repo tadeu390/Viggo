@@ -125,14 +125,15 @@
 			if(empty($data['Id']))
 			{
 				unset($data['Modalidade_id']);
-				return $this->db->insert('Inscricao',$data);
+				$this->db->insert('Inscricao',$data);
 			}
 			else
 			{	
 				unset($data['Modalidade_id']);
 				$this->db->where('Id', $data['Id']);
-				return $this->db->update('Inscricao', $data);
+				$this->db->update('Inscricao', $data);
 			}
+			return $this->get_inscricao_cp($data['Aluno_id'], $data['Curso_id'], $data['Periodo_letivo_id'])['Id'];
 		}
 		/*!
 		*	RESPONSÁVEL POR RETORNAR UMA INSCRIÇÃO DA MATRICULA DE UM ALUNO NO PERIODO LETIVO MAIS RECENTE DO CURSO.
@@ -156,6 +157,81 @@
 				i.Periodo_letivo_id = ".$last_periodo_letivo_id."");
 			
 			return $query->row_array();
+		}
+		/*!
+		*	RESPONSÁVEL POR RETORNAR A INSCRIÇÃO DO ALUNO PARA UM CURSO EM UM DETERMINADO PERÍODO LETIVO
+		*
+		*	$aluno_id -> Id do aluno que se deseja obter a inscrição.
+		*	$curso_id -> Id do curso do aluno.
+		*	$periodo_letivo_id -> Id do período letivo da inscrição.
+		*/
+		public function get_inscricao_cp($aluno_id, $curso_id, $periodo_letivo_id)
+		{
+			$query = $this->db->query("
+				SELECT * FROM Inscricao i 
+				WHERE i.Aluno_id = ".$this->db->escape($aluno_id)." AND i.Curso_id = ".$this->db->escape($curso_id)." 
+				AND i.Periodo_letivo_id = ".$this->db->escape($periodo_letivo_id)."
+				");
+
+			return $query->row_array();
+		}
+
+		//CRIAR MODEL PARA OS MÉTODOS ABAIXO.
+		/*!
+		*	RESPONSÁVEL POR CADASTRAR OS DOCUMENTOS QUE A ESCOLA POSSUI DE UM ALUNO EM UMA DETERMINADA INSCRIÇÃO.
+		*
+		*	$docs_id -> Id dos documentos que o aluno trouxe.
+		*	$inscricao_id -> Id da inscrição para a qual se está cadastrando/atualizando os documentos.
+		*/
+		public function set_doc_inscricao($docs_id, $inscricao_id)
+		{
+			for($i = 0; $i < COUNT($docs_id); $i++)
+			{
+				$data = array(
+					'Inscricao_id' => $inscricao_id,
+					'Doc_id' => $docs_id[$i]
+				);
+
+				//verificar se já existe
+				$query = $this->db->query("
+					SELECT Id FROM Doc_inscricao 
+					WHERE Inscricao_id = ".$this->db->escape($inscricao_id)." AND Doc_id = ".$this->db->escape($docs_id[$i])."");
+				
+				if(empty($query->row_array()))
+					$this->db->insert('Doc_inscricao', $data);
+			}
+
+			//buscar todos do banco
+			$query = $this->db->query("
+				SELECT Doc_id FROM Doc_inscricao 
+				WHERE Inscricao_id = ".$this->db->escape($inscricao_id)."
+			");
+			$doc_banco = $query->result_array();
+			for($i = 0; $i < COUNT($doc_banco); $i++)
+			{	
+				$flag = 0;
+				for($j = 0; $j < COUNT($docs_id); $j++)
+				{
+					if($doc_banco[$i]['Doc_id'] == $docs_id[$j])
+						$flag = 1;
+				}
+				if($flag == 0)
+				{
+					$this->db->where('Inscricao_id', $inscricao_id);
+					$this->db->where('Doc_id', $doc_banco[$i]['Doc_id']);
+					$this->db->delete('Doc_inscricao');
+				}
+			}
+		}
+		/*!
+		*	RESPONSÁVEL POR REMOVER TODOS OS DOCUMENTOS CADASTRADOS PARA UMA INSCRIÇÃO.
+		*
+		*	$inscricao_id -> Id da inscrição do aluno.
+		*/
+		public function delete_doc_inscricao($inscricao_id)
+		{
+			$this->db->where('Inscricao_id', $inscricao_id);
+			$this->db->delete('Doc_inscricao');
 		}
 	}
 ?>

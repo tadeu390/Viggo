@@ -23,7 +23,8 @@
 			$this->load->model('Academico_model');
 			$this->load->model('Etapa_model');
 			$this->load->model('Regras_model');
-			$this->load->model('Doc_model');
+			//$this->load->model('Doc_model');
+			$this->load->model('Endereco_model');
 			$this->data['menu_selectd'] = $this->Geral_model->get_identificador_menu("usuario");
 		}
 		/*!
@@ -52,8 +53,14 @@
 			if($this->Geral_model->get_permissao(CREATE, get_parent_class($this)) == TRUE)
 			{
 				$this->data['obj'] = $this->Usuario_model->get_usuario(FALSE, 0, FALSE);
-				$this->data['lista_documentos_aluno'] = $this->Doc_model->get_doc(TRUE, FALSE, DOC_ALUNO);
-				$this->data['lista_documentos_responsavel'] = $this->Doc_model->get_doc(TRUE, FALSE, DOC_RESPONSAVEL);
+				$this->data['obj_aluno'] = $this->Aluno_model->get_aluno(0);
+				$this->data['Endereco'] = array(array(
+											'Endereco_id' => '', 'Rua' => '', 'Bairro' => '',
+											'Zona' => '', 'Transp_publico' => '', 'Municipio' => '',
+											'Uf' => '', 'Cep' => '', 'Telefone_aluno' => '',
+											'Telefone_responsavel' => '', 'Aluno_id' => ''));
+				//$this->data['lista_documentos_aluno'] = $this->Doc_model->get_doc(TRUE, FALSE, DOC_ALUNO);
+				//$this->data['lista_documentos_responsavel'] = $this->Doc_model->get_doc(TRUE, FALSE, DOC_RESPONSAVEL);
 
 				$this->data['type'] = $type;
 				$this->data['grupos_usuario'] = $this->Grupo_model->get_grupo(FALSE, FALSE, FALSE);
@@ -77,8 +84,15 @@
 			{
 				$this->data['obj'] = $this->Usuario_model->get_usuario(FALSE, $id, FALSE);
 				$this->data['obj_aluno'] = $this->Aluno_model->get_aluno($this->data['obj']['Id']);
-				$this->data['lista_documentos_aluno'] = $this->Doc_model->get_doc(FALSE, FALSE, DOC_ALUNO);
-				$this->data['lista_documentos_responsavel'] = $this->Doc_model->get_doc(FALSE, FALSE, DOC_RESPONSAVEL);
+				$this->data['Endereco'] = $this->Endereco_model->get_endereco(TRUE, FALSE, $this->data['obj_aluno']['Id']);
+				if(empty($this->data['Endereco']))
+				{
+					$this->data['Endereco'] = array(array(
+											'Endereco_id' => '', 'Rua' => '', 'Bairro' => '',
+											'Zona' => '', 'Transp_publico' => null, 'Municipio' => '',
+											'Uf' => '', 'Cep' => '', 'Telefone_aluno' => '',
+											'Telefone_responsavel' => '', 'Aluno_id' => ''));
+				}
 				$this->data['type'] = ALUNO;
 				$this->data['grupos_usuario'] = $this->Grupo_model->get_grupo(FALSE, FALSE, FALSE);
 				$this->data['title'] = 'Editar aluno';
@@ -94,6 +108,12 @@
 		*/
 		public function valida_aluno($Aluno)
 		{
+			if($this->Aluno_model->cpf_valido($Aluno['Cpf'], $Aluno['Usuario_id']) == "invalido")
+				return "O CPF informado já se encontra em uso por outro aluno.";
+			else if($this->Aluno_model->rg_valido($Aluno['Rg'], $Aluno['Usuario_id']) == "invalido")
+				return "O RG informado já se encontra em uso por outro aluno.";
+			else if($this->Aluno_model->titulo_eleitor_valido($Aluno['Titulo_eleitor'], $Aluno['Usuario_id']) == "invalido")
+				return "O título de eleitor informado já se encontra em uso por outro aluno.";
 			return 1;
 		}
 		/*!
@@ -103,7 +123,7 @@
 		*/
 		public function store_banco($Aluno)
 		{
-			$this->Aluno_model->set_aluno($Aluno);
+			return $this->Aluno_model->set_aluno($Aluno);
 		}
 		/*!
 		*	RESPONSÁVEL POR CAPTAR OS DADOS DO FORMULÁRIO SUBMETIDO.
@@ -119,7 +139,22 @@
 				'Data_nascimento' => $this->input->post('data_nascimento'),
 				'Sexo' => $this->input->post('sexo'),
 				'Grupo_id' => $this->input->post('grupo_id'),
+
 				'Email_notifica_nova_conta' => $this->input->post('email_notifica_nova_conta'),
+			);
+
+			$endereco = array(
+				'Id' => $this->input->post('endereco_id'),
+				'Rua' => $this->input->post('rua'),
+				'Bairro' => $this->input->post('bairro'),
+				'Zona' => $this->input->post('zona'),
+				'Transp_publico' => $this->input->post('transp_publico'),
+				'Municipio' => $this->input->post('municipio'),
+				'Uf' => $this->input->post('uf_endereco'),
+				'Cep' => $this->input->post('cep'),
+				'Telefone_aluno' => $this->input->post('telefone_aluno'),
+				'Telefone_responsavel' => $this->input->post('telefone_responsavel'),
+				'Aluno_id' => $this->input->post('aluno_id')
 			);
 
 			$dataToSave['Data_nascimento'] = $this->convert_date($dataToSave['Data_nascimento'], "en");
@@ -140,8 +175,27 @@
 				 	if($resultado == 1)
 				 	{
 				 		$dataToSaveAluno = array(
-							'Usuario_id' => $this->input->post('id')
+				 			'Id' => $this->input->post('aluno_id'),
+							'Usuario_id' => $this->input->post('id'),
+							'Naturalidade' => $this->input->post('naturalidade'),
+							'Uf' => $this->input->post('uf'),
+							'Nome_mae' => $this->input->post('nome_mae'),
+							'Nome_pai' => $this->input->post('nome_pai'),
+							'Cor' => $this->input->post('cor'),
+							'Especial' => $this->input->post('necessidade_especial'),
+							'Identificacao' => $this->input->post('identificacao'),
+							'Sit_ensino_medio' => $this->input->post('situacao_em'),
+							'Escola' => $this->input->post('escola'),
+							'Cpf' => $this->input->post('cpf'),
+							'Rg' => $this->input->post('rg'),
+							'Orgao_expedidor' => $this->input->post('orgao_expedidor'),
+							'Data_expedicao' => $this->convert_date($this->input->post("data_expedicao"),"en"),
+							'Titulo_eleitor' => $this->input->post('titulo_eleitor'),
+							'Zona_eleitoral' => $this->input->post('zona_eleitoral'),
+							'Secao_eleitoral' => $this->input->post('secao_eleitoral'),
+							'Uf_titulo' => $this->input->post('uf_titulo')
 						);
+
 						$resultado = $this->valida_aluno($dataToSaveAluno);
 						if($resultado == 1)
 						{
@@ -150,6 +204,9 @@
 							$dataToSaveAluno['Usuario_id'] = $resultado;//QUANDO ESTIVER CRIANDO ISSO É NECESSARIO, POIS O POST DO ID VIRÁ VAZIO
 							$Usuario_id = $resultado;
 							$resultado = $this->store_banco($dataToSaveAluno);
+
+							$endereco['Aluno_id'] = $resultado;
+							$this->Endereco_model->set_endereco($endereco);
 
 							if($this->input->post('inscricao_aluno') != NULL)
 								$this->set_aluno_cookie($Usuario_id);

@@ -19,7 +19,8 @@
 		<br /><br />
 		<?php $atr = array("id" => "form_cadastro_$controller", "name" => "form_cadastro"); 
 			echo form_open("$controller/store", $atr); 
-			
+			echo "<input type='hidden' id='aluno_id' name='aluno_id' value='".$obj_aluno['Id']."'>";
+			echo "<input type='hidden' id='endereco_id' name='endereco_id' value='".$Endereco[0]['Endereco_id']."'>";
 		?>
 		<div class="row"><!--ABRE A ROW QUE FECHA O CREATE_EDIT DE USUARIO-->
 			<div class="col-lg-6">
@@ -57,23 +58,60 @@
 		<div class="row">
 			<div class="col-lg-4">
 				<div class="form-group relative">
-					<input maxlength="100" id="naturalidade" spellcheck="false" name="naturalidade" value='<?php echo (!empty($obj['Naturalidade']) ? $obj['Naturalidade']:''); ?>' type="text" class="input-material">
+					<input maxlength="100" id="naturalidade" spellcheck="false" name="naturalidade" value='<?php echo (!empty($obj_aluno['Naturalidade']) ? $obj_aluno['Naturalidade']:''); ?>' type="text" class="input-material">
 					<label for="naturalidade" class="label-material">Naturalidade</label>
 					<div class='input-group mb-2 mb-sm-0 text-danger' id='error-naturalidade'></div>
 				</div>
 			</div>
 			<div class="col-lg-2">
 				<div class='form-group'>
+					<?php
+						$uf = array();
+						$uf[0] = 'AC';
+						$uf[1] = 'AL';
+						$uf[2] = 'AP';
+						$uf[3] = 'AM';
+						$uf[4] = 'BA';
+						$uf[5] = 'CE';
+						$uf[6] = 'DF';
+						$uf[7] = 'ES';
+						$uf[8] = 'GO';
+						$uf[9] = 'MA';
+						$uf[10] = 'MT';
+						$uf[11] = 'MS';
+						$uf[12] = 'MG';
+						$uf[13] = 'PA';
+						$uf[14] = 'PR';
+						$uf[15] = 'PE';
+						$uf[16] = 'PI';
+						$uf[17] = 'RR';
+						$uf[18] = 'RO';
+						$uf[19] = 'RJ';
+						$uf[20] = 'RN';
+						$uf[21] = 'RS';
+						$uf[22] = 'SC';
+						$uf[23] = 'SP';
+						$uf[24] = 'SE';
+						$uf[25] = 'TO';
+					?>
 					<select name='uf' id='uf' class='form-control padding0'>
 						<option value='0' class='background_dark'>UF</option>
-						<option class='background_dark' value='MG'>MG</option>
+						<?php 
+							for($i = 0; $i < COUNT($uf); $i++)
+							{	
+								$selected = '';
+								if($obj_aluno['Uf'] == $uf[$i])
+									$selected = 'selected';
+								echo"<option $selected class='background_dark' value='".$uf[$i]."'>".$uf[$i]."</option>";
+							}
+						?>
 					</select>
 					<div class='input-group mb-2 mb-sm-0 text-danger' id='error-uf'></div>
 				</div>
 			</div>
 			<div class="col-lg-6">
 				<div class="form-group relative">
-					<input maxlength="100" id="nome_mae" spellcheck="false" name="nome_mae" value='<?php echo (!empty($obj['Nome_mae']) ? $obj['Nome_mae']:''); ?>' type="text" class="input-material">
+					<input maxlength="100" id="nome_mae" spellcheck="false" name="nome_mae" value='<?php echo (!empty($obj_aluno['Nome_mae']) ? $obj_aluno['Nome_mae']:''); ?>' type="text" class="input-material">
 					<label for="nome_mae" class="label-material">Nome da mãe</label>
 					<div class='input-group mb-2 mb-sm-0 text-danger' id='error-nome_mae'></div>
 				</div>
@@ -82,7 +120,7 @@
 		<div class="row">
 			<div class="col-lg-6">
 				<div class="form-group relative">
-					<input maxlength="100" id="nome_pai" spellcheck="false" name="nome_pai" value='<?php echo (!empty($obj['Nome_pai']) ? $obj['Nome_pai']:''); ?>' type="text" class="input-material">
+					<input maxlength="100" id="nome_pai" spellcheck="false" name="nome_pai" value='<?php echo (!empty($obj_aluno['Nome_pai']) ? $obj_aluno['Nome_pai']:''); ?>' type="text" class="input-material">
 					<label for="nome_pai" class="label-material">Nome do pai</label>
 					<div class='input-group mb-2 mb-sm-0 text-danger' id='error-nome_pai'></div>
 				</div>
@@ -106,9 +144,13 @@
 						<?php 
 							for($i = 0; $i < COUNT($cor); $i++)
 							{
+								$checked = '';
+								if($obj_aluno['Cor'] == $cor[$i])
+									$checked = 'checked';
+
 								echo"<div class='form-check form-check-inline checkbox checbox-switch switch-success custom-controls-stacked ml-4'>";
 									echo"<label class='form-check-label' id='cor$i'>";
-								    	echo"<input name='cor' id='cor$i' value='0' type='radio'/> <span></span>".$cor[$i];
+								    	echo"<input $checked name='cor' id='cor$i' value='".$cor[$i]."' type='radio'/> <span></span>".$cor[$i];
 									echo"</label>";
 								echo"</div>";
 							}
@@ -125,12 +167,12 @@
 						<legend>&nbsp;Portador de necessidades especiais</legend>
 						<div class='form-check form-check-inline checkbox checbox-switch switch-success custom-controls-stacked ml-4'>
 							<label class='form-check-label' id='necessidade_especial_sim'>
-						    	<input name='necessidade_especial' id='necessidade_especial_sim' value='0' type='radio'/> <span></span>Sim
+						    	<input name='necessidade_especial' <?php echo ($obj_aluno['Especial'] == 1 ? 'checked': ''); ?> id='necessidade_especial_sim' value='1' type='radio'/> <span></span>Sim
 							</label>
 						</div>
 						<div class='form-check form-check-inline checkbox checbox-switch switch-success custom-controls-stacked ml-4'>
 							<label class='form-check-label' id='necessidade_especial_nao'>
-						    	<input name='necessidade_especial' id='necessidade_especial_nao' value='0' type='radio'/> <span></span>Não
+						    	<input name='necessidade_especial' <?php echo ($obj_aluno['Especial'] == '0' ? 'checked': ''); ?> id='necessidade_especial_nao' value='0' type='radio'/> <span></span>Não
 							</label>
 						</div>
 						<div class='input-group mb-2 mb-sm-0 text-danger' id='error-necessidade_especial'></div>
@@ -140,8 +182,8 @@
 			<div class="col-lg-4">
 				<br />
 				<div class="form-group relative">
-					<input maxlength="100" id="Identificacao" spellcheck="false" name="Identificacao" value='<?php echo (!empty($obj['Identificacao']) ? $obj['Identificacao']:''); ?>' type="text" class="input-material">
-					<label for="Identificacao" class="label-material">Identificação</label>
+					<input maxlength="100" id="identificacao" spellcheck="false" name="identificacao" value='<?php echo (!empty($obj_aluno['Identificacao']) ? $obj_aluno['Identificacao']:''); ?>' type="text" class="input-material">
+					<label for="identificacao" class="label-material">Identificação</label>
 					<div class='input-group mb-2 mb-sm-0 text-danger' id='error-identificacao'></div>
 				</div>
 			</div>
@@ -161,9 +203,13 @@
 						<?php 
 							for($i = 0; $i < COUNT($sit); $i++)
 							{
+								$checked = '';
+								if($obj_aluno['Sit_ensino_medio'] == $sit[$i])
+									$checked = 'checked';
+
 								echo"<div class='form-check form-check-inline checkbox checbox-switch switch-success custom-controls-stacked ml-4'>";
 									echo"<label class='form-check-label' id='situacao_em$i'>";
-								    	echo"<input name='situacao_em' id='situacao_em$i' value='0' type='radio'/> <span></span>".$sit[$i];
+								    	echo"<input $checked name='situacao_em' id='situacao_em$i' value='".$sit[$i]."' type='radio'/> <span></span>".$sit[$i];
 									echo"</label>";
 								echo"</div>";
 							}
@@ -178,12 +224,12 @@
 						<legend>&nbsp;Escola</legend>
 						<div class='form-check form-check-inline checkbox checbox-switch switch-success custom-controls-stacked ml-4'>
 							<label class='form-check-label' id='escola_publica'>
-						    	<input name='escola' id='escola_publica' value='0' type='radio'/> <span></span>Pública
+						    	<input name='escola' <?php echo ($obj_aluno['Escola'] == 'Pública' ? 'checked': ''); ?> id='escola_publica' value='Pública' type='radio'/> <span></span>Pública
 							</label>
 						</div>
 						<div class='form-check form-check-inline checkbox checbox-switch switch-success custom-controls-stacked ml-4'>
 							<label class='form-check-label' id='escola_privada'>
-						    	<input name='escola' id='escola_privada' value='0' type='radio'/> <span></span>Privada
+						    	<input name='escola' <?php echo ($obj_aluno['Escola'] == 'Privada' ? 'checked': ''); ?> id='escola_privada' value='Privada' type='radio'/> <span></span>Privada
 							</label>
 						</div>
 						<div class='input-group mb-2 mb-sm-0 text-danger' id='error-escola'></div>
@@ -192,39 +238,30 @@
 			</div>
 		</div>
 		<div class="row">
-			<div class="col-lg-6">
-				<div class="form-group relative">
-					<input maxlength="100" id="simade" spellcheck="false" name="simade" value='<?php echo (!empty($obj['Simade']) ? $obj['Simade']:''); ?>' type="text" class="input-material">
-					<label for="simade" class="label-material">Simade</label>
-					<div class='input-group mb-2 mb-sm-0 text-danger' id='error-simade'></div>
-				</div>
-			</div>
-		</div>
-		<div class="row">
 			<div class="col-lg-3">
 				<div class="form-group relative">
-					<input maxlength="100" id="cpf" spellcheck="false" name="cpf" value='<?php echo (!empty($obj['Cpf']) ? $obj['Cpf']:''); ?>' type="text" class="input-material">
+					<input maxlength="15" id="cpf" spellcheck="false" name="cpf" value='<?php echo (!empty($obj_aluno['Cpf']) ? $obj_aluno['Cpf']:''); ?>' type="text" class="input-material">
 					<label for="cpf" class="label-material">CPF</label>
 					<div class='input-group mb-2 mb-sm-0 text-danger' id='error-cpf'></div>
 				</div>
 			</div>
 			<div class="col-lg-3">
 				<div class="form-group relative">
-					<input maxlength="100" id="rg" spellcheck="false" name="rg" value='<?php echo (!empty($obj['Rg']) ? $obj['Rg']:''); ?>' type="text" class="input-material">
+					<input maxlength="20" id="rg" spellcheck="false" name="rg" value='<?php echo (!empty($obj_aluno['Rg']) ? $obj_aluno['Rg']:''); ?>' type="text" class="input-material">
 					<label for="rg" class="label-material">RG</label>
 					<div class='input-group mb-2 mb-sm-0 text-danger' id='error-rg'></div>
 				</div>
 			</div>
 			<div class="col-lg-3">
 				<div class="form-group relative">
-					<input maxlength="100" id="orgao_expedidor" spellcheck="false" name="orgao_expedidor" value='<?php echo (!empty($obj['Orgao_expedidor']) ? $obj['Orgao_expedidor']:''); ?>' type="text" class="input-material">
+					<input maxlength="20" id="orgao_expedidor" spellcheck="false" name="orgao_expedidor" value='<?php echo (!empty($obj_aluno['Orgao_expedidor']) ? $obj_aluno['Orgao_expedidor']:''); ?>' type="text" class="input-material">
 					<label for="orgao_expedidor" class="label-material">Órgão expedidor</label>
 					<div class='input-group mb-2 mb-sm-0 text-danger' id='error-orgao_expedidor'></div>
 				</div>
 			</div>
 			<div class="col-lg-3">
 				<div class="form-group relative" id="data1">
-					<input maxlength="100" id="data_expedicao" spellcheck="false" name="data_expedicao" value='<?php echo (!empty($obj['Data_expedicao']) ? $obj['Data_expedicao']:''); ?>' type="text" class="input-material">
+					<input id="data_expedicao" spellcheck="false" name="data_expedicao" value='<?php echo (!empty($obj_aluno['Data_expedicao_pt'] && $obj_aluno['Data_expedicao_pt'] !='00/00/0000') ? $obj_aluno['Data_expedicao_pt']:''); ?>' type="text" class="input-material">
 					<label for="data_expedicao" class="label-material">Data da expedição</label>
 					<div class='input-group mb-2 mb-sm-0 text-danger' id='error-data_expedicao'></div>
 				</div>
@@ -233,21 +270,21 @@
 		<div class="row">
 			<div class="col-lg-3">
 				<div class="form-group relative">
-					<input maxlength="100" id="titulo_eleitor" spellcheck="false" name="titulo_eleitor" value='<?php echo (!empty($obj['Titulo_eleitor']) ? $obj['Titulo_eleitor']:''); ?>' type="text" class="input-material">
+					<input maxlength="15" id="titulo_eleitor" spellcheck="false" name="titulo_eleitor" value='<?php echo (!empty($obj_aluno['Titulo_eleitor']) ? $obj_aluno['Titulo_eleitor']:''); ?>' type="text" class="input-material">
 					<label for="titulo_eleitor" class="label-material">Título de eleitor</label>
 					<div class='input-group mb-2 mb-sm-0 text-danger' id='error-titulo_eleitor'></div>
 				</div>
 			</div>
 			<div class="col-lg-3">
 				<div class="form-group relative">
-					<input maxlength="100" id="zona_eleitoral" spellcheck="false" name="zona_eleitoral" value='<?php echo (!empty($obj['Zona_eleitoral']) ? $obj['Zona_eleitoral']:''); ?>' type="text" class="input-material">
+					<input maxlength="5" id="zona_eleitoral" spellcheck="false" name="zona_eleitoral" value='<?php echo (!empty($obj_aluno['Zona_eleitoral']) ? $obj_aluno['Zona_eleitoral']:''); ?>' type="text" class="input-material">
 					<label for="zona_eleitoral" class="label-material">Zona</label>
 					<div class='input-group mb-2 mb-sm-0 text-danger' id='error-zona_eleitoral'></div>
 				</div>
 			</div>
 			<div class="col-lg-3">
 				<div class="form-group relative">
-					<input maxlength="100" id="secao_eleitoral" spellcheck="false" name="secao_eleitoral" value='<?php echo (!empty($obj['Secao_eleitoral']) ? $obj['Secao_eleitoral']:''); ?>' type="text" class="input-material">
+					<input maxlength="5" id="secao_eleitoral" spellcheck="false" name="secao_eleitoral" value='<?php echo (!empty($obj_aluno['Secao_eleitoral']) ? $obj_aluno['Secao_eleitoral']:''); ?>' type="text" class="input-material">
 					<label for="secao_eleitoral" class="label-material">Seção</label>
 					<div class='input-group mb-2 mb-sm-0 text-danger' id='error-secao_eleitoral'></div>
 				</div>
@@ -256,7 +293,15 @@
 				<div class='form-group'>
 					<select name='uf_titulo' id='uf_titulo' class='form-control padding0'>
 						<option value='0' class='background_dark'>UF</option>
-						<option class='background_dark' value='MG'>MG</option>
+						<?php 
+							for($i = 0; $i < COUNT($uf); $i++)
+							{
+								$selected = '';
+								if($obj_aluno['Uf_titulo'] == $uf[$i])
+									$selected = 'selected';
+								echo"<option $selected class='background_dark' value='".$uf[$i]."'>".$uf[$i]."</option>";
+							}
+						?>
 					</select>
 					<div class='input-group mb-2 mb-sm-0 text-danger' id='error-uf_titulo'></div>
 				</div>
@@ -267,14 +312,14 @@
 			<div class="row">
 				<div class="col-lg-8">
 					<div class="form-group relative">
-						<input maxlength="100" id="rua" spellcheck="false" name="rua" value='<?php echo (!empty($obj['Rua']) ? $obj['Rua']:''); ?>' type="text" class="input-material">
+						<input maxlength="100" id="rua" spellcheck="false" name="rua" value='<?php echo (!empty($Endereco[0]['Rua']) ? $Endereco[0]['Rua']:''); ?>' type="text" class="input-material">
 						<label for="rua" class="label-material">Rua</label>
 						<div class='input-group mb-2 mb-sm-0 text-danger' id='error-rua'></div>
 					</div>
 				</div>
 				<div class="col-lg-4">
 					<div class="form-group relative">
-						<input maxlength="100" id="bairro" spellcheck="false" name="bairro" value='<?php echo (!empty($obj['Bairro']) ? $obj['Bairro']:''); ?>' type="text" class="input-material">
+						<input maxlength="40" id="bairro" spellcheck="false" name="bairro" value='<?php echo (!empty($Endereco[0]['Bairro']) ? $Endereco[0]['Bairro']:''); ?>' type="text" class="input-material">
 						<label for="bairro" class="label-material">Bairro</label>
 						<div class='input-group mb-2 mb-sm-0 text-danger' id='error-bairro'></div>
 					</div>
@@ -287,12 +332,12 @@
 							<legend>&nbsp;Zona</legend>
 							<div class='form-check form-check-inline checkbox checbox-switch switch-success custom-controls-stacked ml-4'>
 								<label class='form-check-label' id='zona_urbana'>
-							    	<input name='zona' id='zona_urbana' value='0' type='radio'/> <span></span>Urbana
+							    	<input name='zona' <?php echo ($Endereco[0]['Zona'] == 'Urbana' ? 'checked': ''); ?> id='zona_urbana' value='Urbana' type='radio'/> <span></span>Urbana
 								</label>
 							</div>
 							<div class='form-check form-check-inline checkbox checbox-switch switch-success custom-controls-stacked ml-4'>
 								<label class='form-check-label' id='zona_rural'>
-							    	<input name='zona' id='zona_rural' value='0' type='radio'/> <span></span>Rural
+							    	<input name='zona' <?php echo ($Endereco[0]['Zona'] == 'Rural' ? 'checked': ''); ?> id='zona_rural' value='Rural' type='radio'/> <span></span>Rural
 								</label>
 							</div>
 							<div class='input-group mb-2 mb-sm-0 text-danger' id='error-zona'></div>
@@ -305,12 +350,12 @@
 							<legend>&nbsp;Transporte público</legend>
 							<div class='form-check form-check-inline checkbox checbox-switch switch-success custom-controls-stacked ml-4'>
 								<label class='form-check-label' id='transp_publico_sim'>
-							    	<input name='transp_publico' id='transp_publico_sim' value='0' type='radio'/> <span></span>Sim
+							    	<input name='transp_publico' <?php echo ($Endereco[0]['Transp_publico'] == 1 ? 'checked': ''); ?> id='transp_publico_sim' value='1' type='radio'/> <span></span>Sim
 								</label>
 							</div>
 							<div class='form-check form-check-inline checkbox checbox-switch switch-success custom-controls-stacked ml-4'>
 								<label class='form-check-label' id='transp_publico_nao'>
-							    	<input name='transp_publico' id='transp_publico_nao' value='0' type='radio'/> <span></span>Não
+							    	<input name='transp_publico' <?php echo ($Endereco[0]['Transp_publico'] == '0' ? 'checked': ''); ?> id='transp_publico_nao' value='0' type='radio'/> <span></span>Não
 								</label>
 							</div>
 							<div class='input-group mb-2 mb-sm-0 text-danger' id='error-transp_publico'></div>
@@ -320,7 +365,7 @@
 				<div class="col-lg-4">
 					<br />
 					<div class="form-group relative">
-						<input maxlength="100" id="municipio" spellcheck="false" name="municipio" value='<?php echo (!empty($obj['Municipio']) ? $obj['Municipio']:''); ?>' type="text" class="input-material">
+						<input maxlength="50" id="municipio" spellcheck="false" name="municipio" value='<?php echo (!empty($Endereco[0]['Municipio']) ? $Endereco[0]['Municipio']:''); ?>' type="text" class="input-material">
 						<label for="municipio" class="label-material">Município</label>
 						<div class='input-group mb-2 mb-sm-0 text-danger' id='error-municipio'></div>
 					</div>
@@ -331,90 +376,43 @@
 					<div class='form-group'>
 						<select name='uf_endereco' id='uf_endereco' class='form-control padding0'>
 							<option value='0' class='background_dark'>UF</option>
-							<option class='background_dark' value='MG'>MG</option>
+							<?php 
+								for($i = 0; $i < COUNT($uf); $i++)
+								{
+									$selected = '';
+									if($Endereco[0]['Uf'] == $uf[$i])
+										$selected = 'selected';
+									echo"<option $selected class='background_dark' value='".$uf[$i]."'>".$uf[$i]."</option>";
+								}
+							?>
 						</select>
-						<div class='input-group mb-2 mb-sm-0 text-danger' id='error-uf_endereco'></div>
+						<div class='input-group mb-2 mb-sm-0 text-danger' id='error-uf_Endereco[0]'></div>
 					</div>
 				</div>
 				<div class="col-lg-3">
 					<div class="form-group relative">
-						<input maxlength="100" id="cep" spellcheck="false" name="cep" value='<?php echo (!empty($obj['Cep']) ? $obj['Cep']:''); ?>' type="text" class="input-material">
+						<input maxlength="15" id="cep" spellcheck="false" name="cep" value='<?php echo (!empty($Endereco[0]['Cep']) ? $Endereco[0]['Cep']:''); ?>' type="text" class="input-material">
 						<label for="cep" class="label-material">CEP</label>
 						<div class='input-group mb-2 mb-sm-0 text-danger' id='error-cep'></div>
 					</div>
 				</div>
 				<div class="col-lg-3">
 					<div class="form-group relative">
-						<input maxlength="100" id="telefone_aluno" spellcheck="false" name="telefone_aluno" value='<?php echo (!empty($obj['Telefone_aluno']) ? $obj['Telefone_aluno']:''); ?>' type="text" class="input-material">
+						<input maxlength="15" id="telefone_aluno" spellcheck="false" name="telefone_aluno" value='<?php echo (!empty($Endereco[0]['Telefone_aluno']) ? $Endereco[0]['Telefone_aluno']:''); ?>' type="text" class="input-material">
 						<label for="telefone_aluno" class="label-material">Telefone do aluno</label>
 						<div class='input-group mb-2 mb-sm-0 text-danger' id='error-telefone_aluno'></div>
 					</div>
 				</div>
 				<div class="col-lg-3">
 					<div class="form-group relative">
-						<input maxlength="100" id="telefone_responsavel" spellcheck="false" name="telefone_responsavel" value='<?php echo (!empty($obj['Telefone_responsavel']) ? $obj['Telefone_responsavel']:''); ?>' type="text" class="input-material">
+						<input maxlength="15" id="telefone_responsavel" spellcheck="false" name="telefone_responsavel" value='<?php echo (!empty($Endereco[0]['Telefone_responsavel']) ? $Endereco[0]['Telefone_responsavel']:''); ?>' type="text" class="input-material">
 						<label for="telefone_responsavel" class="label-material">Telefone do responsável</label>
 						<div class='input-group mb-2 mb-sm-0 text-danger' id='error-telefone_responsavel'></div>
 					</div>
 				</div>
 			</div>
 		</fieldset>
-		<fieldset class="my-3">
-			<legend>&nbsp;Documentos do aluno</legend>
-			<div class="row">
-				<div class="col-lg-6">
-					<?php
-						$d = (int)(COUNT($lista_documentos_aluno) / 2);
 
-						for($i = 0; $i < (COUNT($lista_documentos_aluno) - $d); $i++)
-						{
-							echo"<div class='checkbox checbox-switch switch-success custom-controls-stacked'>";
-								echo "<label for='documento_aluno$i'>";
-									echo "<input type='checkbox' id='documento_aluno$i' name='documento_aluno$i' value='1' /><span></span>";
-										echo $lista_documentos_aluno[$i]['Nome_doc'];
-								echo "</label>";
-							echo"</div>";
-
-						}
-					?>
-				</div>
-				<div class="col-lg-6">
-					<?php
-						$d = (int)(COUNT($lista_documentos_aluno) / 2);
-
-						for($i = (COUNT($lista_documentos_aluno) - $d); $i < COUNT($lista_documentos_aluno); $i++)
-						{
-							echo"<div class='checkbox checbox-switch switch-success custom-controls-stacked'>";
-								echo "<label for='documento_aluno$i'>";
-									echo "<input type='checkbox' id='documento_aluno$i' name='documento_aluno$i' value='1' /><span></span>";
-										echo $lista_documentos_aluno[$i]['Nome_doc'];
-								echo "</label>";
-							echo"</div>";
-
-						}
-					?>
-				</div>
-			</div>
-		</fieldset>
-		<fieldset class="my-3">
-			<legend>&nbsp;Documentos do responsável</legend>
-			<div class="row">
-				<div class="col-lg-6">
-					<?php
-						for($i = 0; $i < COUNT($lista_documentos_responsavel); $i++)
-						{
-							echo"<div class='checkbox checbox-switch switch-success custom-controls-stacked'>";
-								echo "<label for='documento_responsavel$i'>";
-									echo "<input type='checkbox' id='documento_responsavel$i' name='documento_responsavel$i' value='1' /><span></span>";
-										echo $lista_documentos_responsavel[$i]['Nome_doc'];
-								echo "</label>";
-							echo"</div>";
-
-						}
-					?>
-				</div>
-			</div>
-		</fieldset>
 
 
 

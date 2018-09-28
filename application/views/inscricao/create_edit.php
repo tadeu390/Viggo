@@ -91,6 +91,64 @@
 				</div>
 			</div>
 		</div>
+
+		<fieldset class="my-3">
+			<legend>&nbsp;Documentos do aluno</legend>
+			<div class="row">
+				<div class="col-lg-6">
+					<?php
+						$d = (int)(COUNT($lista_documentos_aluno) / 2);
+
+						for($i = 0; $i < (COUNT($lista_documentos_aluno) - $d); $i++)
+						{
+							echo"<div class='checkbox checbox-switch switch-success custom-controls-stacked'>";
+								echo "<label for='documento_aluno$i'>";
+									echo "<input type='checkbox' id='documento_aluno$i' name='documento_aluno[]' value='".$lista_documentos_aluno[$i]['Doc_id']."' /><span></span>";
+										echo $lista_documentos_aluno[$i]['Nome_doc'];
+								echo "</label>";
+							echo"</div>";
+
+						}
+					?>
+				</div>
+				<div class="col-lg-6">
+					<?php
+						$d = (int)(COUNT($lista_documentos_aluno) / 2);
+
+						for($i = (COUNT($lista_documentos_aluno) - $d); $i < COUNT($lista_documentos_aluno); $i++)
+						{
+							echo"<div class='checkbox checbox-switch switch-success custom-controls-stacked'>";
+								echo "<label for='documento_aluno$i'>";
+									echo "<input type='checkbox' id='documento_aluno$i' name='documento_aluno[]' value='".$lista_documentos_aluno[$i]['Doc_id']."' /><span></span>";
+										echo $lista_documentos_aluno[$i]['Nome_doc'];
+								echo "</label>";
+							echo"</div>";
+
+						}
+					?>
+				</div>
+			</div>
+		</fieldset>
+		<fieldset class="my-3">
+			<legend>&nbsp;Documentos do responsável</legend>
+			<div class="row">
+				<div class="col-lg-6">
+					<?php
+						for($i = 0; $i < COUNT($lista_documentos_responsavel); $i++)
+						{
+							echo"<div class='checkbox checbox-switch switch-success custom-controls-stacked'>";
+								echo "<label for='documento_responsavel$i'>";
+									echo "<input type='checkbox' id='documento_responsavel$i' name='documento_responsavel$i' value='1' /><span></span>";
+										echo $lista_documentos_responsavel[$i]['Nome_doc'];
+								echo "</label>";
+							echo"</div>";
+
+						}
+					?>
+				</div>
+			</div>
+		</fieldset>
+
 		<div class='form-group'>
 			<div class='checkbox checbox-switch switch-success custom-controls-stacked'>
 				<?php

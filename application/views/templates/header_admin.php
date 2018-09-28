@@ -33,7 +33,7 @@
 				float: none; 
 				margin-bottom: 10px; 
 			}
-			tr:hover 
+			.table tbody tr:hover 
 			{
 				background-color: #EDC127 !important;
 			}
