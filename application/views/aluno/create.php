@@ -412,24 +412,15 @@
 				</div>
 			</div>
 		</fieldset>
-
-
-
-
-
-
-
-
-
 		<BR />
 		<div class="row">
 			<div class="col-lg-4">
 				<div class='form-group'>
 					<div class='checkbox checbox-switch switch-success custom-controls-stacked'>
 						<?php
-							$checked = "";
-							if($obj['Ativo'] == 1)
-								$checked = "checked";
+							$checked = "checked";
+							if($obj['Ativo'] == 0 && !empty($obj['Id']))
+								$checked = "";
 							
 							echo"<label for='conta_ativa' class=''>";
 								echo "<input type='checkbox' $checked id='conta_ativa' name='conta_ativa' value='1' /><span></span> Conta ativa";
@@ -474,4 +465,4 @@
 		?>
 		</form>
 	</div>
-</div> 
+</div>

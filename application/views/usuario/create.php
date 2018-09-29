@@ -24,7 +24,7 @@
 		<div class="row"><!--ABRE A ROW QUE FECHA O CREATE_EDIT DE USUARIO-->
 			<div class="col-lg-6">
 				<div class='form-group'>
-						<div style="color: #8a8d93;">Tipo de usuário</div>
+						<!--<div style="color: #8a8d93;">Tipo de usuário</div>-->
 							<?php
 								if(empty($obj['Id']))
 									$method = "\"create\"";
@@ -37,7 +37,7 @@
 									$id = 0;
 
 								echo"<select name='grupo_id' id='grupo_id' class='form-control padding0' onchange='Main.altera_tipo_cadastro_usuario(this.value,$id,$method)'>";
-								echo"<option value='0' class='background_dark'>Selecione</option>";
+								echo"<option value='0' class='background_dark'>Selecione um tipo de usuário</option>";
 							
 								for($i = 0; $i < count($grupos_usuario); $i++)
 								{
@@ -61,9 +61,9 @@
 				<div class='form-group'>
 					<div class='checkbox checbox-switch switch-success custom-controls-stacked'>
 						<?php
-							$checked = "";
-							if($obj['Ativo'] == 1)
-								$checked = "checked";
+							$checked = "checked";
+							if($obj['Ativo'] == 0)
+								$checked = "";
 							
 							echo"<label for='conta_ativa' class=''>";
 								echo "<input type='checkbox' $checked id='conta_ativa' name='conta_ativa' value='1' /><span></span> Conta ativa";

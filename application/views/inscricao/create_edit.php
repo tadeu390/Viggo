@@ -101,9 +101,18 @@
 
 						for($i = 0; $i < (COUNT($lista_documentos_aluno) - $d); $i++)
 						{
+							$checked = '';
+							for($j = 0; $j < COUNT($lista_doc_inscricao); $j++)
+							{
+								if($lista_documentos_aluno[$i]['Doc_id'] == $lista_doc_inscricao[$j]['Doc_id'])
+								{
+									$checked = 'checked';
+									break;
+								}
+							}
 							echo"<div class='checkbox checbox-switch switch-success custom-controls-stacked'>";
 								echo "<label for='documento_aluno$i'>";
-									echo "<input type='checkbox' id='documento_aluno$i' name='documento_aluno[]' value='".$lista_documentos_aluno[$i]['Doc_id']."' /><span></span>";
+									echo "<input type='checkbox' $checked id='documento_aluno$i' name='documento[]' value='".$lista_documentos_aluno[$i]['Doc_id']."' /><span></span>";
 										echo $lista_documentos_aluno[$i]['Nome_doc'];
 								echo "</label>";
 							echo"</div>";
@@ -116,10 +125,19 @@
 						$d = (int)(COUNT($lista_documentos_aluno) / 2);
 
 						for($i = (COUNT($lista_documentos_aluno) - $d); $i < COUNT($lista_documentos_aluno); $i++)
-						{
+						{	
+							$checked = '';
+							for($j = 0; $j < COUNT($lista_doc_inscricao); $j++)
+							{
+								if($lista_documentos_aluno[$i]['Doc_id'] == $lista_doc_inscricao[$j]['Doc_id'])
+								{
+									$checked = 'checked';
+									break;
+								}
+							}
 							echo"<div class='checkbox checbox-switch switch-success custom-controls-stacked'>";
 								echo "<label for='documento_aluno$i'>";
-									echo "<input type='checkbox' id='documento_aluno$i' name='documento_aluno[]' value='".$lista_documentos_aluno[$i]['Doc_id']."' /><span></span>";
+									echo "<input $checked type='checkbox' id='documento_aluno$i' name='documento[]' value='".$lista_documentos_aluno[$i]['Doc_id']."' /><span></span>";
 										echo $lista_documentos_aluno[$i]['Nome_doc'];
 								echo "</label>";
 							echo"</div>";
@@ -136,13 +154,58 @@
 					<?php
 						for($i = 0; $i < COUNT($lista_documentos_responsavel); $i++)
 						{
-							echo"<div class='checkbox checbox-switch switch-success custom-controls-stacked'>";
-								echo "<label for='documento_responsavel$i'>";
-									echo "<input type='checkbox' id='documento_responsavel$i' name='documento_responsavel$i' value='1' /><span></span>";
-										echo $lista_documentos_responsavel[$i]['Nome_doc'];
-								echo "</label>";
+							$nome_doc_outros = "";
+							$checked = '';
+							for($j = 0; $j < COUNT($lista_doc_inscricao); $j++)
+							{
+								if($lista_documentos_responsavel[$i]['Doc_id'] == $lista_doc_inscricao[$j]['Doc_id'])
+								{
+									$checked = 'checked';
+									if($lista_documentos_responsavel[$i]['Nome_doc'] == 'RG Outros')
+										$nome_doc_outros = $lista_doc_inscricao[$j]['Outros'];
+									else if($lista_documentos_responsavel[$i]['Nome_doc'] == 'CPF Outros')
+										$nome_doc_outros = $lista_doc_inscricao[$j]['Outros'];
+									break;
+								}
+							}
+							echo"<div class='row'>";
+								echo"<div class='col-lg-6'>";
+									echo"<div class='checkbox checbox-switch switch-success custom-controls-stacked'>";
+										echo "<label for='documento_responsavel$i'>";
+											if($lista_documentos_responsavel[$i]['Nome_doc'] == 'RG Outros')
+												echo "<input onchange='Main.estado_campo(\"rg_outro\");' $checked type='checkbox' id='documento_responsavel$i' name='documento[]' value='".$lista_documentos_responsavel[$i]['Doc_id']."' /><span></span>";
+											else if($lista_documentos_responsavel[$i]['Nome_doc'] == 'CPF Outros')
+												echo "<input onchange='Main.estado_campo(\"cpf_outro\");' $checked type='checkbox' id='documento_responsavel$i' name='documento[]' value='".$lista_documentos_responsavel[$i]['Doc_id']."' /><span></span>";
+											else 
+												echo "<input $checked type='checkbox' id='documento_responsavel$i' name='documento[]' value='".$lista_documentos_responsavel[$i]['Doc_id']."' /><span></span>";
+												echo $lista_documentos_responsavel[$i]['Nome_doc'];
+										echo "</label>";
+									echo"</div>";
+								echo"</div>";
+								echo"<div class='col-lg-6 text-left'>";
+									$disabled = 'disabled';
+									if($lista_documentos_responsavel[$i]['Nome_doc'] == 'RG Outros')
+									{
+										if($checked == 'checked')
+											$disabled = '';
+										echo"<div class='form-group relative' style='margin-bottom: 0px;'>";
+											echo"<input placeholder='Especifique' $disabled maxlength='15' id='rg_outro' spellcheck='false' name='rg_outro' value='".$nome_doc_outros."' type='text' class='input-material'>";
+											//echo"<label for='rg_outro' class='label-material'>Especifique</label>";
+											echo"<div class='input-group mb-2 mb-sm-0 text-danger' id='error-rg_outro'></div>";
+										echo"</div>";
+									}
+									else if($lista_documentos_responsavel[$i]['Nome_doc'] == 'CPF Outros')
+									{
+										if($checked == 'checked')
+											$disabled = '';
+										echo"<div class='form-group relative' style='margin-bottom: 0px;'>";
+											echo"<input placeholder='Especifique' $disabled maxlength='15' id='cpf_outro' spellcheck='false' name='cpf_outro' value='".$nome_doc_outros."' type='text' class='input-material'>";
+											//echo"<label for='cpf_outro' class='label-material'>Especifique</label>";
+											echo"<div class='input-group mb-2 mb-sm-0 text-danger' id='error-cpf_outro'></div>";
+										echo"</div>";
+									}
+								echo"</div>";
 							echo"</div>";
-
 						}
 					?>
 				</div>

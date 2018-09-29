@@ -18,6 +18,7 @@
 			$this->load->model('Aluno_model');
 			$this->load->model('Renovacao_matricula_model');
 			$this->load->model('Doc_model');
+			$this->load->model('Doc_inscricao_model');
 			$this->set_menu();
 			$this->data['controller'] = strtolower(get_class($this));
 			$this->data['menu_selectd'] = $this->Geral_model->get_identificador_menu(strtolower(get_class($this)));
@@ -95,8 +96,9 @@
 				$this->data['lista_cursos'] = $this->Curso_model->get_curso(FALSE, FALSE, FALSE);
 				$this->data['lista_modalidades'] = $this->Modalidade_model->get_modalidade(FALSE, FALSE, FALSE);
 				$this->data['lista_documentos_aluno'] = $this->Doc_model->get_doc(FALSE, FALSE, DOC_ALUNO);
+				$this->data['lista_doc_inscricao'] = $this->Doc_inscricao_model->get_doc_inscricao($this->data['obj']['Id']);
 				$this->data['lista_documentos_responsavel'] = $this->Doc_model->get_doc(FALSE, FALSE, DOC_RESPONSAVEL);
-
+				
 				$this->view("inscricao/create_edit", $this->data);
 			}
 			else
@@ -116,6 +118,7 @@
 				$this->data['lista_cursos'] = $this->Curso_model->get_curso(TRUE, FALSE, FALSE);
 				$this->data['lista_modalidades'] = $this->Modalidade_model->get_modalidade(TRUE, FALSE, FALSE);
 				$this->data['lista_documentos_aluno'] = $this->Doc_model->get_doc(FALSE, FALSE, DOC_ALUNO);
+				$this->data['lista_doc_inscricao'] = $this->Doc_inscricao_model->get_doc_inscricao($this->data['obj']['Id']);
 				$this->data['lista_documentos_responsavel'] = $this->Doc_model->get_doc(FALSE, FALSE, DOC_RESPONSAVEL);
 				$this->data['lista_alunos'] = $this->Aluno_model->get_aluno(FALSE);
 				$this->view("inscricao/create_edit", $this->data);
@@ -191,11 +194,15 @@
 				 				$this->Renovacao_matricula_model->delete_matricula($dataToSave['Id']);
 				 		}
 
-				 		$documentos_aluno = $this->input->post('documento_aluno');
+				 		$documentos_aluno = $this->input->post('documento');
+				 		$doc_outros = array(
+				 			'Rg_outro' => $this->input->post('rg_outro'),
+				 			'Cpf_outro' => $this->input->post('cpf_outro')
+				 		);
 				 		if(COUNT($documentos_aluno) > 0)
-				 			$this->Inscricao_model->set_doc_inscricao($documentos_aluno, $resultado);
+				 			$this->Doc_inscricao_model->set_doc_inscricao($documentos_aluno, $doc_outros, $resultado);
 				 		else
-				 			$this->Inscricao_model->delete_doc_inscricao($resultado);
+				 			$this->Doc_inscricao_model->delete_doc_inscricao($resultado);
 				 		$resultado = "sucesso";
 				 	}
 				}

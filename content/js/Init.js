@@ -50,6 +50,14 @@ $(document).ready(
 
     //TURMAS
 
+    $('#cpf_outro').blur(function() {
+      if (this.value != '') Main.show_error("cpf_outro", '', 'is-valid');
+    });
+
+    $('#rg_outro').blur(function() {
+      if (this.value != '') Main.show_error("rg_outro", '', 'is-valid');
+    });
+
     //REGRAS LETIVAS
     $('#modalidade_id').change(function() {
       if (this.value != '0') Main.show_error("modalidade_id", '', '');
@@ -242,7 +250,7 @@ $(document).ready(
 
     $("#form_cadastro_horario").submit(function(event) {
       event.preventDefault();
-      Main.inscricao_validar();
+      Main.create_edit();
     });
 
     $("#form_cadastro_inscricao").submit(function(event) {

@@ -572,6 +572,10 @@ var Main = {
 			Main.show_error("curso_id", 'Selecione um curso.', '');
 		else if($("#modalidade_id").val() == "0")
 			Main.show_error("modalidade_id", 'Selecione uma modalidade.', '');
+		else if($("#documento_responsavel3").is(":checked") == true && $("#rg_outro").val() == "")
+			Main.show_error("rg_outro", 'Obrigatório', '');
+		else if($("#documento_responsavel4").is(":checked") == true && $("#cpf_outro").val() == "")
+			Main.show_error("cpf_outro", 'Obrigatório', '');
 		else
 			Main.create_edit();
 	},
@@ -1847,6 +1851,12 @@ var Main = {
 		    	Main.modal("aviso", "Houve um erro ao processar sua requisição. Verifique sua conexão com a internet.");
 			},500);
 		});
+	},
+	estado_campo : function (id)
+	{
+		if(document.getElementById(id).disabled == true)
+			document.getElementById(id).disabled = false;
+		else 
+			document.getElementById(id).disabled = true;
 	}
-
 };

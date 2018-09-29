@@ -19,7 +19,7 @@
 			if($id === FALSE)
 			{
 				$query =  $this->db->query("
-					SELECT a.Id, u.Nome as Nome_aluno, CONCAT(a.Cpf,' - ', u.Nome) as Nome_ra, a.Usuario_id  
+					SELECT a.Id, u.Nome as Nome_aluno, CONCAT(u.Nome,' - ', a.Cpf) as Nome_ra, a.Usuario_id  
 						FROM Aluno a 
 						INNER JOIN Usuario u ON a.Usuario_id = u.Id 
 					WHERE u.Ativo = 1 ORDER BY u.Nome ASC");
