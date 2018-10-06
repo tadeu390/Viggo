@@ -52,7 +52,7 @@
 						</div>
 
 						<div class='form-group'>
-							<div class='checkbox checbox-switch switch-success custom-controls-stacked' onclick="Main.oculta_limite_falta(this.value)">
+							<div class='checkbox checbox-switch switch-success custom-controls-stacked'>
 								<?php
 								$checked = "";
 								if ($obj['Avaliar_faltas'] == 1)
@@ -65,20 +65,11 @@
 								?>
 							</div>
 						</div>
-
-						<?php if($obj['Avaliar_faltas'] == 0 || $obj['Avaliar_faltas'] == NULL):?>	
-							<div class="form-group relative">
-								<input id="limite_falta" name="limite_falta" value='<?php echo (!empty($obj['Limite_falta']) ? $obj['Limite_falta']:''); ?>' type="text" class="input-material">
-								<label for="limite_falta" class="label-material">Limite de falta (%)</label>
-								<div class='input-group mb-2 mb-sm-0 text-danger' id='error-limite_falta'></div>
-							</div>
-						<?php else: ?>	
-							<div class="form-group relative">
-								<input id="limite_falta" name="limite_falta" disabled value='<?php echo (!empty($obj['Limite_falta']) ? $obj['Limite_falta']:''); ?>' type="text" class="input-material">
-								<label for="limite_falta" class="label-material">Limite de falta (%)</label>
-								<div class='input-group mb-2 mb-sm-0 text-danger' id='error-limite_falta'></div>
-							</div>
-						<?php endif; ?>	
+						<div class="form-group relative">
+							<input id="limite_falta" name="limite_falta" value='<?php echo (!empty($obj['Limite_falta']) ? $obj['Limite_falta']:''); ?>' type="text" class="input-material">
+							<label for="limite_falta" class="label-material">Limite de falta (%)</label>
+							<div class='input-group mb-2 mb-sm-0 text-danger' id='error-limite_falta'></div>
+						</div>
 
 						<div class="form-group relative">
 							<input id="dias_letivos" name="dias_letivos" value='<?php echo (!empty($obj['Dias_letivos']) ? $obj['Dias_letivos']:''); ?>' type="text" class="input-material">

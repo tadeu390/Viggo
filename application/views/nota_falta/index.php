@@ -47,7 +47,7 @@
 								echo "<td>".$lista_turmas[$i]['Nome_turma']."</td>";
 								echo "<td $cor>".(($lista_turmas[$i]['Ativo_turma'] == 1) ? 'Sim' : 'Não')."</td>";
 								echo "<td class='text-right'>";
-								echo "<a href='".$url."$controller/turma/".$lista_turmas[$i]['Id']."/0' title='Inserir Notas/Faltas' style='cursor: pointer;' class='glyphicon glyphicon-arrow-right text-danger'></a>";
+								echo "<a href='".$url."$controller/notas/"."0/".$lista_turmas[$i]['Id']."/0"."' title='Inserir Notas/Faltas' style='cursor: pointer;' class='glyphicon glyphicon-arrow-right text-danger'></a>";
 								echo "</td>";
 							echo "</tr>";
 						}

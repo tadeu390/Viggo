@@ -15,20 +15,22 @@
 	<br />
 
 	<table class="table table-bordered table-sm text-white" >
-	<tr>	
-		<td style="width: 50%; padding: 10px; vertical-align: middle;">Aluno</td>
-		<?php
-			for($j = 0; $j < COUNT($lista_horarios); $j++)
-			{
-				echo "<td title='".$lista_horarios[$j]['Horario']."' class='text-center' style='width: 10%; vertical-align: middle;'> Aula "; 
-					echo $lista_horarios[$j]['Aula'];
-					echo "<input type='hidden' id='horario_id$j' name='horario_id$j' value=".$lista_horarios[$j]['Horario_id']." />";
-					echo "<input type='hidden' id='disc_hor_id$j' name='disc_hor_id$j' value=".$lista_horarios[$j]['Disc_hor_id']." />";
-				echo "</td>";
-			}
-		?>
-		<td style="width: 30%; vertical-align: middle;">Justificativa</td>
-	</tr>
+	<thead>
+		<tr>
+			<td style="width: 50%; padding: 10px; vertical-align: middle;">Aluno</td>
+			<?php
+				for($j = 0; $j < COUNT($lista_horarios); $j++)
+				{
+					echo "<td title='".$lista_horarios[$j]['Horario']."' class='text-center' style='width: 10%; vertical-align: middle;'> Aula "; 
+						echo $lista_horarios[$j]['Aula'];
+						echo "<input type='hidden' id='horario_id$j' name='horario_id$j' value=".$lista_horarios[$j]['Horario_id']." />";
+						echo "<input type='hidden' id='disc_hor_id$j' name='disc_hor_id$j' value=".$lista_horarios[$j]['Disc_hor_id']." />";
+					echo "</td>";
+				}
+			?>
+			<td style="width: 30%; vertical-align: middle;">Justificativa</td>
+		</tr>
+	</thead>
 		<?php
 			for($i=0; $i < COUNT($lista_alunos); $i++)
 			{//echo $lista_alunos[$i]['Sub_turma'];

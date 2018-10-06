@@ -86,17 +86,17 @@
 								echo "<td $cor style='vertical-align:middle'>".$lista_matriculas[$i]['Nome_modalidade']."</td>";
 								echo "<td class='text-center' id='tdbt".$lista_matriculas[$i]['Id']."'>";
 									if($lista_matriculas[$i]['Status'] == 'matricular')
-										echo"<button id='bt".$lista_matriculas[$i]['Id']."' onclick='Main.matricula(\"".$lista_matriculas[$i]['Id']."\");' class='btn btn-success btn-block text-white'><span class='glyphicon glyphicon-plus-sign text-warning'></span> Matricular</button>";
+										echo"<button style='line-height: 0px;' id='bt".$lista_matriculas[$i]['Id']."' onclick='Main.matricula(\"".$lista_matriculas[$i]['Id']."\");' class='btn btn-success btn-block text-white'><span class='glyphicon glyphicon-plus-sign text-warning'></span> Matricular</button>";
 									else if ($lista_matriculas[$i]['Status'] == 'renovar')
-										echo"<button id='bt".$lista_matriculas[$i]['Id']."' onclick='Main.matricula(\"".$lista_matriculas[$i]['Id']."\");' class='btn btn-info btn-block text-white '><span class='glyphicon glyphicon-warning-sign text-warning'></span> Renovar</button>";
+										echo"<button style='line-height: 0px;' id='bt".$lista_matriculas[$i]['Id']."' onclick='Main.matricula(\"".$lista_matriculas[$i]['Id']."\");' class='btn btn-info btn-block text-white '><span class='glyphicon glyphicon-warning-sign text-warning'></span> Renovar</button>";
 									else
 										echo "<span class='glyphicon glyphicon-ok'></span> Matriculado";
 								echo "</td>";
 								echo "<td class='text-right' style='vertical-align:middle'>";
-								if(permissao::get_permissao(UPDATE, $controller) && $lista_matriculas[$i]['Editar_apagar'] == 'editar_apagar')
-									echo "<a href='".$url."$controller/edit/".$lista_matriculas[$i]['Id']."' title='Editar' style='cursor: pointer;' class='glyphicon glyphicon-edit  text-danger'></a> | ";
+								if(permissao::get_permissao(UPDATE, $controller) /*&& $lista_matriculas[$i]['Editar_apagar'] == 'editar_apagar'*/)
+									echo "<a href='".$url."$controller/edit/".$lista_matriculas[$i]['Id']."' title='Editar' style='cursor: pointer;' class='glyphicon glyphicon-edit  text-danger'></a>";
 								if(permissao::get_permissao(DELETE, $controller) && $lista_matriculas[$i]['Editar_apagar'] == 'editar_apagar')
-									echo "<span onclick='Main.confirm_delete(\"". $lista_matriculas[$i]['Id'] ."\");' id='sp_lead_trash' name='sp_lead_trash' title='Cancelar matrícula/inscrição' style='cursor: pointer;' class='glyphicon glyphicon-trash text-danger'></span>";
+									echo " | <span onclick='Main.confirm_delete(\"". $lista_matriculas[$i]['Id'] ."\");' id='sp_lead_trash' name='sp_lead_trash' title='Cancelar matrícula/inscrição' style='cursor: pointer;' class='glyphicon glyphicon-trash text-danger'></span>";
 								echo "</td>";
 							echo "</tr>";
 						}

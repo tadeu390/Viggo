@@ -1,13 +1,7 @@
 <?php $this->load->helper("mstring");?>
 <?php $this->load->helper("notas");?>
 <?php $this->load->helper("faltas");?>
-<style type="text/css">
-	tr:hover 
-	{
-		background-color: #EDC127 !important;
-		color: white !important;
-	}
-</style>
+
 <table class="table table-bordered">
 	<thead>
 		<tr>

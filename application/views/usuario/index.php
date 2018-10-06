@@ -65,13 +65,13 @@
 						{
 							$cor = "";
 							if($usuarios[$i]['Ativo'] == 0)
-								$cor = "class='color-danger'";
-							echo "<tr>";
-								echo "<td $cor>".($i + 1)."</td>";
-								echo "<td $cor><span title='".$usuarios[$i]['Nome_usuario']."'>".
+								$cor = "class='text-danger'";
+							echo "<tr $cor>";
+								echo "<td>".($i + 1)."</td>";
+								echo "<td><span title='".$usuarios[$i]['Nome_usuario']."'>".
 								mstring::corta_string($usuarios[$i]['Nome_usuario'], 25)
 								."</span></td>";
-								echo "<td $cor>".(($usuarios[$i]['Ativo'] == 1) ? 'Sim' : 'Não')."</td>";
+								echo "<td>".(($usuarios[$i]['Ativo'] == 1) ? 'Sim' : 'Não')."</td>";
 								//echo "<td $cor>".$usuarios[$i]['email']."</td>";
 								//echo "<td $cor>".$usuarios[$i]['nome_grupo']."</td>";
 								echo "<td class='text-right'>";

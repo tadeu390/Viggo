@@ -319,6 +319,7 @@
 				$this->data['obj'] = $this->Regras_model->get_regras(FALSE, $id, FALSE, FALSE);
 				$this->data['intervalos'] = $this->Intervalo_model->get_intervalo($id);
 				$this->data['etapas'] = $this->Etapa_model->get_etapa($id, FALSE, ETAPA_NORMAL);
+				$this->data['etapas_extras'] = $this->Etapa_model->get_etapa($id, FALSE, ETAPA_EXTRA);
 				$this->view("regras/detalhes", $this->data);
 			}
 			else

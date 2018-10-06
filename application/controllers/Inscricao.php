@@ -90,8 +90,8 @@
 			if($this->Geral_model->get_permissao(UPDATE, get_class($this)) == TRUE)
 			{
 				$this->data['obj'] = $this->Inscricao_model->get_inscricao(FALSE, $id, FALSE);
-				if($this->data['obj']['Editar_apagar'] == 'bloqueado')
-					redirect("inscricao/index");
+				//if($this->data['obj']['Editar_apagar'] == 'bloqueado')
+				
 				$this->data['lista_alunos'] = $this->Aluno_model->get_aluno(FALSE);
 				$this->data['lista_cursos'] = $this->Curso_model->get_curso(FALSE, FALSE, FALSE);
 				$this->data['lista_modalidades'] = $this->Modalidade_model->get_modalidade(FALSE, FALSE, FALSE);
@@ -169,31 +169,38 @@
 			);
 
 			//BLOQUEIA ACESSO DIRETO AO MÉTODO
-			 if(!empty($this->input->post()))
-			 {
+			if(!empty($this->input->post()))
+			{
 			 	if($this->Geral_model->get_permissao(CREATE, get_class($this)) == TRUE || $this->Geral_model->get_permissao(UPDATE, get_class($this)) == TRUE)
 				{
-				 	$resultado = $this->valida_inscricao($dataToSave);
-
+					$inscricao = $this->Inscricao_model->get_inscricao(FALSE, $dataToSave['Id'], FALSE);
+				 	if(empty($inscricao) || $inscricao['Editar_apagar'] != "bloqueado")
+						$resultado = $this->valida_inscricao($dataToSave);
+					else 
+						$resultado = 1;
+					
 				 	if($resultado == 1)
 				 	{
 				 		delete_cookie ('inscricao_aluno');//deleta o id do aluno que veio da tela de criar aluno.
-				 		$resultado = $this->store_banco($dataToSave);
-
-				 		if($this->input->post('matricular') == 1)//se marcar esta opção, cria a inscrição e já gera a matrícula para o período corrente
-				 		{
-					 		$dataRenovacaoToSave = array(
-								'Inscricao_id' => $this->Inscricao_model->get_inscricao_por_aluno($dataToSave)['Id'],
-								'Periodo_letivo_id' => $this->Modalidade_model->get_periodo_por_modalidade($dataToSave['Modalidade_id'])['Id']
-							);
-					 		$this->Renovacao_matricula_model->set_renovacao_matricula($dataRenovacaoToSave);
-				 		}
-				 		else
-				 		{
-				 			if(!empty($dataToSave['Id']))
-				 				$this->Renovacao_matricula_model->delete_matricula($dataToSave['Id']);
-				 		}
-
+						if(empty($inscricao) || $inscricao['Editar_apagar'] != "bloqueado")
+						{
+							$resultado = $this->store_banco($dataToSave);
+							if(($this->input->post('matricular') == 1))//se marcar esta opção, cria a inscrição e já gera a matrícula para o período corrente
+							{
+								$dataRenovacaoToSave = array(
+									'Inscricao_id' => $this->Inscricao_model->get_inscricao_por_aluno($dataToSave)['Id'],
+									'Periodo_letivo_id' => $this->Modalidade_model->get_periodo_por_modalidade($dataToSave['Modalidade_id'])['Id']
+								);
+								$this->Renovacao_matricula_model->set_renovacao_matricula($dataRenovacaoToSave);
+							}
+							else
+							{
+								if(!empty($dataToSave['Id']))
+									$this->Renovacao_matricula_model->delete_matricula($dataToSave['Id']);
+							}
+						}
+						else 
+							$resultado = $inscricao['Id'];
 				 		$documentos_aluno = $this->input->post('documento');
 				 		$doc_outros = array(
 				 			'Rg_outro' => $this->input->post('rg_outro'),
@@ -203,7 +210,8 @@
 				 			$this->Doc_inscricao_model->set_doc_inscricao($documentos_aluno, $doc_outros, $resultado);
 				 		else
 				 			$this->Doc_inscricao_model->delete_doc_inscricao($resultado);
-				 		$resultado = "sucesso";
+				 		
+						$resultado = "sucesso";
 				 	}
 				}
 				else

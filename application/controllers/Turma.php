@@ -304,27 +304,6 @@
 		  	$this->input->set_cookie($cookie);
 		}
 		/*!
-		*	RESPONSÁVEL POR RECEBER DA MODEL TODOS OS ATRIBUTOS DE UMA TURMA E OS ENVIA-LOS A VIEW.
-		*
-		*	$id -> Id de uma turma.
-		*/
-		public function detalhes($id = FALSE)
-		{
-			if($this->Geral_model->get_permissao(READ, get_class($this)) == TRUE)
-			{
-				$this->data['title'] = 'Detalhes da turma';
-				$this->data['obj'] = $this->Turma_model->get_turma(FALSE, $id, FALSE, FALSE);
-				$this->data['lista_disc_turma_header'] = $this->Disc_turma_model->get_disc_turma_header($id);
-				$curso_id = $this->Disc_turma_model->get_curso_turma($id)['Curso_id'];
-				$this->data['lista_disc_turma_disciplina'] = $this->Disc_turma_model->get_disc_turma_disciplina($id,$curso_id);
-				$this->data['lista_disc_turma_aluno'] = $this->Disc_turma_model->get_disc_turma_aluno($id);
-				$this->data['lista_disc_turma_professor'] = $this->Disc_turma_model->get_disc_turma_professor($id);
-				$this->view("turma/detalhes", $this->data);
-			}
-			else
-				$this->view("templates/permissao", $this->data);
-		}
-		/*!
 		*	RESPONSÁVEL POR RETORNAR UM PERIODO LETIVO NO FORMATO JSON. USADO PARA
 		*	CARREGAR AS INFORMAÇÕES DO PERIODO LETIVO NA TELA DE TURMA.
 		*	

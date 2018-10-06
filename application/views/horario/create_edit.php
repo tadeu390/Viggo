@@ -2,6 +2,10 @@
 	.table-bordered th, .table-bordered td {
 	border: 1px solid #393836 !important;
 }
+.table tbody tr:hover 
+{
+	background-color: white !important;
+}
 </style>
 <?php $this->load->helper("mtime");?>
 <br /><br />
@@ -132,7 +136,7 @@
 										$aula = 1;
 										for($i = 0; $i < ($regras['Quantidade_aula'] + $qtd_intervalo[$k][0]); $i++)
 										{
-											echo "<td class='text-center' style='vertical-align: middle;'>";
+											echo "<td class='text-center align-middle'>";
 												$Duracao_intervalo = "0";
 
 												$flag = 0;

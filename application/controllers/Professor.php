@@ -86,6 +86,7 @@
 			$this->data['lista_etapas'] = $this->Etapa_model->get_etapa($this->periodo_letivo_id, FALSE, FALSE);
 			$this->data['etapa'] = $this->Etapa_model->get_etapa(FALSE, $etapa_id, FALSE);
 			$this->data['lista_alunos'] = $this->Aluno_model->get_aluno_turma($disciplina_id, $turma_id, $subturma);
+
 			$this->data['url_part']['turma_id'] = $turma_id;
 			$this->data['url_part']['disciplina_id'] = $disciplina_id;
 			$this->data['url_part']['etapa_id'] = $etapa_id;
@@ -101,6 +102,8 @@
 		*/
 		public function determina_turma($lista_turmas, $turma_id)
 		{
+			if(empty($lista_turmas))
+				return 0;
 			$flag = 0;
 			for($i = 0; $i < COUNT($lista_turmas); $i++)
 			{

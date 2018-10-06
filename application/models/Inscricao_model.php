@@ -15,6 +15,8 @@
 		*	$Ativo -> Quando passado "TRUE" quer dizer pra retornar somente registro(s) ativos(s), se for passado FALSE retorna tudo.
 		*	$id -> Id de uma matricula específica.
 		*	$page-> Número da página de registros que se quer carregar.
+		*	$filter -> Contém os filtros quando utilizado.
+		*	$ordenacao -> Contem a ordem e o campo que se deseja ordenar.
 		*/
 		public function get_inscricao($Ativo = FALSE, $id = false, $page = false, $filter = false, $ordenacao = false)
 		{

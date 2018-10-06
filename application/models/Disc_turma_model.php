@@ -80,7 +80,7 @@
 				INNER JOIN Aluno a ON i.Aluno_id = a.Id 
 				INNER JOIN Usuario u ON u.Id = a.Usuario_id 
                 WHERE dt.Turma_id = ".$this->db->escape($id)." 
-                GROUP by 1,2,3,4 ORDER BY m.Sub_turma");
+                GROUP by 1,2,3,4 ORDER BY m.Sub_turma, u.Nome");
 
 			return $query->result_array();
 		}

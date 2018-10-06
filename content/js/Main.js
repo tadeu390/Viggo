@@ -191,6 +191,9 @@ var Main = {
 	{
 		if(class_error != "")
 			document.getElementById(form).className = "input-material "+class_error;
+		if(error != "" && document.getElementById(form) != undefined)
+			document.getElementById(form).focus();
+		
 		document.getElementById("error-"+form).innerHTML = error;
 	},
 	limpa_login : function ()
@@ -599,18 +602,6 @@ var Main = {
 			else if(tipo == 2)//aluno
 				window.location.assign(Url.base_url+"aluno/"+method+"/"+registro+"/"+tipo);
 		}
-	},
-	oculta_limite_falta : function()
-	{
-		var a = false;
-		a = document.getElementById("limite_falta").disabled;
-		if($('input:checkbox[name^=avaliar_faltas]:checked').length == 1 && a  == false)
-		{
-			document.getElementById("limite_falta").disabled = true;
-			document.getElementById("limite_falta").value = "";
-		}
-		else
-			document.getElementById("limite_falta").disabled = false;
 	},
 	validar_regras : function()
 	{

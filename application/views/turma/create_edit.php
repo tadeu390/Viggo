@@ -232,11 +232,13 @@
 						<?php
 							echo "<div class='background_white ' style='padding-top: 3px; border-radius: 0px 0px 5px 5px;'>";
 								echo "<table class='table'>";
-										echo "<tr>";
-											echo "<td id='qtd_alunos_encontrados_busca'>Alunos encontrados ";
-												echo count($lista_alunos);
-											echo"</td>";
-										echo "</tr>";
+										echo "<thead>";
+											echo "<tr>";
+												echo "<td id='qtd_alunos_encontrados_busca'>Alunos encontrados ";
+													echo count($lista_alunos);
+												echo"</td>";
+											echo "</tr>";
+											echo "</thead>";
 								echo "</table>";
 							echo "</div>";
 						?>
@@ -276,23 +278,25 @@
 								echo "<input type='hidden' id='quantidade_minima_aux' value='".(($lista_disc_turma_header['Qtd_minima_aluno'] == 0) ? '-' : $lista_disc_turma_header['Qtd_minima_aluno'])."'>";
 								echo "<input type='hidden' id='quantidade_maxima_aux' value='".(($lista_disc_turma_header['Qtd_maxima_aluno'] == 0) ? '-' : $lista_disc_turma_header['Qtd_maxima_aluno'])."'>";
 								echo "<table class='table'>";
-										echo "<tr>";
-											echo "<td id='quantidade_alunos'>Alunos na turma ";
-												echo count($lista_disc_turma_aluno);
-											echo"</td>";
-											echo "<td id='quantidade_minima' class='text-right'>";
-												if(!empty($lista_disc_turma_header['Qtd_minima_aluno']))
-													echo"Mínimo ".$lista_disc_turma_header['Qtd_minima_aluno'];
-												else
-													echo"Mínimo -";
-											echo"</td>";
-											echo "<td id='quantidade_maxima' class='text-right'>";
-												if(!empty($lista_disc_turma_header['Qtd_maxima_aluno']))
-													echo"Máximo ".$lista_disc_turma_header['Qtd_maxima_aluno'];
-												else
-													echo "Máximo -";
-											echo"</td>";
-										echo "</tr>";
+										echo "<thead>";
+											echo "<tr>";
+												echo "<td id='quantidade_alunos'>Alunos na turma ";
+													echo count($lista_disc_turma_aluno);
+												echo"</td>";
+												echo "<td id='quantidade_minima' class='text-right'>";
+													if(!empty($lista_disc_turma_header['Qtd_minima_aluno']))
+														echo"Mínimo ".$lista_disc_turma_header['Qtd_minima_aluno'];
+													else
+														echo"Mínimo -";
+												echo"</td>";
+												echo "<td id='quantidade_maxima' class='text-right'>";
+													if(!empty($lista_disc_turma_header['Qtd_maxima_aluno']))
+														echo"Máximo ".$lista_disc_turma_header['Qtd_maxima_aluno'];
+													else
+														echo "Máximo -";
+												echo"</td>";
+											echo "</tr>";
+										echo "</thead>";
 								echo "</table>";
 							echo "</div>";
 						?>
@@ -326,7 +330,7 @@
 													echo"</td>";
 
 													echo "<td class='text-center' style='vertical-align: middle;'>";
-														echo "<input type='number' class='text-center' style='width: 60%;' maxlength='1' id='sub_turma_add$i' name='sub_turma_add$i' value='".$lista_disc_turma_aluno[$i]['Sub_turma']."'>";
+														echo "<input type='number' min='0' class='text-center' style='width: 60%;' maxlength='1' id='sub_turma_add$i' name='sub_turma_add$i' value='".$lista_disc_turma_aluno[$i]['Sub_turma']."'>";
 													echo "</td>";
 													echo "<td class='text-center' style='vertical-align: middle;'>";
 														echo "<a title='Detalhes' target='n_guia' href='".$url."aluno/detalhes/".$lista_disc_turma_aluno[$i]['Usuario_id']."'>";
@@ -352,15 +356,6 @@
 				<div class="col-lg-12">
 					<div class='form-group'>
 						<div class='checkbox checbox-switch switch-success custom-controls-stacked'>
-							<label for='horario' style='color: #8a8d93;'>
-								<input type='checkbox' id='horario' name='horario' value='1' /><span></span> Salvar e ir para o horário da turma.
-							</label>
-						</div>
-					</div>
-				</div>
-				<div class="col-lg-12">
-					<div class='form-group'>
-						<div class='checkbox checbox-switch switch-success custom-controls-stacked'>
 							<?php
 							$checked = "";
 							if ($lista_disc_turma_header['Ativo'] == 1)
@@ -370,6 +365,15 @@
 							echo "<input type='checkbox' $checked id='turma_ativa' name='turma_ativa' value='1' /><span></span> Turma ativa";
 							echo "</label>";
 							?>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-12">
+					<div class='form-group'>
+						<div class='checkbox checbox-switch switch-success custom-controls-stacked'>
+							<label for='horario' style='color: #8a8d93;'>
+								<input type='checkbox' id='horario' name='horario' value='1' /><span></span> Salvar e ir para o horário da turma.
+							</label>
 						</div>
 					</div>
 				</div>
