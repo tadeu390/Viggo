@@ -1,7 +1,7 @@
 <?php $this->load->helper("notas");?>
 <?php $this->load->helper("mstring");?>
 <?php $this->load->helper("permissao");?>
-<?php $this->load->view("/shared/_periodo"); ?>
+<?php $this->load->view("/shared/_periodo");?>
 <br />
 <div class='row padding20 text-white relative' style="width: 98%; left: 2%">
 	<?php

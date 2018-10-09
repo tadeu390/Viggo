@@ -163,7 +163,7 @@
 
 			return $query->row_array();
 		}
-		public function get_horarios_professor($disciplina_id, $turma_id, $professor_id, $subturma, $data, $ativo)
+		public function get_horarios_disciplina($disciplina_id, $turma_id, $subturma, $data, $ativo)
 		{
 			//OS CASES SÃO UTILIZADOS PARA DETECTAR MUDANÇAS NO HORÁRIO, OU SEJA, SE HOUVER UM HORÁRIO DIFERENTE PARA A DATA EM QUESTÃO
 			//NA TABELA DE CALENDEARIO_PRESENCA, ENTAO CONSIDERA O QUE ESTÁ LÁ
@@ -193,7 +193,6 @@
 				    INNER JOIN Horario h ON h.Id = dh.Horario_id 
 				    WHERE dt.Turma_id = ".$this->db->escape($turma_id)." AND 
 				    dg.Disciplina_id = ".$this->db->escape($disciplina_id)." AND 
-				    dt.Professor_Id = ".$this->db->escape($professor_id)." AND 
 				    (dh.Sub_turma = ".$this->db->escape($subturma)." OR dh.Sub_turma = 0) AND  
 				    dh.Ativo = ".$this->db->escape($ativo)." AND 
 				    h.Dia = DATE_FORMAT(".$this->db->escape($data).", '%w') 

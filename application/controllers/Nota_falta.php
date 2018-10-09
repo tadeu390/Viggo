@@ -23,6 +23,9 @@
 			$this->load->model("Descricao_nota_model");
 			$this->load->model("Aluno_model");
 			$this->load->model("Nota_model");
+			$this->load->model("Calendario_presenca_model");
+			$this->load->model("Horario_model");
+			$this->load->model("Conteudo_model");
 			
 			$this->set_menu();
 			$this->data['controller'] = strtolower(get_class($this));
@@ -191,13 +194,263 @@
 			header('Content-Type: application/json');
 			echo json_encode($arr);
 		}
+
+		public function faltas($disciplina_id, $turma_id, $etapa_id)
+		{
+			$this->data['title'] = 'Turma';
+			if($this->Geral_model->get_permissao(CREATE, get_class($this)) == TRUE || $this->Geral_model->get_permissao(UPDATE, get_class($this)) == TRUE)
+			{
+				$this->data['disc_turma_header'] = $this->Disc_turma_model->get_disc_turma_header($turma_id);
+				
+				$this->data['method'] = __FUNCTION__;
+				
+				$disciplinas = $this->Disc_turma_model->get_grade_disciplina(
+					$this->Disc_turma_model->get_grade_id_turma($turma_id)['Grade_id'],  
+					$this->Disc_turma_model->get_periodo_turma($turma_id)['Periodo'], $turma_id);
+
+				if($disciplina_id == 0)
+					$disciplina_id = $disciplinas[0]['Disciplina_id']; //pega a primeira disciplina por padrao.
+
+				
+				$periodo_letivo_id = $this->Disc_turma_model->get_disc_turma_header($turma_id)['Periodo_letivo_id'];
+
+				$this->data['lista_etapas'] = $this->Etapa_model->get_etapa($periodo_letivo_id, FALSE, FALSE);
+
+				if($etapa_id == 0)
+					$etapa_id = $this->data['lista_etapas'][0]['Id'];
+
+				$this->data['url_part']['etapa_id'] = $etapa_id;
+				$this->data['url_part']['disciplina_id'] = $disciplina_id;
+				$this->data['url_part']['turma_id'] = $turma_id;
+				
+				$this->data['etapa'] = $this->Etapa_model->get_etapa(FALSE, $etapa_id, FALSE);
+
+				
+				
+				$this->data['lista_alunos'] = $this->Aluno_model->get_aluno_turma($disciplina_id, $turma_id, FALSE);
+
+				$this->data['meses'] = $this->Calendario_presenca_model->get_intervalo_mes(
+					$this->convert_date($this->Etapa_model->get_etapa(FALSE, $etapa_id, FALSE)['Data_inicio'],"en"), 
+					$this->convert_date($this->Etapa_model->get_etapa(FALSE, $etapa_id, FALSE)['Data_fim'],"en"));
+
+				$this->data['periodo_letivo_id'] = $periodo_letivo_id;
+
+				$this->data['disciplinas'] = $disciplinas;
+				$this->view("nota_falta/faltas", $this->data);
+			}
+			else
+				$this->view("templates/permissao", $this->data);
+		}
+
+		public function chamada($disciplina_id, $turma_id, $etapa_id)
+		{
+			$this->data['title'] = 'Notas e faltas';
+			if($this->Geral_model->get_permissao(CREATE, get_class($this)) == TRUE && $this->Geral_model->get_permissao(UPDATE, get_class($this)) == TRUE)
+			{
+				$this->data['disc_turma_header'] = $this->Disc_turma_model->get_disc_turma_header($turma_id);
+				
+				$this->data['method'] = __FUNCTION__;
+				
+				$disciplinas = $this->Disc_turma_model->get_grade_disciplina(
+					$this->Disc_turma_model->get_grade_id_turma($turma_id)['Grade_id'],  
+					$this->Disc_turma_model->get_periodo_turma($turma_id)['Periodo'], $turma_id);
+
+				if($disciplina_id == 0)
+					$disciplina_id = $disciplinas[0]['Disciplina_id']; //pega a primeira disciplina por padrao.
+
+				$this->data['disciplinas'] = $disciplinas;
+
+				$periodo_letivo_id = $this->Disc_turma_model->get_disc_turma_header($turma_id)['Periodo_letivo_id'];
+
+				$this->data['lista_etapas'] = $this->Etapa_model->get_etapa($periodo_letivo_id, FALSE, FALSE);
+
+				if($etapa_id == 0)
+					$etapa_id = $this->data['lista_etapas'][0]['Id'];
+
+				$this->data['url_part']['etapa_id'] = $etapa_id;
+				$this->data['url_part']['disciplina_id'] = $disciplina_id;
+				$this->data['url_part']['turma_id'] = $turma_id;
+				
+				$this->data['etapa'] = $this->Etapa_model->get_etapa(FALSE, $etapa_id, FALSE);
+
+				
+				
+				$this->data['lista_alunos'] = $this->Aluno_model->get_aluno_turma($disciplina_id, $turma_id, FALSE);
+
+
+				$this->data['data'] = date('Y-m-d');
+
+				$this->data['method'] = __FUNCTION__;
+
+				////obter a lista de sub_turmas
+				$this->data['lista_subturmas'] = $this->Turma_model->get_sub_turmas($disciplina_id, $turma_id, date('Y-m-d'));
+				
+				//especificar uma subturma default para a turma em questão
+				$sub_turma_default =  (empty($this->data['lista_subturmas'][0]['Sub_turma']) ? 0 : $this->data['lista_subturmas'][0]['Sub_turma']);
+
+				$this->data['sub_turma'] = $sub_turma_default;
+
+				/////obter a lista de horários.
+				$this->data['lista_horarios'] = $this->Horario_model->get_horarios_disciplina($disciplina_id, $turma_id, $sub_turma_default, date('Y-m-d'), 1);
+				if(empty($this->data['lista_horarios']))
+					$this->data['lista_horarios'] = $this->Horario_model->get_horarios_disciplina($disciplina_id, $turma_id, $sub_turma_default, date('Y-m-d'), 0);
+
+				if(!empty($this->data['lista_horarios']))
+				{
+					for($i = 0; $i < COUNT($this->data['lista_horarios']); $i ++)
+					{
+						$this->data['conteudo'] = $this->Conteudo_model->get_conteudo($this->data['lista_horarios'][$i]['Disc_hor_id'], date('Y-m-d'));	
+						if(!empty($this->data['conteudo']))//tentar até achar em algum horário, isso porque pra mesma data é registrado o mesmo conteudo independentemente 
+						//da quantidade de aula e se for removido alguma disciplina do horario entao é necessario procurar nas restantes que ficou até achar o coteúdo.
+							break;
+					}
+				}
+				else 
+					$this->data['conteudo'] = "";
+
+				$this->view("nota_falta/chamada", $this->data);
+			}
+			else
+				redirect("templates/permissao");
+		}
 		/*!
-		*	RESPONSÁVEL POR RECEBER DA MODEL TODAS AS DISCIPLINAS E TODOS OS DADOS DE FALTAS DE CADA ALUNO DE 
-		*	UM DETERMINADO PROFESSOR E ENVIA-LOS A VIEW.
+		*	RESPONSÁVEL POR CARREGAR DA MODEL TODAS AS SUBTURMAS DE UMA DETERMINADA DISCIPLINA DE UMA DETERMINADA 
+		*	TURMA EM UMA DETERMINADA DATA (DIA DA SEMANA). SE NÃO HOUVER SUBTURMA PRA TAL OCASIÃO A MODEL 
+		*	RETORNARÁ SUBTURMA 0.
 		*
-		*	$disciplina_id -> Id da disciplina da grade. É usado para se obter as faltas da disciplina pra cada aluno.
-		*	$turma_id -> Id da turma que está sendo consultada pelo professor.
-		*	$etapa_id -> Id da etapa especificado pelo usuário quando clicar nos botões de etapas.
+		*	$disciplina_id -> Id da disciplina que se quer obter as subturmas.
+		*	$turma_id -> Id da turma turma associada a disicplina.
+		*	$data -> Data selecionada pelo professor.
 		*/
+		public function get_sub_turmas($disciplina_id, $turma_id, $data)
+		{
+			$resultado = "sucesso";
+			$this->data['url_part']['disciplina_id'] = $disciplina_id;
+			$this->data['url_part']['turma_id'] = $turma_id;
+			$this->data['lista_subturmas'] = $this->Turma_model->get_sub_turmas($disciplina_id, $turma_id, date('Y-m-d'));
+			$this->data['sub_turma'] = (empty($this->data['lista_subturmas'][0]['Sub_turma']) ? 0 : $this->data['lista_subturmas'][0]['Sub_turma']);
+
+			$this->data['lista_subturmas'] = $this->Turma_model->get_sub_turmas($disciplina_id, $turma_id, $data);
+			$resultado = $this->load->view("nota_falta/_subturmas", $this->data, TRUE);
+
+			$arr = array('response' => $resultado);
+			header('Content-Type: application/json');
+			echo json_encode($arr);
+		}
+		/*!
+		*	RESPONSÁVEL POR CARREGAR DA MODEL A LISTA DE ALUNOS DE ACORDO COM O HORÁRIO, O QUE ACARRETA EM
+		*	CARREGAR APENAS ALUNOS DA SUBTURMA EM QUESTÃO CASO EXISTA SUBTURMA.
+		*
+		*	$disciplina_id -> Disciplina que os alunos cursam.
+		*	$turma_id -> Turma que se quer obter os alunos.
+		*	$subturma -> Se tiver uma subturma.
+		*	$data -> Data da chamada selecionada.
+		*/
+		public function get_alunos_chamada($disciplina_id, $turma_id, $subturma, $data)
+		{
+			$resultado = "sucesso";
+			$status = "ok";
+			$this->data['url_part']['disciplina_id'] = $disciplina_id;
+			$this->data['url_part']['turma_id'] = $turma_id;
+
+			$this->load->helper("mstring");
+			$this->load->helper("faltas");
+			$this->data['data'] = $data;
+			//print_r($this->Professor_model->get_alunos_chamada($disciplina_id, $turma_id, $disc_hor_id));
+
+			$this->data['lista_alunos'] = $this->Aluno_model->get_aluno_turma($disciplina_id, $turma_id, $subturma);
+			/////obter a lista de horários.
+			$this->data['lista_horarios'] = $this->Horario_model->get_horarios_disciplina($disciplina_id, $turma_id, $subturma, $data, 1);
+			if(empty($this->data['lista_horarios']))
+			{
+				$status = "vazio";
+				$this->data['lista_horarios'] = $this->Horario_model->get_horarios_disciplina($disciplina_id, $turma_id, $subturma, $data, 0);
+			}
+			
+			if(!empty($this->data['lista_horarios']))
+			{
+				for($i = 0; $i < COUNT($this->data['lista_horarios']); $i ++)
+				{
+					$this->data['conteudo'] = $this->Conteudo_model->get_conteudo($this->data['lista_horarios'][$i]['Disc_hor_id'], $data);	
+					if(!empty($this->data['conteudo']))//tentar até achar em algum horário, isso porque pra mesma data é registrado o mesmo conteudo independentemente 
+					//da quantidade de aula e se for removido alguma horario da disciplnina entao é necessario procurar nas restantes que ficou até achar o conteúdo.
+						break;
+				}
+			}
+			else 
+				$this->data['conteudo'] = "";
+			
+			$resultado = $this->load->view("professor/_alunos", $this->data, TRUE);
+			
+			$arr = array('response' => $resultado, 'status' => $status);
+			header('Content-Type: application/json');
+			echo json_encode($arr);
+		}
+		/*!
+		*	RESPONSÁVEL POR PEGAR DO FORMULÁRIO A CHAMADA DOS ALUNOS, A JUSTIFICATIVA DE FALTA E O CONTEÚDO LECIONADO.
+		*/
+		public function store_chamada()
+		{
+			$resultado = "sucesso";
+			$dataToSaveItem = array();
+			$dataToSave = array();
+			$conteudo = array();
+
+			for($i = 0; $i < $this->input->post('qtd_aluno'); $i++)
+			{
+				for($j = 0; $j < $this->input->post('qtd_coluna'); $j++)
+				{
+					if($i == 0)//só pege 1 na primeira volta do loop externo pra nao duplicar o conteudo lecionado
+					{
+						$conteudo_horario = array(
+							'Id' => $this->input->post('conteudo_id'),
+							'Descricao' => $this->input->post('conteudo_lecionado'),
+							'Disc_hor_id' => $this->input->post('disc_hor_id'.$j),
+							'Data_registro' => $this->convert_date($this->input->post('data_atual'),"en")
+						);
+						array_push($conteudo, $conteudo_horario);
+					}
+					
+					$dataToSaveItem = array(
+						'Id' => $this->input->post('calendario_presenca_id'.$i."".$j),
+						'Matricula_id' => $this->input->post('matricula_id'.$i),
+						'Presenca' => (empty($this->input->post('presenca'.$i."".$j)) ? 0 : $this->input->post('presenca'.$i."".$j)),
+						'Justificativa' => $this->input->post('justificativa'.$i),
+						'Horario_id' => $this->input->post('horario_id'.$j),
+						'Data_registro' => $this->convert_date($this->input->post('data_atual'),"en")
+					);
+					array_push($dataToSave, $dataToSaveItem);
+				}
+			}
+
+			//print_r($dataToSave);
+
+			$disc_hor_id = $this->input->post('horarios');
+			//print_r($disc_hor_id);
+			//print_r($conteudo);
+			//bloquear acesso direto ao metodo store
+			 if(!empty($this->input->post()))
+			 {
+				if($this->Geral_model->get_permissao(CREATE, get_class($this)) == TRUE || $this->Geral_model->get_permissao(UPDATE, get_class($this)) == TRUE)
+				{
+					//$resultado = $this->valida_chamada($dataToSave);
+					$resultado = 1;
+				 	if($resultado == 1)
+				 	{
+				 		$this->Calendario_presenca_model->set_presenca($dataToSave);
+				 		$this->Conteudo_model->set_conteudo($conteudo);
+				 		$resultado = "sucesso";
+				 	}
+				}
+				else
+					$resultado = "Você não tem permissão para realizar esta ação.";
+
+				$arr = array('response' => $resultado);
+				header('Content-Type: application/json');
+				echo json_encode($arr);
+			 }
+			 else
+				redirect('nota_falta/faltas');
+		}
 	}
 ?>

@@ -133,7 +133,7 @@
 				$etapa_id = $this->etapa_id_default;
 			}
 
-			$this->data['title'] = 'Minhas disciplinas';
+			$this->data['title'] = 'Notas e faltas';
 			if($this->Geral_model->get_permissao(READ, get_class($this)) == TRUE)
 			{
 				$this->data['lista_turmas'] = $this->Turma_model->get_turma_prof($disciplina_id, $this->professor_id, $this->periodo_letivo_id);
@@ -293,7 +293,7 @@
 				$etapa_id = $this->etapa_id_default;
 			}
 			
-			$this->data['title'] = 'Minhas disciplinas';
+			$this->data['title'] = 'Notas e faltas';
 			if($this->Geral_model->get_permissao(READ, get_class($this)) == TRUE)
 			{
 				$this->data['method'] = __FUNCTION__;
@@ -332,7 +332,7 @@
 				$etapa_id = $this->etapa_id_default;
 			}
 			
-			$this->data['title'] = 'Minhas disciplinas';
+			$this->data['title'] = 'Notas e faltas';
 			if($this->Geral_model->get_permissao(CREATE, get_class($this)) == TRUE && $this->Geral_model->get_permissao(UPDATE, get_class($this)) == TRUE)
 			{
 				$this->data['method'] = __FUNCTION__;
@@ -351,9 +351,9 @@
 				$this->data['sub_turma'] = $this->sub_turma_default;
 
 				/////obter a lista de horários.
-				$this->data['lista_horarios'] = $this->Horario_model->get_horarios_professor($disciplina_id, $turma_id, $this->professor_id, $this->sub_turma_default, date('Y-m-d'), 1);
+				$this->data['lista_horarios'] = $this->Horario_model->get_horarios_disciplina($disciplina_id, $turma_id, $this->sub_turma_default, date('Y-m-d'), 1);
 				if(empty($this->data['lista_horarios']))
-					$this->data['lista_horarios'] = $this->Horario_model->get_horarios_professor($disciplina_id, $turma_id, $this->professor_id, $this->sub_turma_default, date('Y-m-d'), 0);
+					$this->data['lista_horarios'] = $this->Horario_model->get_horarios_disciplina($disciplina_id, $turma_id, $this->sub_turma_default, date('Y-m-d'), 0);
 
 				if(!empty($this->data['lista_horarios']))
 				{
@@ -419,11 +419,11 @@
 
 			$this->data['lista_alunos'] = $this->Aluno_model->get_aluno_turma($disciplina_id, $turma_id, $subturma);
 			/////obter a lista de horários.
-			$this->data['lista_horarios'] = $this->Horario_model->get_horarios_professor($disciplina_id, $turma_id, $this->professor_id, $subturma, $data, 1);
+			$this->data['lista_horarios'] = $this->Horario_model->get_horarios_disciplina($disciplina_id, $turma_id, $subturma, $data, 1);
 			if(empty($this->data['lista_horarios']))
 			{
 				$status = "vazio";
-				$this->data['lista_horarios'] = $this->Horario_model->get_horarios_professor($disciplina_id, $turma_id, $this->professor_id, $subturma, $data, 0);
+				$this->data['lista_horarios'] = $this->Horario_model->get_horarios_disciplina($disciplina_id, $turma_id, $subturma, $data, 0);
 			}
 			
 			if(!empty($this->data['lista_horarios']))
@@ -520,7 +520,7 @@
 		*/
 		public function etapa_extra($disciplina_id, $turma_id, $etapa_id)
 		{
-			$this->data['title'] = 'Minhas disciplinas';
+			$this->data['title'] = 'Notas e faltas';
 			if($this->Geral_model->get_permissao(READ, get_class($this)) == TRUE)
 			{
 				$this->data['method'] = "notas";

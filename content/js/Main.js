@@ -1781,7 +1781,7 @@ var Main = {
 	chamada_validar : function()
 	{
 		Main.method = "store_chamada";
-		Main.method_redirect = "faltas";
+		Main.method_redirect = "faltas/"+$("#disciplina_selecionada").val() + "/" + $("#turma_selecionada").val() + "/" + $("#etapa_selecionada").val();
 
 		Main.create_edit();
 	},
