@@ -143,7 +143,7 @@
 
 				if($resultado != "invalido")
 				{
-					$somatorio = $resultado;
+					$somatorio = number_format($resultado,2);
 					$resultado = $this->Nota_model->set_notas($nota, $descricao_nota_id, $matricula_id, $etapa_id);
 
 					$status = $this->Nota_model->status_nota($etapa_id, $periodo_letivo_id, $somatorio);

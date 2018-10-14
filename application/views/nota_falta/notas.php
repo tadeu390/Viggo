@@ -131,7 +131,7 @@
 									$status = notas::status_nota($url_part['etapa_id'], $periodo_letivo_id, $total);
 
 									echo"<td class='text-center text-danger' id='td_total".$i."' style='vertical-align: middle; width: 10%;'>";
-										 echo "<input type='text' id='total".$i."' value='".$total."' disabled class='border-".$status." form-control border_radius text-center text-".$status."' style=' background-color: white;' />";
+										 echo "<input type='text' id='total".$i."' value='".number_format($total,2)."' disabled class='border-".$status." form-control border_radius text-center text-".$status."' style=' background-color: white;' />";
 									echo"</td>";
 									for ($j = 0; $j < COUNT($lista_colunas_nota) ; $j++)
 									{

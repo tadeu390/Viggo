@@ -1,6 +1,7 @@
 <?php $this->load->helper("notas");?>
 <?php $this->load->helper("mstring");?>
 <?php $this->load->helper("permissao");?>
+<?php $this->load->view("/shared/_periodo");?>
 <br /><br />
 <div class='row padding20 text-white relative' style="width: 98%; left: 2%">
 	<?php
@@ -83,7 +84,7 @@
 											echo "<td style='width: 10%; position: relative;' class='text-center'>";
 												echo $lista_colunas_nota[$i]['Descricao'];
 												echo "<input type='hidden' id='descricao_nota_id_hidden$i' value='".$lista_colunas_nota[$i]['Descricao_nota_id']."' />";
-												if(empty($status_bimestre))
+												if(empty($status_etapa_extra))
 													if(permissao::get_permissao(DELETE, $controller))
 														echo "<span onclick='Main.confirm_remover_coluna_nota(".$lista_colunas_nota[$i]['Descricao_nota_id'].",",$url_part['turma_id'].",".$url_part['disciplina_id'].",".$url_part['etapa_id'].");' title='Remover coluna' style='cursor: pointer; position: absolute; right: 0px;' class='glyphicon glyphicon-remove text-danger'></span>";
 											echo "</td>";
@@ -116,10 +117,10 @@
 												echo"</td>";
 											}
 
-											$status = notas::status_nota($url_part['etapa_id'], $periodo_letivo_id, $nota);
-
+											$status = notas::status_nota($url_part['etapa_id'], $periodo_letivo_id, $total);
+											
 											echo"<td class='text-center text-danger' id='td_total".$i."' style='vertical-align: middle; width: 10%;'>";
-												 echo "<input type='text' id='total".$i."' value='".$total."' disabled class='border-".$status." form-control border_radius text-center text-".$status."' style=' background-color: white;' />";
+												 echo "<input type='text' id='total".$i."' value='".number_format($total,2)."' disabled class='border-".$status." form-control border_radius text-center text-".$status."' style=' background-color: white;' />";
 											echo"</td>";
 										echo "</tr>";
 										$limite = $limite + 1;

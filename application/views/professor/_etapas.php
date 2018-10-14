@@ -1,5 +1,7 @@
 <?php 
 	$ultimo = 0;
+	if($method == 'etapa_extra')
+		$method = "notas";
 	for ($i = 0; $i < COUNT($lista_etapas); $i++) 
 	{
 		$partial_class = "btn-danger";

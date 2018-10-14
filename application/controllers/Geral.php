@@ -30,6 +30,9 @@
 	//TIPO DE DOCUMENTO
 	define("DOC_ALUNO", 1);
 	define("DOC_RESPONSAVEL", 2);
+	
+	//ID DA DESCRIÇÃO DE NOTA DA RECUPERACAO DA ETAPA
+	define("RECUPERACAO_ETAPA", 1);
 
 	class Geral extends CI_Controller 
 	{

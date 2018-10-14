@@ -95,11 +95,12 @@
 						$data_atual = DateTime::createFromFormat ('d/m/Y', date('d/m/Y'), $timeZone);
 						
 						$nota_etapa = notas::get_total_nota_etapa($lista_alunos[$i]['Matricula_id'], $lista_etapas[$j]['Id']);
+						
 						if($lista_etapas[$j]['Tipo'] == ETAPA_NORMAL)
 						{
 							$media_etapa = ($regra_letiva['Media'] / 100) * $lista_etapas[$j]['Valor'];
 
-							$total_nota = $total_nota + $nota_etapa;
+							
 
 							$status = "text-info";
 							if($nota_etapa < $media_etapa)//aluno perdeu media
@@ -109,19 +110,26 @@
 								$nota_etapa_rec = notas::get_nota(RECUPERACAO_PARALELA, $lista_alunos[$i]['Matricula_id'], $lista_etapas[$j]['Id']);
 								if($nota_etapa_rec >= $media_etapa)
 								{
-									$nota_etapa = $media_etapa;
+									$nota_etapa = number_format($media_etapa,2);
 									$status = "text-info";
 								}
+								else 
+								{
+									if($nota_etapa < $nota_etapa_rec)
+										$nota_etapa  = $nota_etapa_rec;
+								}
 							}
+							$total_nota = $total_nota + $nota_etapa;
+							
 							$falta_disc = faltas::get_faltas_etapa($lista_etapas[$j]['Data_inicio2'], $lista_etapas[$j]['Data_fim2'], $lista_alunos[$i]['Matricula_id']);
 							
 							$total_falta_disc = $total_falta_disc + $falta_disc;
 
-							echo "<td class='text-center $status'>";
+							echo "<td class='text-center $status align-middle'>";
 								echo $nota_etapa;
 							echo "</td>";	
 
-							echo "<td class='text-center'>";
+							echo "<td class='text-center align-middle'>";
 								echo $falta_disc;
 							echo "</td>";
 
@@ -131,7 +139,12 @@
 								$situacao = faltas::situacao_falta_aluno($lista_alunos[$i]['Aluno_id'], $turma_id, $regra_letiva, ETAPA_NORMAL);
 								
 								if($total_nota < $regra_letiva['Media'])
-									$situacao = "Recuperação";
+								{
+									if(!empty($lista_etapas[$j + 1]['Nome']))
+										$situacao = $lista_etapas[$j + 1]['Nome'];
+									else 
+										$situacao = "Reprovado";
+								}
 							}
 						}
 						else
@@ -143,20 +156,27 @@
 								$status = "text-info";
 								if($total_nota < $regra_letiva['Media'])
 									$status = "text-danger";
-								echo "<td class='text-center $status'>";
-									echo $total_nota;
+								echo "<td class='text-center $status align-middle'>";
+									echo number_format($total_nota,2);
 								echo "</td>";
-								echo "<td class='text-center'>";
+								echo "<td class='text-center align-middle'>";
 									echo $total_falta_disc;
 								echo "</td>";
 							}//IMPRIME O TOTAL DE NOTA DAS ETAPAS/BIMESTRES
-
+							
+							$nota_etapa_extra = notas::get_total_nota_etapa($lista_alunos[$i]['Matricula_id'], $lista_etapas[$j]['Id']);
+							
+							if($nota_etapa_extra >= $lista_etapas[$j]['Media'])
+								$status = "text-info";
+							else 
+								$status = "text-danger";
+							
 							if($data_atual > $data_fim)
 							{
 								//pegar a primeira etapa extra, esta é a etapa de estudos independentes, onde os alunos pode passar carregando no máximo
 								//o limite de disciplinas estabelecidos na regra do período letivo.
 
-								$nota_etapa_extra = notas::get_total_nota_etapa($lista_alunos[$i]['Matricula_id'], $lista_etapas[$j]['Id']);
+								
 								if(!empty($nota_etapa_extra)) //MEXER NO STATUS DE SOMENTE ALUNOS QUE FORAM PARA A PRÓXIMA ETAPA.
 								{
 									//AO ENTRAR PELA PRIMEIRA VEZ SIGNIFICA QUE A PRIMEIRA ETAPA EXTRA ACABOU, ENTÃO PARA O QUE O ALUNO POSSA IR PARA A
@@ -165,14 +185,10 @@
 
 
 									if($nota_etapa_extra >= $lista_etapas[$j]['Media'])
-									{	
-										$status = "text-info";
 										$situacao = "Aprovado";
-									}
 									else
 									{
-										$status = "text-danger";
-										$situacao = (($j < COUNT($lista_etapas)) ? $lista_etapas[($j + 1)]['Nome'] : "Reprovado"); //imprime o próximo status, se não houver, então reprovou
+										$situacao = ((!empty($lista_etapas[($j + 1)]['Nome'])) ? $lista_etapas[($j + 1)]['Nome'] : "Reprovado"); //imprime o próximo status, se não houver, então reprovou
 
 										//buscar a situação do aluno em todas as disciplinas que ele faz, e verificar quantas ele não passou
 										//trocar isso com o if, pq se ele jaá reprovu em mais do que o limite permitido e aprovar em uma disciplina, vai aparecer aprovado direto
@@ -181,7 +197,7 @@
 								}
 							}
 							//PRA BAIXO IMPRIME AS NOTAS EXTRAS, RECUPERAÇÃO.
-							echo "<td class='text-center $status'>";
+							echo "<td class='text-center $status align-middle'>";
 								echo $nota_etapa;
 							echo "</td>";
 						}

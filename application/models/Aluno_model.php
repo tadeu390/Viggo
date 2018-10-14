@@ -78,7 +78,7 @@
 				LEFT JOIN Disc_hor dh ON dt.Id = dh.Disc_turma_id AND (m.Sub_turma = dh.Sub_turma OR dh.Sub_turma = 0)
 				WHERE dg.Disciplina_id = ".$this->db->escape($disciplina_id)." AND 
 				dt.Turma_id = ".$this->db->escape($turma_id)." ".$sub_turma." GROUP BY #dh.Sub_turma, 
-				m.Id");
+				m.Id ORDER BY u.Nome");
 			
 				return $query->result_array();
 		}

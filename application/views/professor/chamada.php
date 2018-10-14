@@ -17,7 +17,7 @@
 	<input type='hidden' id='method' value='<?php echo $method; ?>'/>
 	<div class='col-lg-12 padding background_dark'>
 		<div class="row">
-			<div class="col-lg-2 padding10" style="border-right: 1px solid white; border-bottom: 1px solid white">
+			<div class="col-lg-2 padding10" style="border-right: 1px solid white;">
 				<?php
 					$this->load->view("professor/_disciplina");
 				?>
@@ -66,8 +66,8 @@
 				</div>
 				<?php $atr = array("id" => "form_cadastro_chamada", "name" => "form_cadastro"); 
 					echo form_open("$controller/store_chamada", $atr);
-					echo "<input type='hidden' id='turma_id_form' name='turma_id_form' value='".$url_part['turma_id']."'>";
-					echo "<input type='hidden' id='disciplina_id_form' name='disciplina_id_form' value='".$url_part['disciplina_id']."'>";
+					echo "<input type='hidden' id='turma_selecionada' name='turma_selecionada' value='".$url_part['turma_id']."'>";
+					echo "<input type='hidden' id='disciplina_selecionada' name='disciplina_selecionada' value='".$url_part['disciplina_id']."'>";
 				?>	
 
 				<div class="row padding10">

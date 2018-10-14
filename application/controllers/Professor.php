@@ -193,7 +193,7 @@
 					//{
 						if($resultado != "invalido")
 						{
-							$somatorio = $resultado;
+							$somatorio = number_format($resultado,2);
 							$resultado = $this->Nota_model->set_notas($nota, $descricao_nota_id, $matricula_id, $etapa_id);
 
 							$status = $this->Nota_model->status_nota($etapa_id, $this->periodo_letivo_id, $somatorio);
@@ -523,7 +523,7 @@
 			$this->data['title'] = 'Notas e faltas';
 			if($this->Geral_model->get_permissao(READ, get_class($this)) == TRUE)
 			{
-				$this->data['method'] = "notas";
+				$this->data['method'] = __FUNCTION__;
 				$this->data['lista_turmas'] = $this->Turma_model->get_turma_prof($disciplina_id, $this->professor_id, $this->periodo_letivo_id);
 				$turma_id = $this->determina_turma($this->data['lista_turmas'], $turma_id);
 
@@ -533,15 +533,20 @@
 				$this->data['lista_alunos'] = array();
 				$this->data['periodo_letivo_id'] = $this->periodo_letivo_id;
 
+				$this->data['status_etapa_extra'] = "disabled";
 				//determinar se a etapa anterior já passou 
 				if($this->Etapa_model->etapa_ja_passou($this->Etapa_model->get_etapa_anterior($etapa_id)['Id']) == true)
 				{
-					$this->data['status_etapa_extra'] = '';
+					///DETERMINAR SE A ETAPA ESTÁ ABERTA.
+					if($this->Etapa_model->get_status_etapa($etapa_id) == true)
+						$this->data['status_etapa_extra'] = '';
+					/////
 
 					$this->data['lista_colunas_nota'] = $this->Nota_model->get_colunas_nota($disciplina_id, $turma_id, $etapa_id);
 					$this->data['lista_alunos'] = $this->Aluno_model->get_aluno_turma($disciplina_id, $turma_id);
 
 					$regras = $this->Regras_model->get_regras(FALSE, $this->periodo_letivo_id, FALSE, FALSE, FALSE);
+
 					do{
 						$etapas = "";
 						$media = 0;
@@ -552,12 +557,14 @@
 						if($e['Tipo'] == ETAPA_NORMAL)//se for, buscar todas as ids de etapa para o período letivo corrente
 						{
 							$lista_etapas = $this->Etapa_model->get_etapa($this->periodo_letivo_id, FALSE, ETAPA_NORMAL);
+							
 							for($i = 0; $i < COUNT($lista_etapas); $i++)
 							{
 								$etapas = $etapas.$lista_etapas[$i]['Id'];
 								if($i != (COUNT($lista_etapas) - 1))
 									$etapas = $etapas.",";
 							}
+							
 							$media = $this->Regras_model->get_regras(FALSE, $this->periodo_letivo_id, FALSE, FALSE, FALSE)['Media'];
 						}
 						else
@@ -568,13 +575,15 @@
 
 						//remover da lista os alunos que estão aprovados
 						$lista_alunos = $this->data['lista_alunos'];
+						
 						for($i = 0; $i < COUNT($lista_alunos); $i++)
 						{
-							if($this->Nota_model->situacao_nota_aluno_disciplina($this->data['lista_alunos'][$i]['Matricula_id'], $etapas, $media) == APROVADO && 
-							   $this->Calendario_presenca_model->situacao_falta_aluno($turma_id, $this->data['lista_alunos'][$i]['Aluno_id'], $regras, $e['Tipo']) == APROVADO)
+							//print_r($this->data['lista_alunos'][$i]['Matricula_id']."-");
+							if($this->Nota_model->situacao_nota_aluno_disciplina($this->data['lista_alunos'][$i]['Matricula_id'], $etapas, $media) == APROVADO /*&& 
+							   $this->Calendario_presenca_model->situacao_falta_aluno($turma_id, $this->data['lista_alunos'][$i]['Aluno_id'], $regras, $e['Tipo']) == APROVADO */)
 								unset($this->data['lista_alunos'][$i]);
 							
-							if($this->Etapa_model->get_etapa_anterior($etapas)['Tipo'] == ETAPA_NORMAL)
+							if($this->Etapa_model->get_etapa_anterior($etapas)['Tipo'] == ETAPA_NORMAL && true == false)
 							{
 								$disc_mat = $this->Matricula_model->get_matriculas($lista_alunos[$i]['Aluno_id'], $turma_id);//levantar as ids de todas as disciplinas que o aluno cursa
 								$reprovas = array();
@@ -586,12 +595,16 @@
 								if(COUNT($reprovas) > $regras['Reprovas'])
 									unset($this->data['lista_alunos'][$i]);//NÃO PODE IR PARA PROGRESSÃO PARCIAL SE REPROVAR EM MAIS DO QUE A REGRA PERMITE.
 							}
+							//if($i == 1)
+								//break;
 						}
+						
 						$this->data['lista_alunos'] = array_values($this->data['lista_alunos']);//resetar o indice do array
 					}while($e['Tipo'] != ETAPA_NORMAL);//etapa normal é a última
+					//o do white acima começa da etapa x que chegou como pamametro e roda pras etapas anteriores
+					//procurando o status de aluno por aluno, se em algum eta anterior ele for encontradado com media e nota dentro da regra
+					//então ele é removido do array pq se encontra aprovado.
 				}
-				else
-					$this->data['status_etapa_extra'] = "disabled";
 
 				$this->data['lista_descricao_nota'] = $this->Descricao_nota_model->get_descricao(TRUE, FALSE);
 

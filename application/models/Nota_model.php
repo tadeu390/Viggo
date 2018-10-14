@@ -189,11 +189,51 @@
 		*/
 		public function situacao_nota_aluno_disciplina($matricula_id, $etapas, $media)
 		{
-			$query = $this->db->query("
+			$nota = 0;
+			
+			$etapas = explode(",",$etapas);
+			
+			for($i = 0; $i < COUNT($etapas); $i++)
+			{
+				$query = $this->db->query("
 				SELECT SUM(Valor) AS Total FROM Notas 
-				WHERE Matricula_id = ".$this->db->escape($matricula_id)." AND Etapa_id IN (".str_replace("'", "", $this->db->escape($etapas)).")");
+				WHERE Matricula_id = ".$this->db->escape($matricula_id)." AND 
+				Etapa_id = ".$this->db->escape($etapas[$i])." AND 
+				Descricao_nota_id != ".RECUPERACAO_ETAPA."");
+		
+				$query_rec_etapa = $this->db->query("
+				SELECT Valor AS Rec FROM Notas 
+				WHERE Matricula_id = ".$this->db->escape($matricula_id)." AND 
+				Etapa_id = ".$this->db->escape($etapas[$i])." AND 
+				Descricao_nota_id = ".RECUPERACAO_ETAPA."");
+				
+				if($query->row_array()['Total'] > $query_rec_etapa->row_array()['Rec'])
+					$nota = $nota + $query->row_array()['Total'];
+				else
+				{
+					$CI = get_instance();
+					$CI->load->model("Etapa_model");
+					$etapa = $CI->Etapa_model->get_etapa(FALSE, $etapas[$i], FALSE);
+					//TRATAR QUANDO FOR ETAPA_EXTRA, NA ETAPA EXTRA CONSIDERA-SE A MEDIA DA ETAPA E 
+					//NAO A MEDIA QUE VEM COMO PARAMETRO DESSA FUNCAO
+					$media_etapa = ($media / 100) * $etapa['Valor'];
+					
+					if($query_rec_etapa->row_array()['Rec'] > $media_etapa)
+						$nota = $nota + $media_etapa;
+					else
+						$nota = $nota + $query_rec_etapa->row_array()['Rec'];
+				}
+			}
+			//echo $matricula_id;
+			if($matricula_id == '00000323')
+			{
 
-			if((empty($query->row_array()['Total']) ? 0 : $query->row_array()['Total']) >= $media)
+				//echo $nota;
+			}
+				
+	
+	
+			if($nota >= $media)
 				return APROVADO;
 			return RECUPERACAO;
 		}

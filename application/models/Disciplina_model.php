@@ -186,7 +186,7 @@
 		public function get_disciplinas_aluno($curso_id, $periodo_letivo_id, $aluno_id)
 		{
 			$query = $this->db->query("
-				SELECT d.Nome AS Nome_disciplina, m.Id AS Matricula_id 
+				SELECT d.Nome AS Nome_disciplina, m.Id AS Matricula_id, dt.Turma_id  
 				FROM Aluno a 
 				INNER JOIN Inscricao i ON i.Aluno_id = a.Id AND i.Curso_id = ".$this->db->escape($curso_id)." 
 				INNER JOIN Matricula m ON m.Inscricao_id = i.Id 

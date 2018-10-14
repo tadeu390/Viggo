@@ -293,9 +293,11 @@
 			if($this->Geral_model->get_permissao(READ, get_class($this)) == TRUE)
 			{
 				$this->set_default();//carrega informações do período selecionado
+				$this->data['Aluno_id']  = $this->aluno_id;
 
 				$this->data['lista_etapas'] = $this->Etapa_model->get_etapa($this->periodo_letivo_id, FALSE, FALSE);
 				$this->data['lista_disciplinas'] = $this->Disciplina_model->get_disciplinas_aluno($this->curso_id, $this->periodo_letivo_id, $this->aluno_id);
+				$this->data['turma_id'] = $this->data['lista_disciplinas'][0]['Turma_id'];
 				$this->data['regra_letiva'] = $this->Regras_model->get_regras(FALSE, $this->periodo_letivo_id, FALSE, FALSE, FALSE);
 				return $this->view("aluno/nota_falta", $this->data);
 			}
